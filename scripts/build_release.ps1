@@ -1,5 +1,6 @@
 param(
-    [string]$OutputRoot
+    [string]$OutputRoot,
+    [switch]$KeepStage
 )
 
 $ErrorActionPreference = "Stop"
@@ -38,7 +39,7 @@ function New-ReleasePackage {
         [string]$Note
     )
 
-    $Name = "nextsystem-v$Version-$Flavor"
+    $Name = "NexTeX-v$Version-$Flavor"
     $StageRoot = Join-Path $OutputRoot $Name
     $ZipPath = Join-Path $OutputRoot ($Name + ".zip")
 
@@ -74,6 +75,10 @@ function New-ReleasePackage {
     Write-Host "Release directory: $StageRoot"
     Write-Host "Release zip:       $ZipPath"
     Write-Host ""
+
+    if (-not $KeepStage) {
+        Remove-Item -Recurse -Force $StageRoot
+    }
 }
 
 New-ReleasePackage `

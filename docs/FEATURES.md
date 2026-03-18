@@ -1,38 +1,64 @@
-# Next-System Features Overview
+# Features
 
-This directory documents the standalone feature subsystem for the next-generation
-template system.
+This document describes the current feature subsystem.
 
-- `core/features/system.tex` is the public subsystem entry.
-- `catalog/features.tex` is the centralized feature catalog.
-- `modules/features/` holds concrete feature implementations.
+## Structure
 
-## Current Scope
-
-- This layer is independent from the old feature system.
-- It exposes flat, composable feature ids with no preset layer.
-- It uses a thin id-to-file mapping model instead of a heavy registry DSL.
-
-## Load Model
-
-- External callers should load only `core/features/system.tex`.
-- `catalog/features.tex` maps each public id to one module file path.
-- `\UseFeature{...}` and `\UseFeatures{...}` provide load-once behavior.
-
-## Current Feature Surface
-
-- `math` -> AMS + mathtools + bm
-- `hyperlinks` -> hyperref + bookmark
-- `index` -> imakeidx + xindy + `\Term`
-- `tables` -> booktabs-oriented table helpers and environments
-- `image` -> single-image + panel-image helpers (beamer-safe behavior)
-- `lists_envs` -> enum/list helpers, including `ExampleBlock`
-- `ui_zh` -> Chinese UI labels and date behavior hooks
-
-## Minimal Usage
-
-```tex
-\usepackage{import}
-\subimport{../core/features/}{system.tex}
-\UseFeatures{math,hyperlinks,tables,image,lists_envs,ui_zh}
+```text
+core/features/        stable feature loader logic
+catalog/features.tex
+modules/features/
 ```
+
+The public subsystem entry is:
+
+```text
+core/features/system.tex
+```
+
+## Responsibilities
+
+### `core/features/`
+
+This layer owns:
+
+- `\UseFeature`
+- `\UseFeatures`
+- load-once control
+
+### `catalog/features.tex`
+
+This file maps public feature ids to module files.
+
+### `modules/features/`
+
+This layer holds the concrete feature implementations.
+
+## Public Feature Model
+
+Features stay flat and composable.
+
+There is no separate preset layer for features.
+
+Current public features include:
+
+- `math`
+- `hyperlinks`
+- `index`
+- `tables`
+- `image`
+- `lists_envs`
+- `ui_zh`
+
+## Runtime Behavior
+
+- the first use of a feature id loads its module
+- repeated use of the same id is ignored
+- unknown ids raise an error
+
+## Public Interface
+
+Use:
+
+- `\UseFeature{id}`
+- `\UseFeatures{a,b,c}`

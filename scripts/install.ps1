@@ -26,7 +26,7 @@ $RuntimeDirs = @(
     "assets"
 )
 
-Write-Host "Installing next_system to user texmf..."
+Write-Host "Installing NexTeX to user texmf..."
 Write-Host "  Source:      $RepoRoot"
 Write-Host "  Destination: $PackageRoot"
 

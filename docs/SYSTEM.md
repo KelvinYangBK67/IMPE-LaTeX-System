@@ -1,91 +1,88 @@
-# Next-System Unified Entry
+# System
 
-`system.tex` is the practical top-level entry for everyday use.
+`NexTeX` is organized around four layers:
 
-It loads:
+- `core/`: stable mechanisms
+- `catalog/`: registrations and public ids
+- `modules/`: extendable implementations
+- `assets/`: bundled resources
 
-- `core/layout/system.tex`
-- `core/fonts/system.tex`
-- `core/features/system.tex`
+The installable public entry files live under `package/`.
+Release and install tooling lives under `scripts/`.
 
-and exposes one unified setup command:
+## Public Entry Layers
 
-```tex
-\UseTemplateSet{
-  layout = beamer,
-  globalfonts = {cmu,shanggu},
-  fonts = {phoenician,aramaic,hebrew},
-  features = {tables,image}
-}
-```
+There are two practical entry modes.
 
-## Recommended Repository Usage
+### Repository-local usage
+
+Inside this repository, examples should load the package-layer entry directly:
 
 ```tex
-\documentclass[aspectratio=169]{beamer}
+\documentclass{article}
 \usepackage{import}
-\subimport{../}{system.tex}
-
-\UseTemplateSet{
-  layout = beamer,
-  globalfonts = {cmu,shanggu},
-  fonts = {sanskrit,hindi},
-  features = {math,tables,image}
-}
+\subimport{../../package/}{system.tex}
+\UseTemplateSet{...}
 ```
 
-## Font Root Configuration
+### Installed usage
 
-By default, the system uses bundled font assets under `assets/fonts`.
-
-Only override the font root when you want to point at another font library:
+After installation into a TeX search path, use either:
 
 ```tex
-\SetCatalogFontRoot{D:/Assets/Templates/latex_templates_next_system/assets/fonts}
+\documentclass{nextbeamer}
+\UseTemplateSet{...}
 ```
 
-or place a `nextsystem.local.tex` file next to the document:
+or:
 
 ```tex
-\SetCatalogFontRoot{D:/Assets/Templates/latex_templates_next_system/assets/fonts}
-```
-
-## Installed Usage
-
-When the template is installed on TeX's search path, you can use:
-
-```tex
-\documentclass[aspectratio=169]{nextbeamer}
-\UseTemplateSet{
-  layout = beamer,
-  globalfonts = {cmu,shanggu},
-  fonts = {sanskrit,hindi},
-  features = {math,tables,image}
-}
-```
-
-The equivalent package-style entry is:
-
-```tex
-\documentclass[aspectratio=169]{beamer}
+\documentclass{beamer}
 \usepackage{nextsystem}
-\UseTemplateSet{ ... }
+\UseTemplateSet{...}
 ```
 
-## Keys
+## Unified Setup Interface
 
-- `layout = <preset>`
-- `globalfonts = {a,b,c}`
-- `mainfonts = {a,b,c}`
+The main public command is:
+
+```tex
+\UseTemplateSet{
+  layout = <preset>,
+  globalfonts = {a,b,c},
+  fonts = {a,b,c},
+  features = {a,b,c}
+}
+```
+
+Supported keys:
+
+- `layout`
+- `globalfonts`
+- `mainfonts`
   Alias of `globalfonts`
-- `fonts = {a,b,c}`
-- `features = {a,b,c}`
+- `fonts`
+- `features`
 
-## Design Notes
+## Bundled Font Root
 
-- `layout` still uses public layout presets only.
-- `globalfonts` is separated from `fonts` because the font system must distinguish global bindings from local script commands.
-- `features` stays flat and composable.
-- `system.tex` is the repository-local entry.
-- `nextsystem.sty` and `next*.cls` are the installed-template entry layer.
-- Bundled font assets live under `assets/fonts`.
+By default, bundled fonts are resolved from `assets/fonts`.
+
+Use `nextsystem.local.tex` or `\SetCatalogFontRoot{...}` only when you want to
+override that root.
+
+## Release Model
+
+The repository now supports two release packages:
+
+- `full`: logic + bundled fonts
+- `core`: logic only
+
+Versioned release packages are generated from:
+
+```text
+scripts/build_release.ps1
+scripts/build_release.bat
+```
+
+The current release version is read from the repository `VERSION` file.

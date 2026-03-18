@@ -1,35 +1,37 @@
-# Next-System Layouts Overview
+# Layouts
 
-This directory documents the standalone layout subsystem for the next-generation
-template system.
+This document describes the current layout subsystem.
 
-- `core/layout/system.tex` is the public subsystem entry.
-- `core/layout/` holds low-frequency framework files.
-- `catalog/layouts.tex` is the centralized preset catalog.
+## Structure
 
-## Current Scope
+```text
+core/layout/       stable layout framework
+catalog/layouts.tex
+```
 
-- This layer is independent from the old layout system.
-- It exposes only public presets.
-- Internal `page_*`, `text_*`, `head_*`, `book_*`, and `slides_*` components stay behind the preset layer.
-- It enforces `documentclass` compatibility during load.
+The public subsystem entry is:
 
-## Load Model
+```text
+core/layout/system.tex
+```
 
-- External callers should load only `core/layout/system.tex`.
-- `system.tex` loads the core layers first, then registers the bundled preset catalog.
-- Callers select presets with `\UseLayout{...}` or `\UseLayouts{...}`.
+## Responsibilities
 
-## Internal Component Boundaries
+### `core/layout/`
 
-- `page_*` modules own paper size, margins, twoside, and binding.
-- `text_*` modules own paragraph spacing, indentation, line spacing, and list rhythm.
-- `head_*` modules own running heads and page-style logic.
-- `book_*` modules own chapter-opening and blank-page behavior.
-- `slides_*` modules own beamer theme and frame helpers.
-- table, image, math, hyperlink, and index support do not belong here.
+This layer owns the stable mechanics:
 
-## Current Public Presets
+- defaults
+- current class detection
+- preset parsing
+- compatibility checks
+- load-once registry behavior
+
+### `catalog/layouts.tex`
+
+This file registers public layout presets.
+
+Current public presets:
 
 - `zh_doc`
 - `en_doc`
@@ -37,10 +39,25 @@ template system.
 - `en_book`
 - `beamer`
 
-## Minimal Usage
+## Preset Model
 
-```tex
-\usepackage{import}
-\subimport{../core/layout/}{system.tex}
-\UseLayout{zh_doc}
-```
+Public layout presets are built from internal component slots such as:
+
+- `page`
+- `text`
+- `head`
+- `book`
+- `slides`
+
+Compatibility is enforced against the active document class before module code
+is executed.
+
+## Public Interface
+
+Use:
+
+- `\UseLayout{...}`
+- `\UseLayouts{...}`
+
+Repository-local loading normally happens through the package-layer `system.tex`
+rather than by loading the layout subsystem directly.
