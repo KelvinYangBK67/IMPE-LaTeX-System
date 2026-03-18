@@ -1,0 +1,9 @@
+% Single entry point for the next-generation font system.
+% This keeps the font stack self-contained and tied to the new structure.
+
+\RequirePackage{import}
+\providecommand{\CatalogFontRoot}{}
+
+\subimport{./}{defaults.tex}
+\subimport{./}{registry_modes.tex}
+\subimport{../../catalog/}{fonts.tex}

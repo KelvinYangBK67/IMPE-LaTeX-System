@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{nextsystem}[2026/03/14 Installable entry for next_system]
+\ProvidesPackage{nextsystem}[2026/03/18 Installable entry for next_system]
 
 \RequirePackage{expl3}
 \RequirePackage{import}
@@ -14,11 +14,8 @@
   {
     \PackageError{nextsystem}
       {Could~not~resolve~the~full~path~to~nextsystem.sty}
-      {Install~the~package~on~TeX's~search~path~or~use~next_system/system.tex.}
+      {Install~the~package~on~TeX's~search~path~or~load~system.tex~directly.}
   }
 \ExplSyntaxOff
 
-\edef\NextSystemTemplateRoot{\NextSystemPackageRoot next_system/}
-\edef\CatalogFontRoot{\NextSystemTemplateRoot assets/fonts/}
-
-\expandafter\subimport\expandafter{\NextSystemTemplateRoot}{system.tex}
+\expandafter\subimport\expandafter{\NextSystemPackageRoot}{system.tex}

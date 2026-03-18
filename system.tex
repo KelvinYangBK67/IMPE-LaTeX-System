@@ -1,0 +1,31 @@
+% Public repository entry for the next-generation template system.
+% This wrapper anchors repository-local paths and then delegates to core.
+
+\RequirePackage{expl3}
+\RequirePackage{xparse}
+\RequirePackage{import}
+
+\makeatletter
+\providecommand{\NextSystemRoot}{}
+\ifx\import@path\@undefined
+  \edef\NextSystemRoot{./}
+\else
+  \edef\NextSystemRoot{\import@path}
+\fi
+\makeatother
+
+\providecommand{\CatalogFontRoot}{}
+\NewDocumentCommand{\SetCatalogFontRoot}{m}
+  {\def\CatalogFontRoot{#1}}
+\InputIfFileExists{nextsystem.local.tex}{}{}
+
+\ExplSyntaxOn
+\tl_if_blank:eT { \CatalogFontRoot }
+  {
+    \tl_set:Nx \l_tmpa_tl { \NextSystemRoot }
+    \tl_put_right:Nn \l_tmpa_tl { assets/fonts }
+    \exp_args:NV \SetCatalogFontRoot \l_tmpa_tl
+  }
+\ExplSyntaxOff
+
+\subimport{./core/system/}{system.tex}
