@@ -1,0 +1,97 @@
+% Feature module: tables
+
+\ifdefined\NextFeatureTablesLoaded
+  \endinput
+\fi
+\def\NextFeatureTablesLoaded{1}
+
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{tabularx}
+\RequirePackage{multirow}
+\RequirePackage{threeparttable}
+\RequirePackage{ragged2e}
+
+\makeatletter
+\@ifpackageloaded{caption}{}{%
+  \RequirePackage{caption}%
+}
+\captionsetup[table]{skip=6pt}
+\makeatother
+
+\newcommand\TablesSetup{%
+  \renewcommand{\arraystretch}{1.18}%
+  \setlength{\tabcolsep}{6pt}%
+  \setlength{\aboverulesep}{0.35ex}%
+  \setlength{\belowrulesep}{0.35ex}%
+  \setlength{\belowbottomsep}{0.6ex}%
+}
+\AtBeginDocument{\TablesSetup}
+
+\newcolumntype{L}{>{\RaggedRight\arraybackslash}X}
+\newcolumntype{C}{>{\Centering\arraybackslash}X}
+\newcolumntype{R}{>{\RaggedLeft\arraybackslash}X}
+\newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\Centering\arraybackslash}p{#1}}
+\newcolumntype{B}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
+
+\newcommand{\TableCmidrule}[1]{\cmidrule(r){#1}}
+\newcommand{\TableGap}[1][0.8ex]{\addlinespace[#1]}
+\newcommand{\TableHead}[1]{#1\midrule}
+\let\NiceHead\TableHead
+
+\newenvironment{TableBook}[4][htbp]{%
+  \begin{table}[#1]\centering
+  \if\relax\detokenize{#3}\relax\else\caption{#3}\fi
+  \if\relax\detokenize{#4}\relax\else\label{#4}\fi
+  \begin{tabular}{@{}#2@{}}%
+  \toprule
+}{%
+  \bottomrule
+  \end{tabular}%
+  \end{table}
+}
+
+\newenvironment{TableBookX}[4][htbp]{%
+  \begin{table}[#1]\centering
+  \if\relax\detokenize{#3}\relax\else\caption{#3}\fi
+  \if\relax\detokenize{#4}\relax\else\label{#4}\fi
+  \begin{tabularx}{\linewidth}{@{}#2@{}}%
+  \toprule
+}{%
+  \bottomrule
+  \end{tabularx}%
+  \end{table}
+}
+
+\newenvironment{TableBookNotes}[4][htbp]{%
+  \begin{table}[#1]\centering
+  \begin{threeparttable}
+  \if\relax\detokenize{#3}\relax\else\caption{#3}\fi
+  \if\relax\detokenize{#4}\relax\else\label{#4}\fi
+  \begin{tabular}{@{}#2@{}}%
+  \toprule
+}{%
+  \bottomrule
+  \end{tabular}%
+  \end{threeparttable}
+  \end{table}
+}
+
+\newenvironment{NiceBooktable}[4][htbp]{%
+  \begin{TableBook}[#1]{#2}{#3}{#4}%
+}{%
+  \end{TableBook}%
+}
+
+\newenvironment{NiceBooktableX}[4][htbp]{%
+  \begin{TableBookX}[#1]{#2}{#3}{#4}%
+}{%
+  \end{TableBookX}%
+}
+
+\newenvironment{NiceBooktableNotes}[4][htbp]{%
+  \begin{TableBookNotes}[#1]{#2}{#3}{#4}%
+}{%
+  \end{TableBookNotes}%
+}

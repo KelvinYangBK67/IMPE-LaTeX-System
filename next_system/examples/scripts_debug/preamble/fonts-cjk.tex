@@ -1,0 +1,30 @@
+% ---------- 字體 ----------
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\providecommand{\ScriptsDebugFontRoot}{./fonts/}
+
+\setCJKmainfont{ShangguSerifHW-Regular.ttf}[
+  Path=\ScriptsDebugFontRoot,
+  BoldFont   = {ShangguSerifHW-Bold.ttf},
+  ItalicFont = {ZhuqueFangsong-Regular.ttf}
+]
+
+% ★ 關鍵：\sffamily 對應的 CJK sans 指定成尙古黑體
+\setCJKsansfont{ShangguSansHW-Regular.ttf}[
+  Path=\ScriptsDebugFontRoot,
+  BoldFont   = {ShangguSansHW-Bold.ttf},
+  ItalicFont = {ZhuqueFangsong-Regular.ttf}
+]
+
+% 手動強制切 sans 時用
+\newCJKfontfamily\CJKsans{ShangguSansHW-Regular.ttf}[
+  Path=\ScriptsDebugFontRoot,
+  BoldFont   = {ShangguSansHW-Bold.ttf},
+  ItalicFont = {ZhuqueFangsong-Regular.ttf}
+]
+
+\newCJKfontfamily\BookTitleFont{ShangguSerifHW-Bold.ttf}[Path=\ScriptsDebugFontRoot, ItalicFont={ZhuqueFangsong-Regular.ttf}]
+\newCJKfontfamily\AuthorFont{ZhuqueFangsong-Regular.ttf}[Path=\ScriptsDebugFontRoot]
+
+\XeTeXlinebreaklocale "zh"
+\XeTeXlinebreakskip = 0pt plus 1pt

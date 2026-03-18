@@ -1,0 +1,37 @@
+% Feature module: hyperlinks
+
+\ifdefined\NextFeatureHyperlinksLoaded
+  \endinput
+\fi
+\def\NextFeatureHyperlinksLoaded{1}
+
+\makeatletter
+\@ifpackageloaded{hyperref}
+  {}
+  {
+    \RequirePackage[
+      hidelinks,
+      hyperindex=true,
+      unicode=true,
+      psdextra,
+      bookmarks=true,
+      bookmarksnumbered=true,
+      bookmarksopen=true,
+      linktoc=all
+    ]{hyperref}
+  }
+\makeatother
+\RequirePackage{bookmark}
+
+\hypersetup{
+  hidelinks,
+  hyperindex=true,
+  pdfauthor={},
+  pdftitle={},
+  pdfsubject={},
+  pdfkeywords={},
+  bookmarks=true,
+  bookmarksnumbered=true,
+  bookmarksopen=true,
+  linktoc=all
+}

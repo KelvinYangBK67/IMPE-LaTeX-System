@@ -1,0 +1,23 @@
+% Feature module: lists_envs
+
+\ifdefined\NextFeatureListsEnvsLoaded
+  \endinput
+\fi
+\def\NextFeatureListsEnvsLoaded{1}
+
+\RequirePackage{setspace}
+
+\newenvironment{ExampleBlock}
+  {\begin{list}{}{%
+      \setlength{\leftmargin}{4em}%
+      \setlength{\rightmargin}{0pt}%
+      \setlength{\listparindent}{0pt}%
+      \setlength{\itemindent}{0pt}%
+      \setlength{\parsep}{0pt}%
+      \setlength{\topsep}{0pt}%
+    }%
+   \item\relax
+   \begingroup
+   \setstretch{1.45}%
+   \itshape}
+  {\par\endgroup\end{list}}

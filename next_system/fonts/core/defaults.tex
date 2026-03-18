@@ -1,0 +1,44 @@
+% Font logic defaults.
+% This file defines only default values and loads the internal logic layers.
+
+\RequirePackage{expl3}
+\RequirePackage{xparse}
+\RequirePackage{fontspec}
+
+% -----------------------------------------------------------------
+% System defaults
+% -----------------------------------------------------------------
+
+\providecommand{\FontDefaultScope}{local}
+\providecommand{\FontDefaultScriptClass}{latin}
+
+\providecommand{\FontDefaultInlineAxis}{horizontal}
+\providecommand{\FontDefaultInlineDirection}{ltr}
+\providecommand{\FontDefaultBlockProgression}{ttb}
+
+\providecommand{\FontDefaultPreserveSpaces}{false}
+\providecommand{\FontDefaultAllowJoining}{false}
+\providecommand{\FontDefaultEnableShaping}{false}
+\providecommand{\FontDefaultMapTextSF}{false}
+\providecommand{\FontDefaultMapTextTT}{false}
+\providecommand{\FontDefaultInlineBehavior}{normal}
+\providecommand{\FontDefaultBlockBehavior}{inherit}
+\providecommand{\FontDefaultBlockAlign}{inherit}
+\providecommand{\FontDefaultVerticalStrategy}{fallen}
+
+\providecommand{\FontDefaultHasSerif}{true}
+\providecommand{\FontDefaultHasSans}{false}
+\providecommand{\FontDefaultHasMono}{false}
+\providecommand{\FontDefaultSupportsBold}{false}
+\providecommand{\FontDefaultSupportsItalic}{false}
+\providecommand{\FontDefaultSupportsBoldItalic}{false}
+\providecommand{\FontDefaultBackend}{generic}
+
+% Load the next-generation internal layers.
+\RequirePackage{import}
+\subimport{./}{style.tex}
+\subimport{./}{writing.tex}
+\subimport{./}{script.tex}
+\subimport{./}{behavior.tex}
+\input{../special_builders.tex}
+\subimport{./}{interface.tex}

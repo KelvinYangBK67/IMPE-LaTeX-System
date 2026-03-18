@@ -1,0 +1,66 @@
+% !TeX program = xelatex
+\documentclass[UTF8,zihao=-4,a4paper,twoside,openright,fontset=none]{ctexbook}
+
+\usepackage{import}
+
+\subimport{../../}{system.tex}
+\UseTemplateSet{
+  layout = zh_book,
+  globalfonts = {cmu,shanggu},
+  fonts = {
+    hindi,
+    sanskrit,
+  arabic,
+  hebrew,
+  tibetan,
+  bopomofo,
+  chinese_simplified,
+  chinese_traditional,
+  japanese,
+  korean,
+  cuneiform,
+  tangut,
+  mongolian,
+  vietnamese_quocngu,
+    vietnamese_hannom
+  },
+  features = {math,hyperlinks,index,lists_envs,image,ui_zh}
+}
+
+\input{next_system_compat}
+
+\title{{\BookTitleFont\Huge 世界文字選講}}
+\author{{\AuthorFont 楊思凱}}
+
+% 僅編譯某一章節時使用，全編則註釋掉
+% \includeonly{chapters/01-intro}
+
+\begin{document}
+
+\frontmatter
+
+\cleardoublepage
+\input{front/cover}
+
+\cleardoublepage
+\tableofcontents
+\cleardoublepage
+
+\include{front/preface} % 你的前言檔
+
+\mainmatter
+\include{chapters/01-intro}
+\include{chapters/02-alph}
+\include{chapters/03-abjad}
+\include{chapters/04-abugida}
+\include{chapters/05-syll}
+\include{chapters/06-logo}
+
+\backmatter
+\appendix
+\include{back/app}
+
+
+\cleardoublepage
+\printindex
+\end{document}

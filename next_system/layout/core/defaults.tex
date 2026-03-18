@@ -1,0 +1,13 @@
+% Layout logic defaults.
+% This file defines only system defaults and loads the internal logic layers.
+
+\RequirePackage{expl3}
+\RequirePackage{xparse}
+\RequirePackage{import}
+
+\providecommand{\LayoutDefaultTargets}{all}
+
+\subimport{./}{class.tex}
+\subimport{./}{modules.tex}
+\subimport{./}{preset.tex}
+\subimport{./}{registry.tex}

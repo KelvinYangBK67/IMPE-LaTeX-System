@@ -1,0 +1,148 @@
+% !TeX program = xelatex
+\documentclass[12pt]{article}
+\usepackage{import}
+\usepackage[a4paper,landscape,margin=1.4cm]{geometry}
+\usepackage{longtable}
+\usepackage{array}
+
+\subimport{../../}{system.tex}
+\UseTemplateSet{
+  globalfonts = {cmu,shanggu},
+  fonts = {
+    noto,
+    times,
+    anatolian,
+    coptic,
+    glagolitic,
+    old_italic,
+    runic,
+    armenian,
+    hindi,
+    sanskrit,
+    georgian,
+    tibetan,
+    arabic,
+    urdu,
+    aramaic,
+    hebrew,
+    kharosthi,
+    pahlavi_parthian,
+    pahlavi_inscriptional,
+    pahlavi_psalter,
+    avestan,
+    phoenician,
+    samaritan,
+    chinese_simplified,
+    chinese_traditional,
+    japanese,
+    korean,
+    tangut,
+    mongolian,
+    vietnamese_quocngu,
+    vietnamese_hannom
+  }
+}
+
+\title{Font Catalog Audit}
+\author{Kelvin}
+\date{\today}
+
+\newcommand{\AuditStyles}[2]{%
+  #1{#2} &
+  #1{\textbf{#2}} &
+  #1{\textit{#2}} &
+  #1{\textbf{\textit{#2}}} &
+  #1{\textsf{#2}} &
+  #1{\textsf{\textbf{#2}}} &
+  #1{\textsf{\textit{#2}}} &
+  #1{\textsf{\textbf{\textit{#2}}}}%
+}
+
+\newcommand{\AuditRow}[3]{%
+  #1 & \AuditStyles{#2}{#3} \\
+}
+
+\begin{document}
+\maketitle
+
+\section{Local Commands: 8 Style Combinations}
+
+\footnotesize
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\begin{longtable}{>{\ttfamily}p{1.35cm}*{8}{>{\arraybackslash}p{0.103\textwidth}}}
+\textnormal{cmd} & serif & bold & italic & bold italic & sans & sans bold & sans italic & sans bold italic \\
+\hline
+\endhead
+\AuditRow{\string\NOT}{\NOT}{Abg fi fl}
+\AuditRow{\string\TIM}{\TIM}{Abg fi fl}
+\AuditRow{\string\CA}{\CA}{𐊠𐊺𐊪}
+\AuditRow{\string\CO}{\CO}{ⲛⲟⲩⲧⲉ}
+\AuditRow{\string\GL}{\GL}{ⰀⰁⰂ}
+\AuditRow{\string\OI}{\OI}{𐌀𐌁𐌂}
+\AuditRow{\string\RU}{\RU}{ᚠᚢᚦ}
+\AuditRow{\string\HY}{\HY}{Հայերեն}
+\AuditRow{\string\HI}{\HI}{अङ्क्ष्म}
+\AuditRow{\string\SA}{\SA}{अङ्क्ष्म}
+\AuditRow{\string\KA}{\KA}{ქართული}
+\AuditRow{\string\TI}{\TI}{བོད་ཡིག}
+\AuditRow{\string\AR}{\AR}{اَلْعَرَبِيَّةُ}
+\AuditRow{\string\UR}{\UR}{اَلْعَرَبِيَّةُ}
+\AuditRow{\string\IA}{\IA}{𐡀𐡓𐡌}
+\AuditRow{\string\HE}{\HE}{שלום עולם}
+\AuditRow{\string\KH}{\KH}{𐨐𐨿𐨪𐨆}
+\AuditRow{\string\PAR}{\PAR}{𐭐𐭓𐭕}
+\AuditRow{\string\PAH}{\PAH}{𐭯𐭠𐭧}
+\AuditRow{\string\PSP}{\PSP}{𐮈𐮎}
+\AuditRow{\string\AV}{\AV}{𐬀𐬬𐬆𐬯}
+\AuditRow{\string\PH}{\PH}{𐤀𐤁𐤂}
+\AuditRow{\string\SM}{\SM}{ࠔࠌࠅࠌ}
+\AuditRow{\string\SC}{\SC}{汉字测试}
+\AuditRow{\string\TC}{\TC}{漢字測試}
+\AuditRow{\string\JP}{\JP}{日本語テスト}
+\AuditRow{\string\KR}{\KR}{한국어 테스트}
+\AuditRow{\string\TG}{\TG}{𗼇𘝞𗫂}
+\AuditRow{\string\MO}{\MO}{ᠮᠣᠩᠭᠣᠯ}
+\AuditRow{\string\VI}{\VI}{Tiếng Việt}
+\AuditRow{\string\HN}{\HN}{漢喃測試}
+\end{longtable}
+
+\normalsize
+\section{RTL Paragraph Audit}
+
+\AR{اَلْعَرَبِيَّةُ}
+
+\UR{اَلْعَرَبِيَّةُ}
+
+\IA{𐡀𐡓𐡌}
+
+\HE{שלום עולם}
+
+\KH{𐨐𐨿𐨪𐨆}
+
+\PAR{𐭐𐭓𐭕}
+
+\PAH{𐭯𐭠𐭧}
+
+\PSP{𐮈𐮎}
+
+\AV{𐬀𐬬𐬆𐬯}
+
+\PH{𐤀𐤁𐤂}
+
+\SM{ࠔࠌࠅࠌ}
+
+\section{Mongolian Vertical Extension}
+
+\verb|\MOV| is tested separately because it is a vertical embedded command rather than a normal style-switch interface.
+
+Short vertical sample:
+\MOV{ᠮᠣᠩᠭᠣᠯ}
+
+Inline sample:
+Mongolian inline: \MO{ᠮᠣᠩᠭᠣᠯ} ; vertical inline: \MOV{ᠮᠣᠩᠭᠣᠯ}
+
+Long vertical sample:
+\MOV{ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠦᠨ ᠦᠰᠦᠭ ᠲᠣᠪᠴᠢ ᠪᠠ ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠦᠨ ᠵᠢᠬᠦ ᠪᠠᠶᠢᠳᠠᠯ}
+
+\end{document}

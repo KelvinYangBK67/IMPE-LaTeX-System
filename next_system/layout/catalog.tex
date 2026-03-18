@@ -1,0 +1,41 @@
+% Centralized preset catalog for the next-generation layout system.
+% Only public presets are registered here.
+
+\LayoutPresetRegister{
+  id = zh_doc,
+  targets = { article,report },
+  page = page_a4_26mm,
+  text = text_zh
+}
+
+\LayoutPresetRegister{
+  id = en_doc,
+  targets = { article,report },
+  page = page_a4_1in,
+  text = text_en
+}
+
+\LayoutPresetRegister{
+  id = zh_book,
+  targets = { book,report },
+  page = page_a4_book,
+  text = text_zh,
+  head = head_fancy_chapter,
+  book = { book_openright, book_blankpage_empty }
+}
+
+\LayoutPresetRegister{
+  id = en_book,
+  targets = { book,report },
+  page = page_a4_book,
+  text = text_en,
+  head = head_fancy_chapter,
+  book = { book_openright, book_blankpage_empty }
+}
+
+\LayoutPresetRegister{
+  id = beamer,
+  targets = { beamer },
+  text = text_beamer_dense,
+  slides = slides_madrid_nav
+}

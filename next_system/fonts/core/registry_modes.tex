@@ -1,0 +1,189 @@
+% Font family registry with on-demand local/global loading.
+% Public interface:
+%   \FontRegisterFamily{ id=..., local={...}, global={...}, ... }
+%   \UseFont{id}[local|global]
+
+\RequirePackage{expl3}
+\RequirePackage{xparse}
+
+\ExplSyntaxOn
+
+\prop_new:N \g__font_family_local_prop
+\prop_new:N \g__font_family_global_prop
+\prop_new:N \g__font_family_default_prop
+\prop_new:N \g__font_family_global_kind_prop
+\prop_new:N \g__font_family_global_status_prop
+\prop_new:N \g__font_family_loaded_prop
+
+\tl_new:N \l__font_family_id_tl
+\tl_new:N \l__font_family_local_tl
+\tl_new:N \l__font_family_global_tl
+\tl_new:N \l__font_family_default_mode_tl
+\tl_new:N \l__font_family_global_kind_tl
+\tl_new:N \l__font_family_global_status_tl
+
+\cs_new_protected:Npn \__font_family_reset:
+  {
+    \tl_clear:N \l__font_family_id_tl
+    \tl_clear:N \l__font_family_local_tl
+    \tl_clear:N \l__font_family_global_tl
+    \tl_clear:N \l__font_family_default_mode_tl
+    \tl_clear:N \l__font_family_global_kind_tl
+    \tl_clear:N \l__font_family_global_status_tl
+  }
+
+\keys_define:nn { font/family }
+  {
+    id           .tl_set:N = \l__font_family_id_tl,
+    local        .tl_set:N = \l__font_family_local_tl,
+    global       .tl_set:N = \l__font_family_global_tl,
+    defaultmode  .tl_set:N = \l__font_family_default_mode_tl,
+    globalkind   .tl_set:N = \l__font_family_global_kind_tl,
+    globalstatus .tl_set:N = \l__font_family_global_status_tl,
+  }
+
+\cs_new_protected:Npn \__font_family_validate_mode:n #1 { }
+\cs_new_protected:Npn \__font_family_validate_global_kind:n #1 { }
+\cs_new_protected:Npn \__font_family_validate_global_status:n #1 { }
+
+\NewDocumentCommand{\FontRegisterFamily}{m}
+  {
+    \__font_family_reset:
+    \keys_set:nn { font/family } {#1}
+
+    \tl_if_blank:VTF \l__font_family_id_tl
+      {
+        \PackageError{font-family-registry}
+          {Missing~id~field}
+          {Set~id~=...~when~registering~a~font~family.}
+      }
+      { }
+
+    \tl_if_blank:VTF \l__font_family_default_mode_tl
+      { \tl_set:Nn \l__font_family_default_mode_tl { local } }
+      { }
+    \tl_if_blank:VTF \l__font_family_global_kind_tl
+      { \tl_set:Nn \l__font_family_global_kind_tl { main } }
+      { }
+    \tl_if_blank:VTF \l__font_family_global_status_tl
+      {
+        \tl_if_blank:VTF \l__font_family_global_tl
+          { \tl_set:Nn \l__font_family_global_status_tl { reserved } }
+          { \tl_set:Nn \l__font_family_global_status_tl { implemented } }
+      }
+      { }
+
+    \__font_family_validate_mode:n { \tl_use:N \l__font_family_default_mode_tl }
+    \__font_family_validate_global_kind:n { \tl_use:N \l__font_family_global_kind_tl }
+    \__font_family_validate_global_status:n { \tl_use:N \l__font_family_global_status_tl }
+
+    \prop_put:NVV \g__font_family_default_prop \l__font_family_id_tl \l__font_family_default_mode_tl
+    \prop_put:NVV \g__font_family_global_kind_prop \l__font_family_id_tl \l__font_family_global_kind_tl
+    \prop_put:NVV \g__font_family_global_status_prop \l__font_family_id_tl \l__font_family_global_status_tl
+
+    \tl_if_blank:VTF \l__font_family_local_tl
+      { }
+      { \prop_put:NVV \g__font_family_local_prop \l__font_family_id_tl \l__font_family_local_tl }
+
+    \str_if_eq:VnT \l__font_family_global_status_tl { implemented }
+      {
+        \tl_if_blank:VTF \l__font_family_global_tl
+          { }
+          { \prop_put:NVV \g__font_family_global_prop \l__font_family_id_tl \l__font_family_global_tl }
+      }
+  }
+
+\cs_new_protected:Npn \__font_family_use_declaration:nnn #1#2#3
+  {
+    \prop_if_in:NnTF \g__font_family_loaded_prop { #1 / #2 }
+      { }
+      {
+        \tl_set:Nx \l_tmpb_tl { scope = #2, \exp_not:n {#3} }
+        \exp_args:NV \FontDeclare \l_tmpb_tl
+        \prop_put:Nnn \g__font_family_loaded_prop { #1 / #2 } { loaded }
+      }
+  }
+
+\cs_generate_variant:Nn \__font_family_use_declaration:nnn { nnV }
+\cs_generate_variant:Nn \__font_family_use_loader:nn { nV }
+
+\cs_new_protected:Npn \__font_family_use_loader:nn #1#2
+  {
+    \str_if_eq:nnTF {#2} { local }
+      {
+        \prop_if_in:NnTF \g__font_family_local_prop {#1}
+          {
+            \prop_get:NnN \g__font_family_local_prop {#1} \l_tmpa_tl
+            \__font_family_use_declaration:nnV {#1} { local } \l_tmpa_tl
+          }
+          {
+            \PackageError{font-family-registry}
+              {Unknown~font~family~mode}
+              {Family~`#1'~does~not~provide~mode~`local'.}
+          }
+      }
+      {
+        \str_if_eq:nnTF {#2} { global }
+          {
+            \prop_if_in:NnTF \g__font_family_global_prop {#1}
+              {
+                \prop_get:NnN \g__font_family_global_prop {#1} \l_tmpa_tl
+                \__font_family_use_declaration:nnV {#1} { global } \l_tmpa_tl
+              }
+              {
+                \prop_if_in:NnTF \g__font_family_global_status_prop {#1}
+                  {
+                    \prop_get:NnN \g__font_family_global_status_prop {#1} \l_tmpa_tl
+                    \str_if_eq:VnTF \l_tmpa_tl { reserved }
+                      {
+                        \prop_get:NnN \g__font_family_global_kind_prop {#1} \l_tmpb_tl
+                        \PackageError{font-family-registry}
+                          {Global~mode~reserved~but~not~implemented}
+                          {Family~`#1'~exposes~a~future~global~window~(\tl_use:N \l_tmpb_tl)~but~it~is~not~implemented~yet.}
+                      }
+                      {
+                        \PackageError{font-family-registry}
+                          {Unknown~font~family~mode}
+                          {Family~`#1'~does~not~provide~mode~`global'.}
+                      }
+                  }
+                  {
+                    \PackageError{font-family-registry}
+                      {Unknown~font~family~id}
+                      {Register~family~`#1'~with~\string\FontRegisterFamily\ first.}
+                  }
+              }
+          }
+          {
+            \PackageError{font-family-registry}
+              {Unknown~font~family~mode}
+              {Use~local~or~global.}
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_family_use_default:n #1
+  {
+    \prop_if_in:NnTF \g__font_family_default_prop {#1}
+      {
+        \prop_get:NnN \g__font_family_default_prop {#1} \l_tmpa_tl
+        \__font_family_use_loader:nV {#1} \l_tmpa_tl
+      }
+      {
+        \PackageError{font-family-registry}
+          {Unknown~font~family~id}
+          {Register~family~`#1'~with~\string\FontRegisterFamily\ first.}
+      }
+  }
+
+\NewDocumentCommand{\UseFont}{m O{}}
+  {
+    \tl_if_blank:nTF {#2}
+      { \__font_family_use_default:n {#1} }
+      { \__font_family_use_loader:nn {#1} {#2} }
+  }
+
+\NewDocumentCommand{\UseFonts}{m O{}}
+  { \clist_map_inline:nn {#1} { \UseFont{##1}[#2] } }
+
+\ExplSyntaxOff

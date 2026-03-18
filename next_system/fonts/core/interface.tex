@@ -1,0 +1,400 @@
+% Interface logic for the next-generation font system.
+% This layer owns the declaration entry points and public builders.
+
+\ExplSyntaxOn
+
+\tl_new:N \l__font_name_tl
+\tl_new:N \l__font_path_tl
+\tl_new:N \l__font_bold_path_tl
+\tl_new:N \l__font_italic_path_tl
+\tl_new:N \l__font_bolditalic_path_tl
+\tl_new:N \l__font_sans_path_tl
+\tl_new:N \l__font_sans_bold_path_tl
+\tl_new:N \l__font_sans_italic_path_tl
+\tl_new:N \l__font_sans_bolditalic_path_tl
+\tl_new:N \l__font_mono_path_tl
+\tl_new:N \l__font_mono_bold_path_tl
+\tl_new:N \l__font_regular_tl
+\tl_new:N \l__font_bold_tl
+\tl_new:N \l__font_italic_tl
+\tl_new:N \l__font_bolditalic_tl
+\tl_new:N \l__font_sans_tl
+\tl_new:N \l__font_sans_bold_tl
+\tl_new:N \l__font_sans_italic_tl
+\tl_new:N \l__font_sans_bolditalic_tl
+\tl_new:N \l__font_mono_tl
+\tl_new:N \l__font_mono_bold_tl
+\tl_new:N \l__font_script_tl
+\tl_new:N \l__font_language_tl
+\tl_new:N \l__font_features_tl
+\tl_new:N \l__font_command_tl
+\tl_new:N \l__font_resolved_bold_path_tl
+\tl_new:N \l__font_resolved_italic_path_tl
+\tl_new:N \l__font_resolved_bolditalic_path_tl
+\tl_new:N \l__font_resolved_sans_path_tl
+\tl_new:N \l__font_resolved_sans_bold_path_tl
+\tl_new:N \l__font_resolved_sans_italic_path_tl
+\tl_new:N \l__font_resolved_sans_bolditalic_path_tl
+\tl_new:N \l__font_resolved_mono_path_tl
+\tl_new:N \l__font_resolved_mono_bold_path_tl
+\tl_new:N \l__font_main_options_tl
+\tl_new:N \l__font_sans_options_tl
+\tl_new:N \l__font_mono_options_tl
+\tl_new:N \l__font_feature_options_tl
+
+\cs_new_protected:Npn \__font_reset_state:
+  {
+    \tl_clear:N \l__font_name_tl
+    \tl_clear:N \l__font_path_tl
+    \tl_clear:N \l__font_bold_path_tl
+    \tl_clear:N \l__font_italic_path_tl
+    \tl_clear:N \l__font_bolditalic_path_tl
+    \tl_clear:N \l__font_sans_path_tl
+    \tl_clear:N \l__font_sans_bold_path_tl
+    \tl_clear:N \l__font_sans_italic_path_tl
+    \tl_clear:N \l__font_sans_bolditalic_path_tl
+    \tl_clear:N \l__font_mono_path_tl
+    \tl_clear:N \l__font_mono_bold_path_tl
+    \tl_clear:N \l__font_regular_tl
+    \tl_clear:N \l__font_bold_tl
+    \tl_clear:N \l__font_italic_tl
+    \tl_clear:N \l__font_bolditalic_tl
+    \tl_clear:N \l__font_sans_tl
+    \tl_clear:N \l__font_sans_bold_tl
+    \tl_clear:N \l__font_sans_italic_tl
+    \tl_clear:N \l__font_sans_bolditalic_tl
+    \tl_clear:N \l__font_mono_tl
+    \tl_clear:N \l__font_mono_bold_tl
+    \tl_clear:N \l__font_script_tl
+    \tl_clear:N \l__font_language_tl
+    \tl_clear:N \l__font_features_tl
+    \tl_clear:N \l__font_command_tl
+    \tl_clear:N \l__font_special_builder_tl
+    \tl_clear:N \l__font_backend_tl
+    \tl_clear:N \l__font_script_class_tl
+    \tl_clear:N \l__font_scope_tl
+    \tl_clear:N \l__font_inline_axis_tl
+    \tl_clear:N \l__font_inline_direction_tl
+    \tl_clear:N \l__font_block_progression_tl
+    \tl_clear:N \l__font_preserve_spaces_tl
+    \tl_clear:N \l__font_allow_joining_tl
+    \tl_clear:N \l__font_enable_shaping_tl
+    \tl_clear:N \l__font_map_textsf_tl
+    \tl_clear:N \l__font_map_texttt_tl
+    \tl_clear:N \l__font_inline_behavior_tl
+    \tl_clear:N \l__font_block_behavior_tl
+    \tl_clear:N \l__font_block_align_tl
+    \tl_clear:N \l__font_vertical_strategy_tl
+  }
+
+\keys_define:nn { font/declare }
+  {
+    scope        .tl_set:N = \l__font_scope_tl,
+    name         .tl_set:N = \l__font_name_tl,
+    path         .tl_set:N = \l__font_path_tl,
+    boldpath     .tl_set:N = \l__font_bold_path_tl,
+    italicpath   .tl_set:N = \l__font_italic_path_tl,
+    bolditalicpath .tl_set:N = \l__font_bolditalic_path_tl,
+    sanspath     .tl_set:N = \l__font_sans_path_tl,
+    sansboldpath .tl_set:N = \l__font_sans_bold_path_tl,
+    sansitalicpath .tl_set:N = \l__font_sans_italic_path_tl,
+    sansbolditalicpath .tl_set:N = \l__font_sans_bolditalic_path_tl,
+    monopath     .tl_set:N = \l__font_mono_path_tl,
+    monoboldpath .tl_set:N = \l__font_mono_bold_path_tl,
+    regular      .tl_set:N = \l__font_regular_tl,
+    bold         .tl_set:N = \l__font_bold_tl,
+    italic       .tl_set:N = \l__font_italic_tl,
+    bolditalic   .tl_set:N = \l__font_bolditalic_tl,
+    sans         .tl_set:N = \l__font_sans_tl,
+    sansbold     .tl_set:N = \l__font_sans_bold_tl,
+    sansitalic   .tl_set:N = \l__font_sans_italic_tl,
+    sansbolditalic .tl_set:N = \l__font_sans_bolditalic_tl,
+    mono         .tl_set:N = \l__font_mono_tl,
+    monobold     .tl_set:N = \l__font_mono_bold_tl,
+    script       .tl_set:N = \l__font_script_tl,
+    language     .tl_set:N = \l__font_language_tl,
+    scriptclass  .tl_set:N = \l__font_script_class_tl,
+    inlineaxis   .tl_set:N = \l__font_inline_axis_tl,
+    inlinedirection .tl_set:N = \l__font_inline_direction_tl,
+    blockprogression .tl_set:N = \l__font_block_progression_tl,
+    preservespaces .tl_set:N = \l__font_preserve_spaces_tl,
+    allowjoining .tl_set:N = \l__font_allow_joining_tl,
+    enableshaping .tl_set:N = \l__font_enable_shaping_tl,
+    maptextsf    .tl_set:N = \l__font_map_textsf_tl,
+    maptexttt    .tl_set:N = \l__font_map_texttt_tl,
+    inlinebehavior .tl_set:N = \l__font_inline_behavior_tl,
+    blockbehavior .tl_set:N = \l__font_block_behavior_tl,
+    blockalign   .tl_set:N = \l__font_block_align_tl,
+    verticalstrategy .tl_set:N = \l__font_vertical_strategy_tl,
+    features     .tl_set:N = \l__font_features_tl,
+    command      .tl_set:N = \l__font_command_tl,
+    backend      .tl_set:N = \l__font_backend_tl,
+    specialbuilder .tl_set:N = \l__font_special_builder_tl,
+  }
+
+\cs_new_protected:Npn \__font_append_script_language_feature_options:N #1
+  {
+    \tl_if_blank:VTF \l__font_effective_features_tl
+      { }
+      { \tl_put_right:Nx #1 { \l__font_effective_features_tl, } }
+  }
+
+\cs_new_protected:Npn \__font_append_path_option:NV #1#2
+  {
+    \tl_if_blank:VTF #2
+      { }
+      { \tl_put_right:Nx #1 { Path = \exp_not:V #2 , } }
+  }
+
+\cs_new_protected:Npn \__font_set_feature_path_option:NV #1#2
+  {
+    \tl_clear:N #1
+    \tl_if_blank:VTF #2
+      { }
+      { \tl_put_right:Nx #1 { Path = \exp_not:V #2 , } }
+  }
+
+\cs_new_protected:Npn \__font_build_main_options:
+  {
+    \tl_clear:N \l__font_main_options_tl
+    \__font_append_path_option:NV \l__font_main_options_tl \l__font_path_tl
+    \tl_put_right:Nx \l__font_main_options_tl
+      { BoldFont = { \l__font_resolved_bold_tl }, }
+    \__font_set_feature_path_option:NV \l__font_feature_options_tl \l__font_resolved_bold_path_tl
+    \tl_put_right:Nx \l__font_main_options_tl
+      { BoldFeatures = { \tl_use:N \l__font_feature_options_tl }, }
+    \tl_put_right:Nx \l__font_main_options_tl
+      { ItalicFont = { \l__font_resolved_italic_tl }, }
+    \__font_set_feature_path_option:NV \l__font_feature_options_tl \l__font_resolved_italic_path_tl
+    \tl_put_right:Nx \l__font_main_options_tl
+      { ItalicFeatures = { \tl_use:N \l__font_feature_options_tl }, }
+    \tl_put_right:Nx \l__font_main_options_tl
+      { BoldItalicFont = { \l__font_resolved_bolditalic_tl }, }
+    \__font_set_feature_path_option:NV \l__font_feature_options_tl \l__font_resolved_bolditalic_path_tl
+    \tl_put_right:Nx \l__font_main_options_tl
+      { BoldItalicFeatures = { \tl_use:N \l__font_feature_options_tl }, }
+    \__font_append_script_language_feature_options:N \l__font_main_options_tl
+  }
+
+\cs_new_protected:Npn \__font_build_sans_options:
+  {
+    \tl_clear:N \l__font_sans_options_tl
+    \__font_append_path_option:NV \l__font_sans_options_tl \l__font_resolved_sans_path_tl
+    \tl_put_right:Nx \l__font_sans_options_tl
+      { BoldFont = { \l__font_resolved_sans_bold_tl }, }
+    \__font_set_feature_path_option:NV \l__font_feature_options_tl \l__font_resolved_sans_bold_path_tl
+    \tl_put_right:Nx \l__font_sans_options_tl
+      { BoldFeatures = { \tl_use:N \l__font_feature_options_tl }, }
+    \tl_put_right:Nx \l__font_sans_options_tl
+      { ItalicFont = { \l__font_resolved_sans_italic_tl }, }
+    \__font_set_feature_path_option:NV \l__font_feature_options_tl \l__font_resolved_sans_italic_path_tl
+    \tl_put_right:Nx \l__font_sans_options_tl
+      { ItalicFeatures = { \tl_use:N \l__font_feature_options_tl }, }
+    \tl_put_right:Nx \l__font_sans_options_tl
+      { BoldItalicFont = { \l__font_resolved_sans_bolditalic_tl }, }
+    \__font_set_feature_path_option:NV \l__font_feature_options_tl \l__font_resolved_sans_bolditalic_path_tl
+    \tl_put_right:Nx \l__font_sans_options_tl
+      { BoldItalicFeatures = { \tl_use:N \l__font_feature_options_tl }, }
+    \__font_append_script_language_feature_options:N \l__font_sans_options_tl
+  }
+
+\cs_new_protected:Npn \__font_build_mono_options:
+  {
+    \tl_clear:N \l__font_mono_options_tl
+    \__font_append_path_option:NV \l__font_mono_options_tl \l__font_resolved_mono_path_tl
+    \tl_put_right:Nx \l__font_mono_options_tl
+      { BoldFont = { \l__font_resolved_mono_bold_tl }, }
+    \__font_set_feature_path_option:NV \l__font_feature_options_tl \l__font_resolved_mono_bold_path_tl
+    \tl_put_right:Nx \l__font_mono_options_tl
+      { BoldFeatures = { \tl_use:N \l__font_feature_options_tl }, }
+    \tl_put_right:Nx \l__font_mono_options_tl
+      { ItalicFont = { \l__font_resolved_italic_tl }, }
+    \__font_set_feature_path_option:NV \l__font_feature_options_tl \l__font_resolved_italic_path_tl
+    \tl_put_right:Nx \l__font_mono_options_tl
+      { ItalicFeatures = { \tl_use:N \l__font_feature_options_tl }, }
+    \tl_put_right:Nx \l__font_mono_options_tl
+      { BoldItalicFont = { \l__font_resolved_bolditalic_tl }, }
+    \__font_set_feature_path_option:NV \l__font_feature_options_tl \l__font_resolved_bolditalic_path_tl
+    \tl_put_right:Nx \l__font_mono_options_tl
+      { BoldItalicFeatures = { \tl_use:N \l__font_feature_options_tl }, }
+    \__font_append_script_language_feature_options:N \l__font_mono_options_tl
+  }
+
+\cs_new_protected:Npn \__font_define_public_command:nn #1#2
+  {
+    \str_if_eq:VnTF \l__font_map_textsf_tl { true }
+      {
+        \cs_set_protected:cpn { __font_map_sf_#2: }
+          { \cs_set_protected:Npn \sffamily { \use:c { __fontsf_#2 } } }
+      }
+      { \cs_set_protected:cpn { __font_map_sf_#2: } { } }
+    \str_if_eq:VnTF \l__font_map_texttt_tl { true }
+      {
+        \cs_set_protected:cpn { __font_map_tt_#2: }
+          { \cs_set_protected:Npn \ttfamily { \use:c { __fonttt_#2 } } }
+      }
+      { \cs_set_protected:cpn { __font_map_tt_#2: } { } }
+
+    \exp_args:Nc \DeclareDocumentCommand {#1} {m}
+      {
+        {
+          \use:c { __font_map_sf_#2: }
+          \use:c { __font_map_tt_#2: }
+          \use:c { __fontrm_#2 }
+          \__font_apply_behavior:nn {#2} {##1}
+        }
+      }
+  }
+
+\cs_new_protected:Npn \__font_define_local_families_generic:
+  {
+    \__font_build_main_options:
+    \__font_build_sans_options:
+    \__font_build_mono_options:
+    \str_if_eq:VnTF \l__font_script_class_tl { cjk }
+      {
+        \cs_if_exist:NF \newCJKfontfamily
+          { \RequirePackage{xeCJK} }
+        \use:x
+          {
+            \exp_not:N \newCJKfontfamily
+            \exp_not:c { __fontrm_\l__font_name_tl }
+            [ \tl_use:N \l__font_main_options_tl ]
+            { \l__font_regular_tl }
+          }
+        \use:x
+          {
+            \exp_not:N \newCJKfontfamily
+            \exp_not:c { __fontsf_\l__font_name_tl }
+            [ \tl_use:N \l__font_sans_options_tl ]
+            { \l__font_resolved_sans_tl }
+          }
+        \use:x
+          {
+            \exp_not:N \newCJKfontfamily
+            \exp_not:c { __fonttt_\l__font_name_tl }
+            [ \tl_use:N \l__font_mono_options_tl ]
+            { \l__font_resolved_mono_tl }
+          }
+      }
+      {
+        \use:x
+          {
+            \exp_not:N \newfontfamily
+            \exp_not:c { __fontrm_\l__font_name_tl }
+            [ \tl_use:N \l__font_main_options_tl ]
+            { \l__font_regular_tl }
+          }
+        \use:x
+          {
+            \exp_not:N \newfontfamily
+            \exp_not:c { __fontsf_\l__font_name_tl }
+            [ \tl_use:N \l__font_sans_options_tl ]
+            { \l__font_resolved_sans_tl }
+          }
+        \use:x
+          {
+            \exp_not:N \newfontfamily
+            \exp_not:c { __fonttt_\l__font_name_tl }
+            [ \tl_use:N \l__font_mono_options_tl ]
+            { \l__font_resolved_mono_tl }
+          }
+      }
+
+    \exp_args:NV \__font_define_behavior_hooks:n \l__font_name_tl
+    \exp_args:NVV \__font_define_public_command:nn
+      \l__font_command_tl
+      \l__font_name_tl
+  }
+
+\cs_new_protected:Npn \__font_define_global_binding:
+  {
+    \__font_build_main_options:
+    \__font_build_sans_options:
+    \__font_build_mono_options:
+    \str_if_eq:VnTF \l__font_script_class_tl { cjk }
+      {
+        \cs_if_exist:NF \setCJKmainfont
+          { \RequirePackage{xeCJK} }
+        \use:x
+          {
+            \exp_not:N \setCJKmainfont
+            [ \tl_use:N \l__font_main_options_tl ]
+            { \l__font_regular_tl }
+          }
+        \use:x
+          {
+            \exp_not:N \setCJKsansfont
+            [ \tl_use:N \l__font_sans_options_tl ]
+            { \l__font_resolved_sans_tl }
+          }
+        \use:x
+          {
+            \exp_not:N \setCJKmonofont
+            [ \tl_use:N \l__font_mono_options_tl ]
+            { \l__font_resolved_mono_tl }
+          }
+      }
+      {
+        \use:x
+          {
+            \exp_not:N \setmainfont
+            [ \tl_use:N \l__font_main_options_tl ]
+            { \l__font_regular_tl }
+          }
+        \use:x
+          {
+            \exp_not:N \setsansfont
+            [ \tl_use:N \l__font_sans_options_tl ]
+            { \l__font_resolved_sans_tl }
+          }
+        \use:x
+          {
+            \exp_not:N \setmonofont
+            [ \tl_use:N \l__font_mono_options_tl ]
+            { \l__font_resolved_mono_tl }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_apply_declaration:
+  {
+    \tl_if_blank:VTF \l__font_regular_tl
+      { \PackageError{font-defaults}{Missing~regular~field}{Set~regular~=...} }
+      { }
+
+    \__font_apply_core_defaults:
+    \__font_validate_core_state:
+    \__font_apply_script_hooks:
+    \__font_apply_behavior_defaults:
+    \__font_validate_behavior_state:
+    \__font_resolve_style_fallbacks:
+
+    \str_if_eq:VnTF \l__font_scope_tl { global }
+      { \__font_define_global_binding: }
+      {
+        \tl_if_blank:VTF \l__font_command_tl
+          { \PackageError{font-defaults}{Missing~command~field}{Set~command~=...~for~local~scope.} }
+          { }
+        \tl_if_blank:VTF \l__font_name_tl
+          { \tl_set_eq:NN \l__font_name_tl \l__font_command_tl }
+          { }
+        \tl_if_blank:VTF \l__font_special_builder_tl
+          {
+            \__font_define_local_families_generic:
+          }
+          { \__font_define_special_local: }
+      }
+  }
+
+\NewDocumentCommand{\FontDeclare}{m}
+  {
+    \__font_reset_state:
+    \keys_set:nn { font/declare } {#1}
+    \__font_apply_declaration:
+  }
+
+\NewDocumentCommand{\FontDeclareLocalDefault}{m}
+  { \FontDeclare{scope=local,#1} }
+
+\ExplSyntaxOff

@@ -1,0 +1,40 @@
+% Feature module: index
+
+\ifdefined\NextFeatureIndexLoaded
+  \endinput
+\fi
+\def\NextFeatureIndexLoaded{1}
+
+\RequirePackage[xindy]{imakeidx}
+
+\providecommand{\IndexTitle}{術語索引}
+\makeatletter
+\ifx\IndexTitle\@empty
+  \makeindex[intoc]
+\else
+  \makeindex[title={\IndexTitle}, intoc]
+\fi
+\makeatother
+
+\indexsetup{
+  othercode = {
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{0pt}
+    \linespread{1.10}\selectfont
+  }
+}
+
+\makeatletter
+\newcommand{\Term}[3]{%
+  \textbf{#2}（#3）\unskip\nobreak\hspace{0pt}%
+  \@ifundefined{term@#1}{%
+    \global\expandafter\def\csname term@#1\endcsname{}%
+    \@ifundefined{hypertarget}
+      {}
+      {\hypertarget{idx:#1}{}}%
+    \@ifundefined{hyperlink}
+      {\index{#1@#2（#3）}}
+      {\index{#1@\protect\hyperlink{idx:#1}{#2（#3）}}}%
+  }{}%
+}
+\makeatother

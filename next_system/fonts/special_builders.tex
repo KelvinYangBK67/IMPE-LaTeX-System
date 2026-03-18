@@ -1,0 +1,418 @@
+% Special local builders copied from legacy modules for scripts whose
+% generic fontspec path was not sufficient.
+
+\RequirePackage{polyglossia}
+\RequirePackage{graphicx}
+\RequirePackage[export]{adjustbox}
+
+\ExplSyntaxOn
+
+\bool_new:N \g__font_polyglossia_arabic_setup_bool
+\bool_new:N \g__font_polyglossia_urdu_setup_bool
+\bool_new:N \g__font_polyglossia_sanskrit_setup_bool
+\tl_new:N \l__font_special_builder_tl
+\seq_new:N \l__font_mongolian_words_seq
+\tl_new:N \l__font_vertical_embed_font_tl
+\tl_new:N \l__font_vertical_embed_gap_tl
+\dim_new:N \l__font_vertical_embed_top_correction_dim
+\dim_new:N \l__font_vertical_embed_bottom_padding_dim
+\box_new:N \l__font_vertical_embed_box
+
+\cs_new:Npn \__font_hindi_select:n #1
+  {
+    \edef\tempfamily{\HIfamily}%
+    \edef\tempseries{\HIseries}%
+    \ifx\tempfamily\rmname
+      \ifx\tempseries\bfname \HIRmBf \else \HIRmMd \fi
+    \else
+      \ifx\tempseries\bfname \HISfBf \else \HISfMd \fi
+    \fi
+  }
+
+\cs_new:Npn \__font_tibetan_select:n #1
+  {
+    \edef\tempfamily{\TIfamily}%
+    \edef\tempseries{\TIseries}%
+    \ifx\tempfamily\rmname
+      \ifx\tempseries\bfname \TIRmBf \else \TIRmMd \fi
+    \else
+      \ifx\tempseries\bfname \TIItaBf \else \TIItaMd \fi
+    \fi
+  }
+
+\cs_new_protected:Npn \__font_special_rtl_wrap:nn #1#2
+  {
+    \ifhmode
+      #1{#2}%
+    \else
+      \par
+      \begingroup
+      \leftskip=0pt plus 1fil\relax
+      \rightskip=0pt\relax
+      \parfillskip=0pt\relax
+      \noindent
+      \hbox to \linewidth { \hfill \beginR #1{#2}\endR }
+      \par
+      \endgroup
+    \fi
+  }
+
+\cs_new_protected:Npn \__font_special_rtl_wrap_plain:n #1
+  {
+    \ifhmode
+      \RL{#1}%
+    \else
+      \par
+      \begingroup
+      \leftskip=0pt plus 1fil\relax
+      \rightskip=0pt\relax
+      \parfillskip=0pt\relax
+      \noindent
+      \hbox to \linewidth { \hfill \beginR #1\endR }
+      \par
+      \endgroup
+    \fi
+  }
+
+\cs_new_protected:Npn \__font_define_special_psalter_pahlavi:
+  {
+    \newfontfamily\PSPRmMd[
+      Path = \l__font_path_tl,
+      RawFeature = { script=phlp }
+    ] { \l__font_regular_tl }
+
+    \DeclareDocumentCommand{\PSP}{m}
+      {
+        {
+          \def\PSPtextit####1{{\PSPRmMd ####1}}
+          \def\PSPtextbf####1{{\PSPRmMd ####1}}
+          \def\PSPtextsf####1{{\PSPRmMd ####1}}
+          \def\PSPtexttt####1{{\PSPRmMd ####1}}
+          \let\textit\PSPtextit
+          \let\textbf\PSPtextbf
+          \let\textsf\PSPtextsf
+          \let\texttt\PSPtexttt
+          \PSPRmMd
+          \__font_special_rtl_wrap_plain:n { ##1 }
+        }
+      }
+  }
+
+\cs_new_protected:Npn \__font_vertical_embed_word:nnn #1#2#3
+  {
+    \hbox_set:Nn \l__font_vertical_embed_box
+      {
+        \rotatebox[origin=c]{-90}
+          {
+            { #2 #3 }
+          }
+      }
+    \raisebox
+      {
+        \dim_eval:n
+          {
+            \ht\strutbox
+            - \box_ht:N \l__font_vertical_embed_box
+            + \l__font_vertical_embed_top_correction_dim
+            - (
+                \box_ht:N \l__font_vertical_embed_box
+                + \box_dp:N \l__font_vertical_embed_box
+              ) / 16
+            + (#1)
+          }
+      }
+      [
+        \dim_eval:n
+          {
+            \box_ht:N \l__font_vertical_embed_box
+            - \ht\strutbox
+            - \l__font_vertical_embed_top_correction_dim
+            + (
+                \box_ht:N \l__font_vertical_embed_box
+                + \box_dp:N \l__font_vertical_embed_box
+              ) / 16
+            - (#1)
+          }
+      ]
+      [
+        \dim_eval:n
+          {
+            \box_dp:N \l__font_vertical_embed_box
+            + \dp\strutbox
+            + \l__font_vertical_embed_top_correction_dim
+            + (#1)
+            + \l__font_vertical_embed_bottom_padding_dim
+            + (
+                \box_ht:N \l__font_vertical_embed_box
+                + \box_dp:N \l__font_vertical_embed_box
+              ) / 8
+          }
+      ]
+      { \box_use:N \l__font_vertical_embed_box }
+  }
+
+\cs_new_protected:Npn \__font_vertical_embed_words:nnn #1#2#3
+  {
+    \leavevmode
+    \seq_set_split:Nnn \l__font_mongolian_words_seq { ~ } {#3}
+    \seq_map_inline:Nn \l__font_mongolian_words_seq
+      {
+        \__font_vertical_embed_word:nnn {#1} {#2} {##1}
+        \hspace{\l__font_vertical_embed_gap_tl}
+      }
+  }
+
+\makeatletter
+\def\HIinitstate{%
+  \edef\HIfamily{rm}%
+  \edef\HIseries{md}%
+  \edef\HI@fam{\f@family}%
+  \edef\HI@sf{\sfdefault}%
+  \ifx\HI@fam\HI@sf \edef\HIfamily{sf}\fi
+  \edef\HI@series{\f@series}%
+  \def\HI@b{b}%
+  \def\HI@bx{bx}%
+  \ifx\HI@series\HI@b \edef\HIseries{bf}\fi
+  \ifx\HI@series\HI@bx \edef\HIseries{bf}\fi
+}
+
+\def\TIinitstate{%
+  \edef\TIfamily{rm}%
+  \edef\TIseries{md}%
+  \edef\TI@shape{\f@shape}%
+  \def\TI@it{it}%
+  \ifx\TI@shape\TI@it \edef\TIfamily{it}\fi
+  \edef\TI@series{\f@series}%
+  \def\TI@b{b}%
+  \def\TI@bx{bx}%
+  \ifx\TI@series\TI@b \edef\TIseries{bf}\fi
+  \ifx\TI@series\TI@bx \edef\TIseries{bf}\fi
+}
+\makeatother
+
+\cs_new_protected:Npn \__font_define_special_hindi:
+  {
+    \newfontfamily\HIRmMd[
+      Path = \l__font_path_tl,
+      Script = \l__font_script_tl
+    ] { \l__font_regular_tl }
+    \newfontfamily\HIRmBf[
+      Path = \l__font_resolved_bold_path_tl,
+      Script = \l__font_script_tl
+    ] { \l__font_resolved_bold_tl }
+    \newfontfamily\HISfMd[
+      Path = \l__font_resolved_sans_path_tl,
+      Script = \l__font_script_tl
+    ] { \l__font_resolved_sans_tl }
+    \newfontfamily\HISfBf[
+      Path = \l__font_resolved_sans_bold_path_tl,
+      Script = \l__font_script_tl
+    ] { \l__font_resolved_sans_bold_tl }
+
+    \DeclareDocumentCommand{\HI}{m}
+      {
+        {
+          \def\rmname{rm}\def\sfname{sf}
+          \def\mdname{md}\def\bfname{bf}
+          \def\HIselect{\__font_hindi_select:n { hindi_local }}
+          \def\HItextsf####1{{\edef\HIfamily{sf}\HIselect ####1}}
+          \def\HItextbf####1{{\edef\HIseries{bf}\HIselect ####1}}
+          \HIinitstate
+          \let\textsf\HItextsf
+          \let\textbf\HItextbf
+          \HIselect ##1
+        }
+      }
+  }
+
+\cs_new_protected:Npn \__font_define_special_sanskrit:
+  {
+    \bool_if:NF \g__font_polyglossia_sanskrit_setup_bool
+      {
+        \setotherlanguage{sanskrit}
+        \bool_gset_true:N \g__font_polyglossia_sanskrit_setup_bool
+      }
+
+    \newfontfamily\sanskritfont[
+      Path = \l__font_path_tl,
+      Script = \l__font_script_tl,
+      Language = \l__font_language_tl,
+      UprightFont = \l__font_regular_tl
+    ] { \l__font_regular_tl }
+
+    \newfontfamily\sanskritfontsf[
+      Path = \l__font_resolved_sans_path_tl,
+      Script = \l__font_script_tl,
+      Language = \l__font_language_tl,
+      UprightFont = \l__font_resolved_sans_tl
+    ] { \l__font_resolved_sans_tl }
+
+    \newfontfamily\devanagarifont[
+      Path = \l__font_path_tl,
+      Script = \l__font_script_tl,
+      Language = \l__font_language_tl,
+      UprightFont = \l__font_regular_tl
+    ] { \l__font_regular_tl }
+
+    \newfontfamily\devanagarifontsf[
+      Path = \l__font_resolved_sans_path_tl,
+      Script = \l__font_script_tl,
+      Language = \l__font_language_tl,
+      UprightFont = \l__font_resolved_sans_tl
+    ] { \l__font_resolved_sans_tl }
+
+    \DeclareDocumentCommand{\SA}{+m}
+      {
+        \textsanskrit{##1}
+      }
+  }
+
+\cs_new_protected:Npn \__font_define_special_tibetan:
+  {
+    \newfontfamily\TIRmMd[
+      Path = \l__font_path_tl,
+      Script = \l__font_script_tl
+    ] { \l__font_regular_tl }
+    \newfontfamily\TIRmBf[
+      Path = \l__font_resolved_bold_path_tl,
+      Script = \l__font_script_tl
+    ] { \l__font_resolved_bold_tl }
+    \newfontfamily\TIItaMd[
+      Path = \l__font_resolved_italic_path_tl,
+      Script = \l__font_script_tl
+    ] { \l__font_resolved_italic_tl }
+    \newfontfamily\TIItaBf[
+      Path = \l__font_resolved_bolditalic_path_tl,
+      Script = \l__font_script_tl
+    ] { \l__font_resolved_bolditalic_tl }
+
+    \DeclareDocumentCommand{\TI}{m}
+      {
+        {
+          \def\rmname{rm}\def\itname{it}
+          \def\mdname{md}\def\bfname{bf}
+          \def\TIselect{\__font_tibetan_select:n { tibetan_local }}
+          \def\TItextsf####1{{\TIselect ####1}}
+          \def\TItextit####1{{\edef\TIfamily{it}\TIselect ####1}}
+          \def\TItextbf####1{{\edef\TIseries{bf}\TIselect ####1}}
+          \TIinitstate
+          \let\textsf\TItextsf
+          \let\textit\TItextit
+          \let\textbf\TItextbf
+          \TIselect ##1
+        }
+      }
+  }
+
+\cs_new_protected:Npn \__font_define_special_arabic:
+  {
+    \bool_if:NF \g__font_polyglossia_arabic_setup_bool
+      {
+        \setotherlanguage{arabic}
+        \bool_gset_true:N \g__font_polyglossia_arabic_setup_bool
+      }
+
+    \newfontfamily\arabicfont[
+      Path = \l__font_path_tl,
+      Script = \l__font_script_tl,
+      Language = \l__font_language_tl,
+      UprightFont = \l__font_regular_tl,
+      BoldFont = \l__font_resolved_bold_tl,
+      ItalicFont = \l__font_resolved_italic_tl,
+      BoldItalicFont = \l__font_resolved_bolditalic_tl
+    ] { \l__font_regular_tl }
+    \newfontfamily\arabicfontsf[
+      Path = \l__font_resolved_sans_path_tl,
+      Script = \l__font_script_tl,
+      Language = \l__font_language_tl,
+      UprightFont = \l__font_resolved_sans_tl,
+      BoldFont = \l__font_resolved_sans_bold_tl,
+      ItalicFont = \l__font_resolved_sans_italic_tl,
+      BoldItalicFont = \l__font_resolved_sans_bolditalic_tl
+    ] { \l__font_resolved_sans_tl }
+    \newfontfamily\arabicfonttt[
+      Path = \l__font_resolved_mono_path_tl,
+      Script = \l__font_script_tl,
+      Language = \l__font_language_tl,
+      UprightFont = \l__font_resolved_mono_tl,
+      BoldFont = \l__font_resolved_mono_bold_tl
+    ] { \l__font_resolved_mono_tl }
+
+    \DeclareDocumentCommand{\AR}{m}
+      {
+        \__font_special_rtl_wrap:nn \textarabic {##1}
+      }
+  }
+
+\cs_new_protected:Npn \__font_define_special_urdu:
+  {
+    \bool_if:NF \g__font_polyglossia_urdu_setup_bool
+      {
+        \setotherlanguage{urdu}
+        \bool_gset_true:N \g__font_polyglossia_urdu_setup_bool
+      }
+
+    \newfontfamily\urdufont[
+      Path = \l__font_path_tl,
+      Script = \l__font_script_tl,
+      Language = \l__font_language_tl,
+      UprightFont = \l__font_regular_tl,
+      BoldFont = \l__font_resolved_bold_tl
+    ] { \l__font_regular_tl }
+
+    \DeclareDocumentCommand{\UR}{m}
+      {
+        \__font_special_rtl_wrap:nn \texturdu {##1}
+      }
+  }
+
+\cs_new_protected:Npn \__font_define_special_mongolian:
+  {
+    \newfontfamily\MOfont[
+      Path = \l__font_path_tl,
+      RawFeature = { script=mong }
+    ] { \l__font_regular_tl }
+
+    \tl_set:Nn \l__font_vertical_embed_gap_tl { 0.35em }
+    \dim_set:Nn \l__font_vertical_embed_top_correction_dim { -0.42em }
+    \dim_set:Nn \l__font_vertical_embed_bottom_padding_dim { 0.30em }
+
+    \DeclareDocumentCommand{\MO}{m}
+      {
+        {
+          \def\MOtextsf####1{{\MOfont ####1}}
+          \def\MOtextit####1{{\MOfont ####1}}
+          \def\MOtextbf####1{{\MOfont ####1}}
+          \let\textsf\MOtextsf
+          \let\textit\MOtextit
+          \let\textbf\MOtextbf
+          \MOfont ##1
+        }
+      }
+
+    \DeclareDocumentCommand{\MOV}{ O{0pt} m }
+      {
+        \__font_vertical_embed_words:nnn {##1} { \MOfont } {##2}
+      }
+  }
+
+\cs_new_protected:Npn \__font_define_special_local:
+  {
+    \str_case:VnF \l__font_special_builder_tl
+      {
+        {hindi}{\__font_define_special_hindi:}
+        {sanskrit}{\__font_define_special_sanskrit:}
+        {tibetan}{\__font_define_special_tibetan:}
+        {arabic}{\__font_define_special_arabic:}
+        {urdu}{\__font_define_special_urdu:}
+        {psalter_pahlavi}{\__font_define_special_psalter_pahlavi:}
+        {mongolian}{\__font_define_special_mongolian:}
+      }
+      {
+        \PackageError{font-defaults}
+          {Unknown~special~builder~`\tl_use:N \l__font_special_builder_tl`}
+          {Use~a~known~special~builder~name.}
+      }
+  }
+
+\ExplSyntaxOff

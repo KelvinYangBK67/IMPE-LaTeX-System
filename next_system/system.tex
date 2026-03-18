@@ -1,0 +1,56 @@
+% Unified public entry for the next-generation template system.
+% This is the practical surface intended for everyday document setup.
+
+\RequirePackage{expl3}
+\RequirePackage{xparse}
+\RequirePackage{import}
+
+\subimport{./layout/}{system.tex}
+\subimport{./fonts/}{system.tex}
+\subimport{./features/}{system.tex}
+
+\ExplSyntaxOn
+
+\tl_new:N \l__nextsystem_layout_tl
+\tl_new:N \l__nextsystem_globalfonts_tl
+\tl_new:N \l__nextsystem_fonts_tl
+\tl_new:N \l__nextsystem_features_tl
+
+\keys_define:nn { nextsystem/setup }
+  {
+    layout .tl_set:N = \l__nextsystem_layout_tl,
+    globalfonts .tl_set:N = \l__nextsystem_globalfonts_tl,
+    mainfonts .meta:n = { globalfonts = {#1} },
+    fonts .tl_set:N = \l__nextsystem_fonts_tl,
+    features .tl_set:N = \l__nextsystem_features_tl,
+  }
+
+\cs_new_protected:Npn \__nextsystem_setup_apply:
+  {
+    \tl_if_blank:VF \l__nextsystem_layout_tl
+      { \exp_args:NV \UseLayout \l__nextsystem_layout_tl }
+
+    \tl_if_blank:VF \l__nextsystem_globalfonts_tl
+      { \exp_args:NV \UseFonts \l__nextsystem_globalfonts_tl [global] }
+
+    \tl_if_blank:VF \l__nextsystem_fonts_tl
+      { \exp_args:NV \UseFonts \l__nextsystem_fonts_tl }
+
+    \tl_if_blank:VF \l__nextsystem_features_tl
+      { \exp_args:NV \UseFeatures \l__nextsystem_features_tl }
+  }
+
+\NewDocumentCommand{\UseTemplateSet}{m}
+  {
+    \tl_clear:N \l__nextsystem_layout_tl
+    \tl_clear:N \l__nextsystem_globalfonts_tl
+    \tl_clear:N \l__nextsystem_fonts_tl
+    \tl_clear:N \l__nextsystem_features_tl
+    \keys_set:nn { nextsystem/setup } {#1}
+    \__nextsystem_setup_apply:
+  }
+
+\NewDocumentCommand{\UseNextSystem}{m}
+  { \UseTemplateSet{#1} }
+
+\ExplSyntaxOff

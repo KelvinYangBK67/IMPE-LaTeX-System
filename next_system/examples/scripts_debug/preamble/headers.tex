@@ -1,0 +1,21 @@
+% ---------- 頁眉設定 ----------
+\usepackage{fancyhdr}
+\setlength{\headheight}{14pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+% 外側頁眉：偶數頁 LE，奇數頁 RO
+\fancyhead[LE]{\nouppercase{\leftmark}}
+\fancyhead[RO]{\nouppercase{\rightmark}}
+
+% 頁碼外側
+\fancyfoot[LE,RO]{\thepage}
+
+% 章首頁也套同一套
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyhead[LE]{\nouppercase{\leftmark}}
+  \fancyhead[RO]{\nouppercase{\rightmark}}
+  \fancyfoot[LE,RO]{\thepage}
+}

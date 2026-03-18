@@ -1,0 +1,16 @@
+% Shared helpers for the next generation font system.
+% Keep these helpers generic and independent from old public modules.
+
+\RequirePackage{iftex}
+
+\newcommand{\FontIfEqTF}[4]{%
+  \def\FontHelperLeft{#1}%
+  \def\FontHelperRight{#2}%
+  \ifx\FontHelperLeft\FontHelperRight
+    #3%
+  \else
+    #4%
+  \fi
+}
+
+\newcommand{\FontUseFallback}[2]{#1}

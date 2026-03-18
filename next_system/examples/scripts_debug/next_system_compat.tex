@@ -1,0 +1,32 @@
+% Local compatibility layer for the copied scripts project.
+% Keep old source files unchanged while routing the project through next_system.
+
+\providecommand{\ScriptsDebugFontRoot}{./fonts/}
+
+\usepackage{xeCJK}
+\newCJKfontfamily\CJKsans{ShangguSansHW-Regular.ttf}[
+  Path=\ScriptsDebugFontRoot,
+  BoldFont={ShangguSansHW-Bold.ttf},
+  ItalicFont={ZhuqueFangsong-Regular.ttf}
+]
+\newCJKfontfamily\BookTitleFont{ShangguSerifHW-Bold.ttf}[
+  Path=\ScriptsDebugFontRoot,
+  ItalicFont={ZhuqueFangsong-Regular.ttf}
+]
+\newCJKfontfamily\AuthorFont{ZhuqueFangsong-Regular.ttf}[Path=\ScriptsDebugFontRoot]
+\XeTeXlinebreaklocale "zh"
+\XeTeXlinebreakskip = 0pt plus 1pt
+
+% Local-only scripts not yet registered in next_system.
+\newfontfamily\timesfont{times.ttf}[Path=\ScriptsDebugFontRoot]
+\newcommand{\TIMES}[1]{{\timesfont #1}}
+
+\newfontfamily\ipafont{CMU Serif}
+\newcommand{\IPA}[1]{{\ipafont #1}}
+
+% Compatibility aliases for old command names.
+\newcommand{\KO}[1]{\KR{#1}}
+\newcommand{\NOM}[1]{\HN{#1}}
+
+% Hieroglyphs are project-local and still loaded directly.
+\usepackage{hiero}

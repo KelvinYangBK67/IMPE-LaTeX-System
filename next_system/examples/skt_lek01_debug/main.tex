@@ -1,0 +1,510 @@
+% !TeX program = xelatex
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage{import}
+
+\subimport{../../}{system.tex}
+\UseTemplateSet{
+  layout = beamer,
+  globalfonts = {cmu,shanggu},
+  fonts = {hindi,sanskrit},
+  features = {tables}
+}
+
+% Common packages (same as original preamble intent).
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+
+% Optional: ToC title (override per deck).
+\providecommand{\AgendaTitle}{Contents}
+
+\title{梵語讀書會~第一講}
+\author{\texorpdfstring{\SA{आकाश याङ्ग}}{आकाश याङ्ग}}
+\date{March 6, 2026}
+
+\begin{document}
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+\section{語音}
+
+\begin{frame}{介紹}
+    梵語（\SA{संस्कृत} saṃskṛta）在歷史上曾使用多種文字進行書寫，其中最常用的、也在現在成爲規範的梵語字體是天城體（\SA{देवनागरी} devanāgarī）。
+
+    掌握天城體的意義在於，不僅僅是有助於我們閱讀現代梵語出版物，同時也是我們進一步學習其他印度文字的鑰匙——因爲現代絕大多數的印度文字，都與天城體同出於婆羅米文（\SA{ब्राह्मी} brāhmī），也就享有相當的相似性。
+    
+    這些來源於婆羅米文的、基本上都是元音附標文字的、廣泛使用於南亞、東南亞地區的文字，我們統稱爲婆羅米系文字（Brahmic scripts）。
+
+    本讀書會會以天城體作爲主要的梵語字體，轉寫（IAST）僅在必要的時候作爲輔助出現。
+\end{frame}
+
+\begin{frame}{介紹}
+    梵語的發展可以分爲四個階段：
+    \begin{itemize}
+        \item 吠陀梵語（Vedic Sanskrit）：即吠陀文獻所使用的梵語形式，保留古老的語法與語音變體。
+        \item 古典梵語（Classical Sanskrit）：經語法學家波尼你（\SA{पाणिनि} pāṇini）規範後的梵語，是後世文學與學術寫作的標準語。
+        \item 後期梵語（Post-Sanskrit）：與中古印度語（Middle Indic）同期的梵語，受俗語（\SA{प्राकृत} prākṛta）影響大，佛教混合梵語（Buddhist Hybrid Sanskrit）即其一例。
+        \item 學院梵語（Scholastic Sanskrit）：中世以後形成的學術書面語。
+    \end{itemize}
+
+    我們的學習以古典梵語爲主。
+\end{frame}
+
+\begin{frame}{梵語語音與天城體書寫}
+    我們在此對梵語語音進行介紹，輔以天城體的書寫，但對於天城體的元音符號、輔音連綴不詳細展開，這些部分可以自行參考Stenzler。
+\end{frame}
+
+\begin{frame}{短元音}
+    梵語中的短元音有：
+    \begin{NiceBooktable}{cccp{6cm}}{}{}
+        \NiceHead{
+            \textbf{天城體} & \textbf{IAST} & \textbf{IPA} & \textbf{備註} \\
+        }
+        \SA{अ} & a & /ɐ/ & 可以按現代印地語實現爲[ə]，但不要讀成[a]\\
+        \SA{इ} & i & /i/  &\\
+        \SA{उ} & u & /u/ &\\
+        \SA{ऋ} & ṛ & /r̩/ & 一般實現爲\SA{रि} ri \\
+        \SA{ऌ} & ḷ & /l̩/ & 一般實現爲\SA{लि} li \\
+    \end{NiceBooktable}
+\end{frame}
+
+\begin{frame}{長元音}
+    梵語中的長元音有：
+    \begin{NiceBooktable}{cccp{6cm}}{}{}
+        \NiceHead{
+            \textbf{天城體} & \textbf{IAST} & \textbf{IPA} & \textbf{備註} \\
+        }
+        \SA{आ} & ā & /ɑː/ & 注意與\SA{अ} a區分，開口要大\\
+        \SA{ई} & ī & /iː/  &\\
+        \SA{ऊ} & ū & /uː/ &\\
+        \SA{ॠ} & ṝ & /r̩ː/ & 一般實現爲\SA{रू} rū，也可實現爲\SA{री} rī \\
+    \end{NiceBooktable}
+\end{frame}
+
+\begin{frame}{複合元音}
+    梵語中的複合元音與元音交替（Ablaut）密切相關。我們先介紹複合元音的語音，再以元音交替爲框架總結。梵語中的複合元音如下：
+    \begin{NiceBooktable}{cccp{6cm}}{}{}
+        \NiceHead{
+            \textbf{天城體} & \textbf{IAST} & \textbf{IPA} & \textbf{備註} \\
+        }
+        \SA{ए} & e & /eː/ & 可以按吠陀梵語實現爲[ɑj]\\
+        \SA{ऐ} & ai & /ɑj/  & 可以按吠陀梵語實現爲[ɑːj]，或按現代印地語實現爲[ɛː]\\
+        \SA{ओ} & o & /oː/ & 可以按吠陀梵語實現爲[ɑw]\\
+        \SA{औ} & au & /ɑw/ & 可以按吠陀梵語實現爲[ɑːw]，或按現代印地語實現爲[ɔː] \\
+    \end{NiceBooktable}
+\end{frame}
+
+\begin{frame}{元音交替}
+    梵語中的元音交替（Ablaut）其實可以理解成一種「合成」。梵語語法將梵語元音分爲三類，簡單元音爲第一類，第二類稱爲\SA{गुण} guṇa，第三類稱爲\SA{वृद्धि} vṛddhi。
+    其中：
+    \begin{itemize}
+        \item $\text{\SA{अ} a}+\text{簡單元音}\to\text{\SA{गुण} guṇa}$
+        \item $\text{\SA{अ} a}+\text{\SA{गुण} guṇa}\to\text{\SA{वृद्धि} vṛddhi}$
+    \end{itemize}
+    \vspace{1em}
+    梵語中的元音在元音交替的框架下如是總結：
+    \begin{NiceBooktable}{lccccc}{}{}
+        \textbf{簡單元音} &  & \SA{इ} i,\SA{ई} ī & \SA{उ} u, \SA{ऊ} ū & \SA{ऋ} ṛ, \SA{ॠ} ṝ & \SA{ऌ} ḷ \\
+        \textbf{\HI{गुण} guṇa} & \SA{अ} a & \SA{ए} e & \SA{ओ} o & \SA{अर्} ar & \SA{अल्} al \\
+        \textbf{\HI{वृद्धि} vṛddhi} & \SA{आ} ā & \SA{ऐ} ai & \SA{औ} au & \SA{आर्} ār & \\
+    \end{NiceBooktable}
+\end{frame}
+
+\begin{frame}{輔音}
+    學習梵語輔音必須首先瞭解一些相關概念。
+
+    \vspace{1em}
+
+    \textbf{發聲態}（phonation）指發音時聲門的狀態，梵語中涉及到的有：
+    \begin{itemize}
+        \item \textbf{清}（voiceless, \SA{अघोष} aghoṣa）：發音時聲帶不震動
+        \item \textbf{濁}（voiced, \SA{घोष} ghoṣa）：發音時聲帶振動
+        \item \textbf{送氣}（aspirated, \SA{महाप्राण} mahāprāṇa）：發音時帶有強烈氣流
+        \item \textbf{不送氣}（unaspirated, \SA{अल्पप्राण} alpaprāṇa）：發音時氣流相對較弱
+    \end{itemize}
+    上述的發聲態組合爲梵語中的四重對立：清不送氣、清送氣、濁不送氣、濁送氣。
+\end{frame}
+
+\begin{frame}{輔音}
+    \textbf{調音方法}（manner of articulation）指發音時發聲器官的氣流通過方式，梵語中涉及：
+    \begin{itemize}
+        \item \textbf{塞音}（plosive, \SA{स्पर्श} sparśa）：發音時發聲部位緊閉阻塞氣流，然後突然張開使氣流衝出成音
+        \item \textbf{鼻音}（nasal, \SA{अनुनासिक} anunāsika）：發音時氣流從鼻腔衝出
+        \item \textbf{擦音}（fricative, \SA{संघर्षी} saṃgharṣī）：發音時發聲部位靠攏，使氣流從狹窄的縫隙中衝出
+        \item \textbf{半元音}（semivowel, \SA{अन्तस्थ} antastha）：元音的不成音節形式，梵語中的半元音實際上不止近音
+    \end{itemize}
+    \vspace{1em}
+    \textbf{調音部位}（place of articulation）則是指發音時阻塞氣流的位置，我們直接在講解梵語字母時引入。
+\end{frame}
+
+\begin{frame}{軟顎音}
+    \textbf{軟顎音}（velar, \SA{कण्ठ्य} kaṇṭhya）指發音時由舌根與軟齶接觸阻塞氣流成音。
+    \begin{NiceBooktable}{clllll}{}{}
+        \NiceHead{
+            \textbf{天城體} & \textbf{IAST} & \textbf{IPA} & \textbf{發聲態} & \textbf{調音方式} \\
+        }
+        \SA{क} & ka & /k/ & 清不送氣 & 塞音 \\
+        \SA{ख} & kha & /kʰ/ & 清送氣 & 塞音 \\
+        \SA{ग} & ga & /ɡ/ & 濁不送氣 & 塞音 \\
+        \SA{घ} & gha & /ɡʱ/ & 濁送氣 & 塞音 \\
+        \SA{ङ} & ṅa & /ŋ/ & 濁不送氣 & 鼻音 \\
+        \SA{ह} & ha & /ɦ/ & 濁送氣 & 擦音 \\
+    \end{NiceBooktable}
+
+    注意，我們把\SA{ह} ha也放進這裏，是因爲在傳統梵語語法中這些音都稱爲喉音（\SA{कण्ठ्य} kaṇṭhya），但實際上\SA{ह} ha是一個濁聲門擦音。
+\end{frame}
+
+\begin{frame}{硬顎音}
+    \textbf{硬顎音}（palatal, \SA{तालव्य} tālavya）指發音時由舌面與硬顎接觸阻礙氣流成音。但是事實上，梵語中的「硬顎塞音」可以實現爲硬顎塞擦音、齦顎塞擦音（推薦）或顎齦塞擦音（現代印地語）
+    \begin{NiceBooktable}{clllll}{}{}
+        \NiceHead{
+            \textbf{天城體} & \textbf{IAST} & \textbf{IPA} & \textbf{發聲態} & \textbf{調音方式} \\
+        }
+        \SA{च} & ca & /tɕ/ & 清不送氣 & 塞音 \\
+        \SA{छ} & cha & /tɕʰ/ & 清送氣 & 塞音 \\
+        \SA{ज} & ja & /dʑ/ & 濁不送氣 & 塞音 \\
+        \SA{झ} & jha & /dʑʱ/ & 濁送氣 & 塞音 \\
+        \SA{ञ} & ña & /ȵ/ & 濁不送氣 & 鼻音 \\
+        \SA{य} & ya & /j/ & 濁不送氣 & 半元音 \\
+        \SA{श} & śa & /ɕ/ & 清送氣 & 擦音 \\
+    \end{NiceBooktable}
+\end{frame}
+
+\begin{frame}{捲舌音}
+    \textbf{捲舌音}（retroflex, \SA{मूर्धन्य} mūrdhanya）指發音時舌尖上翹與硬顎前端接觸阻礙氣流成音。
+    \begin{NiceBooktable}{clllll}{}{}
+        \NiceHead{
+            \textbf{天城體} & \textbf{IAST} & \textbf{IPA} & \textbf{發聲態} & \textbf{調音方式} \\
+        }
+        \SA{ट} & ṭa & /ʈ/ & 清不送氣 & 塞音 \\
+        \SA{ठ} & ṭha & /ʈʰ/ & 清送氣 & 塞音 \\
+        \SA{ड} & ḍa & /ɖ/ & 濁不送氣 & 塞音 \\
+        \SA{ढ} & ḍha & /ɖʱ/ & 濁送氣 & 塞音 \\
+        \SA{ण} & ṇa & /ɳ/ & 濁不送氣 & 鼻音 \\
+        \SA{र} & ra & /ɾ/ & 濁不送氣 & 半元音 \\
+        \SA{ष} & ṣa & /ʂ/ & 清送氣 & 擦音 \\
+    \end{NiceBooktable}
+
+    注意，現代印地語中不區分\SA{श} śa與\SA{ष} ṣa。\SA{र} ra建議實現爲齒齦顫音[r]或閃音[ɾ]，同時捲舌近音[ɻ]、擦音[ʐ]等亦可接受。
+\end{frame}
+
+\begin{frame}{齒音}
+    \textbf{齒音}（dental, \SA{दनत्य} danatya）指發音時舌尖與上齒接觸阻礙氣流成音。注意，梵語的齒音不同於英語與漢語，英語、漢語等語言中的「齒音」實際上是齒齦音，舌位比梵語的齒音更靠後，這也就是爲什麼在印度英語中總是用捲舌音來模擬英語的齒音。
+    \begin{NiceBooktable}{clllll}{}{}
+        \NiceHead{
+            \textbf{天城體} & \textbf{IAST} & \textbf{IPA} & \textbf{發聲態} & \textbf{調音方式} \\
+        }
+        \SA{त} & ta & /t/ & 清不送氣 & 塞音 \\
+        \SA{थ} & tha & /tʰ/ & 清送氣 & 塞音 \\
+        \SA{द} & da & /d/ & 濁不送氣 & 塞音 \\
+        \SA{ध} & dha & /dʱ/ & 濁送氣 & 塞音 \\
+        \SA{न} & na & /n/ & 濁不送氣 & 鼻音 \\
+        \SA{ल} & la & /l/ & 濁不送氣 & 半元音 \\
+        \SA{स} & sa & /s/ & 清送氣 & 擦音 \\
+    \end{NiceBooktable}
+\end{frame}
+
+\begin{frame}{雙脣音}
+    \textbf{雙脣音}（bilabial, \SA{ओष्ठ्य} oṣṭhya）指發音時雙脣接觸阻礙氣流成音。
+    \begin{NiceBooktable}{clllll}{}{}
+        \NiceHead{
+            \textbf{天城體} & \textbf{IAST} & \textbf{IPA} & \textbf{發聲態} & \textbf{調音方式} \\
+        }
+        \SA{प} & pa & /p/ & 清不送氣 & 塞音 \\
+        \SA{फ} & pha & /pʰ/ & 清送氣 & 塞音 \\
+        \SA{ब} & ba & /b/ & 濁不送氣 & 塞音 \\
+        \SA{भ} & bha & /bʱ/ & 濁送氣 & 塞音 \\
+        \SA{म} & ma & /m/ & 濁不送氣 & 鼻音 \\
+        \SA{व} & va & /ʋ/ & 濁不送氣 & 半元音 \\
+    \end{NiceBooktable}
+
+    \SA{व} va一般實現爲近音[ʋ]或[w]，實現爲擦音[v]也是可接受的。
+\end{frame}
+
+\begin{frame}{輔音}
+    我們將梵語的輔音總結如下：
+    \begin{NiceBooktable}{lcccccccc}{}{}
+        \textbf{軟顎音}  & \SA{क} ka & \SA{ख} kha & \SA{ग} ga & \SA{घ} gha & \SA{ङ} ṅa & {} & {} & \SA{ह} ha \\
+        \textbf{硬顎音}  & \SA{च} ca & \SA{छ} cha & \SA{ज} ja & \SA{झ} jha & \SA{ञ} ña & \SA{य} ya & \SA{श} śa & {} \\
+        \textbf{捲舌音} & \SA{ट} ṭa & \SA{ठ} ṭha & \SA{ड} ḍa & \SA{ढ} ḍha & \SA{ण} ṇa & \SA{र} ra & \SA{ष} ṣa & {} \\
+        \textbf{齒音}  & \SA{त} ta & \SA{थ} tha & \SA{द} da & \SA{ध} dha & \SA{न} na & \SA{ल} la & \SA{स} sa & {} \\
+        \textbf{雙脣音}  & \SA{प} pa & \SA{फ} pha & \SA{ब} ba & \SA{भ} bha & \SA{म} ma & \SA{व} va & {} & {} \\
+    \end{NiceBooktable}
+\end{frame}
+
+\begin{frame}{語音符號}
+    梵語中有一些特殊的語音符號，我們對其發音進行規定。
+
+    \SA{अनुस्वार} anusvāra寫作右上角的一個小點，即\SA{अं} aṃ，依據其後的輔音按照下列發音規則發音：
+    \begin{itemize}
+        \item $\text{\SA{अं} aṃ} + \text{軟顎音} \to \text{\SA{अङ्} aṅ}$
+        \item $\text{\SA{अं} aṃ} + \text{硬顎音} \to \text{\SA{अञ्} añ}$
+        \item $\text{\SA{अं} aṃ} + \text{捲舌音} \to \text{\SA{अण्} aṇ}$
+        \item $\text{\SA{अं} aṃ} + \text{齒音} \to \text{\SA{अन्} an}$
+        \item $\text{\SA{अं} aṃ} + \text{雙脣音} \to \text{\SA{अम्} am}$
+    \end{itemize}
+
+    另外，\SA{अनुनासिक} anunāsika標識鼻化，如\SA{अँ} ã，但少見得多。
+\end{frame}
+
+\begin{frame}{語音符號}
+    \SA{विसर्ग} visarga寫作字母右邊的兩點，即\SA{अः} aḥ，只會出現在清擦音、清軟顎音、清雙脣音前。一般來說，其發音實現爲清聲門擦音[h]加上前面元音的尾音。注意，複合元音使用其對應的簡單元音作爲尾音。
+
+    另外，也可以遵循吠陀梵語的規則來實現\SA{विसर्ग} visarga的發音。當其在句末時，仍遵循上述發音規則；當其後有輔音時，遵循：
+    \begin{itemize}
+        \item $\text{\SA{अः} aḥ} + \text{\SA{क} ka/\SA{ख} kha} \to \text{\SA{अᳵक} aẖka/\SA{अᳵख} aẖkha}$
+        \item $\text{\SA{अः} aḥ} + \text{\SA{प} pa/\SA{फ} pha} \to \text{\SA{अᳶप} aḫpa/\SA{अᳶफ} aḫpha}$
+        \item $\text{\SA{अः} aḥ} + \text{\SA{श} śa} \to \text{\SA{अश्श} aśśa}$
+        \item $\text{\SA{अः} aḥ} + \text{\SA{ष} ṣa} \to \text{\SA{अष्ष} aṣṣa}$
+        \item $\text{\SA{अः} aḥ} + \text{\SA{स} sa} \to \text{\SA{अस्स} assa}$
+    \end{itemize}
+
+    其中，\SA{ᳵ} ẖ被稱爲\SA{जिह्वामूलीय} jihvāmūlīya，發音爲/x/；\SA{ᳶ} ḫ被稱爲\SA{उपध्मानीय} upadhmānīya，發音爲/ɸ/。
+\end{frame}
+
+\begin{frame}{重音}
+    吠陀梵語本來是存在聲調（\SA{स्वर} svara，實際上是一種音高重音，與現代日語相似）的，但在古典梵語中消失了。
+    當我們讀古典梵語時，習慣上將詞的倒數第一個長音節作爲重音，或者直接按照自己的發音習慣即可。
+
+    古代梵語語法與現代語言學對音節的切分並不一致。古代梵語語法直接按照字母（\SA{अक्षर} akṣara）切分，但現在習慣上從後往前切分，按順序保證每個音節有一個元音，並盡可能以一個輔音開頭，除非是元音開頭或輔音叢開頭。
+    當切分出來的音節存在一個長元音或以輔音（包括語音符號）結尾時，即稱爲長音節。
+
+    以《薄伽梵歌》（\SA{भगवद्गीता} bhagavadgītā）首句爲例：
+    \begin{itemize}
+        \item \SA{धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः}
+        \item {\rmfamily\HI{\textbf{धर्}-\textbf{मक्}-\textbf{षेत्}-\textbf{रे} कु-\textbf{रुक्}-\textbf{षेत्}-\textbf{रे} स-म-\textbf{वे}-\textbf{ता} यु-\textbf{युत्}-स-\textbf{वः}}}
+    \end{itemize}
+    加粗的爲長音節。
+\end{frame}
+
+\section{語法}
+
+\begin{frame}{介紹}
+    梵語屬於典型的屈折語，屈折變化相當複雜。我們首先並不花太多時間在講解梵語語法體系上，只需要瞭解兩個概念，即\textbf{變格}（declension）與\textbf{變位}（conjugation）。
+    變格和變位的本質都是將詞根（root）通過某種變化方式，標志其在句中的作用，從而構成詞（word）。
+
+    在梵語中，變格能夠使詞根帶上數（\SA{वचन} vacana）的意義，並標志詞在句子是發出動作方、承受動作方、場所還是其他的角色。能變格的詞我們稱爲\textbf{名詞}（noun）。
+
+    變位則能夠使詞根帶上人稱（\SA{पुरुष} puruṣa）與數的意義，並標志詞所意指的動作或狀態發生的時間、方式（主動還是被動）、情態等。能變位的詞我們稱爲\textbf{動詞}（verb）。
+
+    不能變位也不能變格的詞，我們稱爲\textbf{不變詞}（indeclinable），一般充當連詞、副詞等。
+\end{frame}
+
+\begin{frame}{現在時\SA{परस्मैपद} parasmaipada第三人稱變位}
+    梵語動詞在使用時需要首先詞根變爲詞幹（stem），然後添加語尾（ending），每種時態語態都要使用特定的一套詞幹和語尾。
+
+    每種語尾都分爲兩套，\SA{परस्मैपद} parasmaipada與\SA{आत्मनेपद} ātmanepada。
+    兩套語尾在古典梵語中已經沒有意義差別了，採用哪套語尾取決於具體的詞。
+
+    除了時態語態之外，動詞變位要反映人稱（第一、第二、第三人稱）與數（單數、雙數、複數），提示動詞所轄名詞的人稱與數。
+
+    動詞詞根\SA{गम्} gam 「走，去」的現在時詞幹爲\SA{गच्छ} gaccha，其現在時\SA{परस्मैपद} parasmaipada第三人稱變位爲：
+    \begin{NiceBooktable}{llll}{}{}
+        \NiceHead{& \textbf{單數} & \textbf{雙數} & \textbf{複數} \\}
+        \textbf{第三人稱} & \SA{गच्छति} gacchati & \SA{गच्छतः} gacchataḥ & \SA{गच्छन्ति} gacchanti \\
+    \end{NiceBooktable}
+
+    現在時在梵語中表示正在進行的動作或者一般性、習慣性的動作。
+\end{frame}
+
+
+\begin{frame}{\SA{अ} a-語幹陽中性名詞的主賓格}
+    以\SA{अ} a結尾的陽性名詞\SA{बाल} bāla「男孩」的主賓格如下：
+    \begin{NiceBooktable}{llll}{}{}
+        \NiceHead{& \textbf{單數} & \textbf{雙數} & \textbf{複數} \\}
+        \textbf{主格} & \SA{बालः} bālaḥ & \SA{बालौ} bālau & \SA{बालाः} bālāḥ \\
+        \textbf{賓格} & \SA{बालम्} bālam & \SA{बालौ} bālau & \SA{बालान्} bālān \\
+    \end{NiceBooktable}
+    以\SA{अ} a結尾的中性名詞\SA{फल} phala「果子」的主賓格如下：
+    \begin{NiceBooktable}{llll}{}{}
+        \NiceHead{& \textbf{單數} & \textbf{雙數} & \textbf{複數} \\}
+        \textbf{主格} & \SA{फलम्} phalam & \SA{फले} phale & \SA{फलानि} phalāni \\
+        \textbf{賓格} & \SA{फलम्} phalam & \SA{फले} phale & \SA{फलानि} phalāni \\
+    \end{NiceBooktable}
+\end{frame}
+
+\begin{frame}{主格的作用}
+    梵語中，\textbf{主格}（nominative）有如下作用：
+    \begin{itemize}
+        \item 表示句子的主語，即施動者，與謂語動詞保持人稱和數一致\\
+        \begin{quotation}
+            \SA{बालः खादति।}\\
+            bālaḥ khādati.\\
+            男孩喫。
+        \end{quotation}
+        \item 表示句子的名詞性謂語\\
+        \begin{quotation}
+            \SA{बालः शिष्यः।}\\
+            bālaḥ śiṣyaḥ.\\
+            男孩是學生。
+        \end{quotation}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{賓格的作用}
+    梵語中，\textbf{賓格}（accusative）有如下作用：
+    \begin{itemize}
+        \item 表示及物動詞的直接賓語\\
+        \begin{quotation}
+            \SA{बालः शिक्षकं पश्यति।}\\
+            bālaḥ śikṣakaṃ paśyati.\\
+            男孩看見老師。
+        \end{quotation}
+        \item 與表運動的動詞連用表示目標、方向等\\
+        \begin{quotation}
+            \SA{बालः क्षेत्रं गच्छति।}\\
+            bālaḥ kṣetraṃ gacchati.\\
+            男孩去田地。
+        \end{quotation}
+        \item 部分不變詞支配賓格名詞\\
+        \begin{quotation}
+            \SA{बालः क्षेत्रं प्रति गच्छति।}\\
+            bālaḥ kṣetraṃ prati gacchati.\\
+            男孩走向田地。
+        \end{quotation}
+    \end{itemize}
+\end{frame}
+
+\section{口語}
+\begin{frame}{口語}
+    \begin{block}{對話}
+        \begin{tabularx}{\linewidth}{@{}LLL@{}}
+            A: \SA{नमस्कारः।} & namaskāraḥ. & 你好。\\
+            B: \SA{नमो नमः।} & namo namaḥ. & 你好。\\
+            A: \SA{भवान्कः।} & bhavān kaḥ? & 你是誰？\\
+            B: \SA{अहं गोपालः। भवतो नाम किम्।} & ahaṃ gopālaḥ. bhavato nāma kim? & 我叫瞿波羅。你叫什麼名字？\\
+            A: \SA{अहं रामः। अपि भवान्नेपालदेशीयः।} & ahaṃ rāmaḥ. api bhavān nepāladeśīyaḥ? & 我叫羅摩。你是尼泊爾人嗎？\\
+            B: \SA{न। अहं भारतदेशीयः। अपि भवांश्चीनदेशीयः।} & na. ahaṃ bhāratadeśīyaḥ. api bhavāṃś cīnadeśīyaḥ? & 不，我是印度人。你是中國人嗎？
+        \end{tabularx}
+    \end{block}
+\end{frame}
+
+\begin{frame}{口語}
+    \begin{block}{對話}
+        \begin{tabularx}{\linewidth}{@{}LLL@{}}
+            A: \SA{आम्। सा का।} & ām. sā kā. & 是的。她是誰？\\
+            B: \SA{सा सिंहलदेशीया। स कः।} & sā siṃhaladeśīyā. sa kaḥ. & 她是斯里蘭卡人。他是誰？\\
+            A: \SA{सोऽस्माकं शिक्षकः। तस्य नामधेयं मुकुन्दः। तत्किम्।} & so'smākaṃ śikṣakaḥ. tasya nāmadheyaṃ mukundaḥ. tat kim. & 他是我們的老師。他的名字是目軍陀。這個是什麼？\\
+            B: \SA{तत्पुस्तकम्।} & tat pustakam. & 這是書。\\
+            A: \SA{अपि तद्भवतः पुस्तकम्।} & api tad bhavataḥ pustakam. & 這是你的書嗎？\\
+            B: \SA{आम्। तन्मम पुस्तकम्।} & ām. tan mama pustakam. & 是的，這是我的書。
+        \end{tabularx}
+    \end{block}
+\end{frame}
+
+\section{閱讀}
+\begin{frame}{詞彙}
+    \begin{block}{動詞}
+        \begin{VocabCols}{2}
+            \SA{आ-ह्वे} ā-hve 1. \SA{आह्वयति} āhvayati 叫過來
+            
+            \SA{उप-विश्} upa-viś 6. \SA{उपविशति} upaviśati 坐下
+            
+            \SA{क्रीड्} krīḍ 1. \SA{क्रीडति} krīḍati 玩耍
+            
+            \SA{क्रुध्} krudh 4. \SA{क्रुध्यति} krudhyati 發怒，生氣
+            
+            \SA{खाद्} khād 1. \SA{खादति} khādati 喫
+            
+            \SA{गम्} gam 1. \SA{गच्छति} gacchati 走，去
+            
+            \SA{दृश्} dṛś 4. \SA{पश्यति} paśyati 看，看見
+            
+            \SA{नम्} nam 1. \SA{नमति} namati 問候，鞠躬，禮敬
+            
+            \SA{पठ्} paṭh 1. \SA{पठति} paṭhati 誦，讀，學習
+            
+            \SA{पठ्} paṭh 10. \SA{पाठयति} pāṭhayati 教
+            
+            \SA{पत्} pat 1. \SA{पतति} patati 落下，摔倒，飛
+            
+            \SA{प्रविश्} pra-viś 6. \SA{प्रविशति} praviśati 走進，踏入
+            
+            \SA{श्रम्} śram 4. \SA{श्राम्यति} śrāmyati 疲倦
+            
+            \SA{सद्} sad 1. \SA{सीदति} sīdati 坐
+            
+            \SA{हस्} has 1. \SA{हसति} hasati 笑
+        \end{VocabCols}
+    \end{block}
+\end{frame}
+
+\begin{frame}{詞彙}
+    \begin{block}{名詞}
+        \begin{VocabCols}{2}
+            \SA{गोपाल} gopāla m. 瞿波羅
+            
+            \SA{फल} phala n. 水果，果實
+            
+            \SA{बाल} bāla m. 孩童，男孩
+
+            \SA{राम} rāma m. 羅摩
+
+            \SA{विद्यालय} vidyālaya m. 學校
+
+            \SA{शिक्षक} śikṣaka m. 老師
+
+            \SA{शिष्य} śiṣya m. 學生
+
+            \SA{सूक्त} sūkta n. 聖歌，讚詩
+        \end{VocabCols}
+    \end{block}
+
+    \begin{block}{不變詞}
+        \begin{VocabCols}{2}
+            \SA{अत्र} atra 這裏，這兒
+
+            \SA{अधुना} adhunā 現在
+
+            \SA{ततः} tataḥ 然後，從那裏
+
+            \SA{तत्र} tatra 那裏，那兒
+
+            \SA{तदनु} tadanu 隨後，然後，接着
+
+            \SA{पूर्वम्} pūrvan 首先，以前
+
+            \SA{सहसा} sahasā 突然，一下子，立刻
+        \end{VocabCols}
+    \end{block}
+\end{frame}
+
+\begin{frame}{基礎課文}
+    \SA{रामः शिष्यः। गोपालः शिष्यः। तत्र विद्यालयः। शिष्यौ विद्यालयं गच्छतः। अधुना शिष्यौ विद्यालयं प्रविशतः। तत्र शिक्षकः सीदति। शिष्यौ शिक्षकं नमतः। ततः शिक्षकः शिष्यानाह्वयति। शिष्याः शिक्षकं नमन्ति। उपविशन्ति। अत्र रामः सीदति। तत्र गोपालः सीदति। शिक्षकः सूक्तानि पाठयति। पूर्वं शिक्षकः सूक्तं पठति। तदनु शिष्याः सूक्तं पठन्ति। सहसा द्वौ बालौ हसतः। शिक्षकः शिष्यौ पश्यति। शिक्षकः क्रुध्यति। बालाः श्राम्यन्ति। तदनु बालाः फलानि खादन्ति। द्वे फले रामः खादति। ततः शिष्याः क्रीडन्ति। रामः क्रीडति। सहसा रामः पतति। बालाः पश्यन्ति। हसन्ति।}
+
+    rāmaḥ śiṣyaḥ. gopālaḥ śiṣyaḥ. tatra vidyālayaḥ. śiṣyau vidyālayaṃ gacchataḥ. adhunā śiṣyau vidyālayaṃ praviśataḥ. tatra śikṣakaḥ sīdati. śiṣyau śikṣakaṃ namataḥ. tataḥ śikṣakaḥ śiṣyānāhvayati. śiṣyāḥ śikṣakaṃ namanti. upaviśanti. atra rāmaḥ sīdati. tatra gopālaḥ sīdati. śikṣakaḥ sūktāni pāṭhayati. pūrvaṃ śikṣakaḥ sūktaṃ paṭhati. tadanu śiṣyāḥ sūktaṃ paṭhanti. sahasā dvau bālau hasataḥ. śikṣakaḥ śiṣyau paśyati. śikṣakaḥ krudhyati. bālāḥ śrāmyanti. tadanu bālāḥ phalāni khādanti. dve phale rāmaḥ khādati. tataḥ śiṣyāḥ krīḍanti. rāmaḥ krīḍati. sahasā rāmaḥ patati. bālāḥ paśyanti. hasanti.
+\end{frame}
+
+\section{寫作}
+\begin{frame}{翻譯練習}
+    將下面的文章翻譯成梵語：
+    \begin{quotation}
+        \rmfamily\itshape
+        男孩看見老師。男孩是學生。男孩問候老師。老師坐下。現在老師誦讀聖歌。然後學生們誦讀聖歌。兩個學生疲倦了。老師看到這兩個學生。老師生氣了。然後學生們玩耍。突然一個男孩絆倒了。羅摩看見，笑了。老師生氣了。
+    \end{quotation}
+\end{frame}
+
+\section{附錄}
+\begin{frame}{一些有用的資料}
+    \begin{block}{網站}
+        \begin{enumerate}
+            \item Gandhari網站詞典：https://gandhari.org/dictionary?section=mw
+            \item 梵佛詞典：https://fdict.cn/\#/
+            \item GRETIL：https://gretil.sub.uni-goettingen.de/
+        \end{enumerate}
+    \end{block}
+
+    \begin{block}{教材}
+        \begin{enumerate}
+            \item Stenzler, A. F. \textit{Elementarbuch der Sanskrit-Sprache} （有英譯本與漢譯本）
+            \item Lehmann, T. \textit{Sanskrit für Anfänger} （有漢譯本）
+            \item Deshpande, M. \textit{A Sanskrit Primer}
+            \item Michika, M. \textit{Enjoyable Sanskrit Grammar}
+            \item 周利群, 黄冠理《梵语综合教程》
+            \item 辻 直四郎『サンスクリット文法』
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+\end{document}

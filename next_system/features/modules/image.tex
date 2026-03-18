@@ -1,0 +1,204 @@
+% Feature module: image
+
+\ifdefined\NextFeatureImageLoaded
+  \endinput
+\fi
+\def\NextFeatureImageLoaded{1}
+
+\RequirePackage{graphicx}
+\RequirePackage{xparse}
+\RequirePackage{caption}
+\RequirePackage{adjustbox}
+\RequirePackage{keyval}
+\RequirePackage{subcaption}
+
+\providecommand{\TemplateFigurePaths}{figs/}
+\graphicspath{{\TemplateFigurePaths}{images/}}
+\providecommand{\OneImageDefaultWidth}{\linewidth}
+\providecommand{\OneImageMaxHeight}{0.75\textheight}
+\providecommand{\OneImageDefaultPlacement}{htbp}
+
+\makeatletter
+\newif\ifFeatureBeamer
+\@ifclassloaded{beamer}{\FeatureBeamertrue}{\FeatureBeamerfalse}
+\makeatother
+
+\newcommand{\FeatureIfEmptyTF}[3]{%
+  \if\relax\detokenize{#1}\relax #2\else #3\fi
+}
+
+\NewDocumentEnvironment{OneImage}
+  { O{\OneImageDefaultPlacement} O{\OneImageDefaultWidth} O{\OneImageMaxHeight} m O{} O{} }
+  {%
+    \ifFeatureBeamer
+      \par\noindent\centering
+      \includegraphics[width=#2,height=#3,keepaspectratio]{#4}\par
+      \FeatureIfEmptyTF{#5}{}{ \vspace{0.3em}\footnotesize #5\par }%
+    \else
+      \begin{figure}[#1]
+        \centering
+        \includegraphics[width=#2,height=#3,keepaspectratio]{#4}%
+        \FeatureIfEmptyTF{#5}{}{ \caption{#5} }%
+        \FeatureIfEmptyTF{#6}{}{ \label{#6} }%
+      \end{figure}
+    \fi
+  }
+  { }
+
+\NewDocumentEnvironment{OneImageInline}
+  { O{\OneImageDefaultWidth} O{\OneImageMaxHeight} m }
+  {%
+    \par\noindent\centering
+    \includegraphics[width=#1,height=#2,keepaspectratio]{#3}\par
+  }
+  { }
+
+\providecommand{\PanelDefaultCols}{3}
+\newlength\PanelSep
+\setlength\PanelSep{0.02\linewidth}
+\providecommand{\PanelDefaultHeight}{0.28\textheight}
+\providecommand{\PanelDefaultMode}{contain}
+\providecommand{\PanelDefaultPlacement}{htbp}
+\newlength\PanelW
+\newlength\PanelH
+\newcount\PanelCols
+\newcounter{PanelCol}
+\def\PanelEnvMode{\PanelDefaultMode}
+\def\PanelEnvPlacement{\PanelDefaultPlacement}
+\def\PanelColsNum{0}
+\def\PanelColsMinusOne{0}
+
+\makeatletter
+\define@key{PanelFigure}{mode}{\def\PanelEnvMode{#1}}
+\define@key{PanelFigure}{height}{\setlength\PanelH{#1}}
+\define@key{PanelFigure}{sep}{\setlength\PanelSep{#1}}
+\define@key{PanelFigure}{placement}{\def\PanelEnvPlacement{#1}}
+\def\PanelThisMode{}
+\def\PanelTrim{}
+\def\PanelClip{auto}
+\define@key{Panel}{mode}{\def\PanelThisMode{#1}}
+\define@key{Panel}{height}{\setlength\PanelH{#1}}
+\define@key{Panel}{trim}{\def\PanelTrim{#1}}
+\define@key{Panel}{clip}{\def\PanelClip{#1}}
+\makeatother
+
+\makeatletter
+\newcommand{\PanelInclude}[1]{%
+  \def\PanelModeUse{\PanelEnvMode}%
+  \ifx\PanelThisMode\@empty\else\def\PanelModeUse{\PanelThisMode}\fi
+  \def\PanelIGOpts{}%
+  \ifx\PanelTrim\@empty\else\edef\PanelIGOpts{trim=\PanelTrim,clip}\fi
+  \ifx\PanelTrim\@empty
+    \def\PanelAuto{auto}%
+    \def\PanelTrue{true}%
+    \ifx\PanelClip\PanelAuto
+    \else
+      \ifx\PanelClip\PanelTrue
+        \ifx\PanelIGOpts\@empty
+          \edef\PanelIGOpts{clip}%
+        \else
+          \edef\PanelIGOpts{\PanelIGOpts,clip}%
+        \fi
+      \fi
+    \fi
+  \fi
+  \def\PanelImgCmd{%
+    \ifx\PanelIGOpts\@empty
+      \includegraphics{#1}%
+    \else
+      \expandafter\includegraphics\expandafter[\PanelIGOpts]{#1}%
+    \fi
+  }%
+  \def\PanelCover{cover}%
+  \def\PanelFitw{fitw}%
+  \def\PanelFith{fith}%
+  \def\PanelStretch{stretch}%
+  \ifx\PanelModeUse\PanelCover
+    \adjustbox{min size={\linewidth}{\PanelH},keepaspectratio,center,clip}{\PanelImgCmd}%
+  \else\ifx\PanelModeUse\PanelFitw
+    \adjustbox{width=\linewidth,max height=\PanelH,keepaspectratio,center}{\PanelImgCmd}%
+  \else\ifx\PanelModeUse\PanelFith
+    \adjustbox{height=\PanelH,max width=\linewidth,keepaspectratio,center}{\PanelImgCmd}%
+  \else\ifx\PanelModeUse\PanelStretch
+    \adjustbox{width=\linewidth,height=\PanelH,center}{\PanelImgCmd}%
+  \else
+    \adjustbox{max size={\linewidth}{\PanelH},keepaspectratio,center}{\PanelImgCmd}%
+  \fi\fi\fi\fi
+}
+\makeatother
+
+\NewDocumentCommand{\Panel}{ O{} m O{} O{} }{%
+  \leavevmode
+  \def\PanelThisMode{}%
+  \def\PanelTrim{}%
+  \def\PanelClip{auto}%
+  \setkeys{Panel}{#1}%
+  \ifFeatureBeamer
+    \begin{minipage}[t]{\PanelW}%
+      \centering
+      \PanelInclude{#2}\par
+      \FeatureIfEmptyTF{#3}{}{ \vspace{0.25em}\scriptsize #3\par }%
+    \end{minipage}%
+  \else
+    \begin{subfigure}[t]{\PanelW}%
+      \centering
+      \PanelInclude{#2}%
+      \FeatureIfEmptyTF{#3}{}{ \caption{#3} }%
+      \FeatureIfEmptyTF{#4}{}{ \label{#4} }%
+    \end{subfigure}%
+  \fi
+  \stepcounter{PanelCol}%
+  \ifnum\value{PanelCol}<\number\PanelCols
+    \nobreak\hspace{\PanelSep}\nobreak
+  \else
+    \par\medskip
+    \setcounter{PanelCol}{0}%
+  \fi
+  \ignorespaces
+}
+
+\NewDocumentEnvironment{PanelFigure}{ O{\PanelDefaultCols} O{} m O{} }{%
+  \def\PanelEnvMode{\PanelDefaultMode}%
+  \def\PanelEnvPlacement{\PanelDefaultPlacement}%
+  \setlength\PanelH{\PanelDefaultHeight}%
+  \setkeys{PanelFigure}{#2}%
+  \PanelCols=#1\relax
+  \setcounter{PanelCol}{0}%
+  \edef\PanelColsNum{\number\PanelCols}%
+  \edef\PanelColsMinusOne{\number\numexpr\PanelCols-1\relax}%
+  \setlength\PanelW{%
+    \dimexpr(\linewidth - \PanelSep*\PanelColsMinusOne)/\PanelColsNum\relax
+  }%
+  \ifFeatureBeamer
+    \par\noindent\centering\leavevmode
+  \else
+    \begin{figure}[\PanelEnvPlacement]
+      \centering
+  \fi
+}{%
+  \ifFeatureBeamer
+    \par
+    \FeatureIfEmptyTF{#3}{}{ \vspace{0.3em}\footnotesize #3\par }%
+  \else
+      \FeatureIfEmptyTF{#3}{}{ \caption{#3} }%
+      \FeatureIfEmptyTF{#4}{}{ \label{#4} }%
+    \end{figure}
+  \fi
+}
+
+\NewDocumentEnvironment{PanelFigure*}{ O{\PanelDefaultCols} O{} }{%
+  \def\PanelEnvMode{\PanelDefaultMode}%
+  \def\PanelEnvPlacement{\PanelDefaultPlacement}%
+  \setlength\PanelH{\PanelDefaultHeight}%
+  \setkeys{PanelFigure}{#2}%
+  \PanelCols=#1\relax
+  \setcounter{PanelCol}{0}%
+  \edef\PanelColsNum{\number\PanelCols}%
+  \edef\PanelColsMinusOne{\number\numexpr\PanelCols-1\relax}%
+  \setlength\PanelW{%
+    \dimexpr(\linewidth - \PanelSep*\PanelColsMinusOne)/\PanelColsNum\relax
+  }%
+  \par\noindent\centering\leavevmode
+}{%
+  \par
+}

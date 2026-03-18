@@ -1,0 +1,26 @@
+\documentclass[12pt]{article}
+
+\usepackage{import}
+\subimport{../../}{system.tex}
+\UseTemplateSet{
+  features = {math,hyperlinks,tables,image,lists_envs,ui_zh}
+}
+
+\begin{document}
+
+\section{Features Debug}
+
+Equation check:
+\[
+  \bm{x} = \arg\min_{x \in \mathbb{R}} (x - 1)^2.
+\]
+
+\begin{TableBook}{ll}{Simple Table}{tab:simple}
+  \TableHead{
+    Key & Value \\
+  }
+  alpha & 1 \\
+  beta & 2 \\
+\end{TableBook}
+
+\end{document}

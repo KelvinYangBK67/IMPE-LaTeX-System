@@ -1,0 +1,18 @@
+% ---------- 介面中文化（不汙染編號）----------
+\usepackage{etoolbox}
+\usepackage{zhnumber}
+
+% polyglossia 會吃 \dateenglish，所以改它
+\renewcommand{\dateenglish}{%
+  \def\today{\number\year 年\number\month 月\number\day 日}%
+}
+\AtBeginDocument{\date{\today}}
+
+% 綁到 captionsenglish，避免被 polyglossia 蓋回英文
+\gappto\captionsenglish{%
+  \renewcommand{\contentsname}{目錄}%
+  \renewcommand{\figurename}{圖}%
+  \renewcommand{\tablename}{表}%
+  \renewcommand{\appendixname}{附錄}%
+  \renewcommand{\bibname}{參考文獻}%
+}

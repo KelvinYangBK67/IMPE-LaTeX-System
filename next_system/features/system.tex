@@ -1,0 +1,55 @@
+% Single entry point for the next-generation feature system.
+% This is intentionally lightweight: feature ids map directly to module files.
+
+\RequirePackage{expl3}
+\RequirePackage{xparse}
+\RequirePackage{import}
+
+\makeatletter
+\newcommand{\FeatureRoot}{}
+\ifx\import@path\@undefined
+  \renewcommand{\FeatureRoot}{./}
+\else
+  \edef\FeatureRoot{\import@path}
+\fi
+\makeatother
+
+\ExplSyntaxOn
+
+\prop_new:N \g__feature_catalog_path_prop
+\prop_new:N \g__feature_catalog_loaded_prop
+
+\cs_new_protected:Npn \__feature_catalog_register:nn #1#2
+  { \prop_put:Nnn \g__feature_catalog_path_prop {#1} {#2} }
+
+\NewDocumentCommand{\FeatureCatalogEntry}{m m}
+  { \__feature_catalog_register:nn {#1} {#2} }
+
+\cs_new_protected:Npn \__feature_use:n #1
+  {
+    \prop_if_in:NnTF \g__feature_catalog_path_prop {#1}
+      {
+        \prop_if_in:NnTF \g__feature_catalog_loaded_prop {#1}
+          { }
+          {
+            \prop_get:NnN \g__feature_catalog_path_prop {#1} \l_tmpa_tl
+            \use:x { \exp_not:N \input { \FeatureRoot \tl_use:N \l_tmpa_tl } }
+            \prop_put:Nnn \g__feature_catalog_loaded_prop {#1} { loaded }
+          }
+      }
+      {
+        \PackageError{feature-catalog}
+          {Unknown~feature~id~`#1`}
+          {Register~the~feature~in~next_system/features/catalog.tex.}
+      }
+  }
+
+\NewDocumentCommand{\UseFeature}{m}
+  { \__feature_use:n {#1} }
+
+\NewDocumentCommand{\UseFeatures}{m}
+  { \clist_map_inline:nn {#1} { \__feature_use:n {##1} } }
+
+\ExplSyntaxOff
+
+\input{catalog.tex}

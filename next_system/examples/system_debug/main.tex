@@ -1,0 +1,23 @@
+% !TeX program = xelatex
+\documentclass[UTF8,zihao=-4,a4paper,fontset=none]{ctexart}
+\usepackage{import}
+\subimport{../../}{system.tex}
+
+\UseTemplateSet{
+  layout = zh_doc,
+  globalfonts = {cmu,shanggu},
+  fonts = {mongolian},
+  features = {math}
+}
+
+\begin{document}
+
+\section{Smoke Test}
+
+中文 English \MOV{ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ} mixed.
+
+\[
+  a^2 + b^2 = c^2
+\]
+
+\end{document}

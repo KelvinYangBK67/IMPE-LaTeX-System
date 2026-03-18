@@ -1,0 +1,96 @@
+% Behavior logic for the next-generation font system.
+% This layer owns inline/block behavior strategies, starting with RTL.
+
+\RequirePackage{bidi}
+
+\ExplSyntaxOn
+
+\tl_new:N \l__font_inline_behavior_tl
+\tl_new:N \l__font_block_behavior_tl
+\tl_new:N \l__font_block_align_tl
+\tl_new:N \l__font_vertical_strategy_tl
+
+\cs_new_protected:Npn \__font_apply_behavior_defaults:
+  {
+    \tl_if_blank:VTF \l__font_inline_behavior_tl
+      { \tl_set:NV \l__font_inline_behavior_tl \FontDefaultInlineBehavior }
+      { }
+    \tl_if_blank:VTF \l__font_block_behavior_tl
+      { \tl_set:NV \l__font_block_behavior_tl \FontDefaultBlockBehavior }
+      { }
+    \tl_if_blank:VTF \l__font_block_align_tl
+      { \tl_set:NV \l__font_block_align_tl \FontDefaultBlockAlign }
+      { }
+    \tl_if_blank:VTF \l__font_vertical_strategy_tl
+      { \tl_set:NV \l__font_vertical_strategy_tl \FontDefaultVerticalStrategy }
+      { }
+  }
+
+\cs_new_protected:Npn \__font_validate_behavior_state:
+  {
+    \__font_tl_if_in_set:NnTF \l__font_inline_behavior_tl
+      { normal,rtl,vertical-fallen,vertical-boxed }
+      { }
+      {
+        \PackageError{font-defaults}
+          {Invalid~inline~behavior~`\tl_use:N \l__font_inline_behavior_tl`}
+          {Use~normal,~rtl,~vertical-fallen,~or~vertical-boxed.}
+      }
+    \__font_tl_if_in_set:NnTF \l__font_block_behavior_tl
+      { inherit,rtl,vertical-fallen,vertical-boxed }
+      { }
+      {
+        \PackageError{font-defaults}
+          {Invalid~block~behavior~`\tl_use:N \l__font_block_behavior_tl`}
+          {Use~inherit,~rtl,~vertical-fallen,~or~vertical-boxed.}
+      }
+  }
+
+\cs_new_protected:Npn \__font_define_behavior_hooks:n #1
+  {
+    \str_if_eq:VnTF \l__font_inline_behavior_tl { rtl }
+      {
+        \cs_set_protected:cpn { __font_behavior_inline_#1:n } ##1
+          { \RL{##1} }
+      }
+      {
+        \cs_set_protected:cpn { __font_behavior_inline_#1:n } ##1
+          { ##1 }
+      }
+
+    \str_if_eq:VnTF \l__font_block_behavior_tl { rtl }
+      {
+        \bool_lazy_or:nnTF
+          { \str_if_eq_p:Vn \l__font_block_align_tl { right } }
+          { \str_if_eq_p:Vn \l__font_block_align_tl { inherit } }
+          {
+            \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
+              {
+                \par
+                \begingroup
+                \leftskip=0pt plus 1fil\relax
+                \rightskip=0pt\relax
+                \parfillskip=0pt\relax
+                \noindent\beginR ##1\endR\par
+                \endgroup
+              }
+          }
+          {
+            \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
+              { \par\noindent\beginR ##1\endR\par }
+          }
+      }
+      {
+        \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
+          { ##1 }
+      }
+  }
+
+\cs_new_protected:Npn \__font_apply_behavior:nn #1#2
+  {
+    \mode_if_horizontal:TF
+      { \use:c { __font_behavior_inline_#1:n } {#2} }
+      { \use:c { __font_behavior_block_#1:n } {#2} }
+  }
+
+\ExplSyntaxOff
