@@ -28,6 +28,7 @@
 \tl_new:N \l__font_language_tl
 \tl_new:N \l__font_features_tl
 \tl_new:N \l__font_command_tl
+\tl_new:N \l__font_special_module_tl
 \tl_new:N \l__font_resolved_bold_path_tl
 \tl_new:N \l__font_resolved_italic_path_tl
 \tl_new:N \l__font_resolved_bolditalic_path_tl
@@ -41,6 +42,8 @@
 \tl_new:N \l__font_sans_options_tl
 \tl_new:N \l__font_mono_options_tl
 \tl_new:N \l__font_feature_options_tl
+\tl_new:N \l__font_special_entry_tl
+\seq_new:N \g__font_loaded_special_modules_seq
 
 \cs_new_protected:Npn \__font_reset_state:
   {
@@ -69,7 +72,7 @@
     \tl_clear:N \l__font_language_tl
     \tl_clear:N \l__font_features_tl
     \tl_clear:N \l__font_command_tl
-    \tl_clear:N \l__font_special_builder_tl
+    \tl_clear:N \l__font_special_module_tl
     \tl_clear:N \l__font_backend_tl
     \tl_clear:N \l__font_script_class_tl
     \tl_clear:N \l__font_scope_tl
@@ -129,13 +132,45 @@
     features     .tl_set:N = \l__font_features_tl,
     command      .tl_set:N = \l__font_command_tl,
     backend      .tl_set:N = \l__font_backend_tl,
-    specialbuilder .tl_set:N = \l__font_special_builder_tl,
+    specialmodule .tl_set:N = \l__font_special_module_tl,
+    specialbuilder .tl_set:N = \l__font_special_module_tl,
+  }
+
+\cs_new_protected:Npn \__font_special_use_generic:
+  {
+    \__font_define_local_families_generic:
+  }
+
+\cs_new_protected:Npn \__font_define_special_local:
+  {
+    \seq_if_in:NVF \g__font_loaded_special_modules_seq \l__font_special_module_tl
+      {
+        \use:x
+          {
+            \exp_not:N \subimport
+              { ../../modules/fonts/ }
+              { \l__font_special_module_tl .tex }
+          }
+        \seq_gput_right:NV \g__font_loaded_special_modules_seq \l__font_special_module_tl
+      }
+    \tl_set:Nx \l__font_special_entry_tl
+      { __font_define_special_\l__font_special_module_tl : }
+    \exp_args:NV \cs_if_exist:cTF \l__font_special_entry_tl
+      { \exp_args:NV \use:c \l__font_special_entry_tl }
+      {
+        \PackageError{font-defaults}
+          {Special~module~`\tl_use:N \l__font_special_module_tl`~did~not~define~its~entry~point}
+          {Define~\string\__font_define_special_\tl_use:N \l__font_special_module_tl :~inside~that~module.}
+      }
   }
 
 \cs_new_protected:Npn \__font_append_script_language_feature_options:N #1
   {
-    \tl_if_blank:VTF \l__font_effective_features_tl
-      { }
+    \tl_if_blank:VF \l__font_script_tl
+      { \tl_put_right:Nx #1 { Script = \exp_not:V \l__font_script_tl , } }
+    \tl_if_blank:VF \l__font_language_tl
+      { \tl_put_right:Nx #1 { Language = \exp_not:V \l__font_language_tl , } }
+    \tl_if_blank:VF \l__font_effective_features_tl
       { \tl_put_right:Nx #1 { \l__font_effective_features_tl, } }
   }
 
@@ -379,7 +414,7 @@
         \tl_if_blank:VTF \l__font_name_tl
           { \tl_set_eq:NN \l__font_name_tl \l__font_command_tl }
           { }
-        \tl_if_blank:VTF \l__font_special_builder_tl
+        \tl_if_blank:VTF \l__font_special_module_tl
           {
             \__font_define_local_families_generic:
           }

@@ -1,0 +1,26 @@
+% Shared light special builder for scripts that only need the generic shaping
+% route, while keeping a distinct support category in the catalog.
+
+\ExplSyntaxOn
+
+\cs_new_protected:Npn \__font_define_special_generic_shaping:
+  {
+    \__font_special_use_generic:
+  }
+
+\cs_new_protected:Npn \__font_define_special_indic:
+  {
+    \__font_define_special_generic_shaping:
+  }
+
+\cs_new_protected:Npn \__font_define_special_tibetan:
+  {
+    \__font_define_special_generic_shaping:
+  }
+
+\cs_new_protected:Npn \__font_define_special_arabic:
+  {
+    \__font_define_special_generic_shaping:
+  }
+
+\ExplSyntaxOff
