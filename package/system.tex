@@ -22,10 +22,18 @@
 \ExplSyntaxOn
 \tl_if_blank:eT { \CatalogFontRoot }
   {
-    \tl_set:Nx \l_tmpa_tl { \NextSystemRoot }
-    \tl_put_right:Nn \l_tmpa_tl { assets/fonts }
+    \tl_set:Nx \l_tmpa_tl { \NextSystemRoot assets/fonts }
+    \exp_args:NV \file_if_exist:nTF \l_tmpa_tl
+      {
+        \tl_set:Nx \l_tmpa_tl { \NextSystemRoot assets/fonts }
+      }
+      {
+        \tl_set:Nx \l_tmpa_tl { \NextSystemRoot ../assets/fonts }
+      }
     \exp_args:NV \SetCatalogFontRoot \l_tmpa_tl
   }
 \ExplSyntaxOff
 
-\subimport{./core/system/}{system.tex}
+\IfFileExists{\NextSystemRoot core/system/system.tex}
+  {\subimport{./core/system/}{system.tex}}
+  {\subimport{../core/system/}{system.tex}}
