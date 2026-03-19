@@ -1,11 +1,13 @@
 # NexTeX
 
+[繁體中文](README-zh.md)
+
 `NexTeX` is a LaTeX template system organized around four layers:
 
 - `core/`: stable mechanisms
 - `catalog/`: registrations and presets
 - `modules/`: extendable implementations
-- `assets/`: bundled resources, including fonts
+- `assets/`: local runtime resources such as fonts
 
 Current release version:
 - `v0.1.0`
@@ -38,7 +40,7 @@ NexTeX is built around three practical principles:
 - **Portable**
   The system should be installable as a reusable template package and also usable directly inside the repository.
 - **Extensible**
-  Stable framework logic, registration data, concrete modules, and bundled assets are separated so the system can grow without collapsing into one large preamble.
+  Stable framework logic, registration data, concrete modules, and runtime resources are separated so the system can grow without collapsing into one large preamble.
 - **Lightweight to use**
   Document-side usage should stay short and predictable, centered on `\UseTemplateSet{...}` rather than repeated manual setup.
 
@@ -47,7 +49,7 @@ In repository structure, that becomes:
 - `core/` for stable mechanisms
 - `catalog/` for registrations
 - `modules/` for extendable implementations
-- `assets/` for bundled resources
+- `assets/` for local runtime resources
 
 ## Typical Use Cases
 
@@ -65,7 +67,7 @@ NexTeX is intended for cases like:
 core/       stable subsystem logic
 catalog/    font / layout / feature registrations
 modules/    extendable implementations
-assets/     bundled resources
+assets/     local runtime resources (not tracked font files)
 package/    installable public entry files
 scripts/    install and release scripts
 docs/       detailed subsystem docs
@@ -77,14 +79,14 @@ examples/   debug / audit examples
 Two release packages are generated:
 
 - `NexTeX-vX.Y.Z-full.zip`
-  Includes the full bundled font set.
+  Generated locally with the local font library included, except for the two Tangut fonts excluded from public distribution.
 - `NexTeX-vX.Y.Z-core.zip`
-  Includes the template logic only, without bundled fonts.
+  Includes the template logic only, without font files.
 
 Recommended usage:
 
-- choose `full` if you want the complete out-of-the-box setup
-- choose `core` if you want the system logic but prefer to manage fonts separately
+- choose `full` if you want a locally generated installable package with your font library included
+- choose `core` if you want the system logic only and will manage fonts separately
 
 Build them with:
 
@@ -112,7 +114,7 @@ This installs the package into the user `texmf` tree, including:
 - `core/`
 - `catalog/`
 - `modules/`
-- `assets/`
+- `assets/` (only when present in the release package)
 
 The PowerShell installer can also be run directly:
 
@@ -182,7 +184,11 @@ Detailed docs are in `docs/`:
 
 ## Notes
 
-- `full` is intended for users who want a complete out-of-the-box installation.
-- `core` is intended for users who want the system logic without the bundled font library.
+- The repository-level MIT license applies to the NexTeX codebase itself, not automatically to third-party fonts used by local or release font libraries.
+- Third-party font licenses and redistribution notices are stored under `font_licenses/`.
+- General font sourcing notes, including non-bundled dependencies such as `cmu`, are documented in `docs/FONTS.md`.
+- The Git repository itself is intended to remain source-only and does not track the font library under `assets/fonts/`.
+- `full` is intended for users who want a locally generated installable package with fonts included.
+- `core` is intended for users who want the system logic without a bundled font library.
 - The repository is still in the `0.x` stage, so interface cleanup may continue before `1.0.0`.
 - This project is maintained by the author with Codex-assisted refactoring, scripting, and documentation support.

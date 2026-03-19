@@ -1,0 +1,60 @@
+% !TeX program = xelatex
+\documentclass[12pt]{nextbook_zh}
+
+\UseTemplateSet{
+  layout = zh_book,
+  globalfonts = {cmu,shanggu},
+  features = {image}
+}
+
+\title{中文書稿模板示例}
+\author{作者姓名}
+\date{\today}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+\chapter*{前言}
+
+這份模板面向可直接起稿的中文書稿或長篇研究文稿。前言可以用來交代寫作動機、
+材料範圍、章節安排與使用方式。
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{緒論}
+
+\section{問題意識}
+
+本節可交代整體問題意識與研究背景。若是課題型書稿，也可以在此說明本書與既有
+研究的差異。
+
+\section{材料與方法}
+
+這裡可說明資料來源、文本範圍、處理方法與技術路徑。
+
+\chapter{正文示例}
+
+\section{章節結構}
+
+書稿模板與論文模板不同，更重視長篇章節遞進，因此這裡保留了 chapter / section
+的基本骨架。
+
+\section{圖片佔位}
+
+\begin{figure}[htbp]
+  \centering
+  \rule{0.7\linewidth}{0.28\linewidth}
+  \caption{章節圖片佔位示例}
+\end{figure}
+
+\backmatter
+
+\chapter*{結語}
+
+這裡可作為總結、附記或後續擴展方向的起點。
+
+\end{document}

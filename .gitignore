@@ -24,3 +24,5 @@ Thumbs.db
 nextsystem.local.tex
 *.synctex(busy)
 dist/
+assets/fonts/
+!assets/.gitkeep

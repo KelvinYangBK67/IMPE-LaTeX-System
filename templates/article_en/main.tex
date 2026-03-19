@@ -1,0 +1,72 @@
+% !TeX program = xelatex
+\documentclass[12pt]{nextart}
+
+\usepackage{booktabs}
+
+\UseTemplateSet{
+  layout = en_doc,
+  globalfonts = {cmu,shanggu},
+  features = {tables,image}
+}
+
+\title{English Article Template}
+\author{Author Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This template is intended as a practical NexTeX article starter rather than a
+minimal probe. It includes a title block, abstract, section structure, and a
+few common document elements that can be rewritten directly into a real paper.
+\end{abstract}
+
+\section{Background}
+
+Use this section to introduce the topic, research context, and source
+materials. It is also a natural place to define the document scope and clarify
+what kind of contribution the paper aims to make.
+
+\section{Research Questions}
+
+Typical framing questions might include:
+
+\begin{enumerate}
+  \item What is the textual or linguistic problem under discussion?
+  \item How does the existing scholarship approach it?
+  \item What new analysis or organization does this paper provide?
+\end{enumerate}
+
+\section{Sample Table}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    Item & Description & Note \\
+    \midrule
+    Sources & Primary material & Replace as needed \\
+    Method & Analysis and comparison & Expand later \\
+    Result & Working observation & Refine in draft \\
+    \bottomrule
+  \end{tabular}
+  \caption{Basic table example}
+\end{table}
+
+\section{Sample Figure}
+
+\begin{figure}[htbp]
+  \centering
+  \rule{0.7\linewidth}{0.28\linewidth}
+  \caption{Figure placeholder}
+\end{figure}
+
+\section{Conclusion}
+
+The goal of this template is to provide a real writing starter with enough
+structure to begin drafting immediately. Citations, notes, and bibliography
+support can be added on top of this base.
+
+\end{document}

@@ -1,0 +1,91 @@
+% Internal Chinese UI bindings for *_zh wrapper classes.
+
+\ifdefined\NextSystemUiZhInternalLoaded
+  \endinput
+\fi
+\def\NextSystemUiZhInternalLoaded{1}
+
+\RequirePackage{etoolbox}
+\RequirePackage{zhnumber}
+
+\makeatletter
+\newcommand{\NextUiZhSetName}[2]{%
+  \@ifundefined{#1}
+    {\expandafter\def\csname #1\endcsname{#2}}
+    {\expandafter\renewcommand\csname #1\endcsname{#2}}%
+}
+
+\newcommand{\NextUiZhApplyDate}{%
+  \def\today{\number\year 年\number\month 月\number\day 日}%
+  \@ifclassloaded{beamer}
+    {%
+      \date[\number\year-\number\month-\number\day]{%
+        \protect\mbox{\number\year 年\number\month 月\number\day 日}%
+      }%
+    }
+    { \date{\today} }%
+}
+
+\newcommand{\NextUiZhApplyChapterFormat}{%
+  \renewcommand{\thechapter}{第\zhnumber{\arabic{chapter}}章}%
+  \renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}%
+  \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}%
+  \renewcommand*\l@chapter{\@dottedtocline{0}{0em}{5em}}%
+  \def\@makechapterhead##1{%
+    \vspace*{50\p@}%
+    {\parindent \z@ \raggedright \normalfont
+      \ifnum \c@secnumdepth >\m@ne
+        \if@mainmatter
+          \huge\bfseries \thechapter
+          \par\nobreak
+          \vskip 20\p@
+        \fi
+      \fi
+      \interlinepenalty\@M
+      \Huge \bfseries ##1\par\nobreak
+      \vskip 40\p@
+    }}%
+}
+
+\AtBeginDocument{%
+  \NextUiZhSetName{abstractname}{摘要}%
+  \NextUiZhSetName{contentsname}{目錄}%
+  \NextUiZhSetName{figurename}{圖}%
+  \NextUiZhSetName{tablename}{表}%
+  \NextUiZhSetName{appendixname}{附錄}%
+  \@ifundefined{bibname}{}{\renewcommand{\bibname}{參考文獻}}%
+  \@ifundefined{refname}{}{\renewcommand{\refname}{參考文獻}}%
+  \@ifundefined{AgendaTitle}{}{\renewcommand{\AgendaTitle}{目錄}}%
+  \NextUiZhApplyDate
+  \@ifclassloaded{ctexbook}{%
+    \renewcommand*\l@chapter{\@dottedtocline{0}{0em}{4.5em}}%
+  }{}%
+  \@ifclassloaded{book}{%
+    \NextUiZhApplyChapterFormat
+  }{}%
+  \@ifclassloaded{report}{%
+    \NextUiZhApplyChapterFormat
+  }{}%
+}
+
+\@ifundefined{dateenglish}
+  {}
+  {
+    \renewcommand{\dateenglish}{%
+      \def\today{\number\year 年\number\month 月\number\day 日}%
+    }
+  }
+
+\@ifundefined{captionsenglish}
+  {}
+  {
+    \gappto\captionsenglish{%
+      \NextUiZhSetName{abstractname}{摘要}%
+      \NextUiZhSetName{contentsname}{目錄}%
+      \NextUiZhSetName{figurename}{圖}%
+      \NextUiZhSetName{tablename}{表}%
+      \NextUiZhSetName{appendixname}{附錄}%
+      \NextUiZhSetName{bibname}{參考文獻}%
+    }
+  }
+\makeatother

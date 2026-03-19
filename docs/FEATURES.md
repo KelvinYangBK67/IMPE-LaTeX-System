@@ -1,5 +1,7 @@
 # Features
 
+[繁體中文](FEATURES-zh.md)
+
 This document describes the current feature subsystem.
 
 ## Structure
@@ -48,7 +50,9 @@ Current public features include:
 - `tables`
 - `image`
 - `lists_envs`
-- `ui_zh`
+
+Chinese UI override is now an internal mechanism bound to the `_zh` wrapper
+classes. It is not part of the public feature surface.
 
 ## Runtime Behavior
 

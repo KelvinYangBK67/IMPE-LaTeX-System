@@ -13,9 +13,13 @@ $RuntimeFiles = @(
     "system.tex",
     "nextsystem.sty",
     "nextart.cls",
+    "nextart_zh.cls",
     "nextbook.cls",
+    "nextbook_zh.cls",
     "nextreport.cls",
+    "nextreport_zh.cls",
     "nextbeamer.cls",
+    "nextbeamer_zh.cls",
     "nextsystem.local.example.tex"
 )
 
@@ -26,9 +30,22 @@ $RuntimeDirs = @(
     "assets"
 )
 
+$HasBundledAssets = Test-Path (Join-Path $RepoRoot "assets\fonts")
+$InstallFlavor = if ($HasBundledAssets) { "full" } else { "core" }
+
 Write-Host "Installing NexTeX to user texmf..."
 Write-Host "  Source:      $RepoRoot"
 Write-Host "  Destination: $PackageRoot"
+Write-Host "  Package:     $InstallFlavor"
+
+if ($HasBundledAssets) {
+    Write-Host "  Bundled font library: present"
+    Write-Host "  Note: public full releases exclude the two unresolved Tangut fonts"
+}
+else {
+    Write-Host "  Bundled font library: not present"
+    Write-Host "  Note: this is a core install; fonts must be provided separately"
+}
 
 New-Item -ItemType Directory -Force -Path $PackageRoot | Out-Null
 
@@ -50,6 +67,19 @@ foreach ($dir in $RuntimeDirs) {
     Copy-Item -Recurse -Force $source $target
 }
 
+$InstalledLocalOverride = Join-Path $PackageRoot "nextsystem.local.tex"
+if ($HasBundledAssets) {
+    $InstalledFontRoot = (Join-Path $PackageRoot "assets\fonts") -replace '\\','/'
+    @(
+        "% Auto-generated during installation."
+        "% This file anchors the bundled font root inside the installed texmf tree."
+        "\SetCatalogFontRoot{$InstalledFontRoot}"
+    ) | Set-Content -Encoding UTF8 $InstalledLocalOverride
+}
+elseif (Test-Path $InstalledLocalOverride) {
+    Remove-Item -Force $InstalledLocalOverride
+}
+
 if (-not $NoRefresh) {
     $mktexlsr = Get-Command mktexlsr -ErrorAction SilentlyContinue
     if ($mktexlsr) {
@@ -66,3 +96,9 @@ Write-Host "Installation complete."
 Write-Host "You can now use:"
 Write-Host "  \documentclass{nextbeamer}"
 Write-Host "  \UseTemplateSet{...}"
+if ($HasBundledAssets) {
+    Write-Host "Bundled font assets were installed with this package."
+}
+else {
+    Write-Host "No bundled font assets were installed; point your local setup to a font library if needed."
+}

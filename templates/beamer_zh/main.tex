@@ -1,0 +1,70 @@
+% !TeX program = xelatex
+\documentclass[aspectratio=169]{nextbeamer_zh}
+
+\UseTemplateSet{
+  layout = beamer,
+  globalfonts = {cmu,shanggu},
+  features = {tables,image}
+}
+
+\title{中文 Beamer 模板示例}
+\author{作者姓名}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{目錄}
+  \tableofcontents
+\end{frame}
+
+\section{研究背景}
+
+\begin{frame}{研究背景}
+  \begin{itemize}
+    \item 在這一頁簡述題目背景與研究動機。
+    \item 可以直接替換成課堂報告、論文發表或讀書報告內容。
+    \item 中英文混排與專有名詞可直接保留在正文中。
+  \end{itemize}
+\end{frame}
+
+\section{研究問題}
+
+\begin{frame}{研究問題}
+  \begin{enumerate}
+    \item 研究對象是什麼？
+    \item 現有研究如何處理？
+    \item 你的觀察或方法在哪裡？
+  \end{enumerate}
+\end{frame}
+
+\section{材料示例}
+
+\begin{frame}{表格示例}
+  \begin{tabular}{ll}
+    項目 & 說明 \\
+    \hline
+    材料 & 文本樣本 \\
+    方法 & 分析與比較 \\
+    結果 & 初步觀察 \\
+  \end{tabular}
+\end{frame}
+
+\begin{frame}{圖片佔位}
+  \centering
+  \rule{0.75\linewidth}{0.35\linewidth}
+\end{frame}
+
+\section{結語}
+
+\begin{frame}{結語}
+  \begin{itemize}
+    \item 這份模板不是最小示例，而是可以直接開始製作投影片的骨架。
+    \item 後續可在此加入更多 section、圖片、表格與引文頁面。
+  \end{itemize}
+\end{frame}
+
+\end{document}

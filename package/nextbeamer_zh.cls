@@ -1,10 +1,10 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextbeamer}[2026/03/19 NexTeX wrapper for beamer]
+\ProvidesClass{nextbeamer_zh}[2026/03/19 NexTeX wrapper for Chinese beamer]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{beamer}}
 \ProcessOptions\relax
-\def\NextSystemUiTag{en}
+\def\NextSystemUiTag{zh}
 \LoadClass{beamer}
 \RequirePackage{nextsystem}
 \makeatother

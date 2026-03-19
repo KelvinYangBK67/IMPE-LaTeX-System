@@ -1,21 +1,11 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{nextsystem}[2026/03/18 Installable entry for next_system]
 
-\RequirePackage{expl3}
 \RequirePackage{import}
+\providecommand{\NextSystemUiTag}{en}
 
-\ExplSyntaxOn
-\tl_new:N \l__nextsystem_package_root_tl
-\file_get_full_name:nNTF { nextsystem.sty } \l__nextsystem_package_root_tl
-  {
-    \regex_replace_once:nnN { [^/]+ \Z } { } \l__nextsystem_package_root_tl
-    \xdef\NextSystemPackageRoot{\tl_use:N \l__nextsystem_package_root_tl}
-  }
-  {
-    \PackageError{nextsystem}
-      {Could~not~resolve~the~full~path~to~nextsystem.sty}
-      {Install~the~package~on~TeX's~search~path~or~load~system.tex~directly.}
-  }
-\ExplSyntaxOff
+\providecommand{\NextSystemPackageRoot}{}
+\xdef\NextSystemPackageRoot{\CurrentFilePath}
+\makeatother
 
 \expandafter\subimport\expandafter{\NextSystemPackageRoot}{system.tex}

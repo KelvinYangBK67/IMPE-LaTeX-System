@@ -1,10 +1,10 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextreport}[2026/03/19 NexTeX wrapper for report]
+\ProvidesClass{nextreport_zh}[2026/03/19 NexTeX wrapper for Chinese report]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
 \ProcessOptions\relax
-\def\NextSystemUiTag{en}
+\def\NextSystemUiTag{zh}
 \LoadClass{report}
 \RequirePackage{nextsystem}
 \makeatother

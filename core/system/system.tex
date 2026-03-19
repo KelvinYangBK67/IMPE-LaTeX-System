@@ -15,6 +15,7 @@
 \tl_new:N \l__nextsystem_globalfonts_tl
 \tl_new:N \l__nextsystem_fonts_tl
 \tl_new:N \l__nextsystem_features_tl
+\tl_new:N \l__nextsystem_ui_tl
 
 \keys_define:nn { nextsystem/setup }
   {
@@ -35,6 +36,13 @@
 
     \tl_if_blank:VF \l__nextsystem_fonts_tl
       { \exp_args:NV \UseFonts \l__nextsystem_fonts_tl }
+
+    \cs_if_exist:NTF \NextSystemUiTag
+      { \tl_set:Nx \l__nextsystem_ui_tl { \NextSystemUiTag } }
+      { \tl_set:Nn \l__nextsystem_ui_tl { en } }
+
+    \str_if_eq:VnT \l__nextsystem_ui_tl { zh }
+      { \subimport{../../core/system/}{ui_zh_internal.tex} }
 
     \tl_if_blank:VF \l__nextsystem_features_tl
       { \exp_args:NV \UseFeatures \l__nextsystem_features_tl }

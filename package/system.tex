@@ -7,10 +7,27 @@
 
 \makeatletter
 \providecommand{\NextSystemRoot}{}
-\ifx\import@path\@undefined
-  \edef\NextSystemRoot{./}
+\providecommand{\CurrentFilePath}{}
+\ifx\CurrentFilePath\@empty
+  \ifx\NextSystemPackageRoot\@undefined
+    \ifx\import@path\@undefined
+      \xdef\NextSystemRoot{./}
+    \else
+      \xdef\NextSystemRoot{\import@path}
+    \fi
+  \else
+    \ifx\NextSystemPackageRoot\@empty
+      \ifx\import@path\@undefined
+        \xdef\NextSystemRoot{./}
+      \else
+        \xdef\NextSystemRoot{\import@path}
+      \fi
+    \else
+      \xdef\NextSystemRoot{\NextSystemPackageRoot}
+    \fi
+  \fi
 \else
-  \edef\NextSystemRoot{\import@path}
+  \xdef\NextSystemRoot{\CurrentFilePath}
 \fi
 \makeatother
 
@@ -23,17 +40,8 @@
 \tl_if_blank:eT { \CatalogFontRoot }
   {
     \tl_set:Nx \l_tmpa_tl { \NextSystemRoot assets/fonts }
-    \exp_args:NV \file_if_exist:nTF \l_tmpa_tl
-      {
-        \tl_set:Nx \l_tmpa_tl { \NextSystemRoot assets/fonts }
-      }
-      {
-        \tl_set:Nx \l_tmpa_tl { \NextSystemRoot ../assets/fonts }
-      }
     \exp_args:NV \SetCatalogFontRoot \l_tmpa_tl
   }
 \ExplSyntaxOff
 
-\IfFileExists{\NextSystemRoot core/system/system.tex}
-  {\subimport{./core/system/}{system.tex}}
-  {\subimport{../core/system/}{system.tex}}
+\expandafter\subimport\expandafter{\NextSystemRoot core/system/}{system.tex}

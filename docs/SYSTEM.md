@@ -1,5 +1,7 @@
 # System
 
+[繁體中文](SYSTEM-zh.md)
+
 `NexTeX` is organized around four layers:
 
 - `core/`: stable mechanisms
@@ -39,6 +41,15 @@ or:
 ```tex
 \documentclass{beamer}
 \usepackage{nextsystem}
+\UseTemplateSet{...}
+```
+
+For wrapper classes, English and Chinese use separate public entrypoints. For
+example:
+
+```tex
+\documentclass{nextart}
+\documentclass{nextart_zh}
 \UseTemplateSet{...}
 ```
 

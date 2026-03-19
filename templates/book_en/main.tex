@@ -1,0 +1,63 @@
+% !TeX program = xelatex
+\documentclass[12pt]{nextbook}
+
+\UseTemplateSet{
+  layout = en_book,
+  globalfonts = {cmu,shanggu},
+  features = {image}
+}
+
+\title{English Book Template}
+\author{Author Name}
+\date{\today}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+\chapter*{Preface}
+
+This template is intended for book-length writing, lecture notes, or extended
+research manuscripts. The preface can explain motivation, scope, and overall
+chapter design.
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{Introduction}
+
+\section{Research Context}
+
+Use this section to introduce the broader context, the existing conversation,
+and the reason the book is organized in its present form.
+
+\section{Sources and Method}
+
+This section can describe the corpus, primary materials, editorial choices, or
+analytical approach used throughout the manuscript.
+
+\chapter{Sample Chapter}
+
+\section{Long-Form Structure}
+
+Unlike a short article starter, a book template should already assume chapter
+progression and a longer reading arc. This file keeps that skeleton in place.
+
+\section{Figure Placeholder}
+
+\begin{figure}[htbp]
+  \centering
+  \rule{0.7\linewidth}{0.28\linewidth}
+  \caption{Chapter figure placeholder}
+\end{figure}
+
+\backmatter
+
+\chapter*{Afterword}
+
+This can be replaced with a conclusion, an afterword, or a note on future
+development.
+
+\end{document}

@@ -1,5 +1,7 @@
 # Layouts
 
+[繁體中文](LAYOUTS-zh.md)
+
 This document describes the current layout subsystem.
 
 ## Structure

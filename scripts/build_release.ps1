@@ -22,15 +22,25 @@ $TopLevelFiles = @(
     "system.tex",
     "nextsystem.sty",
     "nextart.cls",
+    "nextart_zh.cls",
     "nextbook.cls",
+    "nextbook_zh.cls",
     "nextreport.cls",
+    "nextreport_zh.cls",
     "nextbeamer.cls",
+    "nextbeamer_zh.cls",
     "nextsystem.local.example.tex"
 )
 
 if (-not $OutputRoot) {
     $OutputRoot = Join-Path $RepoRoot "dist"
 }
+
+Write-Host "Building NexTeX release packages..."
+Write-Host "  Version:     v$Version"
+Write-Host "  Repository:  $RepoRoot"
+Write-Host "  Output root: $OutputRoot"
+Write-Host ""
 
 function New-ReleasePackage {
     param(
@@ -42,6 +52,10 @@ function New-ReleasePackage {
     $Name = "NexTeX-v$Version-$Flavor"
     $StageRoot = Join-Path $OutputRoot $Name
     $ZipPath = Join-Path $OutputRoot ($Name + ".zip")
+
+    Write-Host "Preparing $Flavor release..."
+    Write-Host "  Stage root: $StageRoot"
+    Write-Host "  Zip path:   $ZipPath"
 
     if (Test-Path $StageRoot) {
         Remove-Item -Recurse -Force $StageRoot
@@ -59,10 +73,37 @@ function New-ReleasePackage {
     Copy-Item -Force (Join-Path $ScriptRoot "install.ps1") (Join-Path $StageRoot "install.ps1")
     Copy-Item -Force (Join-Path $ScriptRoot "install.bat") (Join-Path $StageRoot "install.bat")
 
+    if ($Flavor -eq "full") {
+        $LocalFontRoot = Join-Path $RepoRoot "assets\fonts"
+        Write-Host "  Local font library: $LocalFontRoot"
+        if (-not (Test-Path $LocalFontRoot)) {
+            throw "Full release requires a local font library at $LocalFontRoot. The Git repository is source-only and does not track font files."
+        }
+        Write-Host "  Font library status: found"
+        Write-Host "  Public exclusion: unresolved Tangut fonts will be removed from this package"
+    }
+    else {
+        Write-Host "  Font library status: not required for core release"
+    }
+
     foreach ($dir in $RuntimeDirs) {
         $source = Join-Path $RepoRoot $dir
         if (Test-Path $source) {
             Copy-Item -Recurse -Force $source (Join-Path $StageRoot $dir)
+        }
+    }
+
+    if ($Flavor -eq "full") {
+        $ExcludedFiles = @(
+            "assets\\fonts\\tangut\\Tangut N4694 V3.10.ttf",
+            "assets\\fonts\\tangut\\new Tangut Std V2.008.ttf"
+        )
+
+        foreach ($relativePath in $ExcludedFiles) {
+            $target = Join-Path $StageRoot $relativePath
+            if (Test-Path $target) {
+                Remove-Item -Force $target
+            }
         }
     }
 
@@ -84,9 +125,9 @@ function New-ReleasePackage {
 New-ReleasePackage `
     -Flavor "full" `
     -RuntimeDirs @("core","catalog","modules","assets") `
-    -Note "Full release with bundled fonts. Install by running install.bat."
+    -Note "Full release generated from the local font library. Tangut fonts with unresolved redistribution terms are intentionally excluded from this public release. Install by running install.bat."
 
 New-ReleasePackage `
     -Flavor "core" `
     -RuntimeDirs @("core","catalog","modules") `
-    -Note "Core release without bundled fonts. Install by running install.bat, then point nextsystem.local.tex or your local setup to a font library."
+    -Note "Core release without font files. Install by running install.bat, then point nextsystem.local.tex or your local setup to a font library."

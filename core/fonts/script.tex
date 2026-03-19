@@ -12,6 +12,7 @@
 \tl_new:N \l__font_map_texttt_tl
 \tl_new:N \l__font_effective_features_tl
 \tl_new:N \l__font_backend_tl
+\tl_new:N \l__font_fallback_mode_tl
 
 \cs_new_protected:Npn \__font_feature_prepend:n #1
   {
@@ -46,6 +47,9 @@
     \tl_if_blank:VTF \l__font_backend_tl
       { \tl_set:NV \l__font_backend_tl \FontDefaultBackend }
       { }
+    \tl_if_blank:VTF \l__font_fallback_mode_tl
+      { \tl_set:NV \l__font_fallback_mode_tl \FontDefaultFallbackMode }
+      { }
 
     \__font_apply_writing_defaults:
   }
@@ -76,6 +80,13 @@
   {
     \__font_validate_scope:
     \__font_validate_script_class:
+    \__font_tl_if_in_set:NnTF \l__font_fallback_mode_tl { strict,soft }
+      { }
+      {
+        \PackageError{font-defaults}
+          {Invalid~fallback~mode~`\tl_use:N \l__font_fallback_mode_tl`}
+          {Use~strict~or~soft.}
+      }
     \__font_validate_writing_model:
   }
 

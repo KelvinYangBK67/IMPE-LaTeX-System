@@ -29,6 +29,7 @@
 \tl_new:N \l__font_features_tl
 \tl_new:N \l__font_command_tl
 \tl_new:N \l__font_special_module_tl
+\tl_new:N \l__font_missing_face_tl
 \tl_new:N \l__font_resolved_bold_path_tl
 \tl_new:N \l__font_resolved_italic_path_tl
 \tl_new:N \l__font_resolved_bolditalic_path_tl
@@ -43,6 +44,7 @@
 \tl_new:N \l__font_mono_options_tl
 \tl_new:N \l__font_feature_options_tl
 \tl_new:N \l__font_special_entry_tl
+\bool_new:N \l__font_use_latex_fallback_bool
 \seq_new:N \g__font_loaded_special_modules_seq
 
 \cs_new_protected:Npn \__font_reset_state:
@@ -73,6 +75,7 @@
     \tl_clear:N \l__font_features_tl
     \tl_clear:N \l__font_command_tl
     \tl_clear:N \l__font_special_module_tl
+    \tl_clear:N \l__font_missing_face_tl
     \tl_clear:N \l__font_backend_tl
     \tl_clear:N \l__font_script_class_tl
     \tl_clear:N \l__font_scope_tl
@@ -88,6 +91,7 @@
     \tl_clear:N \l__font_block_behavior_tl
     \tl_clear:N \l__font_block_align_tl
     \tl_clear:N \l__font_vertical_strategy_tl
+    \bool_set_false:N \l__font_use_latex_fallback_bool
   }
 
 \keys_define:nn { font/declare }
@@ -132,6 +136,7 @@
     features     .tl_set:N = \l__font_features_tl,
     command      .tl_set:N = \l__font_command_tl,
     backend      .tl_set:N = \l__font_backend_tl,
+    fallbackmode .tl_set:N = \l__font_fallback_mode_tl,
     specialmodule .tl_set:N = \l__font_special_module_tl,
     specialbuilder .tl_set:N = \l__font_special_module_tl,
   }
@@ -139,6 +144,71 @@
 \cs_new_protected:Npn \__font_special_use_generic:
   {
     \__font_define_local_families_generic:
+  }
+
+\cs_new_protected:Npn \__font_note_missing_face:nn #1#2
+  {
+    \tl_if_blank:VTF \l__font_missing_face_tl
+      { \tl_set:Nn \l__font_missing_face_tl { #1 = #2 } }
+      { }
+  }
+
+\cs_new_protected:Npn \__font_check_face:nnVV #1#2#3#4
+  {
+    \tl_if_blank:VTF #4
+      {
+        \exp_args:NV \IfFontExistsTF #3
+          { }
+          { \__font_note_missing_face:nn {#1} {#2} }
+      }
+      {
+        \exp_args:Nx \file_if_exist:nTF
+          { \tl_use:N #4 \tl_use:N #3 }
+          { }
+          { \__font_note_missing_face:nn {#1} {#2} }
+      }
+  }
+
+\prg_new_conditional:Npnn \__font_all_faces_exist: { TF }
+  {
+    \tl_clear:N \l__font_missing_face_tl
+    \__font_check_face:nnVV {regular} { \l__font_regular_tl } \l__font_regular_tl \l__font_path_tl
+    \__font_check_face:nnVV {bold} { \l__font_resolved_bold_tl } \l__font_resolved_bold_tl \l__font_resolved_bold_path_tl
+    \__font_check_face:nnVV {italic} { \l__font_resolved_italic_tl } \l__font_resolved_italic_tl \l__font_resolved_italic_path_tl
+    \__font_check_face:nnVV {bolditalic} { \l__font_resolved_bolditalic_tl } \l__font_resolved_bolditalic_tl \l__font_resolved_bolditalic_path_tl
+    \__font_check_face:nnVV {sans} { \l__font_resolved_sans_tl } \l__font_resolved_sans_tl \l__font_resolved_sans_path_tl
+    \__font_check_face:nnVV {sansbold} { \l__font_resolved_sans_bold_tl } \l__font_resolved_sans_bold_tl \l__font_resolved_sans_bold_path_tl
+    \__font_check_face:nnVV {sansitalic} { \l__font_resolved_sans_italic_tl } \l__font_resolved_sans_italic_tl \l__font_resolved_sans_italic_path_tl
+    \__font_check_face:nnVV {sansbolditalic} { \l__font_resolved_sans_bolditalic_tl } \l__font_resolved_sans_bolditalic_tl \l__font_resolved_sans_bolditalic_path_tl
+    \__font_check_face:nnVV {mono} { \l__font_resolved_mono_tl } \l__font_resolved_mono_tl \l__font_resolved_mono_path_tl
+    \__font_check_face:nnVV {monobold} { \l__font_resolved_mono_bold_tl } \l__font_resolved_mono_bold_tl \l__font_resolved_mono_bold_path_tl
+    \tl_if_blank:VTF \l__font_missing_face_tl
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+\cs_new_protected:Npn \__font_warn_soft_fallback:
+  {
+    \PackageWarning{font-defaults}
+      {Font~declaration~`\tl_use:N \l__font_name_tl`~could~not~be~resolved~(\tl_use:N \l__font_missing_face_tl).~Falling~back~to~LaTeX~default~families}
+  }
+
+\cs_new_protected:Npn \__font_error_missing_faces:
+  {
+    \PackageError{font-defaults}
+      {Font~declaration~`\tl_use:N \l__font_name_tl`~could~not~be~resolved~(\tl_use:N \l__font_missing_face_tl)}
+      {Check~the~font~name~or~font~file~path,~or~set~fallbackmode=soft.}
+  }
+
+\cs_new_protected:Npn \__font_define_local_families_fallback:
+  {
+    \cs_set_protected:cpn { __fontrm_\l__font_name_tl } { \rmfamily }
+    \cs_set_protected:cpn { __fontsf_\l__font_name_tl } { \sffamily }
+    \cs_set_protected:cpn { __fonttt_\l__font_name_tl } { \ttfamily }
+    \exp_args:NV \__font_define_behavior_hooks:n \l__font_name_tl
+    \exp_args:NVV \__font_define_public_command:nn
+      \l__font_command_tl
+      \l__font_name_tl
   }
 
 \cs_new_protected:Npn \__font_define_special_local:
@@ -178,7 +248,7 @@
   {
     \tl_if_blank:VTF #2
       { }
-      { \tl_put_right:Nx #1 { Path = \exp_not:V #2 , } }
+      { \tl_put_right:Nx #1 { Path = { \exp_not:V #2 } , } }
   }
 
 \cs_new_protected:Npn \__font_set_feature_path_option:NV #1#2
@@ -186,7 +256,7 @@
     \tl_clear:N #1
     \tl_if_blank:VTF #2
       { }
-      { \tl_put_right:Nx #1 { Path = \exp_not:V #2 , } }
+      { \tl_put_right:Nx #1 { Path = { \exp_not:V #2 } , } }
   }
 
 \cs_new_protected:Npn \__font_build_main_options:
@@ -404,21 +474,52 @@
     \__font_apply_behavior_defaults:
     \__font_validate_behavior_state:
     \__font_resolve_style_fallbacks:
+    \bool_set_false:N \l__font_use_latex_fallback_bool
+    \__font_all_faces_exist:TF
+      { }
+      {
+        \str_if_eq:VnTF \l__font_fallback_mode_tl { soft }
+          {
+            \tl_if_blank:VTF \l__font_name_tl
+              { \tl_set_eq:NN \l__font_name_tl \l__font_command_tl }
+              { }
+            \str_if_eq:VnTF \l__font_scope_tl { global }
+              {
+                \__font_warn_soft_fallback:
+                \bool_set_true:N \l__font_use_latex_fallback_bool
+              }
+              {
+                \tl_if_blank:VTF \l__font_command_tl
+                  { \PackageError{font-defaults}{Missing~command~field}{Set~command~=...~for~local~scope.} }
+                  { }
+                \__font_warn_soft_fallback:
+                \__font_define_local_families_fallback:
+                \bool_set_true:N \l__font_use_latex_fallback_bool
+              }
+          }
+          { \__font_error_missing_faces: }
+      }
 
     \str_if_eq:VnTF \l__font_scope_tl { global }
-      { \__font_define_global_binding: }
       {
-        \tl_if_blank:VTF \l__font_command_tl
-          { \PackageError{font-defaults}{Missing~command~field}{Set~command~=...~for~local~scope.} }
-          { }
-        \tl_if_blank:VTF \l__font_name_tl
-          { \tl_set_eq:NN \l__font_name_tl \l__font_command_tl }
-          { }
-        \tl_if_blank:VTF \l__font_special_module_tl
+        \bool_if:NF \l__font_use_latex_fallback_bool
+          { \__font_define_global_binding: }
+      }
+      {
+        \bool_if:NF \l__font_use_latex_fallback_bool
           {
-            \__font_define_local_families_generic:
+            \tl_if_blank:VTF \l__font_command_tl
+              { \PackageError{font-defaults}{Missing~command~field}{Set~command~=...~for~local~scope.} }
+              { }
+            \tl_if_blank:VTF \l__font_name_tl
+              { \tl_set_eq:NN \l__font_name_tl \l__font_command_tl }
+              { }
+            \tl_if_blank:VTF \l__font_special_module_tl
+              {
+                \__font_define_local_families_generic:
+              }
+              { \__font_define_special_local: }
           }
-          { \__font_define_special_local: }
       }
   }
 
