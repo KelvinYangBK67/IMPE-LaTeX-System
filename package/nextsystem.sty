@@ -1,11 +1,8 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{nextsystem}[2026/03/18 Installable entry for next_system]
 
-\RequirePackage{import}
 \providecommand{\NextSystemUiTag}{en}
+\newif\ifNextSystemInstalled
+\NextSystemInstalledtrue
 
-\providecommand{\NextSystemPackageRoot}{}
-\xdef\NextSystemPackageRoot{\CurrentFilePath}
-\makeatother
-
-\expandafter\subimport\expandafter{\NextSystemPackageRoot}{system.tex}
+\input{system.tex}

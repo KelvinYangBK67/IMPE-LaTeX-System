@@ -37,8 +37,22 @@
 
 % Load the internal font logic layers.
 \RequirePackage{import}
-\subimport{./}{style.tex}
-\subimport{./}{writing.tex}
-\subimport{./}{script.tex}
-\subimport{./}{behavior.tex}
-\subimport{./}{interface.tex}
+\makeatletter
+\@ifundefined{ifNextSystemInstalled}
+  {\newif\ifNextSystemInstalled\NextSystemInstalledfalse}
+  {}
+\makeatother
+
+\ifNextSystemInstalled
+  \input{core/fonts/style.tex}
+  \input{core/fonts/writing.tex}
+  \input{core/fonts/script.tex}
+  \input{core/fonts/behavior.tex}
+  \input{core/fonts/interface.tex}
+\else
+  \subimport{./}{style.tex}
+  \subimport{./}{writing.tex}
+  \subimport{./}{script.tex}
+  \subimport{./}{behavior.tex}
+  \subimport{./}{interface.tex}
+\fi

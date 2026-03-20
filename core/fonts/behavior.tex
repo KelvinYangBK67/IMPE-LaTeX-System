@@ -66,31 +66,50 @@
           {
             \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
               {
-                \par
                 \begingroup
+                \RTL
                 \leftskip=0pt plus 1fil\relax
                 \rightskip=0pt\relax
                 \parfillskip=0pt\relax
-                \noindent\beginR ##1\endR\par
+                \noindent ##1
+                \endRTL
                 \endgroup
               }
           }
           {
             \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
-              { \par\noindent\beginR ##1\endR\par }
+              {
+                \begingroup
+                \RTL
+                \noindent ##1
+                \endRTL
+                \endgroup
+              }
           }
       }
       {
-        \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
-          { ##1 }
+        \str_if_eq:VnTF \l__font_block_behavior_tl { inherit }
+          {
+            \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
+              { ##1 }
+          }
+          {
+            \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
+              { ##1 }
+          }
       }
   }
 
 \cs_new_protected:Npn \__font_apply_behavior:nn #1#2
   {
-    \mode_if_horizontal:TF
-      { \use:c { __font_behavior_inline_#1:n } {#2} }
+    \tl_set:Nn \l_tmpa_tl {#2}
+    \tl_if_in:NnTF \l_tmpa_tl { \par }
       { \use:c { __font_behavior_block_#1:n } {#2} }
+      {
+        \mode_if_horizontal:TF
+          { \use:c { __font_behavior_inline_#1:n } {#2} }
+          { \use:c { __font_behavior_block_#1:n } {#2} }
+      }
   }
 
 \ExplSyntaxOff

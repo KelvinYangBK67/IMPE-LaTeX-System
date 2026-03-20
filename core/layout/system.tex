@@ -2,5 +2,17 @@
 % This keeps layout loading self-contained and tied to the new structure.
 
 \RequirePackage{import}
-\subimport{./}{defaults.tex}
-\subimport{../../catalog/}{layouts.tex}
+
+\makeatletter
+\@ifundefined{ifNextSystemInstalled}
+  {\newif\ifNextSystemInstalled\NextSystemInstalledfalse}
+  {}
+\makeatother
+
+\ifNextSystemInstalled
+  \input{core/layout/defaults.tex}
+  \input{catalog/layouts.tex}
+\else
+  \subimport{./}{defaults.tex}
+  \subimport{../../catalog/}{layouts.tex}
+\fi

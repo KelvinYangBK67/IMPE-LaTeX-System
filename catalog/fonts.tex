@@ -99,6 +99,54 @@
   globalstatus = implemented
 }
 
+
+\FontRegisterFamily{
+  id = gentium,
+  defaultmode = local,
+  local = {
+    command = GEN,
+    name = gentium_local,
+    path = \CatalogFontRoot/gentium/,
+    regular = GentiumPlus-Regular.ttf,
+    bold = GentiumPlus-Bold.ttf,
+    italic = GentiumPlus-Italic.ttf,
+    bolditalic = GentiumPlus-BoldItalic.ttf
+  },
+  global = {
+    path = \CatalogFontRoot/gentium/,
+    regular = GentiumPlus-Regular.ttf,
+    bold = GentiumPlus-Bold.ttf,
+    italic = GentiumPlus-Italic.ttf,
+    bolditalic = GentiumPlus-BoldItalic.ttf
+  },
+  globalkind = main,
+  globalstatus = implemented
+}
+
+
+\FontRegisterFamily{
+  id = charis,
+  defaultmode = local,
+  local = {
+    command = CHA,
+    name = charis_local,
+    path = \CatalogFontRoot/charis/,
+    regular = CharisSIL-Regular.ttf,
+    bold = CharisSIL-Bold.ttf,
+    italic = CharisSIL-Italic.ttf,
+    bolditalic = CharisSIL-BoldItalic.ttf
+  },
+  global = {
+    path = \CatalogFontRoot/charis/,
+    regular = CharisSIL-Regular.ttf,
+    bold = CharisSIL-Bold.ttf,
+    italic = CharisSIL-Italic.ttf,
+    bolditalic = CharisSIL-BoldItalic.ttf
+  },
+  globalkind = main,
+  globalstatus = implemented
+}
+
 % -----------------------------------------------------------------
 % Simple local scripts
 % -----------------------------------------------------------------
@@ -371,8 +419,8 @@
     path = \CatalogFontRoot/arabic/,
     regular = NotoNaskhArabic-Regular.ttf,
     bold = NotoNaskhArabic-Bold.ttf,
-    italic = NotoNastaliqUrdu-Regular.ttf,
-    bolditalic = NotoNastaliqUrdu-Bold.ttf,
+    italic = ArefRuqaa-Regular.ttf,
+    bolditalic = ArefRuqaa-Bold.ttf,
     sans = NotoSansArabic-Regular.ttf,
     sansbold = NotoSansArabic-Bold.ttf,
     sansitalic = NotoKufiArabic-Regular.ttf,
@@ -429,6 +477,26 @@
     path = \CatalogFontRoot/aramaic/,
     regular = NotoSansImperialAramaic-Regular.ttf,
     features = { RawFeature = { script=armi } },
+    scriptclass = complex,
+    inlinebehavior = rtl,
+    blockbehavior = rtl,
+    blockalign = right,
+    maptextsf = true,
+    maptexttt = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = nabataean,
+  defaultmode = local,
+  local = {
+    command = NB,
+    name = nabataean_local,
+    path = \CatalogFontRoot/nabataean/,
+    regular = NotoSansNabataean-Regular.ttf,
+    script = Nabataean,
     scriptclass = complex,
     inlinebehavior = rtl,
     blockbehavior = rtl,

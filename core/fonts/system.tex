@@ -4,6 +4,18 @@
 \RequirePackage{import}
 \providecommand{\CatalogFontRoot}{}
 
-\subimport{./}{defaults.tex}
-\subimport{./}{registry_modes.tex}
-\subimport{../../catalog/}{fonts.tex}
+\makeatletter
+\@ifundefined{ifNextSystemInstalled}
+  {\newif\ifNextSystemInstalled\NextSystemInstalledfalse}
+  {}
+\makeatother
+
+\ifNextSystemInstalled
+  \input{core/fonts/defaults.tex}
+  \input{core/fonts/registry_modes.tex}
+  \input{catalog/fonts.tex}
+\else
+  \subimport{./}{defaults.tex}
+  \subimport{./}{registry_modes.tex}
+  \subimport{../../catalog/}{fonts.tex}
+\fi

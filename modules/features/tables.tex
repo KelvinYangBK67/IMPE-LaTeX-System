@@ -6,7 +6,9 @@
 \def\NextFeatureTablesLoaded{1}
 
 \RequirePackage{booktabs}
+\RequirePackage{longtable}
 \RequirePackage{array}
+\RequirePackage{graphicx}
 \RequirePackage{tabularx}
 \RequirePackage{multirow}
 \RequirePackage{threeparttable}
@@ -14,6 +16,7 @@
 
 \makeatletter
 \@ifpackageloaded{caption}{}{%
+  \@ifundefined{caption@documentclass}{\def\caption@documentclass{standard}}{}
   \RequirePackage{caption}%
 }
 \captionsetup[table]{skip=6pt}
@@ -39,6 +42,30 @@
 \newcommand{\TableGap}[1][0.8ex]{\addlinespace[#1]}
 \newcommand{\TableHead}[1]{#1\midrule}
 \let\NiceHead\TableHead
+
+\NewDocumentEnvironment{TableInlineFit}{m +b}{%
+  \begin{center}%
+  \scriptsize
+  \setlength{\tabcolsep}{4pt}%
+  \renewcommand{\arraystretch}{1.15}%
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{#1}%
+      #2%
+    \end{tabular}%
+  }%
+  \end{center}%
+}{}
+
+\newenvironment{TableLong}[1]{%
+  \begingroup
+  \scriptsize
+  \setlength{\tabcolsep}{4pt}%
+  \renewcommand{\arraystretch}{1.15}%
+  \begin{longtable}{#1}%
+}{%
+  \end{longtable}%
+  \endgroup
+}
 
 \newenvironment{TableBook}[4][htbp]{%
   \begin{table}[#1]\centering

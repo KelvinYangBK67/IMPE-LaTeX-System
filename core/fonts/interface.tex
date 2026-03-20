@@ -45,7 +45,19 @@
 \tl_new:N \l__font_feature_options_tl
 \tl_new:N \l__font_special_entry_tl
 \bool_new:N \l__font_use_latex_fallback_bool
+\bool_new:N \l__font_nextsystem_installed_bool
+\bool_new:N \l__font_reapply_style_bool
 \seq_new:N \g__font_loaded_special_modules_seq
+
+\cs_if_exist:NTF \ifNextSystemInstalled
+  {
+    \ifNextSystemInstalled
+      \bool_gset_true:N \l__font_nextsystem_installed_bool
+    \else
+      \bool_gset_false:N \l__font_nextsystem_installed_bool
+    \fi
+  }
+  { \bool_gset_false:N \l__font_nextsystem_installed_bool }
 
 \cs_new_protected:Npn \__font_reset_state:
   {
@@ -215,11 +227,22 @@
   {
     \seq_if_in:NVF \g__font_loaded_special_modules_seq \l__font_special_module_tl
       {
-        \use:x
+        \bool_if:NTF \l__font_nextsystem_installed_bool
           {
-            \exp_not:N \subimport
-              { ../../modules/fonts/ }
-              { \l__font_special_module_tl .tex }
+            \use:x
+              {
+                \exp_not:N \subimport
+                  { modules/fonts/ }
+                  { \l__font_special_module_tl .tex }
+              }
+          }
+          {
+            \use:x
+              {
+                \exp_not:N \subimport
+                  { ../../modules/fonts/ }
+                  { \l__font_special_module_tl .tex }
+              }
           }
         \seq_gput_right:NV \g__font_loaded_special_modules_seq \l__font_special_module_tl
       }
@@ -327,6 +350,26 @@
 
 \cs_new_protected:Npn \__font_define_public_command:nn #1#2
   {
+    \str_if_eq:VnTF \l__font_script_class_tl { cjk }
+      {
+        \str_if_eq:VnTF \l__font_preserve_spaces_tl { true }
+          {
+            \cs_set_protected:cpn { __font_space_policy_#2: }
+              {
+                \cs_if_exist:NT \xeCJKsetup
+                  { \xeCJKsetup { CJKspace = true } }
+              }
+          }
+          {
+            \cs_set_protected:cpn { __font_space_policy_#2: }
+              {
+                \cs_if_exist:NT \xeCJKsetup
+                  { \xeCJKsetup { CJKspace = false } }
+              }
+          }
+      }
+      { \cs_set_protected:cpn { __font_space_policy_#2: } { } }
+
     \str_if_eq:VnTF \l__font_map_textsf_tl { true }
       {
         \cs_set_protected:cpn { __font_map_sf_#2: }
@@ -340,13 +383,40 @@
       }
       { \cs_set_protected:cpn { __font_map_tt_#2: } { } }
 
-    \exp_args:Nc \DeclareDocumentCommand {#1} {m}
+    \cs_set_protected:cpn { __font_prepare_local_#2: }
+      {
+        \use:c { __font_space_policy_#2: }
+        \use:c { __font_map_sf_#2: }
+        \use:c { __font_map_tt_#2: }
+        \use:c { __fontrm_#2 }
+        \bool_set_false:N \l__font_reapply_style_bool
+        \str_if_eq:eeF { \use:c { f@series } } { \mddefault }
+          {
+            \exp_args:Nx \fontseries { \use:c { f@series } }
+            \bool_set_true:N \l__font_reapply_style_bool
+          }
+        \str_if_eq:eeF { \use:c { f@shape } } { \updefault }
+          {
+            \exp_args:Nx \fontshape { \use:c { f@shape } }
+            \bool_set_true:N \l__font_reapply_style_bool
+          }
+        \bool_if:NT \l__font_reapply_style_bool
+          { \selectfont }
+      }
+
+    \exp_args:Nc \DeclareDocumentCommand {#1} {+m}
       {
         {
-          \use:c { __font_map_sf_#2: }
-          \use:c { __font_map_tt_#2: }
-          \use:c { __fontrm_#2 }
+          \use:c { __font_prepare_local_#2: }
           \__font_apply_behavior:nn {#2} {##1}
+        }
+      }
+
+    \exp_args:Nc \DeclareDocumentCommand { #1block } { +m }
+      {
+        {
+          \use:c { __font_prepare_local_#2: }
+          \use:c { __font_behavior_block_#2:n } {##1}
         }
       }
   }

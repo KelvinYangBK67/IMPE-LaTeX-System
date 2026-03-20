@@ -4,44 +4,69 @@
 \RequirePackage{expl3}
 \RequirePackage{xparse}
 \RequirePackage{import}
+\RequirePackage{xstring}
 
 \makeatletter
+\@ifundefined{ifNextSystemInstalled}
+  {\newif\ifNextSystemInstalled\NextSystemInstalledfalse}
+  {}
 \providecommand{\NextSystemRoot}{}
 \providecommand{\CurrentFilePath}{}
-\ifx\CurrentFilePath\@empty
-  \ifx\NextSystemPackageRoot\@undefined
+\ifNextSystemInstalled
+  \xdef\NextSystemRoot{}
+\else
+  \ifx\CurrentFilePath\@empty
     \ifx\import@path\@undefined
-      \xdef\NextSystemRoot{./}
+      \xdef\NextSystemRoot{../}
     \else
-      \xdef\NextSystemRoot{\import@path}
+      \StrBefore{\import@path}{package/}[\NextSystemRoot]
+      \ifx\NextSystemRoot\@empty
+        \edef\NextSystemRoot{\import@path}
+      \fi
     \fi
   \else
-    \ifx\NextSystemPackageRoot\@empty
-      \ifx\import@path\@undefined
-        \xdef\NextSystemRoot{./}
-      \else
-        \xdef\NextSystemRoot{\import@path}
-      \fi
-    \else
-      \xdef\NextSystemRoot{\NextSystemPackageRoot}
+    \StrBefore{\CurrentFilePath}{package/}[\NextSystemRoot]
+    \ifx\NextSystemRoot\@empty
+      \edef\NextSystemRoot{\CurrentFilePath}
+      \IfEndWith{\NextSystemRoot}{/}{}{
+        \edef\NextSystemRoot{\NextSystemRoot/}
+      }
     \fi
   \fi
-\else
-  \xdef\NextSystemRoot{\CurrentFilePath}
 \fi
 \makeatother
 
 \providecommand{\CatalogFontRoot}{}
 \NewDocumentCommand{\SetCatalogFontRoot}{m}
   {\def\CatalogFontRoot{#1}}
-\InputIfFileExists{nextsystem.local.tex}{}{}
+\ifNextSystemInstalled
+  \InputIfFileExists{nextsystem.local.tex}{}{}
+\fi
 
-\ExplSyntaxOn
-\tl_if_blank:eT { \CatalogFontRoot }
-  {
-    \tl_set:Nx \l_tmpa_tl { \NextSystemRoot assets/fonts }
-    \exp_args:NV \SetCatalogFontRoot \l_tmpa_tl
-  }
-\ExplSyntaxOff
+\makeatletter
+\ifx\CatalogFontRoot\@empty
+  \ifNextSystemInstalled
+    \edef\CatalogFontRoot{assets/fonts}
+  \else
+    \ifx\import@path\@undefined
+      \edef\CatalogFontRoot{../assets/fonts}
+    \else
+      \StrBefore{\import@path}{package/}[\CatalogFontRoot]
+      \ifx\CatalogFontRoot\@empty
+        \edef\CatalogFontRoot{\import@path}
+      \fi
+      \IfEndWith{\CatalogFontRoot}{/}{}{
+        \edef\CatalogFontRoot{\CatalogFontRoot/}
+      }
+      \edef\CatalogFontRoot{\CatalogFontRoot assets/fonts}
+      \StrSubstitute{\CatalogFontRoot}{ }{}[\CatalogFontRoot]
+    \fi
+  \fi
+\fi
+\makeatother
 
-\expandafter\subimport\expandafter{\NextSystemRoot core/system/}{system.tex}
+\ifNextSystemInstalled
+  \input{core/system/system.tex}
+\else
+  \subimport{../core/system/}{system.tex}
+\fi

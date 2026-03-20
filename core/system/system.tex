@@ -5,11 +5,34 @@
 \RequirePackage{xparse}
 \RequirePackage{import}
 
-\subimport{../layout/}{system.tex}
-\subimport{../fonts/}{system.tex}
-\subimport{../features/}{system.tex}
+\makeatletter
+\@ifundefined{ifNextSystemInstalled}
+  {\newif\ifNextSystemInstalled\NextSystemInstalledfalse}
+  {}
+\makeatother
+
+\ifNextSystemInstalled
+  \input{core/layout/system.tex}
+  \input{core/fonts/system.tex}
+  \input{core/features/system.tex}
+\else
+  \subimport{../layout/}{system.tex}
+  \subimport{../fonts/}{system.tex}
+  \subimport{../features/}{system.tex}
+\fi
 
 \ExplSyntaxOn
+
+\bool_new:N \g__nextsystem_installed_bool
+\cs_if_exist:NTF \ifNextSystemInstalled
+  {
+    \ifNextSystemInstalled
+      \bool_gset_true:N \g__nextsystem_installed_bool
+    \else
+      \bool_gset_false:N \g__nextsystem_installed_bool
+    \fi
+  }
+  { \bool_gset_false:N \g__nextsystem_installed_bool }
 
 \tl_new:N \l__nextsystem_layout_tl
 \tl_new:N \l__nextsystem_globalfonts_tl
@@ -42,7 +65,15 @@
       { \tl_set:Nn \l__nextsystem_ui_tl { en } }
 
     \str_if_eq:VnT \l__nextsystem_ui_tl { zh }
-      { \subimport{../../core/system/}{ui_zh_internal.tex} }
+      {
+        \bool_if:NTF \g__nextsystem_installed_bool
+          { \input{core/system/ui_zh_internal.tex} }
+          {
+            \cs_if_exist:NTF \NextSystemRoot
+              { \expandafter\subimport\expandafter{\NextSystemRoot core/system/}{ui_zh_internal.tex} }
+              { \subimport{./}{ui_zh_internal.tex} }
+          }
+      }
 
     \tl_if_blank:VF \l__nextsystem_features_tl
       { \exp_args:NV \UseFeatures \l__nextsystem_features_tl }

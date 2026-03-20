@@ -150,6 +150,78 @@ catalog/fonts.tex
 - CJK 文字使用設定好的全域 CJK family
 - 額外 script family 再透過 `fonts = {...}` 以區域方式載入
 
+## 已註冊 Families
+
+目前 catalog 中已註冊的 family 如下。`globalfonts = {...}` 只會載入全域綁定；`fonts = {...}` 則會在有對應定義時載入 local 命令 family。
+
+| Family id | Local 命令 | 預設模式 | 提供 global | 說明 |
+|---|---|---|---|---|
+| `cmu` | `-` | `global` | 是 | CMU 拉丁字族；不提供 bundled local 命令 |
+| `noto` | `NOT` | `local` | 是 | Noto 拉丁字族 |
+| `times` | `TIM` | `local` | 是 | Windows Times/Arial/Consolas 組合 |
+| `gentium` | `GEN` | `local` | 是 | Gentium Plus 拉丁字族 |
+| `charis` | `CHA` | `local` | 是 | Charis SIL 拉丁字族 |
+| `anatolian` | `CA` | `local` | 否 | Carian |
+| `coptic` | `CO` | `local` | 否 | 科普特文 |
+| `bopomofo` | `ZY` | `local` | 否 | 注音 / Bopomofo |
+| `cuneiform` | `CU` | `local` | 否 | 楔形文字 |
+| `glagolitic` | `GL` | `local` | 否 | 格拉哥里字母 |
+| `old_italic` | `OI` | `local` | 否 | 古意大利字母 |
+| `runic` | `RU` | `local` | 否 | 如尼字母 |
+| `armenian` | `HY` | `local` | 否 | 亞美尼亞文 |
+| `hindi` | `HI` | `local` | 否 | 印地語 |
+| `sanskrit` | `SA` | `local` | 否 | 梵語 |
+| `tamil` | `TA` | `local` | 否 | 泰米爾文 |
+| `brahmi` | `BR` | `local` | 否 | 婆羅米文 |
+| `georgian` | `KA` | `local` | 否 | 格魯吉亞文 |
+| `tibetan` | `TI` | `local` | 否 | 藏文 |
+| `arabic` | `AR` | `local` | 否 | 阿拉伯文 |
+| `urdu` | `UR` | `local` | 否 | 烏爾都文 |
+| `aramaic` | `IA` | `local` | 否 | 帝國亞蘭文 |
+| `nabataean` | `NB` | `local` | 否 | 納巴泰文 |
+| `hebrew` | `HE` | `local` | 否 | 希伯來文 |
+| `kharosthi` | `KH` | `local` | 否 | 佉盧文 |
+| `pahlavi_parthian` | `PAR` | `local` | 否 | 碑銘帕提亞文 |
+| `pahlavi_inscriptional` | `PAH` | `local` | 否 | 碑銘巴列維文 |
+| `pahlavi_psalter` | `PSP` | `local` | 否 | 詩篇巴列維文 |
+| `avestan` | `AV` | `local` | 否 | 阿維斯陀文 |
+| `phoenician` | `PH` | `local` | 否 | 腓尼基文 |
+| `samaritan` | `SM` | `local` | 否 | 撒馬利亞文 |
+| `chinese_simplified` | `SC` | `local` | 否 | 簡體中文 |
+| `chinese_traditional` | `TC` | `local` | 否 | 繁體中文 |
+| `japanese` | `JP` | `local` | 否 | 日文 |
+| `shanggu` | `-` | `global` | 是 | 漢字全域 CJK family |
+| `sim` | `-` | `global` | 是 | Windows CJK 字族 |
+| `korean` | `KR` | `local` | 否 | 韓文 |
+| `tangut` | `TG` | `local` | 否 | 西夏文 |
+| `mongolian` | `MO` | `local` | 否 | 蒙古文 |
+| `vietnamese_quocngu` | `VI` | `local` | 否 | 越南語國語字 |
+| `vietnamese_hannom` | `HN` | `local` | 否 | 越南漢喃 |
+
+目前阿拉伯字母相關 family 的分工為：
+- `arabic`：regular/bold 使用 Naskh，italic/bolditalic 使用 Ruqaa，`sans` / `sansbold` 使用 Noto Sans Arabic，`sansitalic` / `sansbolditalic` / `mono*` 使用 Noto Kufi Arabic。
+- `urdu`：Nastaliq 僅保留給烏爾都文 family 使用。
+
+若 local 命令欄位為 `-`，表示該 family 在目前 catalog 中是純 global 用途。
+
+## 字體映射說明
+
+這一節只列出那些不是單純 `regular` / `bold` / `italic` / `bolditalic` 對應的 family。若某個 family 只是一般四態字體檔映射，則不在此重複展開。
+
+- `shanggu`
+  這是全域 Han/CJK family，不是 local 命令 family，主要負責中文向版面中的漢字主文字通道。
+- `sim`
+  這是 Windows 側的全域 CJK fallback family，作用同樣是全域 Han/CJK 綁定，而不是 local 命令 family。
+- `times`
+  不是單一字族，而是混合 Windows 字體：
+  `regular` / `bold` / `italic` / `bolditalic` 來自 Times New Roman，
+  `sans*` 來自 Arial，
+  `mono*` 來自 Consolas。
+- `arabic`
+  `regular` / `bold` 使用 Naskh，`italic` / `bolditalic` 使用 Ruqaa，`sans` / `sansbold` 使用 Noto Sans Arabic，`sansitalic` / `sansbolditalic` / `mono*` 使用 Noto Kufi Arabic。
+- `urdu`
+  Nastaliq 僅作為烏爾都文 family 的專用字體，不與 `arabic` 共用。
+
 ## 字體庫模型
 
 NexTeX 現在把 Git 倉庫與實際字體庫分開：

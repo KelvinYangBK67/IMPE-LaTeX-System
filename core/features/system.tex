@@ -6,11 +6,23 @@
 \RequirePackage{import}
 
 \makeatletter
-\newcommand{\FeatureRoot}{}
-\ifx\import@path\@undefined
-  \renewcommand{\FeatureRoot}{./}
+\@ifundefined{ifNextSystemInstalled}
+  {\newif\ifNextSystemInstalled\NextSystemInstalledfalse}
+  {}
+\providecommand{\NextSystemRoot}{}
+\newcommand{\FeatureModuleRoot}{}
+\ifNextSystemInstalled
+  \edef\FeatureModuleRoot{modules/features/}
 \else
-  \edef\FeatureRoot{\import@path}
+  \ifx\import@path\@undefined
+    \edef\FeatureModuleRoot{./modules/features/}
+  \else
+    \edef\FeatureModuleRoot{\import@path}
+    \StrSubstitute{\FeatureModuleRoot}{core/system/../features/}{modules/features/}[\FeatureModuleRoot]
+    \StrSubstitute{\FeatureModuleRoot}{core/features/}{modules/features/}[\FeatureModuleRoot]
+    \StrSubstitute{\FeatureModuleRoot}{package/../}{ }[\FeatureModuleRoot]
+    \StrSubstitute{\FeatureModuleRoot}{ }{}[\FeatureModuleRoot]
+  \fi
 \fi
 \makeatother
 
@@ -33,7 +45,7 @@
           { }
           {
             \prop_get:NnN \g__feature_catalog_path_prop {#1} \l_tmpa_tl
-            \use:x { \exp_not:N \input { \FeatureRoot \tl_use:N \l_tmpa_tl } }
+            \use:x { \exp_not:N \input { \FeatureModuleRoot \tl_use:N \l_tmpa_tl } }
             \prop_put:Nnn \g__feature_catalog_loaded_prop {#1} { loaded }
           }
       }
@@ -52,4 +64,8 @@
 
 \ExplSyntaxOff
 
-\subimport{../../catalog/}{features.tex}
+\ifNextSystemInstalled
+  \input{catalog/features.tex}
+\else
+  \subimport{../../catalog/}{features.tex}
+\fi

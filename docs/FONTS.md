@@ -150,6 +150,78 @@ This means:
 - CJK text uses the configured global CJK family
 - extra script families can then be loaded locally through `fonts = {...}`
 
+## Registered Families
+
+The current catalog registers the following families. `globalfonts = {...}` only loads global bindings; `fonts = {...}` loads the local command family when one exists.
+
+| Family id | Local command | Default mode | Global available | Notes |
+|---|---|---|---|---|
+| `cmu` | `-` | `global` | yes | CMU Latin family; no bundled local command |
+| `noto` | `NOT` | `local` | yes | Noto Latin family |
+| `times` | `TIM` | `local` | yes | Windows Times/Arial/Consolas bundle |
+| `gentium` | `GEN` | `local` | yes | Gentium Plus Latin family |
+| `charis` | `CHA` | `local` | yes | Charis SIL Latin family |
+| `anatolian` | `CA` | `local` | no | Carian |
+| `coptic` | `CO` | `local` | no | Coptic |
+| `bopomofo` | `ZY` | `local` | no | Bopomofo / Zhuyin |
+| `cuneiform` | `CU` | `local` | no | Cuneiform |
+| `glagolitic` | `GL` | `local` | no | Glagolitic |
+| `old_italic` | `OI` | `local` | no | Old Italic |
+| `runic` | `RU` | `local` | no | Runic |
+| `armenian` | `HY` | `local` | no | Armenian |
+| `hindi` | `HI` | `local` | no | Hindi |
+| `sanskrit` | `SA` | `local` | no | Sanskrit |
+| `tamil` | `TA` | `local` | no | Tamil |
+| `brahmi` | `BR` | `local` | no | Brahmi |
+| `georgian` | `KA` | `local` | no | Georgian |
+| `tibetan` | `TI` | `local` | no | Tibetan |
+| `arabic` | `AR` | `local` | no | Arabic |
+| `urdu` | `UR` | `local` | no | Urdu |
+| `aramaic` | `IA` | `local` | no | Imperial Aramaic |
+| `nabataean` | `NB` | `local` | no | Nabataean |
+| `hebrew` | `HE` | `local` | no | Hebrew |
+| `kharosthi` | `KH` | `local` | no | Kharosthi |
+| `pahlavi_parthian` | `PAR` | `local` | no | Inscriptional Parthian |
+| `pahlavi_inscriptional` | `PAH` | `local` | no | Inscriptional Pahlavi |
+| `pahlavi_psalter` | `PSP` | `local` | no | Psalter Pahlavi |
+| `avestan` | `AV` | `local` | no | Avestan |
+| `phoenician` | `PH` | `local` | no | Phoenician |
+| `samaritan` | `SM` | `local` | no | Samaritan |
+| `chinese_simplified` | `SC` | `local` | no | Simplified Chinese |
+| `chinese_traditional` | `TC` | `local` | no | Traditional Chinese |
+| `japanese` | `JP` | `local` | no | Japanese |
+| `shanggu` | `-` | `global` | yes | Global CJK family for Han text |
+| `sim` | `-` | `global` | yes | Windows CJK family |
+| `korean` | `KR` | `local` | no | Korean |
+| `tangut` | `TG` | `local` | no | Tangut |
+| `mongolian` | `MO` | `local` | no | Mongolian |
+| `vietnamese_quocngu` | `VI` | `local` | no | Vietnamese Quoc Ngu |
+| `vietnamese_hannom` | `HN` | `local` | no | Vietnamese Han-Nom |
+
+For the current Arabic-script split:
+- `arabic` uses Naskh for regular/bold, Ruqaa for italic/bolditalic, Noto Sans Arabic for `sans` / `sansbold`, and Noto Kufi Arabic for `sansitalic` / `sansbolditalic` / `mono*`.
+- `urdu` keeps Nastaliq as its dedicated local family.
+
+Families without a local command marker (`-`) are global-only in the current catalog.
+
+## Family Mapping Notes
+
+Only families with non-trivial internal mapping are listed here. Simple families that only provide the usual `regular` / `bold` / `italic` / `bolditalic` files are not repeated.
+
+- `shanggu`
+  This is a global Han/CJK family rather than a local command family. It is intended to cover the main Han text channels used in Chinese-facing layouts.
+- `sim`
+  This is the Windows-side global CJK fallback family. It serves the same role as a global Han/CJK binding rather than a local command family.
+- `times`
+  Uses a mixed Windows bundle rather than a single font family:
+  `regular` / `bold` / `italic` / `bolditalic` come from Times New Roman,
+  `sans*` comes from Arial,
+  and `mono*` comes from Consolas.
+- `arabic`
+  Uses Naskh for `regular` / `bold`, Ruqaa for `italic` / `bolditalic`, Noto Sans Arabic for `sans` / `sansbold`, and Noto Kufi Arabic for `sansitalic` / `sansbolditalic` / `mono*`.
+- `urdu`
+  Keeps Nastaliq as its dedicated local family and does not share that mapping with `arabic`.
+
 ## Font Library Model
 
 NexTeX now separates the Git repository from the actual font library:

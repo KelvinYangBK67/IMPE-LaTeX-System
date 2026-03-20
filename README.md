@@ -10,7 +10,10 @@
 - `assets/`: local runtime resources such as fonts
 
 Current release version:
-- `v0.1.0`
+- `v0.1.1`
+
+Release history:
+- [CHANGELOG.md](./CHANGELOG.md)
 
 ## Purpose
 
