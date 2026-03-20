@@ -70,6 +70,8 @@ function New-ReleasePackage {
         Copy-Item -Force (Join-Path (Join-Path $RepoRoot "package") $file) (Join-Path $StageRoot $file)
     }
 
+    Copy-Item -Force (Join-Path $RepoRoot "LICENSE") (Join-Path $StageRoot "LICENSE")
+
     Copy-Item -Force (Join-Path $ScriptRoot "install.ps1") (Join-Path $StageRoot "install.ps1")
     Copy-Item -Force (Join-Path $ScriptRoot "install.bat") (Join-Path $StageRoot "install.bat")
 
@@ -90,6 +92,13 @@ function New-ReleasePackage {
         $source = Join-Path $RepoRoot $dir
         if (Test-Path $source) {
             Copy-Item -Recurse -Force $source (Join-Path $StageRoot $dir)
+        }
+    }
+
+    if ($Flavor -eq "full") {
+        $FontLicensesDir = Join-Path $RepoRoot "font_licenses"
+        if (Test-Path $FontLicensesDir) {
+            Copy-Item -Recurse -Force $FontLicensesDir (Join-Path $StageRoot "font_licenses")
         }
     }
 
