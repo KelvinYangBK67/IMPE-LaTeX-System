@@ -57,6 +57,8 @@ Current modules:
   Pahlavi-specific shaping routing
 - `mongolian.tex`
   Mongolian-specific layout behavior, including `\MOV`
+- `khitan_small.tex`
+  Khitan Small Script cluster composer for LuaLaTeX
 
 ## Declaration Model
 
@@ -181,6 +183,7 @@ The current catalog registers the following families. `globalfonts = {...}` only
 | `nabataean` | `NB` | `local` | no | Nabataean |
 | `hebrew` | `HE` | `local` | no | Hebrew |
 | `kharosthi` | `KH` | `local` | no | Kharosthi |
+| `khitan_small` | `KHS` | `local` | no | Khitan Small Script |
 | `pahlavi_parthian` | `PAR` | `local` | no | Inscriptional Parthian |
 | `pahlavi_inscriptional` | `PAH` | `local` | no | Inscriptional Pahlavi |
 | `pahlavi_psalter` | `PSP` | `local` | no | Psalter Pahlavi |
@@ -221,6 +224,11 @@ Only families with non-trivial internal mapping are listed here. Simple families
   Uses Naskh for `regular` / `bold`, Ruqaa for `italic` / `bolditalic`, Noto Sans Arabic for `sans` / `sansbold`, and Noto Kufi Arabic for `sansitalic` / `sansbolditalic` / `mono*`.
 - `urdu`
   Keeps Nastaliq as its dedicated local family and does not share that mapping with `arabic`.
+- `khitan_small`
+  Correct stacked composition is currently supported under LuaLaTeX only. Input clusters are separated
+  by spaces; Type B inserts `U+16FE4 KHITAN SMALL SCRIPT FILLER` after the first character. Under
+  XeLaTeX, the family currently falls back to linear local font rendering and should not be relied
+  on for correct cluster stacking.
 
 ## Font Library Model
 

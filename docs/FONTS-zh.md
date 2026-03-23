@@ -57,6 +57,8 @@ core/fonts/system.tex
   Pahlavi 專用的 shaping routing
 - `mongolian.tex`
   蒙古文專用的版面行為，包括 `\MOV`
+- `khitan_small.tex`
+  契丹小字的 LuaLaTeX cluster composer
 
 ## 宣告模型
 
@@ -181,6 +183,7 @@ catalog/fonts.tex
 | `nabataean` | `NB` | `local` | 否 | 納巴泰文 |
 | `hebrew` | `HE` | `local` | 否 | 希伯來文 |
 | `kharosthi` | `KH` | `local` | 否 | 佉盧文 |
+| `khitan_small` | `KHS` | `local` | 否 | 契丹小字 |
 | `pahlavi_parthian` | `PAR` | `local` | 否 | 碑銘帕提亞文 |
 | `pahlavi_inscriptional` | `PAH` | `local` | 否 | 碑銘巴列維文 |
 | `pahlavi_psalter` | `PSP` | `local` | 否 | 詩篇巴列維文 |
@@ -221,6 +224,10 @@ catalog/fonts.tex
   `regular` / `bold` 使用 Naskh，`italic` / `bolditalic` 使用 Ruqaa，`sans` / `sansbold` 使用 Noto Sans Arabic，`sansitalic` / `sansbolditalic` / `mono*` 使用 Noto Kufi Arabic。
 - `urdu`
   Nastaliq 僅作為烏爾都文 family 的專用字體，不與 `arabic` 共用。
+- `khitan_small`
+  目前只有 LuaLaTeX 提供正確的契丹小字堆疊。輸入時以空格分隔 cluster；
+  Type B 則在首字後插入 `U+16FE4 KHITAN SMALL SCRIPT FILLER`。在 XeLaTeX 下，
+  目前會退回線性的 local font rendering，不能依賴其輸出正確的 cluster stacking。
 
 ## 字體庫模型
 

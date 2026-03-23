@@ -1,7 +1,18 @@
 % Behavior logic for the next-generation font system.
 % This layer owns inline/block behavior strategies, starting with RTL.
 
-\RequirePackage{bidi}
+\RequirePackage{iftex}
+\ifXeTeX
+  \RequirePackage{bidi}
+\else
+  \providecommand\RL[1]{#1}
+  \expandafter\ifx\csname RTL\endcsname\relax
+    \expandafter\def\csname RTL\endcsname{}
+  \fi
+  \expandafter\ifx\csname endRTL\endcsname\relax
+    \expandafter\def\csname endRTL\endcsname{}
+  \fi
+\fi
 
 \ExplSyntaxOn
 

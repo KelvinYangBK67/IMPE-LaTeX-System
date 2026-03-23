@@ -274,6 +274,26 @@
       { \tl_put_right:Nx #1 { Path = { \exp_not:V #2 } , } }
   }
 
+\cs_new_protected:Npn \__font_append_backend_options:N #1
+  {
+    \str_case:VnF \l__font_backend_tl
+      {
+        { generic } { }
+        { native } { }
+        { harfbuzz }
+          {
+            \sys_if_engine_luatex:T
+              { \tl_put_right:Nn #1 { Renderer = HarfBuzz, } }
+          }
+        { graphite }
+          {
+            \sys_if_engine_xetex:T
+              { \tl_put_right:Nn #1 { Renderer = Graphite, } }
+          }
+      }
+      { }
+  }
+
 \cs_new_protected:Npn \__font_set_feature_path_option:NV #1#2
   {
     \tl_clear:N #1
@@ -285,6 +305,7 @@
 \cs_new_protected:Npn \__font_build_main_options:
   {
     \tl_clear:N \l__font_main_options_tl
+    \__font_append_backend_options:N \l__font_main_options_tl
     \__font_append_path_option:NV \l__font_main_options_tl \l__font_path_tl
     \tl_put_right:Nx \l__font_main_options_tl
       { BoldFont = { \l__font_resolved_bold_tl }, }
@@ -307,6 +328,7 @@
 \cs_new_protected:Npn \__font_build_sans_options:
   {
     \tl_clear:N \l__font_sans_options_tl
+    \__font_append_backend_options:N \l__font_sans_options_tl
     \__font_append_path_option:NV \l__font_sans_options_tl \l__font_resolved_sans_path_tl
     \tl_put_right:Nx \l__font_sans_options_tl
       { BoldFont = { \l__font_resolved_sans_bold_tl }, }
@@ -329,6 +351,7 @@
 \cs_new_protected:Npn \__font_build_mono_options:
   {
     \tl_clear:N \l__font_mono_options_tl
+    \__font_append_backend_options:N \l__font_mono_options_tl
     \__font_append_path_option:NV \l__font_mono_options_tl \l__font_resolved_mono_path_tl
     \tl_put_right:Nx \l__font_mono_options_tl
       { BoldFont = { \l__font_resolved_mono_bold_tl }, }

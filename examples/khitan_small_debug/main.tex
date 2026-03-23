@@ -1,0 +1,57 @@
+% !TeX program = lualatex
+\documentclass[12pt]{nextart}
+
+\UseTemplateSet{
+  layout = en_doc,
+  globalfonts = {cmu},
+  fonts = {khitan_small}
+}
+
+\title{Khitan Small Script Debug}
+\author{NexTeX Debug}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Khitan Small Script Probe}
+
+This page tests Khitan Small Script cluster composition inside NexTeX.
+Use LuaLaTeX for correct stacked output; XeLaTeX currently falls back to linear rendering.
+Clusters are separated by spaces, and Type B inserts U+16FE4 KHITAN SMALL SCRIPT FILLER between
+the first and second characters.
+
+\bigskip
+
+\textbf{Type A cluster candidate}
+
+\medskip
+
+\KHS{𘬀𘬁𘬂𘬃𘬄𘬅}
+
+\bigskip
+
+\textbf{Type B cluster candidate (with U+16FE4 filler after the first character)}
+
+\medskip
+
+\KHS{𘬀𖿤𘬁𘬂𘬃 𘭔𖿤𘭢}
+
+\bigskip
+
+\textbf{Longer sequence}
+
+\medskip
+
+\KHS{𘬀𘬁𘬂𘬃𘬄𘬅𘬆𘬇}
+
+\bigskip
+
+\textbf{Known stacking sample}
+
+\medskip
+
+\KHS{𘰷𘭴 𘰝𘲥𘲦 𘲲𘯴𘱆 𘳍𘰄}
+
+\end{document}
