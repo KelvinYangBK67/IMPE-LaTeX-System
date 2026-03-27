@@ -229,14 +229,33 @@
 }
 
 \FontRegisterFamily{
-  id = old_italic,
+  id = italic,
   defaultmode = local,
   local = {
     command = OI,
-    name = old_italic_local,
-    path = \CatalogFontRoot/old_italic/,
+    name = italic_local,
+    path = \CatalogFontRoot/italic/,
     regular = NotoSansOldItalic-Regular.ttf,
     script = Latin,
+    maptextsf = true,
+    maptexttt = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = hungarian,
+  defaultmode = local,
+  local = {
+    command = OH,
+    name = hungarian_local,
+    path = \CatalogFontRoot/hungarian/,
+    regular = NotoSansOldHungarian-Regular.ttf,
+    scriptclass = complex,
+    inlinebehavior = rtl,
+    blockbehavior = rtl,
+    blockalign = right,
     maptextsf = true,
     maptexttt = true
   },
@@ -535,6 +554,64 @@
 }
 
 \FontRegisterFamily{
+  id = syriac,
+  defaultmode = local,
+  local = {
+    command = SY,
+    name = syriac_local,
+    path = \CatalogFontRoot/syriac/,
+    regular = SyrCOMEdessa.otf,
+    bold = SyrCOMMidyat.otf,
+    italic = SyrCOMJerusalem.otf,
+    bolditalic = SyrCOMJerusalemBold.otf,
+    sans = NotoSansSyriac-Regular.ttf,
+    sansbold = NotoSansSyriac-Bold.ttf,
+    sansitalic = NotoSansSyriacWestern-Regular.ttf,
+    sansbolditalic = NotoSansSyriacWestern-Bold.ttf,
+    scriptclass = complex,
+    specialmodule = generic_shaping,
+    script = Syriac,
+    inlinebehavior = rtl,
+    blockbehavior = rtl,
+    blockalign = right,
+    allowjoining = true,
+    enableshaping = true,
+    maptextsf = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = syriac_eastern,
+  defaultmode = local,
+  local = {
+    command = SYE,
+    name = syriac_eastern_local,
+    path = \CatalogFontRoot/syriac_eastern/,
+    regular = SyrCOMAdiabene.otf,
+    bold = SyrCOMCtesiphon.otf,
+    italic = SyrCOMJerusalem.otf,
+    bolditalic = SyrCOMJerusalemBold.otf,
+    sans = NotoSansSyriacEastern-Regular.ttf,
+    sansbold = NotoSansSyriacEastern-Bold.ttf,
+    sansitalic = NotoSansSyriacWestern-Regular.ttf,
+    sansbolditalic = NotoSansSyriacWestern-Bold.ttf,
+    scriptclass = complex,
+    specialmodule = generic_shaping,
+    script = Syriac,
+    inlinebehavior = rtl,
+    blockbehavior = rtl,
+    blockalign = right,
+    allowjoining = true,
+    enableshaping = true,
+    maptextsf = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
   id = kharosthi,
   defaultmode = local,
   local = {
@@ -563,6 +640,9 @@
     path = \CatalogFontRoot/khitan_small/,
     regular = NotoSerifKhitanSmallScript-Regular.ttf,
     specialmodule = khitan_small,
+    externalcommand = KHSi,
+    externalengine = lualatex,
+    externalrendercommand = KHSstackblock,
     maptextsf = true,
     maptexttt = true
   },
@@ -655,6 +735,29 @@
 }
 
 \FontRegisterFamily{
+  id = manichaean,
+  defaultmode = local,
+  local = {
+    command = MA,
+    name = manichaean_local,
+    path = \CatalogFontRoot/manichaean/,
+    regular = NotoSansManichaean-Regular.ttf,
+    features = { RawFeature = { script=mani } },
+    scriptclass = complex,
+    specialmodule = generic_shaping,
+    inlinebehavior = rtl,
+    blockbehavior = rtl,
+    blockalign = right,
+    allowjoining = true,
+    enableshaping = true,
+    maptextsf = true,
+    maptexttt = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
   id = phoenician,
   defaultmode = local,
   local = {
@@ -686,6 +789,48 @@
     scriptclass = complex,
     inlinebehavior = rtl,
     blockbehavior = rtl,
+    maptextsf = true,
+    maptexttt = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = sogdian,
+  defaultmode = local,
+  local = {
+    command = SG,
+    name = sogdian_local,
+    path = \CatalogFontRoot/sogdian/,
+    regular = NotoSansSogdian-Regular.ttf,
+    features = { RawFeature = { script=sogd } },
+    scriptclass = complex,
+    specialmodule = generic_shaping,
+    inlinebehavior = rtl,
+    blockbehavior = rtl,
+    blockalign = right,
+    allowjoining = true,
+    enableshaping = true,
+    maptextsf = true,
+    maptexttt = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = sogdian_old,
+  defaultmode = local,
+  local = {
+    command = SGO,
+    name = sogdian_old_local,
+    path = \CatalogFontRoot/sogdian_old/,
+    regular = NotoSansOldSogdian-Regular.ttf,
+    scriptclass = complex,
+    inlinebehavior = rtl,
+    blockbehavior = rtl,
+    blockalign = right,
     maptextsf = true,
     maptexttt = true
   },
@@ -850,9 +995,143 @@
     command = MO,
     name = mongolian_local,
     path = \CatalogFontRoot/mongolian/,
-    regular = NotoSansMongolian-Regular.ttf,
+    regular = mnglwhiteotf.ttf,
+    italic = mnglwritingotf.ttf,
+    bold = mngltitleotf.ttf,
+    bolditalic = mnglartotf.ttf,
+    sans = NotoSansMongolian-Regular.ttf,
     scriptclass = complex,
-    specialmodule = mongolian,
+    features = { RawFeature = { script=mong } },
+    specialmodule = vertical,
+    verticalstrategy = ltr,
+    maptextsf = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = mongolian_baiti,
+  defaultmode = local,
+  local = {
+    command = MOb,
+    name = mongolian_baiti_local,
+    path = \CatalogFontRoot/mongolian_baiti/,
+    regular = monbaiti.ttf,
+    scriptclass = complex,
+    features = { RawFeature = { script=mong } },
+    specialmodule = vertical,
+    verticalstrategy = ltr,
+    enableshaping = true,
+    maptextsf = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = manchu,
+  defaultmode = local,
+  local = {
+    command = MC,
+    name = manchu_local,
+    path = \CatalogFontRoot/manchu/,
+    regular = Ab-Xy.ttf,
+    bold = Ab-Xy_B.ttf,
+    sans = NotoSansMongolian-Regular.ttf,
+    scriptclass = complex,
+    features = { RawFeature = { script=mong } },
+    specialmodule = vertical,
+    verticalstrategy = ltr,
+    maptextsf = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = segoe,
+  defaultmode = local,
+  local = {
+    command = SEG,
+    name = segoe_local,
+    path = \CatalogFontRoot/segoe/,
+    regular = seguihis.ttf,
+    script = Brahmi,
+    language = Sanskrit,
+    scriptclass = complex,
+    specialmodule = generic_shaping,
+    enableshaping = true,
+    maptextsf = true,
+    maptexttt = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = thai,
+  defaultmode = local,
+  local = {
+    command = TH,
+    name = thai_local,
+    path = \CatalogFontRoot/thai/,
+    regular = NotoSerifThai-Regular.ttf,
+    bold = NotoSerifThai-Bold.ttf,
+    sans = NotoSansThaiLooped-Regular.ttf,
+    sansbold = NotoSansThaiLooped-Bold.ttf,
+    sansitalic = NotoSansThai-Regular.ttf,
+    sansbolditalic = NotoSansThai-Bold.ttf,
+    scriptclass = complex,
+    specialmodule = generic_shaping,
+    script = Thai,
+    language = Thai,
+    enableshaping = true,
+    maptextsf = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = turkic,
+  defaultmode = local,
+  local = {
+    command = OT,
+    name = turkic_local,
+    path = \CatalogFontRoot/turkic/,
+    regular = NotoSansOldTurkic-Regular.ttf,
+    scriptclass = complex,
+    inlinebehavior = rtl,
+    blockbehavior = rtl,
+    blockalign = right,
+    maptextsf = true,
+    maptexttt = true
+  },
+  globalkind = coverage,
+  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = uyghur,
+  defaultmode = local,
+  local = {
+    command = UY,
+    name = uyghur_local,
+    path = \CatalogFontRoot/uyghur/,
+    regular = NotoSerifOldUyghur-Regular.ttf,
+    scriptclass = complex,
+    features = { RawFeature = { script=ougr } },
+    specialmodule = vertical,
+    verticalstrategy = ltr,
+    verticalrotation = 90,
+    verticalorigin = rB,
+    verticaltopcorrection = 1em,
+    inlinebehavior = rtl,
+    blockbehavior = rtl,
+    blockalign = right,
+    allowjoining = true,
+    enableshaping = true,
     maptextsf = true
   },
   globalkind = coverage,

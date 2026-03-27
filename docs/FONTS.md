@@ -32,6 +32,31 @@ This layer owns the stable mechanics:
 - declaration interface
 - family registry behavior
 
+Current core files:
+
+- `system.tex`
+  Public entry for the font subsystem. It loads the defaults layer, the family registry, and `catalog/fonts.tex`.
+- `defaults.tex`
+  Loads the internal font layers and defines the default values for scope, script class, fallback mode, writing model, behavior, and backend.
+- `style.tex`
+  Resolves style fallback chains such as `bold`, `italic`, `bolditalic`, `sans*`, and `mono*`.
+- `writing.tex`
+  Defines and validates the writing model fields: inline axis, inline direction, and block progression.
+- `script.tex`
+  Applies the core defaults and validates script-class related state such as `scriptclass`, `preservespaces`, `allowjoining`, `enableshaping`, and backend choice.
+- `behavior.tex`
+  Defines inline/block behavior routing, currently including the normal and RTL behavior hooks.
+- `interface.tex`
+  The main declaration engine. It parses registered family fields, resolves concrete font options, defines public commands, and now also owns the built-in `generic_shaping` and `vertical` special routes.
+- `registry.tex`
+  Stores low-level declaration entries before they are turned into usable local/global families.
+- `registry_modes.tex`
+  Tracks family loading mode (`local` / `global`) and performs on-demand family activation.
+- `externalized.tex`
+  Provides the stable externalized-render pipeline used by commands such as `\KHSi`: cache naming, external subdocument generation, shell-out, and PDF reinsertion.
+- `helpers.tex`
+  Small shared helper primitives used by the font framework.
+
 ### `catalog/fonts.tex`
 
 This is the centralized registration file.
@@ -47,18 +72,20 @@ It declares:
 
 ### `modules/fonts/`
 
-This layer holds the current special font-support modules.
+This layer now holds only script-specific special implementations that are not part of the stable generic core.
 
 Current modules:
 
-- `generic_shaping.tex`
-  Shared light special support for current `indic`, `tibetan`, and `arabic` routes
 - `pahlavi.tex`
   Pahlavi-specific shaping routing
-- `mongolian.tex`
-  Mongolian-specific layout behavior, including `\MOV`
 - `khitan_small.tex`
   Khitan Small Script cluster composer for LuaLaTeX
+
+Notes:
+
+- `generic_shaping` is now built into `core/fonts/interface.tex`
+- `vertical` is now built into `core/fonts/interface.tex`
+- new families that only reuse those stable routes should normally be handled by registration, not by adding a new file under `modules/fonts/`
 
 ## Declaration Model
 
@@ -168,7 +195,8 @@ The current catalog registers the following families. `globalfonts = {...}` only
 | `bopomofo` | `ZY` | `local` | no | Bopomofo / Zhuyin |
 | `cuneiform` | `CU` | `local` | no | Cuneiform |
 | `glagolitic` | `GL` | `local` | no | Glagolitic |
-| `old_italic` | `OI` | `local` | no | Old Italic |
+| `italic` | `OI` | `local` | no | Old Italic |
+| `hungarian` | `OH` | `local` | no | Old Hungarian |
 | `runic` | `RU` | `local` | no | Runic |
 | `armenian` | `HY` | `local` | no | Armenian |
 | `hindi` | `HI` | `local` | no | Hindi |
@@ -182,14 +210,19 @@ The current catalog registers the following families. `globalfonts = {...}` only
 | `aramaic` | `IA` | `local` | no | Imperial Aramaic |
 | `nabataean` | `NB` | `local` | no | Nabataean |
 | `hebrew` | `HE` | `local` | no | Hebrew |
+| `syriac` | `SY` | `local` | no | Syriac |
+| `syriac_eastern` | `SYE` | `local` | no | Eastern Syriac |
 | `kharosthi` | `KH` | `local` | no | Kharosthi |
 | `khitan_small` | `KHS` | `local` | no | Khitan Small Script |
 | `pahlavi_parthian` | `PAR` | `local` | no | Inscriptional Parthian |
 | `pahlavi_inscriptional` | `PAH` | `local` | no | Inscriptional Pahlavi |
 | `pahlavi_psalter` | `PSP` | `local` | no | Psalter Pahlavi |
 | `avestan` | `AV` | `local` | no | Avestan |
+| `manichaean` | `MA` | `local` | no | Manichaean |
 | `phoenician` | `PH` | `local` | no | Phoenician |
 | `samaritan` | `SM` | `local` | no | Samaritan |
+| `sogdian` | `SG` | `local` | no | Sogdian |
+| `sogdian_old` | `SGO` | `local` | no | Old Sogdian |
 | `chinese_simplified` | `SC` | `local` | no | Simplified Chinese |
 | `chinese_traditional` | `TC` | `local` | no | Traditional Chinese |
 | `japanese` | `JP` | `local` | no | Japanese |
@@ -198,6 +231,12 @@ The current catalog registers the following families. `globalfonts = {...}` only
 | `korean` | `KR` | `local` | no | Korean |
 | `tangut` | `TG` | `local` | no | Tangut |
 | `mongolian` | `MO` | `local` | no | Mongolian |
+| `mongolian_baiti` | `MOb` | `local` | no | Mongolian Baiti |
+| `manchu` | `MC` | `local` | no | Manchu |
+| `segoe` | `SEG` | `local` | no | Segoe UI Historic |
+| `thai` | `TH` | `local` | no | Thai |
+| `turkic` | `OT` | `local` | no | Old Turkic |
+| `uyghur` | `UY` | `local` | no | Old Uyghur |
 | `vietnamese_quocngu` | `VI` | `local` | no | Vietnamese Quoc Ngu |
 | `vietnamese_hannom` | `HN` | `local` | no | Vietnamese Han-Nom |
 
@@ -300,17 +339,91 @@ This preserves compilation while making the missing-font state visible in the lo
 
 ## Current Special-Module Model
 
-The catalog now points directly to special support modules via:
+The catalog now points directly to special support logic via:
 
-- `specialmodule = generic_shaping`
-- `specialmodule = pahlavi`
-- `specialmodule = mongolian`
+- built-in special handlers in `core/fonts/interface.tex`
+  - `specialmodule = generic_shaping`
+  - `specialmodule = vertical`
+- script-specific modules under `modules/fonts/`
+  - `specialmodule = pahlavi`
+  - `specialmodule = khitan_small`
 
 This means:
 
 - there is no separate dispatch table file anymore
-- the catalog chooses the module directly
-- the interface loads that module on demand
+- the catalog chooses the special path directly
+- built-in capabilities are handled inside `core/fonts/interface.tex`
+- only genuinely script-specific logic remains under `modules/fonts/`
+
+## Mongolian Local Mapping and Redistribution
+
+The `mongolian` local family currently uses:
+
+- `regular = mnglwhiteotf.ttf`
+- `italic = mnglwritingotf.ttf`
+- `bold = mngltitleotf.ttf`
+- `bolditalic = mnglartotf.ttf`
+- `sans = NotoSansMongolian-Regular.ttf`
+
+`MO` remains the ordinary linear Mongolian local command, while `MOv` is the vertical variant built on top of the same local family.
+
+The `manchu` family follows the same vertical model:
+
+- `MC` is the ordinary linear command
+- `MCv` is the vertical variant
+
+The `uyghur` family also uses the vertical route:
+
+- `UY` is horizontal RTL
+- `UYv` is the vertical left-to-right variant
+
+Additional local-only Mongolian-family registrations:
+
+- `mongolian_baiti` provides `\MOb`
+  - `regular = monbaiti.ttf`
+  - local-only Microsoft font
+- `segoe` provides `\SEG`
+  - `regular = seguihis.ttf`
+  - local-only Microsoft font
+
+Important redistribution note:
+
+- the four `mngl*.ttf` files above are kept for local use but are **not** included in the public `full` release package
+- their redistribution status has not yet been confirmed clearly enough for public bundling
+- users who need them should obtain them from the original source themselves:
+  http://www.mongolfont.com/cn/font/index.html
+- `assets/fonts/mongolian_baiti/monbaiti.ttf` is a Microsoft font and is **not** included in the public `full` release package
+  - reference:
+    https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti
+- `assets/fonts/segoe/seguihis.ttf` is a Microsoft font and is **not** included in the public `full` release package
+  - reference:
+    https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
+
+## Syriac Local Mapping
+
+The `syriac` family uses:
+
+- `regular = SyrCOMEdessa.otf`
+- `bold = SyrCOMMidyat.otf`
+- `italic = SyrCOMJerusalem.otf`
+- `bolditalic = SyrCOMJerusalemBold.otf`
+- `sans = NotoSansSyriac-Regular.ttf`
+- `sansbold = NotoSansSyriac-Bold.ttf`
+- `sansitalic = NotoSansSyriacWestern-Regular.ttf`
+- `sansbolditalic = NotoSansSyriacWestern-Bold.ttf`
+
+The `syriac_eastern` family uses:
+
+- `regular = SyrCOMAdiabene.otf`
+- `bold = SyrCOMCtesiphon.otf`
+- `italic = SyrCOMJerusalem.otf`
+- `bolditalic = SyrCOMJerusalemBold.otf`
+- `sans = NotoSansSyriacEastern-Regular.ttf`
+- `sansbold = NotoSansSyriacEastern-Bold.ttf`
+- `sansitalic = NotoSansSyriacWestern-Regular.ttf`
+- `sansbolditalic = NotoSansSyriacWestern-Bold.ttf`
+
+The bundled `SyrCOM*.otf` files now have their license text stored under `font_licenses/`.
 
 ## Debug / Audit Entry
 

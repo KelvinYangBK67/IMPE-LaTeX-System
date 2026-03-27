@@ -28,6 +28,16 @@ This layer owns:
 - `\UseFeatures`
 - load-once control
 
+Current core files:
+
+- `system.tex`
+  The full feature subsystem entry. It defines the feature catalog storage, the public loading commands, load-once behavior, and then loads `catalog/features.tex`.
+
+At the moment, the feature subsystem is intentionally small. Unlike `fonts/` and
+`layout/`, it does not yet split into multiple internal helper files under
+`core/features/`; the stable loader logic currently lives in `system.tex`
+itself.
+
 ### `catalog/features.tex`
 
 This file maps public feature ids to module files.

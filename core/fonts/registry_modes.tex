@@ -98,7 +98,7 @@
     \prop_if_in:NnTF \g__font_family_loaded_prop { #1 / #2 }
       { }
       {
-        \tl_set:Nx \l_tmpb_tl { scope = #2, \exp_not:n {#3} }
+        \tl_set:Nx \l_tmpb_tl { scope = #2, familyid = #1, \exp_not:n {#3} }
         \exp_args:NV \FontDeclare \l_tmpb_tl
         \prop_put:Nnn \g__font_family_loaded_prop { #1 / #2 } { loaded }
       }

@@ -20,6 +20,7 @@
 - `I.Ming-8.10.ttf` 使用的是 IPA Font License，不屬於 OFL。
 - `NomNaTong-Regular.ttf` 使用的是 MIT License，不屬於 OFL。
 - 下方列出的兩款 Tangut 字體，其可再分發授權文本目前仍未確認，應單獨看待。
+- 下方列出的四款蒙古文 `mngl*.ttf` 字體，其可再分發狀態目前也仍不夠明確，應單獨看待。
 
 目前內容：
 
@@ -27,6 +28,8 @@
   對應 `assets/fonts/bopomofo/I.Ming-8.10.ttf` 的授權全文
 - `NomNaTong-MIT-LICENSE.md`
   對應 `assets/fonts/vietnamese_hannom/NomNaTong-Regular.ttf` 的 MIT 授權全文
+- `SyrCOM-license.txt`
+  對應 bundled `assets/fonts/syriac/SyrCOM*.otf` 的授權全文
 
 參考譯文：
 
@@ -44,11 +47,23 @@
 
 - `assets/fonts/tangut/Tangut N4694 V3.10.ttf`
 - `assets/fonts/tangut/new Tangut Std V2.008.ttf`
+- `assets/fonts/mongolian/mnglwhiteotf.ttf`
+- `assets/fonts/mongolian/mnglwritingotf.ttf`
+- `assets/fonts/mongolian/mngltitleotf.ttf`
+- `assets/fonts/mongolian/mnglartotf.ttf`
+- `assets/fonts/mongolian_baiti/monbaiti.ttf`
+- `assets/fonts/segoe/seguihis.ttf`
 
 這兩款字體目前未隨倉庫附上可明確辨識的授權全文。
 若要在本專案之外再分發、公開或另作使用，請使用者自行確認其原始來源與適用授權條款。
 如需使用這兩款西夏文字體，也請使用者自行由原始來源取得：
 http://ccamc.org/fonts_tangut.php
+如需使用上述四款蒙古文字體，也請使用者自行由原始來源取得：
+http://www.mongolfont.com/cn/font/index.html
+如需使用 `monbaiti.ttf`，也請使用者自行由微軟頁面取得：
+https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti
+如需使用 `seguihis.ttf`，也請使用者自行由微軟頁面取得：
+https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
 基於這個原因，它們也已從公開的 `full` release 套件中排除。
 
 之後如果還有其他第三方字體需要附上完整授權或額外再分發聲明，也可以繼續放在這個目錄中。

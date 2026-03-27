@@ -12,6 +12,7 @@ $PackageRoot = Join-Path $TexmfRoot "tex\latex\nextsystem"
 $RuntimeFiles = @(
     "system.tex",
     "nextsystem.sty",
+    "nextsystem-externalized-render.ps1",
     "nextart.cls",
     "nextart_zh.cls",
     "nextbook.cls",

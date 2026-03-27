@@ -20,6 +20,7 @@ Current licensing summary:
 - `I.Ming-8.10.ttf` is distributed under the IPA Font License, not OFL.
 - `NomNaTong-Regular.ttf` is distributed under the MIT License, not OFL.
 - The exact redistribution license texts for the two Tangut fonts listed below have not yet been confirmed and should be treated separately.
+- The exact redistribution status of the four bundled-local Mongolian `mngl*.ttf` fonts has also not yet been confirmed clearly enough for public release packaging.
 
 Current contents:
 
@@ -27,6 +28,8 @@ Current contents:
   License text for `assets/fonts/bopomofo/I.Ming-8.10.ttf`
 - `NomNaTong-MIT-LICENSE.md`
   MIT license text for `assets/fonts/vietnamese_hannom/NomNaTong-Regular.ttf`
+- `SyrCOM-license.txt`
+  License text for the bundled `assets/fonts/syriac/SyrCOM*.otf` files
 
 Reference translation:
 
@@ -44,11 +47,23 @@ Unresolved fonts excluded from public release packaging:
 
 - `assets/fonts/tangut/Tangut N4694 V3.10.ttf`
 - `assets/fonts/tangut/new Tangut Std V2.008.ttf`
+- `assets/fonts/mongolian/mnglwhiteotf.ttf`
+- `assets/fonts/mongolian/mnglwritingotf.ttf`
+- `assets/fonts/mongolian/mngltitleotf.ttf`
+- `assets/fonts/mongolian/mnglartotf.ttf`
+- `assets/fonts/mongolian_baiti/monbaiti.ttf`
+- `assets/fonts/segoe/seguihis.ttf`
 
 Their exact redistribution license texts are not currently bundled in this repository.
 Users should verify the original source and applicable license terms themselves before redistribution or reuse outside this project context.
 If users need these Tangut fonts, they should obtain them from the original source themselves:
 http://ccamc.org/fonts_tangut.php
+If users need the four Mongolian `mngl*.ttf` fonts, they should obtain them from the original source themselves:
+http://www.mongolfont.com/cn/font/index.html
+If users need `monbaiti.ttf`, they should obtain it themselves from:
+https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti
+If users need `seguihis.ttf`, they should obtain it themselves from:
+https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
 They are excluded from the public `full` release package for this reason.
 
 This directory can be extended later for other third-party fonts whose licenses require inclusion of the full text or additional notices.

@@ -12,6 +12,45 @@
 The installable public entry files live under `package/`.
 Release and install tooling lives under `scripts/`.
 
+## Layer Roles
+
+### `core/`
+
+This layer holds the stable framework logic that should not need to change when
+new families, presets, or features are added. In practice:
+
+- `core/fonts/` owns the font declaration engine, fallback resolution, writing
+  model, behavior routing, family registry behavior, externalized rendering,
+  and the built-in generic routes such as `generic_shaping` and `vertical`
+- `core/layout/` owns class detection, preset application, component loading,
+  and layout registry behavior
+- `core/features/` owns the feature catalog loader and `\UseFeature` /
+  `\UseFeatures`
+
+### `catalog/`
+
+This layer holds the centralized public registrations:
+
+- `catalog/fonts.tex`
+- `catalog/layouts.tex`
+- `catalog/features.tex`
+
+These files define the public ids and metadata that the core loaders consume.
+
+### `modules/`
+
+This layer now holds only extendable, script-specific, or feature-specific
+implementations that are not part of the stable generic core. Examples include:
+
+- `modules/fonts/khitan_small.tex`
+- `modules/fonts/pahlavi.tex`
+- files under `modules/features/`
+
+### `assets/`
+
+This layer holds bundled resources, mainly the local font library under
+`assets/fonts/`.
+
 ## Public Entry Layers
 
 There are two practical entry modes.

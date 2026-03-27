@@ -15,12 +15,12 @@
 
 \ifNextSystemInstalled
   \input{core/layout/class.tex}
-  \input{core/layout/modules.tex}
+  \input{modules/layout/components.tex}
   \input{core/layout/preset.tex}
   \input{core/layout/registry.tex}
 \else
   \subimport{./}{class.tex}
-  \subimport{./}{modules.tex}
+  \subimport{../../modules/layout/}{components.tex}
   \subimport{./}{preset.tex}
   \subimport{./}{registry.tex}
 \fi

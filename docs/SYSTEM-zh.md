@@ -12,6 +12,45 @@
 可安裝的公開入口檔案位於 `package/`。
 release 與安裝工具位於 `scripts/`。
 
+## 分層職責
+
+### `core/`
+
+這一層保存穩定框架邏輯。理想情況下，新增新的 family、preset 或 feature
+時，不應該需要改這一層。本層目前大致包括：
+
+- `core/fonts/`
+  負責字體宣告引擎、fallback 解析、writing model、behavior routing、
+  family registry 行為、externalized rendering，以及目前已內建的
+  `generic_shaping`、`vertical` 等穩定 route
+- `core/layout/`
+  負責 class 偵測、preset 套用、component 載入與 layout registry 行為
+- `core/features/`
+  負責 feature catalog loader，以及 `\UseFeature` / `\UseFeatures`
+
+### `catalog/`
+
+這一層保存集中式的公開註冊表：
+
+- `catalog/fonts.tex`
+- `catalog/layouts.tex`
+- `catalog/features.tex`
+
+這些檔案定義公開 id 與 metadata，供 core loader 消費。
+
+### `modules/`
+
+這一層現在只保留那些不屬於穩定 generic core、而且帶有 script-specific
+或 feature-specific 實作的可擴展檔案。例如：
+
+- `modules/fonts/khitan_small.tex`
+- `modules/fonts/pahlavi.tex`
+- `modules/features/` 底下的各 feature 實作
+
+### `assets/`
+
+這一層保存 bundled 資源，最主要的是 `assets/fonts/` 之下的本地字體庫。
+
 ## 公開入口層
 
 目前有兩種實際使用方式。

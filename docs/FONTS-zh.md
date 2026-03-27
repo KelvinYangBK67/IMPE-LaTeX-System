@@ -32,6 +32,31 @@ core/fonts/system.tex
 - 宣告介面
 - family registry 行為
 
+目前的 core 檔案分工如下：
+
+- `system.tex`
+  字體子系統的公開入口。它會載入 defaults 層、family registry，以及 `catalog/fonts.tex`。
+- `defaults.tex`
+  載入內部各層邏輯，並定義 scope、script class、fallback mode、writing model、behavior、backend 等預設值。
+- `style.tex`
+  負責樣式 fallback 鏈的解析，例如 `bold`、`italic`、`bolditalic`、`sans*`、`mono*`。
+- `writing.tex`
+  定義並驗證 writing model 相關欄位：inline axis、inline direction、block progression。
+- `script.tex`
+  套用 core 預設值，並驗證 `scriptclass`、`preservespaces`、`allowjoining`、`enableshaping`、backend 等 script-class 相關狀態。
+- `behavior.tex`
+  定義 inline / block 行為路由，目前包括一般行為與 RTL 行為 hook。
+- `interface.tex`
+  主要的宣告引擎。它負責解析 family 註冊欄位、解析實際字體選項、定義 public commands，並且現在也內建了 `generic_shaping` 與 `vertical` 兩條穩定 special route。
+- `registry.tex`
+  保存底層 declaration entry，之後再把它們轉成可使用的 local / global family。
+- `registry_modes.tex`
+  追蹤 family 的載入模式（`local` / `global`），並負責 on-demand family activation。
+- `externalized.tex`
+  提供穩定的 externalized render 管線，例如 `\KHSi` 會用到的快取命名、外部子文件生成、shell-out 與 PDF 嵌回。
+- `helpers.tex`
+  提供字體框架共用的小型 helper primitive。
+
 ### `catalog/fonts.tex`
 
 這是集中式字體註冊表。
@@ -47,18 +72,20 @@ core/fonts/system.tex
 
 ### `modules/fonts/`
 
-這一層保存目前的特殊字體支持模組。
+這一層現在只保留那些不屬於穩定 generic core、而且帶有 script-specific 實作的特殊字體支持模組。
 
 目前模組包括：
 
-- `generic_shaping.tex`
-  目前供 `indic`、`tibetan`、`arabic` 路線共用的輕 special support
 - `pahlavi.tex`
   Pahlavi 專用的 shaping routing
-- `mongolian.tex`
-  蒙古文專用的版面行為，包括 `\MOV`
 - `khitan_small.tex`
   契丹小字的 LuaLaTeX cluster composer
+
+補充說明：
+
+- `generic_shaping` 現在已經內建在 `core/fonts/interface.tex`
+- `vertical` 現在也已經內建在 `core/fonts/interface.tex`
+- 對於只需要重用這些穩定 route 的新 family，正常情況下應該只改註冊，不需要再往 `modules/fonts/` 新增檔案
 
 ## 宣告模型
 
@@ -168,7 +195,8 @@ catalog/fonts.tex
 | `bopomofo` | `ZY` | `local` | 否 | 注音 / Bopomofo |
 | `cuneiform` | `CU` | `local` | 否 | 楔形文字 |
 | `glagolitic` | `GL` | `local` | 否 | 格拉哥里字母 |
-| `old_italic` | `OI` | `local` | 否 | 古意大利字母 |
+| `italic` | `OI` | `local` | 否 | 古意大利字母 |
+| `hungarian` | `OH` | `local` | 否 | 古匈牙利字母 |
 | `runic` | `RU` | `local` | 否 | 如尼字母 |
 | `armenian` | `HY` | `local` | 否 | 亞美尼亞文 |
 | `hindi` | `HI` | `local` | 否 | 印地語 |
@@ -182,14 +210,19 @@ catalog/fonts.tex
 | `aramaic` | `IA` | `local` | 否 | 帝國亞蘭文 |
 | `nabataean` | `NB` | `local` | 否 | 納巴泰文 |
 | `hebrew` | `HE` | `local` | 否 | 希伯來文 |
+| `syriac` | `SY` | `local` | 否 | 敘利亞文 |
+| `syriac_eastern` | `SYE` | `local` | 否 | 東敘利亞文 |
 | `kharosthi` | `KH` | `local` | 否 | 佉盧文 |
 | `khitan_small` | `KHS` | `local` | 否 | 契丹小字 |
 | `pahlavi_parthian` | `PAR` | `local` | 否 | 碑銘帕提亞文 |
 | `pahlavi_inscriptional` | `PAH` | `local` | 否 | 碑銘巴列維文 |
 | `pahlavi_psalter` | `PSP` | `local` | 否 | 詩篇巴列維文 |
 | `avestan` | `AV` | `local` | 否 | 阿維斯陀文 |
+| `manichaean` | `MA` | `local` | 否 | 摩尼文字 |
 | `phoenician` | `PH` | `local` | 否 | 腓尼基文 |
 | `samaritan` | `SM` | `local` | 否 | 撒馬利亞文 |
+| `sogdian` | `SG` | `local` | 否 | 粟特文 |
+| `sogdian_old` | `SGO` | `local` | 否 | 古粟特文 |
 | `chinese_simplified` | `SC` | `local` | 否 | 簡體中文 |
 | `chinese_traditional` | `TC` | `local` | 否 | 繁體中文 |
 | `japanese` | `JP` | `local` | 否 | 日文 |
@@ -198,6 +231,12 @@ catalog/fonts.tex
 | `korean` | `KR` | `local` | 否 | 韓文 |
 | `tangut` | `TG` | `local` | 否 | 西夏文 |
 | `mongolian` | `MO` | `local` | 否 | 蒙古文 |
+| `mongolian_baiti` | `MOb` | `local` | 否 | Mongolian Baiti |
+| `manchu` | `MC` | `local` | 否 | 滿文 |
+| `segoe` | `SEG` | `local` | 否 | Segoe UI Historic |
+| `thai` | `TH` | `local` | 否 | 泰文 |
+| `turkic` | `OT` | `local` | 否 | 古突厥文 |
+| `uyghur` | `UY` | `local` | 否 | 古回鶻文 |
 | `vietnamese_quocngu` | `VI` | `local` | 否 | 越南語國語字 |
 | `vietnamese_hannom` | `HN` | `local` | 否 | 越南漢喃 |
 
@@ -299,17 +338,94 @@ NexTeX 目前支援兩種字體 fallback 模式：
 
 ## 目前的特殊模組模型
 
-現在註冊表直接透過下列欄位指向特殊支持模組：
+現在註冊表直接透過下列欄位指向特殊支持邏輯：
 
-- `specialmodule = generic_shaping`
-- `specialmodule = pahlavi`
-- `specialmodule = mongolian`
+- 內建於 `core/fonts/interface.tex` 的特殊能力
+  - `specialmodule = generic_shaping`
+  - `specialmodule = vertical`
+- 仍保留在 `modules/fonts/` 的 script-specific 模組
+  - `specialmodule = pahlavi`
+  - `specialmodule = khitan_small`
 
 這代表：
 
 - 已經沒有額外的 dispatch table 檔案
-- 註冊表直接決定使用哪個模組
-- 介面層會在需要時按需載入該模組
+- 註冊表直接決定使用哪條特殊路徑
+- 穩定且通用的能力已內建在 `core/fonts/interface.tex`
+- 只有真正 script-specific 的邏輯才繼續留在 `modules/fonts/`
+
+## 蒙古文區域字體映射與分發說明
+
+目前 `mongolian` 的區域字體族映射如下：
+
+- `regular = mnglwhiteotf.ttf`
+- `italic = mnglwritingotf.ttf`
+- `bold = mngltitleotf.ttf`
+- `bolditalic = mnglartotf.ttf`
+- `sans = NotoSansMongolian-Regular.ttf`
+
+其中：
+
+- `MO` 是普通的線性蒙古文字體命令
+- `MOv` 是建立在同一字體族之上的豎排變體
+
+`manchu` 採用同樣的 vertical 模型：
+
+- `MC` 是普通線性命令
+- `MCv` 是豎排變體
+
+`uyghur` 也採用 vertical 路線：
+
+- `UY` 是橫排 RTL 命令
+- `UYv` 是豎排、由左往右排列的變體
+
+另外新增兩個本地專用字體註冊：
+
+- `mongolian_baiti` 對應 `\MOb`
+  - `regular = monbaiti.ttf`
+  - 微軟字體，只供本地使用
+- `segoe` 對應 `\SEG`
+  - `regular = seguihis.ttf`
+  - 微軟字體，只供本地使用
+
+重要的再分發說明：
+
+- 上述四款 `mngl*.ttf` 字體目前只保留作本地使用
+- 由於其授權／可再分發狀態目前仍不夠明確，**不會**放進公開的 `full` release 套件
+- 如需使用，請使用者自行由原始來源取得：
+  http://www.mongolfont.com/cn/font/index.html
+- `assets/fonts/mongolian_baiti/monbaiti.ttf` 屬於微軟字體，**不會**放進公開的 `full` release 套件
+  - 參考頁面：
+    https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti
+- `assets/fonts/segoe/seguihis.ttf` 屬於微軟字體，**不會**放進公開的 `full` release 套件
+  - 參考頁面：
+    https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
+
+## Syriac 區域字體映射
+
+`syriac` family 使用：
+
+- `regular = SyrCOMEdessa.otf`
+- `bold = SyrCOMMidyat.otf`
+- `italic = SyrCOMJerusalem.otf`
+- `bolditalic = SyrCOMJerusalemBold.otf`
+- `sans = NotoSansSyriac-Regular.ttf`
+- `sansbold = NotoSansSyriac-Bold.ttf`
+- `sansitalic = NotoSansSyriacWestern-Regular.ttf`
+- `sansbolditalic = NotoSansSyriacWestern-Bold.ttf`
+
+`syriac_eastern` family 使用：
+
+- `regular = SyrCOMAdiabene.otf`
+- `bold = SyrCOMCtesiphon.otf`
+- `italic = SyrCOMJerusalem.otf`
+- `bolditalic = SyrCOMJerusalemBold.otf`
+- `sans = NotoSansSyriacEastern-Regular.ttf`
+- `sansbold = NotoSansSyriacEastern-Bold.ttf`
+- `sansitalic = NotoSansSyriacWestern-Regular.ttf`
+- `sansbolditalic = NotoSansSyriacWestern-Bold.ttf`
+
+目前 `SyrCOM*.otf` 的授權全文已整理到 `font_licenses/` 目錄中。
 
 ## 除錯 / 稽核入口
 

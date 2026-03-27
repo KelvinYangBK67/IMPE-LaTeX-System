@@ -44,6 +44,11 @@
 \tl_new:N \l__font_mono_options_tl
 \tl_new:N \l__font_feature_options_tl
 \tl_new:N \l__font_special_entry_tl
+\tl_new:N \l__font_decl_family_id_tl
+\tl_new:N \l__font_external_command_tl
+\tl_new:N \l__font_external_engine_tl
+\tl_new:N \l__font_external_render_command_tl
+\tl_new:N \l__font_external_clusterwise_tl
 \bool_new:N \l__font_use_latex_fallback_bool
 \bool_new:N \l__font_nextsystem_installed_bool
 \bool_new:N \l__font_reapply_style_bool
@@ -88,6 +93,11 @@
     \tl_clear:N \l__font_command_tl
     \tl_clear:N \l__font_special_module_tl
     \tl_clear:N \l__font_missing_face_tl
+    \tl_clear:N \l__font_decl_family_id_tl
+    \tl_clear:N \l__font_external_command_tl
+    \tl_clear:N \l__font_external_engine_tl
+    \tl_clear:N \l__font_external_render_command_tl
+    \tl_clear:N \l__font_external_clusterwise_tl
     \tl_clear:N \l__font_backend_tl
     \tl_clear:N \l__font_script_class_tl
     \tl_clear:N \l__font_scope_tl
@@ -145,17 +155,58 @@
     blockbehavior .tl_set:N = \l__font_block_behavior_tl,
     blockalign   .tl_set:N = \l__font_block_align_tl,
     verticalstrategy .tl_set:N = \l__font_vertical_strategy_tl,
+    verticalrotation .tl_set:N = \l__font_vertical_rotation_override_tl,
+    verticalorigin .tl_set:N = \l__font_vertical_origin_override_tl,
+    verticaltopcorrection .tl_set:N = \l__font_vertical_top_correction_override_tl,
     features     .tl_set:N = \l__font_features_tl,
     command      .tl_set:N = \l__font_command_tl,
+    familyid     .tl_set:N = \l__font_decl_family_id_tl,
     backend      .tl_set:N = \l__font_backend_tl,
     fallbackmode .tl_set:N = \l__font_fallback_mode_tl,
     specialmodule .tl_set:N = \l__font_special_module_tl,
     specialbuilder .tl_set:N = \l__font_special_module_tl,
+    externalcommand .tl_set:N = \l__font_external_command_tl,
+    externalengine .tl_set:N = \l__font_external_engine_tl,
+    externalrendercommand .tl_set:N = \l__font_external_render_command_tl,
+    externalclusterwise .tl_set:N = \l__font_external_clusterwise_tl,
   }
 
 \cs_new_protected:Npn \__font_special_use_generic:
   {
     \__font_define_local_families_generic:
+  }
+
+\prg_new_conditional:Npnn \__font_special_is_builtin:n #1 { TF }
+  {
+    \str_case:nnF {#1}
+      {
+        { generic_shaping } { \prg_return_true: }
+        { indic } { \prg_return_true: }
+        { tibetan } { \prg_return_true: }
+        { arabic } { \prg_return_true: }
+        { vertical } { \prg_return_true: }
+      }
+      { \prg_return_false: }
+  }
+
+\cs_new_protected:Npn \__font_define_special_generic_shaping:
+  {
+    \__font_special_use_generic:
+  }
+
+\cs_new_protected:Npn \__font_define_special_indic:
+  {
+    \__font_define_special_generic_shaping:
+  }
+
+\cs_new_protected:Npn \__font_define_special_tibetan:
+  {
+    \__font_define_special_generic_shaping:
+  }
+
+\cs_new_protected:Npn \__font_define_special_arabic:
+  {
+    \__font_define_special_generic_shaping:
   }
 
 \cs_new_protected:Npn \__font_note_missing_face:nn #1#2
@@ -221,30 +272,46 @@
     \exp_args:NVV \__font_define_public_command:nn
       \l__font_command_tl
       \l__font_name_tl
+    \tl_if_blank:VF \l__font_external_command_tl
+      {
+        \use:x
+          {
+            \exp_not:N \__font_define_externalized_command:nnnnn
+              { \tl_use:N \l__font_external_command_tl }
+              { \tl_use:N \l__font_external_engine_tl }
+              { \tl_use:N \l__font_decl_family_id_tl }
+              { \tl_use:N \l__font_external_render_command_tl }
+              { \tl_use:N \l__font_external_clusterwise_tl }
+          }
+      }
   }
 
 \cs_new_protected:Npn \__font_define_special_local:
   {
-    \seq_if_in:NVF \g__font_loaded_special_modules_seq \l__font_special_module_tl
+    \exp_args:NV \__font_special_is_builtin:nTF \l__font_special_module_tl
+      { }
       {
-        \bool_if:NTF \l__font_nextsystem_installed_bool
+        \seq_if_in:NVF \g__font_loaded_special_modules_seq \l__font_special_module_tl
           {
-            \use:x
+            \bool_if:NTF \l__font_nextsystem_installed_bool
               {
-                \exp_not:N \subimport
-                  { modules/fonts/ }
-                  { \l__font_special_module_tl .tex }
+                \use:x
+                  {
+                    \exp_not:N \subimport
+                      { modules/fonts/ }
+                      { \l__font_special_module_tl .tex }
+                  }
               }
-          }
-          {
-            \use:x
               {
-                \exp_not:N \subimport
-                  { ../../modules/fonts/ }
-                  { \l__font_special_module_tl .tex }
+                \use:x
+                  {
+                    \exp_not:N \subimport
+                      { ../../modules/fonts/ }
+                      { \l__font_special_module_tl .tex }
+                  }
               }
+            \seq_gput_right:NV \g__font_loaded_special_modules_seq \l__font_special_module_tl
           }
-        \seq_gput_right:NV \g__font_loaded_special_modules_seq \l__font_special_module_tl
       }
     \tl_set:Nx \l__font_special_entry_tl
       { __font_define_special_\l__font_special_module_tl : }
@@ -444,6 +511,275 @@
       }
   }
 
+\tl_new:N \l__font_vertical_embed_gap_tl
+\tl_new:N \l__font_vertical_base_command_tl
+\tl_new:N \l__font_vertical_base_name_tl
+\tl_new:N \l__font_vertical_flow_tl
+\tl_new:N \l__font_vertical_rotation_angle_tl
+\tl_new:N \l__font_vertical_rotation_origin_tl
+\tl_clear_new:N \l__font_vertical_rotation_override_tl
+\tl_clear_new:N \l__font_vertical_origin_override_tl
+\tl_clear_new:N \l__font_vertical_top_correction_override_tl
+\tl_new:N \l__font_vertical_content_tl
+\tl_new:N \l__font_vertical_style_family_tl
+\tl_new:N \l__font_vertical_style_series_tl
+\tl_new:N \l__font_vertical_style_shape_tl
+\tl_new:N \l__font_vertical_style_setup_tl
+\bool_new:N \l__font_vertical_first_word_bool
+\dim_new:N \l__font_vertical_embed_top_correction_dim
+\dim_new:N \l__font_vertical_embed_bottom_padding_dim
+\dim_new:N \l__font_vertical_embed_height_dim
+\dim_new:N \l__font_vertical_embed_depth_dim
+\box_new:N \l__font_vertical_embed_box
+\box_new:N \l__font_vertical_source_box
+
+\cs_new_protected:Npn \__font_vertical_use_base:n #1
+  {
+    \use:c { __font_space_policy_\l__font_vertical_base_name_tl : }
+    \use:c { __font_map_sf_\l__font_vertical_base_name_tl : }
+    \use:c { __font_map_tt_\l__font_vertical_base_name_tl : }
+    \str_case:VnF \l__font_vertical_style_family_tl
+      {
+        { sans } { \use:c { __fontsf_\l__font_vertical_base_name_tl } }
+        { mono } { \use:c { __fonttt_\l__font_vertical_base_name_tl } }
+      }
+      { \use:c { __fontrm_\l__font_vertical_base_name_tl } }
+    \bool_set_false:N \l__font_reapply_style_bool
+    \str_if_eq:eeF { \use:c { f@series } } { \mddefault }
+      {
+        \exp_args:Nx \fontseries { \use:c { f@series } }
+        \bool_set_true:N \l__font_reapply_style_bool
+      }
+    \str_if_eq:eeF { \use:c { f@shape } } { \updefault }
+      {
+        \exp_args:Nx \fontshape { \use:c { f@shape } }
+        \bool_set_true:N \l__font_reapply_style_bool
+      }
+    \bool_if:NT \l__font_reapply_style_bool
+      { \selectfont }
+    #1
+  }
+
+\cs_new_protected:Npn \__font_vertical_emit_word:n #1
+  {
+    \tl_if_blank:nF {#1}
+      {
+        \bool_if:NF \l__font_vertical_first_word_bool
+          {
+            \nobreak
+            \hskip \l__font_vertical_embed_gap_tl \relax
+            \allowbreak
+          }
+        \bool_set_false:N \l__font_vertical_first_word_bool
+        \__font_vertical_embed_word:nn { 0pt } {#1}
+      }
+  }
+
+\cs_new_protected:Npn \__font_vertical_emit_words_forward:n #1
+  {
+    \bool_set_true:N \l__font_vertical_first_word_bool
+    \regex_split:nnN { \s+ } {#1} \l_tmpa_seq
+    \seq_map_inline:Nn \l_tmpa_seq
+      { \__font_vertical_emit_word:n {##1} }
+  }
+
+\cs_new_protected:Npn \__font_vertical_emit_words_reverse:n #1
+  {
+    \bool_set_true:N \l__font_vertical_first_word_bool
+    \regex_split:nnN { \s+ } {#1} \l_tmpa_seq
+    \seq_map_inline_reverse:Nn \l_tmpa_seq
+      { \__font_vertical_emit_word:n {##1} }
+  }
+
+\cs_new_protected:Npn \__font_vertical_style_reset:
+  {
+    \tl_clear:N \l__font_vertical_style_family_tl
+    \tl_clear:N \l__font_vertical_style_series_tl
+    \tl_clear:N \l__font_vertical_style_shape_tl
+    \tl_clear:N \l__font_vertical_style_setup_tl
+  }
+
+\cs_new_protected:Npn \__font_vertical_finalize_argument:
+  {
+    \tl_clear:N \l__font_vertical_style_setup_tl
+    \tl_if_blank:VF \l__font_vertical_style_series_tl
+      { \tl_put_right:NV \l__font_vertical_style_setup_tl \l__font_vertical_style_series_tl }
+    \tl_if_blank:VF \l__font_vertical_style_shape_tl
+      { \tl_put_right:NV \l__font_vertical_style_setup_tl \l__font_vertical_style_shape_tl }
+  }
+
+\cs_new_protected:Npn \__font_vertical_prepare_argument:n #1
+  {
+    \__font_vertical_style_reset:
+    \tl_set:Nn \l__font_vertical_content_tl {#1}
+    \__font_vertical_unwrap_loop:
+  }
+
+\cs_new_protected:Npn \__font_vertical_unwrap_loop:
+  {
+    \tl_if_head_eq_meaning:VNTF \l__font_vertical_content_tl \textsf
+      { \__font_vertical_unwrap_textsf: }
+      {
+        \tl_if_head_eq_meaning:VNTF \l__font_vertical_content_tl \texttt
+          { \__font_vertical_unwrap_texttt: }
+          {
+            \tl_if_head_eq_meaning:VNTF \l__font_vertical_content_tl \textbf
+              { \__font_vertical_unwrap_textbf: }
+              {
+                \tl_if_head_eq_meaning:VNTF \l__font_vertical_content_tl \textit
+                  { \__font_vertical_unwrap_textit: }
+                  { \__font_vertical_finalize_argument: }
+              }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_vertical_unwrap_textsf:
+  { \exp_after:wN \__font_vertical_unwrap_textsf_aux:w \l__font_vertical_content_tl \q_stop }
+\cs_new_protected:Npn \__font_vertical_unwrap_textsf_aux:w \textsf #1#2 \q_stop
+  {
+    \tl_if_blank:nTF {#2}
+      {
+        \tl_set:Nn \l__font_vertical_style_family_tl { sans }
+        \tl_set:Nn \l__font_vertical_content_tl {#1}
+        \__font_vertical_unwrap_loop:
+      }
+      { \__font_vertical_finalize_argument: }
+  }
+
+\cs_new_protected:Npn \__font_vertical_unwrap_texttt:
+  { \exp_after:wN \__font_vertical_unwrap_texttt_aux:w \l__font_vertical_content_tl \q_stop }
+\cs_new_protected:Npn \__font_vertical_unwrap_texttt_aux:w \texttt #1#2 \q_stop
+  {
+    \tl_if_blank:nTF {#2}
+      {
+        \tl_set:Nn \l__font_vertical_style_family_tl { mono }
+        \tl_set:Nn \l__font_vertical_content_tl {#1}
+        \__font_vertical_unwrap_loop:
+      }
+      { \__font_vertical_finalize_argument: }
+  }
+
+\cs_new_protected:Npn \__font_vertical_unwrap_textbf:
+  { \exp_after:wN \__font_vertical_unwrap_textbf_aux:w \l__font_vertical_content_tl \q_stop }
+\cs_new_protected:Npn \__font_vertical_unwrap_textbf_aux:w \textbf #1#2 \q_stop
+  {
+    \tl_if_blank:nTF {#2}
+      {
+        \tl_set:Nn \l__font_vertical_style_series_tl { \bfseries }
+        \tl_set:Nn \l__font_vertical_content_tl {#1}
+        \__font_vertical_unwrap_loop:
+      }
+      { \__font_vertical_finalize_argument: }
+  }
+
+\cs_new_protected:Npn \__font_vertical_unwrap_textit:
+  { \exp_after:wN \__font_vertical_unwrap_textit_aux:w \l__font_vertical_content_tl \q_stop }
+\cs_new_protected:Npn \__font_vertical_unwrap_textit_aux:w \textit #1#2 \q_stop
+  {
+    \tl_if_blank:nTF {#2}
+      {
+        \tl_set:Nn \l__font_vertical_style_shape_tl { \itshape }
+        \tl_set:Nn \l__font_vertical_content_tl {#1}
+        \__font_vertical_unwrap_loop:
+      }
+      { \__font_vertical_finalize_argument: }
+  }
+
+\cs_new_protected:Npn \__font_define_vertical_public_command:nnnnn #1#2#3#4#5
+  {
+    \exp_args:Nc \DeclareDocumentCommand {#1} { O{0pt} m }
+      {
+        {
+          \tl_set:Nn \l__font_vertical_base_name_tl {#2}
+          \tl_set:Nn \l__font_vertical_flow_tl {#3}
+          \tl_set:Nn \l__font_vertical_rotation_angle_tl {#4}
+          \tl_set:Nn \l__font_vertical_rotation_origin_tl {#5}
+          \__font_vertical_prepare_argument:n {##2}
+          \leavevmode
+          {
+            \tl_use:N \l__font_vertical_style_setup_tl
+            \str_if_eq:VnTF \l__font_vertical_flow_tl { rtl }
+              { \exp_args:NV \__font_vertical_emit_words_reverse:n \l__font_vertical_content_tl }
+              { \exp_args:NV \__font_vertical_emit_words_forward:n \l__font_vertical_content_tl }
+          }
+        }
+      }
+  }
+
+\cs_new_protected:Npn \__font_vertical_embed_word:nn #1#2
+  {
+    \hbox_set:Nn \l__font_vertical_source_box
+      { { \__font_vertical_use_base:n {#2} } }
+    \use:x
+      {
+        \exp_not:N \hbox_set:Nn \exp_not:N \l__font_vertical_embed_box
+          {
+            \exp_not:N \rotatebox [ origin=\tl_use:N \l__font_vertical_rotation_origin_tl ]
+              { \tl_use:N \l__font_vertical_rotation_angle_tl }
+              {
+                \exp_not:N \box_use:N \exp_not:N \l__font_vertical_source_box
+              }
+          }
+      }
+    \dim_set:Nn \l__font_vertical_embed_height_dim
+      {
+        \box_ht:N \l__font_vertical_embed_box
+        + \l__font_vertical_embed_top_correction_dim
+      }
+    \dim_set:Nn \l__font_vertical_embed_depth_dim
+      {
+        \box_dp:N \l__font_vertical_embed_box
+        + \l__font_vertical_embed_bottom_padding_dim
+        - \l__font_vertical_embed_top_correction_dim
+      }
+    \dim_compare:nNnT { \l__font_vertical_embed_depth_dim } < { 0pt }
+      { \dim_zero:N \l__font_vertical_embed_depth_dim }
+    \leavevmode
+    \raisebox{\l__font_vertical_embed_top_correction_dim}
+      [\l__font_vertical_embed_height_dim]
+      [\l__font_vertical_embed_depth_dim]
+      {
+        \box_use:N \l__font_vertical_embed_box
+      }
+  }
+
+\cs_new_protected:Npn \__font_define_special_vertical:
+  {
+    \__font_define_special_generic_shaping:
+    \tl_set:Nn \l__font_vertical_embed_gap_tl { 0.35em }
+    \dim_set:Nn \l__font_vertical_embed_top_correction_dim { 1em }
+    \dim_set:Nn \l__font_vertical_embed_bottom_padding_dim { 0.28em }
+    \tl_if_blank:VF \l__font_vertical_top_correction_override_tl
+      { \dim_set:Nn \l__font_vertical_embed_top_correction_dim { \l__font_vertical_top_correction_override_tl } }
+    \tl_if_blank:VTF \l__font_vertical_strategy_tl
+      {
+        \str_if_eq:VnTF \l__font_inline_direction_tl { rtl }
+          { \tl_set:Nn \l__font_vertical_flow_tl { ltr } }
+          { \tl_set:Nn \l__font_vertical_flow_tl { rtl } }
+      }
+      { \tl_set_eq:NN \l__font_vertical_flow_tl \l__font_vertical_strategy_tl }
+
+    \tl_if_blank:VTF \l__font_vertical_rotation_override_tl
+      { \tl_set:Nn \l__font_vertical_rotation_angle_tl { -90 } }
+      { \tl_set_eq:NN \l__font_vertical_rotation_angle_tl \l__font_vertical_rotation_override_tl }
+
+    \tl_if_blank:VTF \l__font_vertical_origin_override_tl
+      { \tl_set:Nn \l__font_vertical_rotation_origin_tl { lB } }
+      { \tl_set_eq:NN \l__font_vertical_rotation_origin_tl \l__font_vertical_origin_override_tl }
+
+    \tl_set:Nx \l_tmpa_tl { \tl_use:N \l__font_command_tl v }
+    \use:x
+      {
+        \exp_not:N \__font_define_vertical_public_command:nnnnn
+          { \tl_use:N \l_tmpa_tl }
+          { \tl_use:N \l__font_name_tl }
+          { \tl_use:N \l__font_vertical_flow_tl }
+          { \tl_use:N \l__font_vertical_rotation_angle_tl }
+          { \tl_use:N \l__font_vertical_rotation_origin_tl }
+      }
+  }
+
 \cs_new_protected:Npn \__font_define_local_families_generic:
   {
     \__font_build_main_options:
@@ -503,6 +839,18 @@
     \exp_args:NVV \__font_define_public_command:nn
       \l__font_command_tl
       \l__font_name_tl
+    \tl_if_blank:VF \l__font_external_command_tl
+      {
+        \use:x
+          {
+            \exp_not:N \__font_define_externalized_command:nnnnn
+              { \tl_use:N \l__font_external_command_tl }
+              { \tl_use:N \l__font_external_engine_tl }
+              { \tl_use:N \l__font_decl_family_id_tl }
+              { \tl_use:N \l__font_external_render_command_tl }
+              { \tl_use:N \l__font_external_clusterwise_tl }
+          }
+      }
   }
 
 \cs_new_protected:Npn \__font_define_global_binding:

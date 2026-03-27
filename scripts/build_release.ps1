@@ -105,7 +105,13 @@ function New-ReleasePackage {
     if ($Flavor -eq "full") {
         $ExcludedFiles = @(
             "assets\\fonts\\tangut\\Tangut N4694 V3.10.ttf",
-            "assets\\fonts\\tangut\\new Tangut Std V2.008.ttf"
+            "assets\\fonts\\tangut\\new Tangut Std V2.008.ttf",
+            "assets\\fonts\\mongolian\\mnglwhiteotf.ttf",
+            "assets\\fonts\\mongolian\\mnglwritingotf.ttf",
+            "assets\\fonts\\mongolian\\mngltitleotf.ttf",
+            "assets\\fonts\\mongolian\\mnglartotf.ttf",
+            "assets\\fonts\\mongolian_baiti\\monbaiti.ttf",
+            "assets\\fonts\\segoe\\seguihis.ttf"
         )
 
         foreach ($relativePath in $ExcludedFiles) {

@@ -38,6 +38,11 @@
 \tl_new:N \l__font_registry_verticalstrategy_tl
 \tl_new:N \l__font_registry_features_tl
 \tl_new:N \l__font_registry_command_tl
+\tl_new:N \l__font_registry_familyid_tl
+\tl_new:N \l__font_registry_externalcommand_tl
+\tl_new:N \l__font_registry_externalengine_tl
+\tl_new:N \l__font_registry_externalrendercommand_tl
+\tl_new:N \l__font_registry_externalclusterwise_tl
 
 \cs_new_protected:Npn \__font_registry_reset:
   {
@@ -70,6 +75,11 @@
     \tl_clear:N \l__font_registry_verticalstrategy_tl
     \tl_clear:N \l__font_registry_features_tl
     \tl_clear:N \l__font_registry_command_tl
+    \tl_clear:N \l__font_registry_familyid_tl
+    \tl_clear:N \l__font_registry_externalcommand_tl
+    \tl_clear:N \l__font_registry_externalengine_tl
+    \tl_clear:N \l__font_registry_externalrendercommand_tl
+    \tl_clear:N \l__font_registry_externalclusterwise_tl
   }
 
 \keys_define:nn { font/register }
@@ -102,6 +112,11 @@
     verticalstrategy .tl_set:N = \l__font_registry_verticalstrategy_tl,
     features .tl_set:N = \l__font_registry_features_tl,
     command .tl_set:N = \l__font_registry_command_tl,
+    familyid .tl_set:N = \l__font_registry_familyid_tl,
+    externalcommand .tl_set:N = \l__font_registry_externalcommand_tl,
+    externalengine .tl_set:N = \l__font_registry_externalengine_tl,
+    externalrendercommand .tl_set:N = \l__font_registry_externalrendercommand_tl,
+    externalclusterwise .tl_set:N = \l__font_registry_externalclusterwise_tl,
   }
 
 \cs_new_protected:Npn \__font_registry_append:NVn #1#2
@@ -144,6 +159,11 @@
     \__font_registry_append:NVn \l__font_registry_verticalstrategy_tl { verticalstrategy }
     \__font_registry_append:NVn \l__font_registry_features_tl { features }
     \__font_registry_append:NVn \l__font_registry_command_tl { command }
+    \__font_registry_append:NVn \l__font_registry_familyid_tl { familyid }
+    \__font_registry_append:NVn \l__font_registry_externalcommand_tl { externalcommand }
+    \__font_registry_append:NVn \l__font_registry_externalengine_tl { externalengine }
+    \__font_registry_append:NVn \l__font_registry_externalrendercommand_tl { externalrendercommand }
+    \__font_registry_append:NVn \l__font_registry_externalclusterwise_tl { externalclusterwise }
   }
 
 \NewDocumentCommand{\FontRegister}{m}
