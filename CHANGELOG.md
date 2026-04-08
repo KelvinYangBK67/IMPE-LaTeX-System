@@ -2,7 +2,7 @@
 
 [繁體中文版本](./CHANGELOG-zh.md)
 
-All notable changes to NexTeX are documented in this file.
+All notable changes to IMPE LaTeX System are documented in this file.
 
 ## [0.1.1] - 2026-03-20
 
@@ -30,7 +30,7 @@ All notable changes to NexTeX are documented in this file.
 ## [0.1.0] - 2026-03-19
 
 ### Added
-- Initial public release of NexTeX.
+- Initial public release of IMPE LaTeX System.
 - Modular LaTeX template system structure with `core`, `catalog`, `modules`, `package`, `scripts`, `docs`, `examples`, and `templates`.
 - Full/core release packaging.
 - Bilingual project documentation.

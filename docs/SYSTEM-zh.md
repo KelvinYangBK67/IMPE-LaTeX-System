@@ -2,7 +2,7 @@
 
 [English](SYSTEM.md)
 
-`NexTeX` 目前按四層結構組織：
+`IMPE LaTeX System` 目前按四層結構組織：
 
 - `core/`：穩定機制層
 - `catalog/`：註冊表與公開 id

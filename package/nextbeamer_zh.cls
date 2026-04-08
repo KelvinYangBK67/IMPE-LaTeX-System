@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextbeamer_zh}[2026/03/19 NexTeX wrapper for Chinese beamer]
+\ProvidesClass{nextbeamer_zh}[2026/03/19 IMPE LaTeX System wrapper for Chinese beamer]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{beamer}}

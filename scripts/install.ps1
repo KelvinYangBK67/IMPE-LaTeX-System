@@ -122,7 +122,7 @@ function Sync-ManagedDirectory {
 $HasBundledAssets = Test-Path (Join-Path $RepoRoot "assets\fonts")
 $InstallFlavor = if ($HasBundledAssets) { "full" } else { "core" }
 
-Write-Host "Installing NexTeX to user texmf..."
+Write-Host "Installing IMPE LaTeX System to user texmf..."
 Write-Host "  Source:      $RepoRoot"
 Write-Host "  Destination: $PackageRoot"
 Write-Host "  Package:     $InstallFlavor"

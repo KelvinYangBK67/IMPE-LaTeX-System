@@ -1,4 +1,4 @@
-% Feature module: math
+﻿% Feature module: math
 
 \ifdefined\NextFeatureMathLoaded
   \endinput
@@ -13,3 +13,41 @@
 \RequirePackage{bm}
 \RequirePackage{mathrsfs}
 \RequirePackage{fix-cm}
+
+% Default theorem-like environments controlled by NextSystem UI tag.
+% Numbering follows section to keep references compact in long documents.
+\makeatletter
+\def\NextMathTheoremName{Theorem}
+\def\NextMathLemmaName{Lemma}
+\def\NextMathPropositionName{Proposition}
+\def\NextMathCorollaryName{Corollary}
+\def\NextMathDefinitionName{Definition}
+\def\NextMathExampleName{Example}
+\def\NextMathRemarkName{Remark}
+\@ifundefined{NextSystemUiTag}{}{%
+  \edef\NextMathUiTag{\NextSystemUiTag}%
+  \def\NextMathZhTag{zh}%
+  \ifx\NextMathUiTag\NextMathZhTag
+    \def\NextMathTheoremName{定理}%
+    \def\NextMathLemmaName{引理}%
+    \def\NextMathPropositionName{命題}%
+    \def\NextMathCorollaryName{推論}%
+    \def\NextMathDefinitionName{定義}%
+    \def\NextMathExampleName{例}%
+    \def\NextMathRemarkName{註}%
+  \fi
+}
+\makeatother
+
+\theoremstyle{plain}
+\newtheorem{theorem}{\NextMathTheoremName}[section]
+\newtheorem{lemma}[theorem]{\NextMathLemmaName}
+\newtheorem{proposition}[theorem]{\NextMathPropositionName}
+\newtheorem{corollary}[theorem]{\NextMathCorollaryName}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{\NextMathDefinitionName}
+\newtheorem{example}[theorem]{\NextMathExampleName}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{\NextMathRemarkName}

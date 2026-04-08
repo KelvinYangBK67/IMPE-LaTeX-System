@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextbook}[2026/03/19 NexTeX wrapper for book]
+\ProvidesClass{nextbook}[2026/03/19 IMPE LaTeX System wrapper for book]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}

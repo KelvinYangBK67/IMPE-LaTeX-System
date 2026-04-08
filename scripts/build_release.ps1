@@ -36,7 +36,7 @@ if (-not $OutputRoot) {
     $OutputRoot = Join-Path $RepoRoot "dist"
 }
 
-Write-Host "Building NexTeX release packages..."
+Write-Host "Building IMPE LaTeX System release packages..."
 Write-Host "  Version:     v$Version"
 Write-Host "  Repository:  $RepoRoot"
 Write-Host "  Output root: $OutputRoot"
@@ -49,7 +49,7 @@ function New-ReleasePackage {
         [string]$Note
     )
 
-    $Name = "NexTeX-v$Version-$Flavor"
+    $Name = "IMPE-LaTeX-System-v$Version-$Flavor"
     $StageRoot = Join-Path $OutputRoot $Name
     $ZipPath = Join-Path $OutputRoot ($Name + ".zip")
 

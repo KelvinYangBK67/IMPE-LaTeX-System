@@ -2,7 +2,7 @@
 
 [English Version](./CHANGELOG.md)
 
-NexTeX 的重要版本變更記錄於此。
+IMPE LaTeX System 的重要版本變更記錄於此。
 
 ## [0.1.1] - 2026-03-20
 
@@ -30,7 +30,7 @@ NexTeX 的重要版本變更記錄於此。
 ## [0.1.0] - 2026-03-19
 
 ### 新增
-- NexTeX 首個公開版本。
+- IMPE LaTeX System 首個公開版本。
 - 建立模組化 LaTeX 模板系統結構，包括 `core`、`catalog`、`modules`、`package`、`scripts`、`docs`、`examples`、`templates`。
 - 加入 full/core 雙 release 打包模式。
 - 補齊中英文雙語專案文檔。

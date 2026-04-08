@@ -2,7 +2,7 @@
 
 [繁體中文](SYSTEM-zh.md)
 
-`NexTeX` is organized around four layers:
+`IMPE LaTeX System` is organized around four layers:
 
 - `core/`: stable mechanisms
 - `catalog/`: registrations and public ids

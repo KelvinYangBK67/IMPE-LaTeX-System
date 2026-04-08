@@ -145,17 +145,17 @@
 
 \cs_new_protected:Npn \__font_externalized_set_paths:n #1
   {
-    \tl_set:Nn \l__font_externalized_cache_dir_tl { .nextex-externalized }
+    \tl_set:Nn \l__font_externalized_cache_dir_tl { .impe-externalized }
     \tl_set:Nx \l__font_externalized_hash_tl
       { \__font_externalized_hash:n {#1} }
     \tl_set:Nx \l__font_externalized_tex_path_tl
-      { \l__font_externalized_cache_dir_tl / nextex-externalized-\l__font_externalized_hash_tl.tex }
+      { \l__font_externalized_cache_dir_tl / impe-externalized-\l__font_externalized_hash_tl.tex }
     \tl_set:Nx \l__font_externalized_pdf_path_tl
-      { \l__font_externalized_cache_dir_tl / nextex-externalized-\l__font_externalized_hash_tl.pdf }
+      { \l__font_externalized_cache_dir_tl / impe-externalized-\l__font_externalized_hash_tl.pdf }
     \tl_set:Nx \l__font_externalized_plan_path_tl
-      { \l__font_externalized_cache_dir_tl / nextex-externalized-\l__font_externalized_hash_tl-plan.tex }
+      { \l__font_externalized_cache_dir_tl / impe-externalized-\l__font_externalized_hash_tl-plan.tex }
     \tl_set:Nx \l__font_externalized_plan_child_tl
-      { nextex-externalized-\l__font_externalized_hash_tl-plan.tex }
+      { impe-externalized-\l__font_externalized_hash_tl-plan.tex }
   }
 
 \cs_new_protected:Npn \__font_externalized_ensure_cache_dir:

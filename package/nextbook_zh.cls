@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextbook_zh}[2026/03/19 NexTeX wrapper for Chinese book]
+\ProvidesClass{nextbook_zh}[2026/03/19 IMPE LaTeX System wrapper for Chinese book]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}

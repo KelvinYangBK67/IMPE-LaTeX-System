@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextart}[2026/03/19 NexTeX wrapper for article]
+\ProvidesClass{nextart}[2026/03/19 IMPE LaTeX System wrapper for article]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}

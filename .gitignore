@@ -26,3 +26,5 @@ nextsystem.local.tex
 dist/
 assets/fonts/
 !assets/.gitkeep
+**/.nextex-externalized/
+**/.impe-externalized/

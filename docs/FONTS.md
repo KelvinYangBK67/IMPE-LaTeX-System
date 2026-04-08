@@ -271,7 +271,7 @@ Only families with non-trivial internal mapping are listed here. Simple families
 
 ## Font Library Model
 
-NexTeX now separates the Git repository from the actual font library:
+IMPE LaTeX System now separates the Git repository from the actual font library:
 
 - the Git repository is intended to remain source-only
 - `assets/fonts/` is treated as a local font library in the working tree
@@ -306,7 +306,7 @@ If that directory is missing:
 
 ## Bundled vs Non-Bundled Fonts
 
-Not every font used by NexTeX is supplied in the same way.
+Not every font used by IMPE LaTeX System is supplied in the same way.
 
 In particular:
 
@@ -321,7 +321,7 @@ For third-party font license texts and redistribution notes, see:
 
 ## Fallback Behavior
 
-NexTeX supports two fallback modes for font declarations:
+IMPE LaTeX System supports two fallback modes for font declarations:
 
 - `strict`
   Missing fonts are treated as errors.

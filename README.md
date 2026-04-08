@@ -1,8 +1,8 @@
-# NexTeX
+# IMPE LaTeX System
 
 [繁體中文](README-zh.md)
 
-`NexTeX` is a LaTeX template system organized around four layers:
+`IMPE LaTeX System` is a LaTeX template system organized around four layers:
 
 - `core/`: stable mechanisms
 - `catalog/`: registrations and presets
@@ -17,7 +17,7 @@ Release history:
 
 ## Purpose
 
-NexTeX is designed for documents that need more than a small preamble patchwork.
+IMPE LaTeX System is designed for documents that need more than a small preamble patchwork.
 
 Its main goal is to provide one coherent system for:
 
@@ -38,7 +38,7 @@ The project is especially aimed at workflows that mix:
 
 ## Design Principles
 
-NexTeX is built around three practical principles:
+IMPE LaTeX System is built around three practical principles:
 
 - **Portable**
   The system should be installable as a reusable template package and also usable directly inside the repository.
@@ -56,7 +56,7 @@ In repository structure, that becomes:
 
 ## Typical Use Cases
 
-NexTeX is intended for cases like:
+IMPE LaTeX System is intended for cases like:
 
 - maintaining a consistent house style across many papers or handouts
 - building multilingual documents with both global fonts and local script commands
@@ -81,9 +81,9 @@ examples/   debug / audit examples
 
 Two release packages are generated:
 
-- `NexTeX-vX.Y.Z-full.zip`
+- `IMPE-LaTeX-System-vX.Y.Z-full.zip`
   Generated locally with the local font library included, except for the two Tangut fonts excluded from public distribution.
-- `NexTeX-vX.Y.Z-core.zip`
+- `IMPE-LaTeX-System-vX.Y.Z-core.zip`
   Includes the template logic only, without font files.
 
 Recommended usage:
@@ -187,7 +187,7 @@ Detailed docs are in `docs/`:
 
 ## Notes
 
-- The repository-level MIT license applies to the NexTeX codebase itself, not automatically to third-party fonts used by local or release font libraries.
+- The repository-level MIT license applies to the IMPE LaTeX System codebase itself, not automatically to third-party fonts used by local or release font libraries.
 - Third-party font licenses and redistribution notices are stored under `font_licenses/`.
 - General font sourcing notes, including non-bundled dependencies such as `cmu`, are documented in `docs/FONTS.md`.
 - The Git repository itself is intended to remain source-only and does not track the font library under `assets/fonts/`.

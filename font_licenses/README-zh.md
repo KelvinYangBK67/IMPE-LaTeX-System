@@ -2,11 +2,11 @@
 
 [English](README.md)
 
-本目錄用於存放 NexTeX 本地字體庫與 full release 套件所使用第三方字體的授權全文與再分發聲明。
+本目錄用於存放 IMPE LaTeX System 本地字體庫與 full release 套件所使用第三方字體的授權全文與再分發聲明。
 
 注意：
 
-- 倉庫根層的 MIT 授權只適用於 NexTeX 程式碼本身。
+- 倉庫根層的 MIT 授權只適用於 IMPE LaTeX System 程式碼本身。
 - 它**不會**自動適用於本地字體庫或 release 套件中使用的第三方字體。
 - 第三方字體仍各自遵循其原始授權。
 - 本目錄只處理第三方字體的授權問題。
@@ -15,7 +15,7 @@
 
 目前授權狀態摘要：
 
-- 除下方特別列出的例外項外，NexTeX 本地字體庫目前使用的第三方字體，已由維護者核對為適用 SIL Open Font License：
+- 除下方特別列出的例外項外，IMPE LaTeX System 本地字體庫目前使用的第三方字體，已由維護者核對為適用 SIL Open Font License：
   https://openfontlicense.org/
 - `I.Ming-8.10.ttf` 使用的是 IPA Font License，不屬於 OFL。
 - `NomNaTong-Regular.ttf` 使用的是 MIT License，不屬於 OFL。

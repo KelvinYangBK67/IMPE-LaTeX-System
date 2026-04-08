@@ -2,11 +2,11 @@
 
 [繁體中文](README-zh.md)
 
-This directory stores license texts and redistribution notices for third-party fonts used by NexTeX local font libraries and full release packages.
+This directory stores license texts and redistribution notices for third-party fonts used by IMPE LaTeX System local font libraries and full release packages.
 
 Important:
 
-- The repository-level MIT license applies to the NexTeX codebase itself.
+- The repository-level MIT license applies to the IMPE LaTeX System codebase itself.
 - It does **not** automatically apply to third-party fonts used by local or release font libraries.
 - Third-party fonts remain under their own respective licenses.
 - This directory is only for third-party font licensing.
@@ -15,7 +15,7 @@ Important:
 
 Current licensing summary:
 
-- Except for the special cases listed below, the third-party fonts currently used in local NexTeX font libraries have been checked by the maintainer as using the SIL Open Font License:
+- Except for the special cases listed below, the third-party fonts currently used in local IMPE LaTeX System font libraries have been checked by the maintainer as using the SIL Open Font License:
   https://openfontlicense.org/
 - `I.Ming-8.10.ttf` is distributed under the IPA Font License, not OFL.
 - `NomNaTong-Regular.ttf` is distributed under the MIT License, not OFL.

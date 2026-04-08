@@ -2,7 +2,7 @@
 
 [繁體中文](README-zh.md)
 
-This directory contains ready-to-use starter templates for NexTeX.
+This directory contains ready-to-use starter templates for IMPE LaTeX System.
 
 They are different from `examples/`:
 
@@ -13,7 +13,7 @@ These templates are intentionally written in the installed-package style:
 
 - they use `nextart`, `nextbook`, `nextbeamer`, and their `_zh` counterparts
 - English and Chinese use separate wrapper class entrypoints
-- they are meant to be used after NexTeX has been installed into `texmf`
+- they are meant to be used after IMPE LaTeX System has been installed into `texmf`
 - repository-local smoke testing should still rely on `examples/`
 
 Current starter templates:
@@ -27,7 +27,7 @@ Current starter templates:
 
 Each template includes:
 
-- an installed-package NexTeX loading pattern
+- an installed-package IMPE LaTeX System loading pattern
 - title / author / date metadata
 - a realistic body skeleton
 - sample headings and text blocks

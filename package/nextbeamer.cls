@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextbeamer}[2026/03/19 NexTeX wrapper for beamer]
+\ProvidesClass{nextbeamer}[2026/03/19 IMPE LaTeX System wrapper for beamer]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{beamer}}

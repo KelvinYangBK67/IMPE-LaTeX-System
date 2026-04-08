@@ -270,7 +270,7 @@ catalog/fonts.tex
 
 ## 字體庫模型
 
-NexTeX 現在把 Git 倉庫與實際字體庫分開：
+IMPE LaTeX System 現在把 Git 倉庫與實際字體庫分開：
 
 - Git 倉庫本身維持 source-only
 - `assets/fonts/` 被視為工作樹中的本地字體庫
@@ -305,7 +305,7 @@ assets/fonts/
 
 ## Bundled 與 Non-Bundled 字體
 
-NexTeX 使用的字體並不都以同一種方式提供。
+IMPE LaTeX System 使用的字體並不都以同一種方式提供。
 
 其中尤其需要注意：
 
@@ -320,7 +320,7 @@ NexTeX 使用的字體並不都以同一種方式提供。
 
 ## Fallback 行為
 
-NexTeX 目前支援兩種字體 fallback 模式：
+IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 
 - `strict`
   找不到字體時視為錯誤。
