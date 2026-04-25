@@ -1,0 +1,29 @@
+% !TeX program = xelatex
+\documentclass[12pt]{article}
+
+\usepackage{import}
+\subimport{../../package/}{system.tex}
+
+\UseCitationStyle{GB}
+
+\UseTemplateSet{
+  layout = en_doc,
+  globalfonts = {cmu,shanggu},
+  features = {citations,hyperlinks}
+}
+
+\AddBibliographyResource{references.bib}
+
+\title{GB/T 7714 Citations Feature Debug}
+\author{IMPE}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+This sentence cites a source using the GB/T 7714 numeric preset\cite{sample2026}.
+
+\PrintBibliography
+
+\end{document}

@@ -1,13 +1,13 @@
 % !TeX program = xelatex
 \documentclass[12pt]{nextart}
 
-\usepackage{booktabs}
-
 \UseTemplateSet{
   layout = en_doc,
   globalfonts = {cmu,shanggu},
-  features = {tables,image}
+  features = {tables,image,citations,hyperlinks}
 }
+
+\AddBibliographyResource{references.bib}
 
 \title{English Article Template}
 \author{Author Name}
@@ -27,7 +27,9 @@ few common document elements that can be rewritten directly into a real paper.
 
 Use this section to introduce the topic, research context, and source
 materials. It is also a natural place to define the document scope and clarify
-what kind of contribution the paper aims to make.
+what kind of contribution the paper aims to make. A narrative citation can be
+written with \textcite{sample2026}; a parenthetical citation can be written as
+\parencite{sample2026}.
 
 \section{Research Questions}
 
@@ -66,7 +68,8 @@ Typical framing questions might include:
 \section{Conclusion}
 
 The goal of this template is to provide a real writing starter with enough
-structure to begin drafting immediately. Citations, notes, and bibliography
-support can be added on top of this base.
+structure to begin drafting immediately.
+
+\PrintBibliography
 
 \end{document}

@@ -1,0 +1,28 @@
+% !TeX program = xelatex
+\documentclass[12pt]{article}
+
+\usepackage{import}
+\subimport{../../package/}{system.tex}
+
+\UseTemplateSet{
+  layout = en_doc,
+  globalfonts = {cmu,shanggu},
+  features = {citations,hyperlinks}
+}
+
+\AddBibliographyResource{references.bib}
+
+\title{Citations Feature Debug}
+\author{IMPE}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+This sentence uses a narrative citation from \textcite{sample2026}.
+This sentence uses a parenthetical citation \parencite{sample2026}.
+
+\PrintBibliography
+
+\end{document}

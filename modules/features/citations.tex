@@ -1,0 +1,33 @@
+% Feature module: citations
+
+\ifdefined\NextFeatureCitationsLoaded
+  \endinput
+\fi
+\def\NextFeatureCitationsLoaded{1}
+
+\RequirePackage{csquotes}
+
+\providecommand{\NextCitationBiblatexOptions}{%
+  backend=biber,
+  style=apa,
+  sorting=nyt,
+  sortcites=true,
+  doi=true,
+  isbn=false,
+  url=true
+}
+
+\makeatletter
+\@ifpackageloaded{biblatex}
+  {}
+  {%
+    \edef\NextCitationLoadBiblatex{%
+      \noexpand\RequirePackage[\NextCitationBiblatexOptions]{biblatex}%
+    }%
+    \NextCitationLoadBiblatex
+  }
+
+\makeatother
+
+\providecommand{\AddBibliographyResource}[1]{\addbibresource{#1}}
+\providecommand{\PrintBibliography}{\printbibliography}
