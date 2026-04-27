@@ -226,6 +226,7 @@ The current catalog registers the following families. `globalfonts = {...}` only
 | `chinese_simplified` | `SC` | `local` | no | Simplified Chinese |
 | `chinese_traditional` | `TC` | `local` | no | Traditional Chinese |
 | `japanese` | `JP` | `local` | no | Japanese |
+| `wenjin_p0` / `wenjin_p2` / `wenjin_p3` | `WJA` / `WJB` / `WJC` | `local` | no | WenJin Mincho Plane 0 / 2 / 3 |
 | `shanggu` | `-` | `global` | yes | Global CJK family for Han text |
 | `sim` | `-` | `global` | yes | Windows CJK family |
 | `korean` | `KR` | `local` | no | Korean |

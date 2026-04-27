@@ -226,6 +226,7 @@ catalog/fonts.tex
 | `chinese_simplified` | `SC` | `local` | 否 | 簡體中文 |
 | `chinese_traditional` | `TC` | `local` | 否 | 繁體中文 |
 | `japanese` | `JP` | `local` | 否 | 日文 |
+| `wenjin_p0` / `wenjin_p2` / `wenjin_p3` | `WJA` / `WJB` / `WJC` | `local` | 否 | 文津宋體第 0 / 2 / 3 平面 |
 | `shanggu` | `-` | `global` | 是 | 漢字全域 CJK family |
 | `sim` | `-` | `global` | 是 | Windows CJK 字族 |
 | `korean` | `KR` | `local` | 否 | 韓文 |
