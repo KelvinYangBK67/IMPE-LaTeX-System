@@ -15,15 +15,34 @@
     {\expandafter\renewcommand\csname #1\endcsname{#2}}%
 }
 
+\newif\ifNextUiZhDateUserSet
+\def\NextUiZhDefaultDate{\today}%
+\ifx\@date\NextUiZhDefaultDate
+  \NextUiZhDateUserSetfalse
+\else
+  \NextUiZhDateUserSettrue
+\fi
+\let\NextUiZhOriginalDate\date
+\protected\def\date{%
+  \NextUiZhDateUserSettrue
+  \NextUiZhOriginalDate
+}
+
 \newcommand{\NextUiZhApplyDate}{%
   \def\today{\number\year 年\number\month 月\number\day 日}%
   \@ifclassloaded{beamer}
     {%
-      \date[\number\year-\number\month-\number\day]{%
-        \protect\mbox{\number\year 年\number\month 月\number\day 日}%
-      }%
+      \ifNextUiZhDateUserSet\else
+        \NextUiZhOriginalDate[\number\year-\number\month-\number\day]{%
+          \protect\mbox{\number\year 年\number\month 月\number\day 日}%
+        }%
+      \fi
     }
-    { \date{\today} }%
+    {%
+      \ifNextUiZhDateUserSet\else
+        \NextUiZhOriginalDate{\today}%
+      \fi
+    }%
 }
 
 \newcommand{\NextUiZhApplyChapterFormat}{%
