@@ -87,7 +87,7 @@ examples/   debug / audit examples
 Two release packages are generated:
 
 - `IMPE-LaTeX-System-vX.Y.Z-full.zip`
-  Generated locally with the local font library included, except for the two Tangut fonts excluded from public distribution.
+  Generated locally with the local font library included, except for fonts excluded from public distribution because their redistribution status is unresolved or restricted.
 - `IMPE-LaTeX-System-vX.Y.Z-core.zip`
   Includes the template logic only, without font files.
 

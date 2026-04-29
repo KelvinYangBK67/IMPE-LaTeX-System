@@ -85,7 +85,7 @@ examples/   除錯 / 稽核示例
 目前生成兩種 release 套件：
 
 - `IMPE-LaTeX-System-vX.Y.Z-full.zip`
-  由本地字體庫生成的完整安裝包，但仍排除兩款未確認來源授權的西夏文字體。
+  由本地字體庫生成的完整安裝包，但會排除再分發狀態未確認或受限制、因此不適合公開發佈的字體。
 - `IMPE-LaTeX-System-vX.Y.Z-core.zip`
   只包含模板邏輯，不包含字體檔案。
 
@@ -101,6 +101,43 @@ scripts\build_release.bat
 ```
 
 生成後的 zip 檔會放在 `dist/` 中。
+
+## IMPE Font-First Tools
+
+第一階段的視覺化工作流以 YAML `.impe` 來源檔為中心。UI 與 CLI 會編輯這個中介檔，生成 TeX，然後再編譯 PDF。
+
+在倉庫根目錄執行 CLI：
+
+```powershell
+python -m tools.impe.cli generate tools\examples\minimal.impe
+python -m tools.impe.cli build tools\examples\minimal.impe
+python -m tools.impe.cli fonts scan
+python -m tools.impe.cli fonts list
+python -m tools.impe.cli fonts check tools\examples\minimal.impe
+```
+
+啟動輕量的 block-based editor：
+
+```powershell
+python -m tools.impe.cli studio
+```
+
+重新設計後的 workbench UI 也可以直接啟動：
+
+```powershell
+python -m impe_studio.app
+```
+
+檢查本地 Studio 環境：
+
+```powershell
+python -m impe_studio doctor
+python -m impe_studio doctor --pdf
+python -m impe_studio doctor --fonts
+python -m impe_studio doctor --json --no-optional
+```
+
+目前 MVP 有意保持 font-first：普通文字就是純內容；使用者套用特殊文字系統後，內容會保存為 `font_block` 或 `font_span`，並由生成器輸出對應的字體命令。
 
 ## 安裝方式
 
@@ -182,10 +219,10 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 
 更詳細的說明在 `docs/` 中：
 
-- `docs/SYSTEM.md`
-- `docs/FONTS.md`
-- `docs/LAYOUTS.md`
-- `docs/FEATURES.md`
+- `docs/SYSTEM-zh.md`
+- `docs/FONTS-zh.md`
+- `docs/LAYOUTS-zh.md`
+- `docs/FEATURES-zh.md`
 
 ## 說明
 

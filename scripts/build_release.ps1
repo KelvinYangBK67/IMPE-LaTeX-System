@@ -82,7 +82,7 @@ function New-ReleasePackage {
             throw "Full release requires a local font library at $LocalFontRoot. The Git repository is source-only and does not track font files."
         }
         Write-Host "  Font library status: found"
-        Write-Host "  Public exclusion: unresolved Tangut fonts will be removed from this package"
+        Write-Host "  Public exclusion: fonts with unresolved or restricted redistribution status will be removed from this package"
     }
     else {
         Write-Host "  Font library status: not required for core release"
@@ -140,7 +140,7 @@ function New-ReleasePackage {
 New-ReleasePackage `
     -Flavor "full" `
     -RuntimeDirs @("core","catalog","modules","assets") `
-    -Note "Full release generated from the local font library. Tangut fonts with unresolved redistribution terms are intentionally excluded from this public release. Install by running install.bat."
+    -Note "Full release generated from the local font library. Fonts with unresolved or restricted redistribution status are intentionally excluded from this public release. Install by running install.bat."
 
 New-ReleasePackage `
     -Flavor "core" `
