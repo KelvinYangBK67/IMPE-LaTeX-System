@@ -43,17 +43,17 @@ core/fonts/system.tex
 - `writing.tex`
   定義並驗證 writing model 相關欄位：inline axis、inline direction、block progression。
 - `script.tex`
-  套用 core 預設值，並驗證 `scriptclass`、`preservespaces`、`allowjoining`、`enableshaping`、backend 等 script-class 相關狀態。
+  套用 core 預設值，並驗證 `scriptclass`、`preservespaces`、backend 等 script-class 相關狀態。
 - `behavior.tex`
   定義 inline / block 行為路由，目前包括一般行為與 RTL 行為 hook。
 - `interface.tex`
-  主要的宣告引擎。它負責解析 family 註冊欄位、解析實際字體選項、定義 public commands，並且現在也內建了 `generic_shaping` 與 `vertical` 兩條穩定 special route。
+  主要的宣告引擎。它負責解析 family 註冊欄位、解析實際字體選項、定義 public commands，並且內建 `vertical` special route。
 - `registry.tex`
   保存底層 declaration entry，之後再把它們轉成可使用的 local / global family。
 - `registry_modes.tex`
   追蹤 family 的載入模式（`local` / `global`），並負責 on-demand family activation。
 - `externalized.tex`
-  提供穩定的 externalized render 管線，例如 `\KHSi` 會用到的快取命名、外部子文件生成、shell-out 與 PDF 嵌回。
+  提供穩定的 externalized render 管線，包括快取命名、外部子文件生成、shell-out 與 PDF 嵌回。
 - `helpers.tex`
   提供字體框架共用的小型 helper primitive。
 
@@ -83,9 +83,9 @@ core/fonts/system.tex
 
 補充說明：
 
-- `generic_shaping` 現在已經內建在 `core/fonts/interface.tex`
-- `vertical` 現在也已經內建在 `core/fonts/interface.tex`
-- 對於只需要重用這些穩定 route 的新 family，正常情況下應該只改註冊，不需要再往 `modules/fonts/` 新增檔案
+- `vertical` 現在已經內建在 `core/fonts/interface.tex`
+- 一般 OpenType shaping 由 `script`、`language`、`features` 這些註冊欄位統一表達
+- 對於只需要標準 fontspec shaping 的新 family，正常情況下應該只改註冊，不需要再往 `modules/fonts/` 新增檔案
 
 ## 宣告模型
 
@@ -112,8 +112,6 @@ core/fonts/system.tex
 - `features`
 - `specialmodule`
 - `inlinebehavior`
-- `blockbehavior`
-- `blockalign`
 - `maptextsf`
 - `maptexttt`
 - `fallbackmode`
@@ -137,8 +135,7 @@ catalog/fonts.tex
   regular = NotoSerifHebrew-Regular.ttf,
   bold = NotoSerifHebrew-Bold.ttf,
   script = Hebrew,
-  scope = local,
-  specialmodule = generic_shaping
+  scope = local
 }
 ```
 
@@ -150,6 +147,7 @@ catalog/fonts.tex
 - `scope = local` 會建立區域命令 family
 - `scope = global` 會把這個 family 綁定進文件全域預設
 - `specialmodule` 只在該字體 family 需要特殊 shaping / layout 路線時才需要
+- 標準 OpenType shaping 應使用 `script`、`language`、`features` 表達，不再使用泛用 shaping special module
 
 ## 最小示例
 
@@ -201,6 +199,7 @@ catalog/fonts.tex
 | `armenian` | `HY` | `local` | 否 | 亞美尼亞文 |
 | `hindi` | `HI` | `local` | 否 | 印地語 |
 | `sanskrit` | `SA` | `local` | 否 | 梵語 |
+| `devanagari` | `DEV` | `local` | 否 | `.impe` 工作流用通用天城體 family |
 | `tamil` | `TA` | `local` | 否 | 泰米爾文 |
 | `brahmi` | `BR` | `local` | 否 | 婆羅米文 |
 | `georgian` | `KA` | `local` | 否 | 格魯吉亞文 |
@@ -342,8 +341,7 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 現在註冊表直接透過下列欄位指向特殊支持邏輯：
 
 - 內建於 `core/fonts/interface.tex` 的特殊能力
-  - `specialmodule = generic_shaping`
-  - `specialmodule = vertical`
+  - `layout = vertical`
 - 仍保留在 `modules/fonts/` 的 script-specific 模組
   - `specialmodule = pahlavi`
   - `specialmodule = khitan_small`
@@ -352,7 +350,8 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 
 - 已經沒有額外的 dispatch table 檔案
 - 註冊表直接決定使用哪條特殊路徑
-- 穩定且通用的能力已內建在 `core/fonts/interface.tex`
+- 一般 shaping 由 `script`、`language`、`features` 組裝成 fontspec 選項
+- 穩定的 vertical 能力已內建在 `core/fonts/interface.tex`
 - 只有真正 script-specific 的邏輯才繼續留在 `modules/fonts/`
 
 ## 蒙古文區域字體映射與分發說明

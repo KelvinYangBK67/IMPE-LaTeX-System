@@ -21,7 +21,7 @@ new families, presets, or features are added. In practice:
 
 - `core/fonts/` owns the font declaration engine, fallback resolution, writing
   model, behavior routing, family registry behavior, externalized rendering,
-  and the built-in generic routes such as `generic_shaping` and `vertical`
+  standard fontspec shaping options, and built-in routes such as `vertical`
 - `core/layout/` owns class detection, preset application, component loading,
   and layout registry behavior
 - `core/features/` owns the feature catalog loader and `\UseFeature` /

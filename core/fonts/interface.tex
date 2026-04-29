@@ -28,6 +28,7 @@
 \tl_new:N \l__font_language_tl
 \tl_new:N \l__font_features_tl
 \tl_new:N \l__font_command_tl
+\tl_new:N \l__font_layout_tl
 \tl_new:N \l__font_special_module_tl
 \tl_new:N \l__font_missing_face_tl
 \tl_new:N \l__font_resolved_bold_path_tl
@@ -91,6 +92,7 @@
     \tl_clear:N \l__font_language_tl
     \tl_clear:N \l__font_features_tl
     \tl_clear:N \l__font_command_tl
+    \tl_clear:N \l__font_layout_tl
     \tl_clear:N \l__font_special_module_tl
     \tl_clear:N \l__font_missing_face_tl
     \tl_clear:N \l__font_decl_family_id_tl
@@ -105,13 +107,7 @@
     \tl_clear:N \l__font_inline_direction_tl
     \tl_clear:N \l__font_block_progression_tl
     \tl_clear:N \l__font_preserve_spaces_tl
-    \tl_clear:N \l__font_allow_joining_tl
-    \tl_clear:N \l__font_enable_shaping_tl
-    \tl_clear:N \l__font_map_textsf_tl
-    \tl_clear:N \l__font_map_texttt_tl
     \tl_clear:N \l__font_inline_behavior_tl
-    \tl_clear:N \l__font_block_behavior_tl
-    \tl_clear:N \l__font_block_align_tl
     \tl_clear:N \l__font_vertical_strategy_tl
     \bool_set_false:N \l__font_use_latex_fallback_bool
   }
@@ -147,19 +143,14 @@
     inlinedirection .tl_set:N = \l__font_inline_direction_tl,
     blockprogression .tl_set:N = \l__font_block_progression_tl,
     preservespaces .tl_set:N = \l__font_preserve_spaces_tl,
-    allowjoining .tl_set:N = \l__font_allow_joining_tl,
-    enableshaping .tl_set:N = \l__font_enable_shaping_tl,
-    maptextsf    .tl_set:N = \l__font_map_textsf_tl,
-    maptexttt    .tl_set:N = \l__font_map_texttt_tl,
     inlinebehavior .tl_set:N = \l__font_inline_behavior_tl,
-    blockbehavior .tl_set:N = \l__font_block_behavior_tl,
-    blockalign   .tl_set:N = \l__font_block_align_tl,
     verticalstrategy .tl_set:N = \l__font_vertical_strategy_tl,
     verticalrotation .tl_set:N = \l__font_vertical_rotation_override_tl,
     verticalorigin .tl_set:N = \l__font_vertical_origin_override_tl,
     verticaltopcorrection .tl_set:N = \l__font_vertical_top_correction_override_tl,
     features     .tl_set:N = \l__font_features_tl,
     command      .tl_set:N = \l__font_command_tl,
+    layout       .tl_set:N = \l__font_layout_tl,
     familyid     .tl_set:N = \l__font_decl_family_id_tl,
     backend      .tl_set:N = \l__font_backend_tl,
     fallbackmode .tl_set:N = \l__font_fallback_mode_tl,
@@ -179,34 +170,48 @@
 \prg_new_conditional:Npnn \__font_special_is_builtin:n #1 { TF }
   {
     \str_case:nnF {#1}
-      {
-        { generic_shaping } { \prg_return_true: }
-        { indic } { \prg_return_true: }
-        { tibetan } { \prg_return_true: }
-        { arabic } { \prg_return_true: }
-        { vertical } { \prg_return_true: }
-      }
+      { }
       { \prg_return_false: }
   }
 
-\cs_new_protected:Npn \__font_define_special_generic_shaping:
+\cs_new_protected:Npn \__font_import_special_module:
   {
-    \__font_special_use_generic:
+    \exp_args:NV \__font_special_is_builtin:nTF \l__font_special_module_tl
+      { }
+      {
+        \seq_if_in:NVF \g__font_loaded_special_modules_seq \l__font_special_module_tl
+          {
+            \bool_if:NTF \l__font_nextsystem_installed_bool
+              {
+                \use:x
+                  {
+                    \exp_not:N \subimport
+                      { modules/fonts/ }
+                      { \l__font_special_module_tl .tex }
+                  }
+              }
+              {
+                \use:x
+                  {
+                    \exp_not:N \subimport
+                      { ../../modules/fonts/ }
+                      { \l__font_special_module_tl .tex }
+                  }
+              }
+            \seq_gput_right:NV \g__font_loaded_special_modules_seq \l__font_special_module_tl
+          }
+      }
   }
 
-\cs_new_protected:Npn \__font_define_special_indic:
+\cs_new_protected:Npn \__font_apply_layout_compat:
   {
-    \__font_define_special_generic_shaping:
-  }
-
-\cs_new_protected:Npn \__font_define_special_tibetan:
-  {
-    \__font_define_special_generic_shaping:
-  }
-
-\cs_new_protected:Npn \__font_define_special_arabic:
-  {
-    \__font_define_special_generic_shaping:
+    \str_if_eq:VnT \l__font_special_module_tl { vertical }
+      {
+        \PackageWarning{font-defaults}
+          {specialmodule=vertical~is~deprecated.~Use~layout=vertical~instead}
+        \tl_set:Nn \l__font_layout_tl { vertical }
+        \tl_clear:N \l__font_special_module_tl
+      }
   }
 
 \cs_new_protected:Npn \__font_note_missing_face:nn #1#2
@@ -288,39 +293,15 @@
 
 \cs_new_protected:Npn \__font_define_special_local:
   {
-    \exp_args:NV \__font_special_is_builtin:nTF \l__font_special_module_tl
-      { }
-      {
-        \seq_if_in:NVF \g__font_loaded_special_modules_seq \l__font_special_module_tl
-          {
-            \bool_if:NTF \l__font_nextsystem_installed_bool
-              {
-                \use:x
-                  {
-                    \exp_not:N \subimport
-                      { modules/fonts/ }
-                      { \l__font_special_module_tl .tex }
-                  }
-              }
-              {
-                \use:x
-                  {
-                    \exp_not:N \subimport
-                      { ../../modules/fonts/ }
-                      { \l__font_special_module_tl .tex }
-                  }
-              }
-            \seq_gput_right:NV \g__font_loaded_special_modules_seq \l__font_special_module_tl
-          }
-      }
+    \__font_import_special_module:
     \tl_set:Nx \l__font_special_entry_tl
       { __font_define_special_\l__font_special_module_tl : }
     \exp_args:NV \cs_if_exist:cTF \l__font_special_entry_tl
       { \exp_args:NV \use:c \l__font_special_entry_tl }
       {
-        \PackageError{font-defaults}
-          {Special~module~`\tl_use:N \l__font_special_module_tl`~did~not~define~its~entry~point}
-          {Define~\string\__font_define_special_\tl_use:N \l__font_special_module_tl :~inside~that~module.}
+        \PackageWarning{font-defaults}
+          {Special~module~`\tl_use:N \l__font_special_module_tl`~has~no~entry~point.~Using~generic~local~font~definition}
+        \__font_define_local_families_generic:
       }
   }
 
@@ -460,18 +441,14 @@
       }
       { \cs_set_protected:cpn { __font_space_policy_#2: } { } }
 
-    \str_if_eq:VnTF \l__font_map_textsf_tl { true }
-      {
-        \cs_set_protected:cpn { __font_map_sf_#2: }
-          { \cs_set_protected:Npn \sffamily { \use:c { __fontsf_#2 } } }
-      }
-      { \cs_set_protected:cpn { __font_map_sf_#2: } { } }
-    \str_if_eq:VnTF \l__font_map_texttt_tl { true }
+    \cs_set_protected:cpn { __font_map_sf_#2: }
+      { \cs_set_protected:Npn \sffamily { \use:c { __fontsf_#2 } } }
+    \tl_if_blank:VTF \l__font_mono_tl
+      { \cs_set_protected:cpn { __font_map_tt_#2: } { } }
       {
         \cs_set_protected:cpn { __font_map_tt_#2: }
           { \cs_set_protected:Npn \ttfamily { \use:c { __fonttt_#2 } } }
       }
-      { \cs_set_protected:cpn { __font_map_tt_#2: } { } }
 
     \cs_set_protected:cpn { __font_prepare_local_#2: }
       {
@@ -499,14 +476,6 @@
         {
           \use:c { __font_prepare_local_#2: }
           \__font_apply_behavior:nn {#2} {##1}
-        }
-      }
-
-    \exp_args:Nc \DeclareDocumentCommand { #1block } { +m }
-      {
-        {
-          \use:c { __font_prepare_local_#2: }
-          \use:c { __font_behavior_block_#2:n } {##1}
         }
       }
   }
@@ -746,7 +715,7 @@
 
 \cs_new_protected:Npn \__font_define_special_vertical:
   {
-    \__font_define_special_generic_shaping:
+    \__font_special_use_generic:
     \tl_set:Nn \l__font_vertical_embed_gap_tl { 0.35em }
     \dim_set:Nn \l__font_vertical_embed_top_correction_dim { 1em }
     \dim_set:Nn \l__font_vertical_embed_bottom_padding_dim { 0.28em }
@@ -955,11 +924,16 @@
             \tl_if_blank:VTF \l__font_name_tl
               { \tl_set_eq:NN \l__font_name_tl \l__font_command_tl }
               { }
-            \tl_if_blank:VTF \l__font_special_module_tl
+            \__font_apply_layout_compat:
+            \tl_if_blank:VF \l__font_special_module_tl
+              { \__font_import_special_module: }
+            \str_if_eq:VnTF \l__font_layout_tl { vertical }
+              { \__font_define_special_vertical: }
               {
-                \__font_define_local_families_generic:
+                \tl_if_blank:VTF \l__font_special_module_tl
+                  { \__font_define_local_families_generic: }
+                  { \__font_define_special_local: }
               }
-              { \__font_define_special_local: }
           }
       }
   }

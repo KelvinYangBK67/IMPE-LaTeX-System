@@ -28,17 +28,16 @@
 \tl_new:N \l__font_registry_inlinedirection_tl
 \tl_new:N \l__font_registry_blockprogression_tl
 \tl_new:N \l__font_registry_preservespaces_tl
-\tl_new:N \l__font_registry_allowjoining_tl
-\tl_new:N \l__font_registry_enableshaping_tl
-\tl_new:N \l__font_registry_maptextsf_tl
-\tl_new:N \l__font_registry_maptexttt_tl
 \tl_new:N \l__font_registry_inlinebehavior_tl
-\tl_new:N \l__font_registry_blockbehavior_tl
-\tl_new:N \l__font_registry_blockalign_tl
+\tl_new:N \l__font_registry_layout_tl
 \tl_new:N \l__font_registry_verticalstrategy_tl
+\tl_new:N \l__font_registry_verticalrotation_tl
+\tl_new:N \l__font_registry_verticalorigin_tl
+\tl_new:N \l__font_registry_verticaltopcorrection_tl
 \tl_new:N \l__font_registry_features_tl
 \tl_new:N \l__font_registry_command_tl
 \tl_new:N \l__font_registry_familyid_tl
+\tl_new:N \l__font_registry_specialmodule_tl
 \tl_new:N \l__font_registry_externalcommand_tl
 \tl_new:N \l__font_registry_externalengine_tl
 \tl_new:N \l__font_registry_externalrendercommand_tl
@@ -65,17 +64,16 @@
     \tl_clear:N \l__font_registry_inlinedirection_tl
     \tl_clear:N \l__font_registry_blockprogression_tl
     \tl_clear:N \l__font_registry_preservespaces_tl
-    \tl_clear:N \l__font_registry_allowjoining_tl
-    \tl_clear:N \l__font_registry_enableshaping_tl
-    \tl_clear:N \l__font_registry_maptextsf_tl
-    \tl_clear:N \l__font_registry_maptexttt_tl
     \tl_clear:N \l__font_registry_inlinebehavior_tl
-    \tl_clear:N \l__font_registry_blockbehavior_tl
-    \tl_clear:N \l__font_registry_blockalign_tl
+    \tl_clear:N \l__font_registry_layout_tl
     \tl_clear:N \l__font_registry_verticalstrategy_tl
+    \tl_clear:N \l__font_registry_verticalrotation_tl
+    \tl_clear:N \l__font_registry_verticalorigin_tl
+    \tl_clear:N \l__font_registry_verticaltopcorrection_tl
     \tl_clear:N \l__font_registry_features_tl
     \tl_clear:N \l__font_registry_command_tl
     \tl_clear:N \l__font_registry_familyid_tl
+    \tl_clear:N \l__font_registry_specialmodule_tl
     \tl_clear:N \l__font_registry_externalcommand_tl
     \tl_clear:N \l__font_registry_externalengine_tl
     \tl_clear:N \l__font_registry_externalrendercommand_tl
@@ -102,17 +100,16 @@
     inlinedirection .tl_set:N = \l__font_registry_inlinedirection_tl,
     blockprogression .tl_set:N = \l__font_registry_blockprogression_tl,
     preservespaces .tl_set:N = \l__font_registry_preservespaces_tl,
-    allowjoining .tl_set:N = \l__font_registry_allowjoining_tl,
-    enableshaping .tl_set:N = \l__font_registry_enableshaping_tl,
-    maptextsf .tl_set:N = \l__font_registry_maptextsf_tl,
-    maptexttt .tl_set:N = \l__font_registry_maptexttt_tl,
     inlinebehavior .tl_set:N = \l__font_registry_inlinebehavior_tl,
-    blockbehavior .tl_set:N = \l__font_registry_blockbehavior_tl,
-    blockalign .tl_set:N = \l__font_registry_blockalign_tl,
+    layout .tl_set:N = \l__font_registry_layout_tl,
     verticalstrategy .tl_set:N = \l__font_registry_verticalstrategy_tl,
+    verticalrotation .tl_set:N = \l__font_registry_verticalrotation_tl,
+    verticalorigin .tl_set:N = \l__font_registry_verticalorigin_tl,
+    verticaltopcorrection .tl_set:N = \l__font_registry_verticaltopcorrection_tl,
     features .tl_set:N = \l__font_registry_features_tl,
     command .tl_set:N = \l__font_registry_command_tl,
     familyid .tl_set:N = \l__font_registry_familyid_tl,
+    specialmodule .tl_set:N = \l__font_registry_specialmodule_tl,
     externalcommand .tl_set:N = \l__font_registry_externalcommand_tl,
     externalengine .tl_set:N = \l__font_registry_externalengine_tl,
     externalrendercommand .tl_set:N = \l__font_registry_externalrendercommand_tl,
@@ -149,17 +146,16 @@
     \__font_registry_append:NVn \l__font_registry_inlinedirection_tl { inlinedirection }
     \__font_registry_append:NVn \l__font_registry_blockprogression_tl { blockprogression }
     \__font_registry_append:NVn \l__font_registry_preservespaces_tl { preservespaces }
-    \__font_registry_append:NVn \l__font_registry_allowjoining_tl { allowjoining }
-    \__font_registry_append:NVn \l__font_registry_enableshaping_tl { enableshaping }
-    \__font_registry_append:NVn \l__font_registry_maptextsf_tl { maptextsf }
-    \__font_registry_append:NVn \l__font_registry_maptexttt_tl { maptexttt }
     \__font_registry_append:NVn \l__font_registry_inlinebehavior_tl { inlinebehavior }
-    \__font_registry_append:NVn \l__font_registry_blockbehavior_tl { blockbehavior }
-    \__font_registry_append:NVn \l__font_registry_blockalign_tl { blockalign }
+    \__font_registry_append:NVn \l__font_registry_layout_tl { layout }
     \__font_registry_append:NVn \l__font_registry_verticalstrategy_tl { verticalstrategy }
+    \__font_registry_append:NVn \l__font_registry_verticalrotation_tl { verticalrotation }
+    \__font_registry_append:NVn \l__font_registry_verticalorigin_tl { verticalorigin }
+    \__font_registry_append:NVn \l__font_registry_verticaltopcorrection_tl { verticaltopcorrection }
     \__font_registry_append:NVn \l__font_registry_features_tl { features }
     \__font_registry_append:NVn \l__font_registry_command_tl { command }
     \__font_registry_append:NVn \l__font_registry_familyid_tl { familyid }
+    \__font_registry_append:NVn \l__font_registry_specialmodule_tl { specialmodule }
     \__font_registry_append:NVn \l__font_registry_externalcommand_tl { externalcommand }
     \__font_registry_append:NVn \l__font_registry_externalengine_tl { externalengine }
     \__font_registry_append:NVn \l__font_registry_externalrendercommand_tl { externalrendercommand }

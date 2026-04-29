@@ -9,11 +9,15 @@
 - `modules/`：可擴展實作層
 - `assets/`：本地執行資源，例如字體
 
-目前發布版本：
-- `v0.1.1`
+目前已發佈版本：
+- `v0.1.2`
 
-版本更新記錄：
-- [CHANGELOG-zh.md](./CHANGELOG-zh.md)
+開發中版本：
+- `v0.2.0`（未發佈）
+
+版本記錄：
+- 已發佈版本：[CHANGELOG-zh.md](./CHANGELOG-zh.md)
+- 開發中變更：[CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)
 
 ## 目標
 

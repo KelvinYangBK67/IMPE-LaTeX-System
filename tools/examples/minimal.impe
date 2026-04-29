@@ -1,0 +1,56 @@
+impe_version: 0.1
+
+document:
+  class: nextreport
+  title: "Untitled Document"
+  author: ""
+  language: zh-Hant
+
+template:
+  layout: report
+  globalfonts:
+    - cmu
+    - shanggu
+  fonts:
+    - devanagari
+    - tibetan
+  features:
+    - tables
+    - image
+    - bib
+
+fonts:
+  preset: custom
+  scripts:
+    devanagari:
+      label: "天城體文本"
+      main: "Noto Serif Devanagari"
+      tex_script: "Devanagari"
+    tibetan:
+      label: "藏文文本"
+      main: "Noto Serif Tibetan"
+      tex_script: "Tibetan"
+
+content:
+  - type: text
+    value: |
+      這裏是一段普通正文。
+
+  - type: font_block
+    kind: devanagari
+    value: |
+      धर्मो रक्षति रक्षितः।
+
+  - type: paragraph
+    spans:
+      - type: text
+        value: "這裏提到 "
+      - type: font_span
+        kind: devanagari
+        value: "धर्मः"
+      - type: text
+        value: " 這個詞。"
+
+build:
+  engine: xelatex
+  out_dir: build

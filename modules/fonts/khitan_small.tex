@@ -463,14 +463,6 @@
           \__font_khs_render_linear:n {##1}
         }
       }
-    \exp_args:Nc \RenewDocumentCommand { #1block } { +m }
-      {
-        {
-          \use:c { __font_prepare_local_#2: }
-          \noindent
-          \__font_khs_render_linear:n {##1}
-        }
-      }
   }
 
 \cs_new_protected:Npn \__font_define_special_khitan_small:

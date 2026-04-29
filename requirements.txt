@@ -1,0 +1,4 @@
+ttkbootstrap>=1.10
+PyYAML>=6.0
+regex>=2024.0.0
+platformdirs>=4.0

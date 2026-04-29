@@ -2,7 +2,18 @@
 
 [English Version](./CHANGELOG.md)
 
-IMPE LaTeX System 的重要版本變更記錄於此。
+IMPE LaTeX System 的已發佈版本變更記錄於此。
+
+尚未發佈的開發中變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
+
+## [0.1.2] - 2026-04-28
+
+### 新增
+- 註冊 WenJin Mincho Plane 0 / 2 / 3，提供 local 命令 `\WJA`、`\WJB`、`\WJC`。
+- 生成 `IMPE-LaTeX-System-v0.1.2-full.zip` 與 `IMPE-LaTeX-System-v0.1.2-core.zip`。
+
+### 修正
+- 中文 UI wrapper 現在會保留使用者明確設定的 `\date{...}`，不再被預設中文日期覆蓋。
 
 ## [0.1.1] - 2026-03-20
 

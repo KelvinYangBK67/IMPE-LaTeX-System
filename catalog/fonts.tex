@@ -23,8 +23,6 @@
     mono = cmuntt.otf,
     monobold = cmuntb.otf
   },
-  globalkind = main,
-  globalstatus = implemented
 }
 
 \FontRegisterFamily{
@@ -44,8 +42,6 @@
     sansbolditalic = NotoSans-BoldItalic.ttf,
     mono = NotoSansMono-Regular.ttf,
     monobold = NotoSansMono-Bold.ttf,
-    maptextsf = true,
-    maptexttt = true
   },
   global = {
     path = \CatalogFontRoot/noto/,
@@ -60,8 +56,6 @@
     mono = NotoSansMono-Regular.ttf,
     monobold = NotoSansMono-Bold.ttf
   },
-  globalkind = main,
-  globalstatus = implemented
 }
 
 \FontRegisterFamily{
@@ -80,8 +74,6 @@
     sansbolditalic = arialbi.ttf,
     mono = consola.ttf,
     monobold = consolab.ttf,
-    maptextsf = true,
-    maptexttt = true
   },
   global = {
     regular = times.ttf,
@@ -95,10 +87,7 @@
     mono = consola.ttf,
     monobold = consolab.ttf
   },
-  globalkind = main,
-  globalstatus = implemented
 }
-
 
 \FontRegisterFamily{
   id = gentium,
@@ -119,10 +108,7 @@
     italic = GentiumPlus-Italic.ttf,
     bolditalic = GentiumPlus-BoldItalic.ttf
   },
-  globalkind = main,
-  globalstatus = implemented
 }
-
 
 \FontRegisterFamily{
   id = charis,
@@ -143,8 +129,6 @@
     italic = CharisSIL-Italic.ttf,
     bolditalic = CharisSIL-BoldItalic.ttf
   },
-  globalkind = main,
-  globalstatus = implemented
 }
 
 % -----------------------------------------------------------------
@@ -160,11 +144,7 @@
     path = \CatalogFontRoot/anatolian/,
     regular = NotoSansCarian-Regular.ttf,
     script = Carian,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -176,11 +156,7 @@
     path = \CatalogFontRoot/coptic/,
     regular = NotoSansCoptic-Regular.ttf,
     script = Coptic,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -193,8 +169,6 @@
     regular = I.Ming-8.10.ttf,
     scriptclass = cjk
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -205,11 +179,7 @@
     name = cuneiform_local,
     path = \CatalogFontRoot/cuneiform/,
     regular = NotoSansCuneiform-Regular.ttf,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -221,11 +191,7 @@
     path = \CatalogFontRoot/glagolitic/,
     regular = NotoSansGlagolitic-Regular.ttf,
     script = Glagolitic,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -237,11 +203,7 @@
     path = \CatalogFontRoot/italic/,
     regular = NotoSansOldItalic-Regular.ttf,
     script = Latin,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -252,15 +214,7 @@
     name = hungarian_local,
     path = \CatalogFontRoot/hungarian/,
     regular = NotoSansOldHungarian-Regular.ttf,
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -272,15 +226,15 @@
     path = \CatalogFontRoot/runic/,
     regular = NotoSansRunic-Regular.ttf,
     script = Runic,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 % -----------------------------------------------------------------
 % Stateful local serif/sans or serif/italic families
+%
+% Standard OpenType shaping is expressed directly through script,
+% language, and features. Built-in layout routes use layout metadata;
+% specialmodule is reserved for custom or script-specific TeX modules.
 % -----------------------------------------------------------------
 
 \FontRegisterFamily{
@@ -295,10 +249,7 @@
     sans = NotoSansArmenian-Regular.ttf,
     sansbold = NotoSansArmenian-Bold.ttf,
     script = Armenian,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -314,13 +265,7 @@
     sansbold = NotoSansDevanagari-Bold.ttf,
     script = Devanagari,
     language = Hindi,
-    scriptclass = complex,
-    specialmodule = generic_shaping,
-    enableshaping = true,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -333,14 +278,22 @@
     regular = TiroDevanagariSanskrit-Regular.ttf,
     script = Devanagari,
     language = Sanskrit,
-    scriptclass = complex,
-    specialmodule = generic_shaping,
-    enableshaping = true,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
+}
+
+\FontRegisterFamily{
+  id = devanagari,
+  defaultmode = local,
+  local = {
+    command = DEV,
+    name = devanagari_local,
+    path = \CatalogFontRoot/hindi/,
+    regular = NotoSerifDevanagari-Regular.ttf,
+    bold = NotoSerifDevanagari-Bold.ttf,
+    sans = NotoSansDevanagari-Regular.ttf,
+    sansbold = NotoSansDevanagari-Bold.ttf,
+    script = Devanagari,
+  },
 }
 
 \FontRegisterFamily{
@@ -358,13 +311,7 @@
     sansbold = NotoSansTamil-Bold.ttf,
     script = Tamil,
     language = Tamil,
-    scriptclass = complex,
-    specialmodule = generic_shaping,
-    enableshaping = true,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -376,13 +323,7 @@
     path = \CatalogFontRoot/brahmi/,
     regular = NotoSansBrahmi-Regular.ttf,
     script = Brahmi,
-    scriptclass = complex,
-    specialmodule = generic_shaping,
-    enableshaping = true,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -397,10 +338,7 @@
     sans = NotoSansGeorgian-Regular.ttf,
     sansbold = NotoSansGeorgian-Bold.ttf,
     script = Georgian,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -416,13 +354,7 @@
     bolditalic = KhaWaBetsugsSans-Text-Bold.ttf,
     script = Tibetan,
     language = Tibetan,
-    scriptclass = complex,
-    specialmodule = generic_shaping,
-    enableshaping = true,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 % -----------------------------------------------------------------
@@ -444,22 +376,9 @@
     sansbold = NotoSansArabic-Bold.ttf,
     sansitalic = NotoKufiArabic-Regular.ttf,
     sansbolditalic = NotoKufiArabic-Bold.ttf,
-    mono = NotoKufiArabic-Regular.ttf,
-    monobold = NotoKufiArabic-Bold.ttf,
     script = Arabic,
     language = Arabic,
-    scriptclass = complex,
-    specialmodule = generic_shaping,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    allowjoining = true,
-    enableshaping = true,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -473,18 +392,7 @@
     bold = NotoNastaliqUrdu-Bold.ttf,
     script = Arabic,
     language = Urdu,
-    scriptclass = complex,
-    specialmodule = generic_shaping,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    allowjoining = true,
-    enableshaping = true,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -496,15 +404,7 @@
     path = \CatalogFontRoot/aramaic/,
     regular = NotoSansImperialAramaic-Regular.ttf,
     features = { RawFeature = { script=armi } },
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -516,15 +416,7 @@
     path = \CatalogFontRoot/nabataean/,
     regular = NotoSansNabataean-Regular.ttf,
     script = Nabataean,
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -542,15 +434,7 @@
     sansbold = NotoSansHebrew-Bold.ttf,
     script = Hebrew,
     language = Hebrew,
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -568,18 +452,8 @@
     sansbold = NotoSansSyriac-Bold.ttf,
     sansitalic = NotoSansSyriacWestern-Regular.ttf,
     sansbolditalic = NotoSansSyriacWestern-Bold.ttf,
-    scriptclass = complex,
-    specialmodule = generic_shaping,
     script = Syriac,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    allowjoining = true,
-    enableshaping = true,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -597,18 +471,8 @@
     sansbold = NotoSansSyriacEastern-Bold.ttf,
     sansitalic = NotoSansSyriacWestern-Regular.ttf,
     sansbolditalic = NotoSansSyriacWestern-Bold.ttf,
-    scriptclass = complex,
-    specialmodule = generic_shaping,
     script = Syriac,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    allowjoining = true,
-    enableshaping = true,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -620,15 +484,7 @@
     path = \CatalogFontRoot/kharosthi/,
     regular = NotoSansKharoshthi-Regular.ttf,
     features = { RawFeature = { script=khar } },
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -640,14 +496,7 @@
     path = \CatalogFontRoot/khitan_small/,
     regular = NotoSerifKhitanSmallScript-Regular.ttf,
     specialmodule = khitan_small,
-    externalcommand = KHSi,
-    externalengine = lualatex,
-    externalrendercommand = KHSstackblock,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -659,15 +508,7 @@
     path = \CatalogFontRoot/pahlavi_parthian/,
     regular = NotoSansInscriptionalParthian-Regular.ttf,
     features = { RawFeature = { script=prti } },
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -679,15 +520,7 @@
     path = \CatalogFontRoot/pahlavi_inscriptional/,
     regular = NotoSansInscriptionalPahlavi-Regular.ttf,
     features = { RawFeature = { script=phli } },
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -699,19 +532,9 @@
     path = \CatalogFontRoot/pahlavi_psalter/,
     regular = NotoSansPsalterPahlavi-Regular.ttf,
     script = PsalterPahlavi,
-    scriptclass = complex,
     specialmodule = pahlavi,
     features = { RawFeature = { script=phlp } },
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    allowjoining = true,
-    enableshaping = true,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -723,15 +546,7 @@
     path = \CatalogFontRoot/avestan/,
     regular = NotoSansAvestan-Regular.ttf,
     script = Avestan,
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -743,18 +558,7 @@
     path = \CatalogFontRoot/manichaean/,
     regular = NotoSansManichaean-Regular.ttf,
     features = { RawFeature = { script=mani } },
-    scriptclass = complex,
-    specialmodule = generic_shaping,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    allowjoining = true,
-    enableshaping = true,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -766,15 +570,7 @@
     path = \CatalogFontRoot/phoenician/,
     regular = NotoSansPhoenician-Regular.ttf,
     script = Phoenician,
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -786,14 +582,7 @@
     path = \CatalogFontRoot/samaritan/,
     regular = NotoSansSamaritan-Regular.ttf,
     script = Samaritan,
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -805,18 +594,7 @@
     path = \CatalogFontRoot/sogdian/,
     regular = NotoSansSogdian-Regular.ttf,
     features = { RawFeature = { script=sogd } },
-    scriptclass = complex,
-    specialmodule = generic_shaping,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    allowjoining = true,
-    enableshaping = true,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -827,15 +605,7 @@
     name = sogdian_old_local,
     path = \CatalogFontRoot/sogdian_old/,
     regular = NotoSansOldSogdian-Regular.ttf,
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 % -----------------------------------------------------------------
@@ -849,18 +619,12 @@
     command = SC,
     name = chinese_simplified_local,
     path = \CatalogFontRoot/chinese_simplified/,
-    boldpath = \CatalogFontRoot/chinese_simplified/,
-    sanspath = \CatalogFontRoot/chinese_simplified/,
-    sansboldpath = \CatalogFontRoot/chinese_simplified/,
     regular = NotoSerifSC-Regular.ttf,
     bold = NotoSerifSC-Bold.ttf,
     sans = NotoSansSC-Regular.ttf,
     sansbold = NotoSansSC-Bold.ttf,
     scriptclass = cjk,
-    maptextsf = true
   },
-  globalkind = main,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -870,18 +634,12 @@
     command = TC,
     name = chinese_traditional_local,
     path = \CatalogFontRoot/chinese_traditional/,
-    boldpath = \CatalogFontRoot/chinese_traditional/,
-    sanspath = \CatalogFontRoot/chinese_traditional/,
-    sansboldpath = \CatalogFontRoot/chinese_traditional/,
     regular = NotoSerifTC-Regular.ttf,
     bold = NotoSerifTC-Bold.ttf,
     sans = NotoSansTC-Regular.ttf,
     sansbold = NotoSansTC-Bold.ttf,
     scriptclass = cjk,
-    maptextsf = true
   },
-  globalkind = main,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -891,18 +649,12 @@
     command = JP,
     name = japanese_local,
     path = \CatalogFontRoot/japanese/,
-    boldpath = \CatalogFontRoot/japanese/,
-    sanspath = \CatalogFontRoot/japanese/,
-    sansboldpath = \CatalogFontRoot/japanese/,
     regular = NotoSerifJP-Regular.ttf,
     bold = NotoSerifJP-Bold.ttf,
     sans = NotoSansJP-Regular.ttf,
     sansbold = NotoSansJP-Bold.ttf,
     scriptclass = cjk,
-    maptextsf = true
   },
-  globalkind = main,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -915,10 +667,7 @@
     regular = WenJinMinchoP0-Regular.ttf,
     scriptclass = cjk,
     preservespaces = true,
-    maptextsf = true
   },
-  globalkind = main,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -931,10 +680,7 @@
     regular = WenJinMinchoP2-Regular.ttf,
     scriptclass = cjk,
     preservespaces = true,
-    maptextsf = true
   },
-  globalkind = main,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -947,10 +693,7 @@
     regular = WenJinMinchoP3-Regular.ttf,
     scriptclass = cjk,
     preservespaces = true,
-    maptextsf = true
   },
-  globalkind = main,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -958,13 +701,6 @@
   defaultmode = global,
   global = {
     path = \CatalogFontRoot/shanggu/,
-    boldpath = \CatalogFontRoot/shanggu/,
-    italicpath = \CatalogFontRoot/shanggu/,
-    bolditalicpath = \CatalogFontRoot/shanggu/,
-    sanspath = \CatalogFontRoot/shanggu/,
-    sansboldpath = \CatalogFontRoot/shanggu/,
-    monopath = \CatalogFontRoot/shanggu/,
-    monoboldpath = \CatalogFontRoot/shanggu/,
     regular = ShangguSerif-Regular.ttf,
     bold = ShangguSerif-Bold.ttf,
     italic = ZhuqueFangsong-Regular.ttf,
@@ -975,8 +711,6 @@
     monobold = ShangguSerif-Bold.ttf,
     scriptclass = cjk
   },
-  globalkind = main,
-  globalstatus = implemented
 }
 
 \FontRegisterFamily{
@@ -991,8 +725,6 @@
     mono = simsun.ttc,
     scriptclass = cjk
   },
-  globalkind = main,
-  globalstatus = implemented
 }
 
 \FontRegisterFamily{
@@ -1002,19 +734,13 @@
     command = KR,
     name = korean_local,
     path = \CatalogFontRoot/korean/,
-    boldpath = \CatalogFontRoot/korean/,
-    sanspath = \CatalogFontRoot/korean/,
-    sansboldpath = \CatalogFontRoot/korean/,
     regular = NotoSerifKR-Regular.ttf,
     bold = NotoSerifKR-Bold.ttf,
     sans = NotoSansKR-Regular.ttf,
     sansbold = NotoSansKR-Bold.ttf,
     scriptclass = cjk,
     preservespaces = true,
-    maptextsf = true
   },
-  globalkind = main,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -1024,16 +750,11 @@
     command = TG,
     name = tangut_local,
     path = \CatalogFontRoot/tangut/,
-    italicpath = \CatalogFontRoot/tangut/,
-    bolditalicpath = \CatalogFontRoot/tangut/,
     regular = NotoSerifTangut-Regular.ttf,
     italic = Tangut N4694 V3.10.ttf,
     bolditalic = new Tangut Std V2.008.ttf,
     scriptclass = cjk,
-    maptextsf = true
   },
-  globalkind = main,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -1048,14 +769,10 @@
     bold = mngltitleotf.ttf,
     bolditalic = mnglartotf.ttf,
     sans = NotoSansMongolian-Regular.ttf,
-    scriptclass = complex,
     features = { RawFeature = { script=mong } },
-    specialmodule = vertical,
+    layout = vertical,
     verticalstrategy = ltr,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -1066,15 +783,10 @@
     name = mongolian_baiti_local,
     path = \CatalogFontRoot/mongolian_baiti/,
     regular = monbaiti.ttf,
-    scriptclass = complex,
     features = { RawFeature = { script=mong } },
-    specialmodule = vertical,
+    layout = vertical,
     verticalstrategy = ltr,
-    enableshaping = true,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -1087,14 +799,10 @@
     regular = Ab-Xy.ttf,
     bold = Ab-Xy_B.ttf,
     sans = NotoSansMongolian-Regular.ttf,
-    scriptclass = complex,
     features = { RawFeature = { script=mong } },
-    specialmodule = vertical,
+    layout = vertical,
     verticalstrategy = ltr,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -1107,14 +815,7 @@
     regular = seguihis.ttf,
     script = Brahmi,
     language = Sanskrit,
-    scriptclass = complex,
-    specialmodule = generic_shaping,
-    enableshaping = true,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -1130,15 +831,9 @@
     sansbold = NotoSansThaiLooped-Bold.ttf,
     sansitalic = NotoSansThai-Regular.ttf,
     sansbolditalic = NotoSansThai-Bold.ttf,
-    scriptclass = complex,
-    specialmodule = generic_shaping,
     script = Thai,
     language = Thai,
-    enableshaping = true,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -1149,15 +844,7 @@
     name = turkic_local,
     path = \CatalogFontRoot/turkic/,
     regular = NotoSansOldTurkic-Regular.ttf,
-    scriptclass = complex,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    maptextsf = true,
-    maptexttt = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -1168,22 +855,13 @@
     name = uyghur_local,
     path = \CatalogFontRoot/uyghur/,
     regular = NotoSerifOldUyghur-Regular.ttf,
-    scriptclass = complex,
     features = { RawFeature = { script=ougr } },
-    specialmodule = vertical,
+    layout = vertical,
     verticalstrategy = ltr,
     verticalrotation = 90,
     verticalorigin = rB,
     verticaltopcorrection = 1em,
-    inlinebehavior = rtl,
-    blockbehavior = rtl,
-    blockalign = right,
-    allowjoining = true,
-    enableshaping = true,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 % -----------------------------------------------------------------
@@ -1197,15 +875,10 @@
     command = VI,
     name = vietnamese_quocngu_local,
     path = \CatalogFontRoot/vietnamese_quocngu/,
-    boldpath = \CatalogFontRoot/vietnamese_quocngu/,
-    sanspath = \CatalogFontRoot/vietnamese_quocngu/,
     regular = Minh Nguyen Regular.ttf,
     bold = Minh Nguyen Bold.ttf,
     sans = Gothic Nguyen Regular.ttf,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
 
 \FontRegisterFamily{
@@ -1215,18 +888,12 @@
     command = HN,
     name = vietnamese_hannom_local,
     path = \CatalogFontRoot/vietnamese_hannom/,
-    boldpath = \CatalogFontRoot/vietnamese_hannom/,
-    italicpath = \CatalogFontRoot/vietnamese_hannom/,
-    bolditalicpath = \CatalogFontRoot/vietnamese_hannom/,
-    sanspath = \CatalogFontRoot/vietnamese_hannom/,
     regular = Minh Nguyen Regular.ttf,
     bold = Minh Nguyen Bold.ttf,
     italic = NomNaTong-Regular.ttf,
     bolditalic = NomNaTong-Regular.ttf,
     sans = Gothic Nguyen Regular.ttf,
     scriptclass = cjk,
-    maptextsf = true
   },
-  globalkind = coverage,
-  globalstatus = reserved
 }
+

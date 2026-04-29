@@ -17,20 +17,78 @@
 \ExplSyntaxOn
 
 \tl_new:N \l__font_inline_behavior_tl
-\tl_new:N \l__font_block_behavior_tl
-\tl_new:N \l__font_block_align_tl
 \tl_new:N \l__font_vertical_strategy_tl
+
+\prg_new_conditional:Npnn \__font_should_infer_rtl: { TF }
+  {
+    \__font_tl_if_in_set:NnTF \l__font_decl_family_id_tl
+      {
+        arabic,urdu,aramaic,nabataean,hebrew,syriac,syriac_eastern,
+        kharosthi,pahlavi_parthian,pahlavi_inscriptional,pahlavi_psalter,
+        avestan,manichaean,phoenician,samaritan,sogdian,sogdian_old,
+        hungarian,turkic,uyghur
+      }
+      { \prg_return_true: }
+      {
+        \__font_tl_if_in_set:NnTF \l__font_script_tl
+          {
+            Arabic,Hebrew,Syriac,Avestan,Nabataean,Phoenician,Samaritan,
+            PsalterPahlavi,ImperialAramaic,Kharoshthi,OldHungarian,
+            OldTurkic,OldUyghur,Sogdian,OldSogdian,Manichaean
+          }
+          { \prg_return_true: }
+          {
+            \tl_if_in:VnTF \l__font_features_tl { script=arab }
+              { \prg_return_true: }
+              {
+                \tl_if_in:VnTF \l__font_features_tl { script=hebr }
+                  { \prg_return_true: }
+                  {
+                    \tl_if_in:VnTF \l__font_features_tl { script=syrc }
+                      { \prg_return_true: }
+                      {
+                        \tl_if_in:VnTF \l__font_features_tl { script=armi }
+                          { \prg_return_true: }
+                          {
+                            \tl_if_in:VnTF \l__font_features_tl { script=mani }
+                              { \prg_return_true: }
+                              {
+                                \tl_if_in:VnTF \l__font_features_tl { script=phli }
+                                  { \prg_return_true: }
+                                  {
+                                    \tl_if_in:VnTF \l__font_features_tl { script=prti }
+                                      { \prg_return_true: }
+                                      {
+                                        \tl_if_in:VnTF \l__font_features_tl { script=sogd }
+                                          { \prg_return_true: }
+                                          {
+                                            \tl_if_in:VnTF \l__font_features_tl { script=ougr }
+                                              { \prg_return_true: }
+                                              {
+                                                \tl_if_in:VnTF \l__font_features_tl { script=khar }
+                                                  { \prg_return_true: }
+                                                  { \prg_return_false: }
+                                              }
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  }
 
 \cs_new_protected:Npn \__font_apply_behavior_defaults:
   {
     \tl_if_blank:VTF \l__font_inline_behavior_tl
-      { \tl_set:NV \l__font_inline_behavior_tl \FontDefaultInlineBehavior }
-      { }
-    \tl_if_blank:VTF \l__font_block_behavior_tl
-      { \tl_set:NV \l__font_block_behavior_tl \FontDefaultBlockBehavior }
-      { }
-    \tl_if_blank:VTF \l__font_block_align_tl
-      { \tl_set:NV \l__font_block_align_tl \FontDefaultBlockAlign }
+      {
+        \__font_should_infer_rtl:TF
+          { \tl_set:Nn \l__font_inline_behavior_tl { rtl } }
+          { \tl_set:NV \l__font_inline_behavior_tl \FontDefaultInlineBehavior }
+      }
       { }
     \tl_if_blank:VTF \l__font_vertical_strategy_tl
       { \tl_set:NV \l__font_vertical_strategy_tl \FontDefaultVerticalStrategy }
@@ -47,14 +105,6 @@
           {Invalid~inline~behavior~`\tl_use:N \l__font_inline_behavior_tl`}
           {Use~normal,~rtl,~vertical-fallen,~or~vertical-boxed.}
       }
-    \__font_tl_if_in_set:NnTF \l__font_block_behavior_tl
-      { inherit,rtl,vertical-fallen,vertical-boxed }
-      { }
-      {
-        \PackageError{font-defaults}
-          {Invalid~block~behavior~`\tl_use:N \l__font_block_behavior_tl`}
-          {Use~inherit,~rtl,~vertical-fallen,~or~vertical-boxed.}
-      }
   }
 
 \cs_new_protected:Npn \__font_define_behavior_hooks:n #1
@@ -63,51 +113,23 @@
       {
         \cs_set_protected:cpn { __font_behavior_inline_#1:n } ##1
           { \RL{##1} }
+        \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
+          {
+            \begingroup
+            \RTL
+            \leftskip=0pt plus 1fil\relax
+            \rightskip=0pt\relax
+            \parfillskip=0pt\relax
+            \noindent ##1
+            \endRTL
+            \endgroup
+          }
       }
       {
         \cs_set_protected:cpn { __font_behavior_inline_#1:n } ##1
           { ##1 }
-      }
-
-    \str_if_eq:VnTF \l__font_block_behavior_tl { rtl }
-      {
-        \bool_lazy_or:nnTF
-          { \str_if_eq_p:Vn \l__font_block_align_tl { right } }
-          { \str_if_eq_p:Vn \l__font_block_align_tl { inherit } }
-          {
-            \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
-              {
-                \begingroup
-                \RTL
-                \leftskip=0pt plus 1fil\relax
-                \rightskip=0pt\relax
-                \parfillskip=0pt\relax
-                \noindent ##1
-                \endRTL
-                \endgroup
-              }
-          }
-          {
-            \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
-              {
-                \begingroup
-                \RTL
-                \noindent ##1
-                \endRTL
-                \endgroup
-              }
-          }
-      }
-      {
-        \str_if_eq:VnTF \l__font_block_behavior_tl { inherit }
-          {
-            \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
-              { ##1 }
-          }
-          {
-            \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
-              { ##1 }
-          }
+        \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
+          { ##1 }
       }
   }
 

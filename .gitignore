@@ -19,11 +19,15 @@
 *.blg
 *.bbl
 *.tmp
+__pycache__/
+*.pyc
 .DS_Store
 Thumbs.db
 nextsystem.local.tex
 *.synctex(busy)
 dist/
+font-registry.json
+tools/examples/build/
 assets/fonts/
 !assets/.gitkeep
 **/.nextex-externalized/

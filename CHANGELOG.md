@@ -2,7 +2,18 @@
 
 [繁體中文版本](./CHANGELOG-zh.md)
 
-All notable changes to IMPE LaTeX System are documented in this file.
+All notable released changes to IMPE LaTeX System are documented in this file.
+
+For unreleased development notes, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
+
+## [0.1.2] - 2026-04-28
+
+### Added
+- Registered WenJin Mincho Plane 0 / 2 / 3 as local commands `\WJA`, `\WJB`, and `\WJC`.
+- Generated `IMPE-LaTeX-System-v0.1.2-full.zip` and `IMPE-LaTeX-System-v0.1.2-core.zip`.
+
+### Fixed
+- Preserved explicit user `\date{...}` values in Chinese UI wrappers instead of overwriting them with the default localized date.
 
 ## [0.1.1] - 2026-03-20
 

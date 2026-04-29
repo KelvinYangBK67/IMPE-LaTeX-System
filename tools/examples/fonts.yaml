@@ -1,0 +1,12 @@
+fonts:
+  - family: "Noto Serif Devanagari"
+    path: "../../assets/fonts/hindi/NotoSerifDevanagari-Regular.ttf"
+    script: devanagari
+    tex_script: Devanagari
+    label: "天城體文本"
+
+  - family: "Noto Serif Tibetan"
+    path: "../../assets/fonts/tibetan/NotoSerifTibetan-Regular.ttf"
+    script: tibetan
+    tex_script: Tibetan
+    label: "藏文文本"

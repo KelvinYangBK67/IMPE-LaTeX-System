@@ -21,8 +21,8 @@ release 與安裝工具位於 `scripts/`。
 
 - `core/fonts/`
   負責字體宣告引擎、fallback 解析、writing model、behavior routing、
-  family registry 行為、externalized rendering，以及目前已內建的
-  `generic_shaping`、`vertical` 等穩定 route
+  family registry 行為、externalized rendering、標準 fontspec shaping
+  選項，以及目前已內建的 `vertical` route
 - `core/layout/`
   負責 class 偵測、preset 套用、component 載入與 layout registry 行為
 - `core/features/`

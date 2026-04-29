@@ -43,17 +43,19 @@ Current core files:
 - `writing.tex`
   Defines and validates the writing model fields: inline axis, inline direction, and block progression.
 - `script.tex`
-  Applies the core defaults and validates script-class related state such as `scriptclass`, `preservespaces`, `allowjoining`, `enableshaping`, and backend choice.
+  Applies the core defaults and validates internal routing state such as `scriptclass`, `preservespaces`, and backend choice.
 - `behavior.tex`
   Defines inline/block behavior routing, currently including the normal and RTL behavior hooks.
 - `interface.tex`
-  The main declaration engine. It parses registered family fields, resolves concrete font options, defines public commands, and now also owns the built-in `generic_shaping` and `vertical` special routes.
+  The main declaration engine. It parses registered family fields, resolves
+  concrete font options, defines public commands, and owns the built-in
+  `layout = vertical` route.
 - `registry.tex`
   Stores low-level declaration entries before they are turned into usable local/global families.
 - `registry_modes.tex`
   Tracks family loading mode (`local` / `global`) and performs on-demand family activation.
 - `externalized.tex`
-  Provides the stable externalized-render pipeline used by commands such as `\KHSi`: cache naming, external subdocument generation, shell-out, and PDF reinsertion.
+  Provides the stable externalized-render pipeline: cache naming, external subdocument generation, shell-out, and PDF reinsertion.
 - `helpers.tex`
   Small shared helper primitives used by the font framework.
 
@@ -67,8 +69,8 @@ It declares:
 - command names
 - font file paths
 - script / language / feature metadata
-- global vs local modes
-- optional special module hooks
+- real local/global modes
+- optional built-in layout routes and special module hooks
 
 ### `modules/fonts/`
 
@@ -83,9 +85,9 @@ Current modules:
 
 Notes:
 
-- `generic_shaping` is now built into `core/fonts/interface.tex`
-- `vertical` is now built into `core/fonts/interface.tex`
-- new families that only reuse those stable routes should normally be handled by registration, not by adding a new file under `modules/fonts/`
+- `layout = vertical` is now built into `core/fonts/interface.tex`
+- ordinary OpenType shaping is handled by normal registration fields: `script`, `language`, and `features`
+- new families that only need standard fontspec shaping should normally be handled by registration, not by adding a new file under `modules/fonts/`
 
 ## Declaration Model
 
@@ -95,28 +97,93 @@ The font layer supports:
 - local command families
 - centralized family registration with `\FontRegisterFamily`
 
-Important local declaration fields include:
+### Ordinary Local Family
 
-- `command`
-- `path`
-- `regular`
-- `bold`
-- `italic`
-- `bolditalic`
-- `sans`
-- `sansbold`
-- `mono`
-- `script`
-- `language`
-- `scriptclass`
-- `features`
-- `specialmodule`
-- `inlinebehavior`
-- `blockbehavior`
-- `blockalign`
-- `maptextsf`
-- `maptexttt`
-- `fallbackmode`
+This is the target format for normal user-added families. A normal local family
+uses one directory under `assets/fonts/` and does not reserve future global
+behavior:
+
+```tex
+\FontRegisterFamily{
+  id = test,
+  defaultmode = local,
+  local = {
+    command = TEST,
+    name = test_local,
+    path = \CatalogFontRoot/test/,
+    regular = test_font.ttf,
+    bold = test_font_bold.ttf,
+    italic = test_font_italic.ttf,
+    bolditalic = test_font_bolditalic.ttf,
+    sans = test_sans.ttf,
+    sansbold = test_sans_bold.ttf,
+    sansitalic = test_sans_italic.ttf,
+    sansbolditalic = test_sans_bolditalic.ttf,
+    script = Devanagari,
+    language = Sanskrit,
+    features = { RawFeature = { script=deva } },
+    fallbackmode = soft
+  }
+}
+```
+
+Only `command`, `name`, `path`, and `regular` are normally required. The other
+style slots may be omitted and will follow the core fallback chain. `sans*`
+faces are mapped automatically inside the local command; `mono*` is reserved for
+global/system families and explicit advanced registrations.
+
+Ordinary local families should not contain:
+
+- `globalkind` / `globalstatus`
+- style-specific path fields when they equal the main `path`
+- `maptextsf` / `maptexttt`
+- `scriptclass`, except for CJK routing
+- `inlinebehavior`, `blockbehavior`, or `blockalign`
+- vertical/externalized fields
+- `mono` / `monobold`
+
+### Global Family
+
+Only families with a real `global = {...}` block can be loaded through
+`globalfonts`. Current global-capable families are Latin/CJK/system families such
+as `cmu`, `noto`, `times`, `gentium`, `charis`, `shanggu`, and `sim`. If a
+family has no `global` block and is requested in global mode, the registry now
+reports a direct "no global mode" error instead of relying on a reserved status
+placeholder.
+
+`cmu` and `times` are system/bundled exceptions: they may name fonts directly and
+do not need `path = \CatalogFontRoot/<id>/`.
+
+### CJK/Internal Routing
+
+`scriptclass = cjk` is an internal routing hint used to select the xeCJK path.
+Ordinary non-CJK families do not need `scriptclass`; OpenType shaping should be
+expressed with `script`, `language`, and `features`.
+
+### Shaping, Layout, and Special Modules
+
+`script`, `language`, and `features = { RawFeature = { script=... } }` are
+standard fontspec/OpenType shaping options. They are not special modules.
+
+`layout = vertical` selects the core built-in vertical layout route for existing
+Mongolian, Manchu, and Old Uyghur-style entries. Its parameters are:
+
+- `verticalstrategy`
+- `verticalrotation`
+- `verticalorigin`
+- `verticaltopcorrection`
+
+`specialmodule` is reserved for external or custom TeX support modules under
+`modules/fonts/`, such as:
+
+- `pahlavi`
+- `khitan_small`
+- custom module names created by Studio
+
+For backward compatibility, the core still treats old
+`specialmodule = vertical` declarations as `layout = vertical` and emits a
+deprecation warning. New catalog entries and Studio-generated entries should not
+write `specialmodule = vertical`.
 
 ## Registration Syntax
 
@@ -128,17 +195,20 @@ catalog/fonts.tex
 
 The current model is based on `\FontRegisterFamily{...}` declarations.
 
-Typical fields include:
+An ordinary local entry looks like:
 
 ```tex
-\FontRegisterFamily{hebrew}{
-  command = HE,
-  path = \CatalogFontRoot/hebrew/,
-  regular = NotoSerifHebrew-Regular.ttf,
-  bold = NotoSerifHebrew-Bold.ttf,
-  script = Hebrew,
-  scope = local,
-  specialmodule = generic_shaping
+\FontRegisterFamily{
+  id = hebrew,
+  defaultmode = local,
+  local = {
+    command = HE,
+    name = hebrew_local,
+    path = \CatalogFontRoot/hebrew/,
+    regular = NotoSerifHebrew-Regular.ttf,
+    bold = NotoSerifHebrew-Bold.ttf,
+    script = Hebrew
+  }
 }
 ```
 
@@ -147,9 +217,12 @@ In practice:
 - `command` defines the local command name without a leading backslash
 - `path` points to the font directory
 - `regular` / `bold` / `italic` / `bolditalic` define concrete files
-- `scope = local` creates a local command family
-- `scope = global` binds the family into the document-wide defaults
-- `specialmodule` is only needed when a font family uses one of the special shaping/layout routes
+- `local = {...}` creates a local command family
+- `global = {...}` binds a family into document-wide defaults
+- `layout = vertical` selects the built-in vertical layout route
+- `verticalstrategy` / `verticalrotation` / `verticalorigin` / `verticaltopcorrection` configure `layout = vertical`
+- `specialmodule` is only needed for external/custom TeX module routes
+- standard OpenType shaping should be expressed with `script`, `language`, and `features`, not a separate generic shaping module
 
 ## Minimal Examples
 
@@ -201,6 +274,7 @@ The current catalog registers the following families. `globalfonts = {...}` only
 | `armenian` | `HY` | `local` | no | Armenian |
 | `hindi` | `HI` | `local` | no | Hindi |
 | `sanskrit` | `SA` | `local` | no | Sanskrit |
+| `devanagari` | `DEV` | `local` | no | Devanagari generic family for `.impe` workflows |
 | `tamil` | `TA` | `local` | no | Tamil |
 | `brahmi` | `BR` | `local` | no | Brahmi |
 | `georgian` | `KA` | `local` | no | Georgian |
@@ -242,7 +316,7 @@ The current catalog registers the following families. `globalfonts = {...}` only
 | `vietnamese_hannom` | `HN` | `local` | no | Vietnamese Han-Nom |
 
 For the current Arabic-script split:
-- `arabic` uses Naskh for regular/bold, Ruqaa for italic/bolditalic, Noto Sans Arabic for `sans` / `sansbold`, and Noto Kufi Arabic for `sansitalic` / `sansbolditalic` / `mono*`.
+- `arabic` uses Naskh for regular/bold, Ruqaa for italic/bolditalic, Noto Sans Arabic for `sans` / `sansbold`, and Noto Kufi Arabic for `sansitalic` / `sansbolditalic`.
 - `urdu` keeps Nastaliq as its dedicated local family.
 
 Families without a local command marker (`-`) are global-only in the current catalog.
@@ -261,7 +335,7 @@ Only families with non-trivial internal mapping are listed here. Simple families
   `sans*` comes from Arial,
   and `mono*` comes from Consolas.
 - `arabic`
-  Uses Naskh for `regular` / `bold`, Ruqaa for `italic` / `bolditalic`, Noto Sans Arabic for `sans` / `sansbold`, and Noto Kufi Arabic for `sansitalic` / `sansbolditalic` / `mono*`.
+  Uses Naskh for `regular` / `bold`, Ruqaa for `italic` / `bolditalic`, Noto Sans Arabic for `sans` / `sansbold`, and Noto Kufi Arabic for `sansitalic` / `sansbolditalic`. It no longer declares local `mono*` faces.
 - `urdu`
   Keeps Nastaliq as its dedicated local family and does not share that mapping with `arabic`.
 - `khitan_small`
@@ -338,23 +412,33 @@ In `soft` mode:
 
 This preserves compilation while making the missing-font state visible in the log.
 
-## Current Special-Module Model
+## Current Layout and Special-Module Model
 
-The catalog now points directly to special support logic via:
+The catalog now distinguishes standard shaping, core layout routes, and external
+TeX modules:
 
-- built-in special handlers in `core/fonts/interface.tex`
-  - `specialmodule = generic_shaping`
-  - `specialmodule = vertical`
-- script-specific modules under `modules/fonts/`
-  - `specialmodule = pahlavi`
-  - `specialmodule = khitan_small`
+- `script`, `language`, and `features` are standard fontspec shaping fields
+- `layout = vertical` selects the built-in vertical layout route in
+  `core/fonts/interface.tex`
+- `verticalstrategy`, `verticalrotation`, `verticalorigin`, and
+  `verticaltopcorrection` are parameters for `layout = vertical`
+- `specialmodule = pahlavi` and `specialmodule = khitan_small` import
+  script-specific support modules from `modules/fonts/`
+- custom Studio modules are also expressed through
+  `specialmodule = <custom_module_name>`
 
 This means:
 
 - there is no separate dispatch table file anymore
-- the catalog chooses the special path directly
-- built-in capabilities are handled inside `core/fonts/interface.tex`
-- only genuinely script-specific logic remains under `modules/fonts/`
+- ordinary shaping is handled by fontspec options assembled from `script`,
+  `language`, and `features`
+- built-in vertical capabilities are handled inside `core/fonts/interface.tex`
+  and are not written as a `specialmodule`
+- only genuinely script-specific or user-provided TeX logic remains under
+  `modules/fonts/`
+- Pahlavi special handling is only attached to the families that actually need
+  it, such as `pahlavi_psalter`; Parthian and Inscriptional Pahlavi remain
+  standard fontspec registrations when RawFeature is sufficient
 
 ## Mongolian Local Mapping and Redistribution
 
