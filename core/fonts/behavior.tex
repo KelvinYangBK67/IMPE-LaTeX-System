@@ -19,6 +19,13 @@
 \tl_new:N \l__font_inline_behavior_tl
 \tl_new:N \l__font_vertical_strategy_tl
 
+\cs_new_protected:Npn \__font_behavior_tibetan_breaks:n #1
+  {
+    \tl_set:Nn \l_tmpa_tl {#1}
+    \tl_replace_all:Nnn \l_tmpa_tl { ་ } { ་\allowbreak }
+    \tl_use:N \l_tmpa_tl
+  }
+
 \prg_new_conditional:Npnn \__font_should_infer_rtl: { TF }
   {
     \__font_tl_if_in_set:NnTF \l__font_decl_family_id_tl
@@ -98,12 +105,12 @@
 \cs_new_protected:Npn \__font_validate_behavior_state:
   {
     \__font_tl_if_in_set:NnTF \l__font_inline_behavior_tl
-      { normal,rtl,vertical-fallen,vertical-boxed }
+      { normal,rtl,tibetan,vertical-fallen,vertical-boxed }
       { }
       {
         \PackageError{font-defaults}
           {Invalid~inline~behavior~`\tl_use:N \l__font_inline_behavior_tl`}
-          {Use~normal,~rtl,~vertical-fallen,~or~vertical-boxed.}
+          {Use~normal,~rtl,~tibetan,~vertical-fallen,~or~vertical-boxed.}
       }
   }
 
@@ -126,10 +133,19 @@
           }
       }
       {
-        \cs_set_protected:cpn { __font_behavior_inline_#1:n } ##1
-          { ##1 }
-        \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
-          { ##1 }
+        \str_if_eq:VnTF \l__font_inline_behavior_tl { tibetan }
+          {
+            \cs_set_protected:cpn { __font_behavior_inline_#1:n } ##1
+              { \__font_behavior_tibetan_breaks:n {##1} }
+            \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
+              { \__font_behavior_tibetan_breaks:n {##1} }
+          }
+          {
+            \cs_set_protected:cpn { __font_behavior_inline_#1:n } ##1
+              { ##1 }
+            \cs_set_protected:cpn { __font_behavior_block_#1:n } ##1
+              { ##1 }
+          }
       }
   }
 

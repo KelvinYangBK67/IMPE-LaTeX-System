@@ -45,7 +45,7 @@ core/fonts/system.tex
 - `script.tex`
   套用 core 預設值，並驗證 `scriptclass`、`preservespaces`、backend 等 script-class 相關狀態。
 - `behavior.tex`
-  定義 inline / block 行為路由，目前包括一般行為與 RTL 行為 hook。
+  定義 inline / block 行為路由，目前包括一般行為、RTL 行為與藏文斷行行為 hook。
 - `interface.tex`
   主要的宣告引擎。它負責解析 family 註冊欄位、解析實際字體選項、定義 public commands，並且內建 `layout = vertical` route。
 - `registry.tex`
@@ -131,7 +131,7 @@ core/fonts/system.tex
 - 與主 `path` 相同的 style-specific path 欄位
 - `maptextsf` / `maptexttt`
 - `scriptclass`，CJK 路由除外
-- `inlinebehavior`、`blockbehavior` 或 `blockalign`
+- `inlinebehavior`、`blockbehavior` 或 `blockalign`，core 維護的 script-specific behavior 條目除外
 - vertical / externalized 欄位
 - `mono` / `monobold`
 

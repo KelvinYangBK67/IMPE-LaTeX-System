@@ -45,7 +45,8 @@ Current core files:
 - `script.tex`
   Applies the core defaults and validates internal routing state such as `scriptclass`, `preservespaces`, and backend choice.
 - `behavior.tex`
-  Defines inline/block behavior routing, currently including the normal and RTL behavior hooks.
+  Defines inline/block behavior routing, currently including normal, RTL, and
+  Tibetan break behavior hooks.
 - `interface.tex`
   The main declaration engine. It parses registered family fields, resolves
   concrete font options, defines public commands, and owns the built-in
@@ -138,7 +139,8 @@ Ordinary local families should not contain:
 - style-specific path fields when they equal the main `path`
 - `maptextsf` / `maptexttt`
 - `scriptclass`, except for CJK routing
-- `inlinebehavior`, `blockbehavior`, or `blockalign`
+- `inlinebehavior`, `blockbehavior`, or `blockalign`, except for core-maintained
+  script-specific behavior entries
 - vertical/externalized fields
 - `mono` / `monobold`
 
