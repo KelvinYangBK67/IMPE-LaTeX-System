@@ -138,6 +138,7 @@ See Section~\ref{sec:intro}.
 ### `citations`
 
 Loads `csquotes` and `biblatex`. The default citation style is English APA.
+Author lists in citations use `&` as the final-name delimiter.
 
 Example:
 

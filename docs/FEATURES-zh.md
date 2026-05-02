@@ -130,6 +130,7 @@ See Section~\ref{sec:intro}.
 ### `citations`
 
 載入 `csquotes` 和 `biblatex`。預設引用格式是英文 APA。
+引用中的作者列表預設使用 `&` 作為最後兩位作者之間的連接符。
 
 例：
 

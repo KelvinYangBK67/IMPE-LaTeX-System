@@ -28,3 +28,10 @@
   }
 
 \makeatother
+
+\DeclareDelimFormat{finalnamedelim}{%
+  \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}%
+  \addspace\&\space}
+\DeclareDelimFormat[textcite]{finalnamedelim}{%
+  \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}%
+  \addspace\&\space}

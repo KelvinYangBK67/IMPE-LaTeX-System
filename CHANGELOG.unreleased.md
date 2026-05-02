@@ -22,7 +22,7 @@ This file tracks development changes that have not been published as a stable re
 - Standardized complex-script shaping registration around `script`, `language`, and `features`, removing unused generic shaping flags.
 - Removed the implicit `\XXXblock` local font command API; local commands now rely on the existing automatic inline/block behavior.
 - Folded RTL behavior into automatic script/family inference, removing redundant `blockbehavior` and `blockalign` catalog fields while reserving `inlinebehavior` for core script-specific behavior.
-- Added Tibetan inline behavior that permits line breaks after Tibetan tsheg separators.
+- Added Tibetan inline behavior that permits line breaks after Tibetan tsheg separators only when followed by Tibetan text.
 - Added `layout = vertical` as the built-in vertical layout route and reserved `specialmodule` for TeX support modules.
 - Added `tools/examples/minimal.impe` and sample font metadata.
 - Added generic `devanagari` catalog font family id for `.impe` workflows.
@@ -51,7 +51,7 @@ This file tracks development changes that have not been published as a stable re
 - 將 complex-script shaping 註冊統一到 `script`、`language`、`features`，移除無實際作用的 generic shaping flags。
 - 移除隱式 `\XXXblock` local font command API；local command 依賴既有 automatic inline/block behavior。
 - 將 RTL behavior 併入 script / family 自動推斷，移除多餘的 `blockbehavior`、`blockalign` catalog 欄位，並保留 `inlinebehavior` 給 core 維護的 script-specific behavior。
-- 新增藏文 inline behavior，允許在藏文 tsheg 分隔符後斷行。
+- 新增藏文 inline behavior，只在藏文 tsheg 分隔符後仍接藏文時允許斷行。
 - 新增 `layout = vertical` 作為 core 內建 vertical layout route，並將 `specialmodule` 保留給 TeX 支持模組。
 - 新增 `tools/examples/minimal.impe` 與字體 metadata 範例。
 - 新增 `.impe` 工作流使用的 `devanagari` 字體 family id。
