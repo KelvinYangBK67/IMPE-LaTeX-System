@@ -146,12 +146,12 @@ Example:
   features = {citations}
 }
 
-\AddBibliographyResource{references.bib}
+\addbibresource{references.bib}
 
 See \textcite{doe2026} for a narrative citation, or use
 \parencite{doe2026} for a parenthetical citation.
 
-\PrintBibliography
+\printbibliography
 ```
 
 Citation style presets must be selected before loading the `citations` feature:
@@ -240,13 +240,12 @@ Public column types:
   fixed-width paragraph columns with ragged-right, centered, and ragged-left
   alignment.
 
-Public helpers:
+Public helper:
 
 - `\TablesSetup`
-- `\TableCmidrule{...}`
-- `\TableGap[amount]`
-- `\TableHead{...}`
-- `\NiceHead`
+
+For table rules and row spacing, use the native `booktabs` commands directly:
+`\toprule`, `\midrule`, `\bottomrule`, `\cmidrule`, and `\addlinespace`.
 
 Public environments:
 

@@ -38,11 +38,6 @@
 \newcolumntype{M}[1]{>{\Centering\arraybackslash}p{#1}}
 \newcolumntype{B}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
 
-\newcommand{\TableCmidrule}[1]{\cmidrule(r){#1}}
-\newcommand{\TableGap}[1][0.8ex]{\addlinespace[#1]}
-\newcommand{\TableHead}[1]{#1\midrule}
-\let\NiceHead\TableHead
-
 \NewDocumentEnvironment{TableInlineFit}{m +b}{%
   \begin{center}%
   \scriptsize

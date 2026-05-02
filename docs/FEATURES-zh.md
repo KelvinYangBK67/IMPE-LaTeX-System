@@ -138,12 +138,12 @@ See Section~\ref{sec:intro}.
   features = {citations}
 }
 
-\AddBibliographyResource{references.bib}
+\addbibresource{references.bib}
 
 See \textcite{doe2026} for a narrative citation, or use
 \parencite{doe2026} for a parenthetical citation.
 
-\PrintBibliography
+\printbibliography
 ```
 
 引用格式必須在載入 `citations` feature 之前選擇：
@@ -228,10 +228,9 @@ See \textcite{doe2026} for a narrative citation, or use
 公開輔助命令：
 
 - `\TablesSetup`
-- `\TableCmidrule{...}`
-- `\TableGap[amount]`
-- `\TableHead{...}`
-- `\NiceHead`
+
+表格線條與行距請直接使用 `booktabs` 原生命令：
+`\toprule`、`\midrule`、`\bottomrule`、`\cmidrule`、`\addlinespace`。
 
 公開環境：
 
