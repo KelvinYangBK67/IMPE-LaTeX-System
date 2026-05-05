@@ -110,7 +110,7 @@ Every finite set has finitely many subsets.
 - PDF 書籤編號並預設展開
 - `linktoc=all`
 - `hyperindex=true`
-- `hyperfootnotes=false`
+- linked footnote markers
 
 同時用 `\hypersetup` 初始化空白 PDF metadata 欄位。
 

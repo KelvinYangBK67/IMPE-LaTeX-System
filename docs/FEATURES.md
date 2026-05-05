@@ -64,6 +64,7 @@ Current public features include:
 - `tables`
 - `image`
 - `lists_envs`
+- `headers`
 
 Chinese UI override is an internal mechanism bound to the `_zh` wrapper
 classes. It is not part of the public feature surface.
@@ -109,6 +110,33 @@ Every finite set has finitely many subsets.
 \end{theorem}
 ```
 
+### `headers`
+
+Loads `fancyhdr` and enables running heads for article, report, and book-like
+documents.
+
+For article classes, section titles populate `\leftmark`. For report/book-like
+classes, chapter titles populate `\leftmark`. By default, the fixed title uses
+the first line of `\title{...}`. Use `\HeaderTitle{...}` to override it with a
+shorter running title.
+
+Example:
+
+```tex
+\UseTemplateSet{
+  layout = en_doc,
+  features = {headers}
+}
+
+\HeaderTitle{Short Document Title}
+```
+
+Use standard document-class options for one-sided or two-sided output:
+
+```tex
+\documentclass[12pt,twoside]{nextart}
+```
+
 ### `hyperlinks`
 
 Loads `hyperref` and `bookmark` with repository defaults:
@@ -118,7 +146,7 @@ Loads `hyperref` and `bookmark` with repository defaults:
 - numbered and open PDF bookmarks
 - `linktoc=all`
 - `hyperindex=true`
-- `hyperfootnotes=false`
+- linked footnote markers
 
 It also initializes empty PDF metadata fields with `\hypersetup`.
 

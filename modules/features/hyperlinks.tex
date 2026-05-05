@@ -24,6 +24,32 @@
 \makeatother
 \RequirePackage{bookmark}
 
+\newcounter{NextHyperFootnoteLink}
+\makeatletter
+\let\NextHyperlinksOriginalFootnote\footnote
+\RenewDocumentCommand{\footnote}{o m}{%
+  \stepcounter{NextHyperFootnoteLink}%
+  \edef\NextHyperFootnoteTextTarget{next-footnote-text-\arabic{NextHyperFootnoteLink}}%
+  \begingroup
+    \let\NextHyperlinksOriginalMakeFnMark\@makefnmark
+    \renewcommand{\@makefnmark}{%
+      \hyperlink{\NextHyperFootnoteTextTarget}{\NextHyperlinksOriginalMakeFnMark}%
+    }%
+    \IfNoValueTF{#1}
+      {%
+        \NextHyperlinksOriginalFootnote{%
+          \Hy@raisedlink{\hypertarget{\NextHyperFootnoteTextTarget}{}}#2%
+        }%
+      }
+      {%
+        \NextHyperlinksOriginalFootnote[#1]{%
+          \Hy@raisedlink{\hypertarget{\NextHyperFootnoteTextTarget}{}}#2%
+        }%
+      }%
+  \endgroup
+}
+\makeatother
+
 \hypersetup{
   pdfauthor={},
   pdftitle={},

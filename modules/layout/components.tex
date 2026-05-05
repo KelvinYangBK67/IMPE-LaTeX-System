@@ -8,6 +8,22 @@
 
 \makeatletter
 
+\newcommand{\NextLayoutPageOneIn}{
+  \if@twoside
+    \RequirePackage[a4paper,margin=1in,bindingoffset=0.4cm]{geometry}
+  \else
+    \RequirePackage[a4paper,margin=1in]{geometry}
+  \fi
+}
+
+\newcommand{\NextLayoutPageTwentySixMm}{
+  \if@twoside
+    \RequirePackage[a4paper,margin=2.6cm,bindingoffset=0.4cm]{geometry}
+  \else
+    \RequirePackage[a4paper,margin=2.6cm]{geometry}
+  \fi
+}
+
 \newcommand{\NextLayoutHeadFancyChapter}{
   \RequirePackage{fancyhdr}
   \providecommand{\HeaderTitle}{}
@@ -61,10 +77,10 @@
 \makeatother
 
 \cs_new_protected:cpn { __layout_component_page_a4_1in: }
-  { \RequirePackage[a4paper,margin=1in]{geometry} }
+  { \NextLayoutPageOneIn }
 
 \cs_new_protected:cpn { __layout_component_page_a4_26mm: }
-  { \RequirePackage[a4paper,margin=2.6cm]{geometry} }
+  { \NextLayoutPageTwentySixMm }
 
 \cs_new_protected:cpn { __layout_component_page_a4_book: }
   {
