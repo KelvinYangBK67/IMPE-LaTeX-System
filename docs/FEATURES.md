@@ -131,6 +131,11 @@ Example:
 \HeaderTitle{Short Document Title}
 ```
 
+The default style is `title`: one-sided documents place the title in the
+center header and the page number in the center footer; two-sided documents
+place the title on the outer header and the page number on the outer footer.
+Use `\HeaderStyle{running}` for chapter/section running heads.
+
 Use standard document-class options for one-sided or two-sided output:
 
 ```tex

@@ -5,6 +5,8 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{beamer}}
 \ProcessOptions\relax
 \def\NextSystemUiTag{en}
+\def\NextDefaultLayout{beamer}
+\def\NextDefaultGlobalFonts{cmu}
 \LoadClass{beamer}
 \RequirePackage{nextsystem}
 \makeatother

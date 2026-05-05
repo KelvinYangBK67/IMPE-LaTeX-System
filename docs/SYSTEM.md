@@ -114,6 +114,31 @@ Supported keys:
 - `fonts`
 - `features`
 
+Wrapper classes provide defaults for `layout` and `globalfonts`, so those keys
+can usually be omitted:
+
+```tex
+\documentclass{nextart_zh}
+
+\UseTemplateSet{
+  features = {headers,citations,hyperlinks}
+}
+```
+
+Current wrapper defaults:
+
+- `nextart`: `layout = en_doc`, `globalfonts = {cmu}`
+- `nextart_zh`: `layout = zh_doc`, `globalfonts = {cmu,shanggu}`
+- `nextbook`: `layout = en_book`, `globalfonts = {cmu}`
+- `nextbook_zh`: `layout = zh_book`, `globalfonts = {cmu,shanggu}`
+- `nextreport`: `layout = en_doc`, `globalfonts = {cmu}`
+- `nextreport_zh`: `layout = zh_doc`, `globalfonts = {cmu,shanggu}`
+- `nextbeamer`: `layout = beamer`, `globalfonts = {cmu}`
+- `nextbeamer_zh`: `layout = beamer`, `globalfonts = {cmu,shanggu}`
+
+Explicit `layout` or `globalfonts` values in `\UseTemplateSet{...}` override
+the wrapper defaults.
+
 ## Bundled Font Root
 
 By default, bundled fonts are resolved from `assets/fonts`.

@@ -5,6 +5,8 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
 \ProcessOptions\relax
 \def\NextSystemUiTag{en}
+\def\NextDefaultLayout{en_doc}
+\def\NextDefaultGlobalFonts{cmu}
 \LoadClass{report}
 \RequirePackage{nextsystem}
 \makeatother

@@ -5,6 +5,8 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions\relax
 \def\NextSystemUiTag{en}
+\def\NextDefaultLayout{en_doc}
+\def\NextDefaultGlobalFonts{cmu}
 \LoadClass{article}
 \RequirePackage{nextsystem}
 \makeatother

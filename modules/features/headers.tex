@@ -9,6 +9,13 @@
 
 \providecommand{\NextHeaderTitleText}{}
 \providecommand{\HeaderTitle}[1]{\renewcommand{\NextHeaderTitleText}{#1}}
+\providecommand{\NextHeaderStyleText}{title}
+\providecommand{\HeaderStyle}[1]{%
+  \renewcommand{\NextHeaderStyleText}{#1}%
+  \ifcsname NextFeatureHeadersApply\endcsname
+    \NextFeatureHeadersApply
+  \fi
+}
 
 \makeatletter
 \newcommand{\NextFeatureHeaderTitleFirstLine}{%
@@ -23,6 +30,38 @@
   \else
     \NextHeaderTitleText
   \fi
+}
+\@namedef{NextFeatureHeadersStyle@title}{%
+  \if@twoside
+    \fancyhead[LE]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyhead[RO]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyfoot[LE]{\small\thepage}%
+    \fancyfoot[RO]{\small\thepage}%
+  \else
+    \fancyhead[C]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyfoot[C]{\small\thepage}%
+  \fi
+}
+\@namedef{NextFeatureHeadersStyle@running}{%
+  \if@twoside
+    \fancyhead[LE]{\small\thepage}%
+    \fancyhead[RE]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyhead[LO]{\itshape\small\leftmark}%
+    \fancyhead[RO]{\small\thepage}%
+  \else
+    \fancyhead[L]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyhead[R]{\small\thepage}%
+  \fi
+}
+\@namedef{NextFeatureHeadersStyle@classic}{\@nameuse{NextFeatureHeadersStyle@running}}
+\newcommand{\NextFeatureHeadersApplyStyle}{%
+  \@ifundefined{NextFeatureHeadersStyle@\NextHeaderStyleText}
+    {%
+      \PackageError{feature-headers}
+        {Unknown header style `\NextHeaderStyleText`}
+        {Use `title` or `running`.}%
+    }
+    {\@nameuse{NextFeatureHeadersStyle@\NextHeaderStyleText}}%
 }
 \newcommand{\NextFeatureHeadersApply}{%
   \pagestyle{fancy}%
@@ -39,15 +78,7 @@
       \renewcommand{\subsectionmark}[1]{}%
       \renewcommand{\subsubsectionmark}[1]{}%
     }%
-  \if@twoside
-    \fancyhead[LE]{\small\thepage}%
-    \fancyhead[RE]{\itshape\small\NextFeatureHeaderTitleContent}%
-    \fancyhead[LO]{\itshape\small\leftmark}%
-    \fancyhead[RO]{\small\thepage}%
-  \else
-    \fancyhead[C]{\itshape\small\NextFeatureHeaderTitleContent}%
-    \fancyfoot[C]{\small\thepage}%
-  \fi
+  \NextFeatureHeadersApplyStyle
   \renewcommand{\headrulewidth}{0.4pt}%
   \renewcommand{\footrulewidth}{0pt}%
   \setlength{\headheight}{14pt}%

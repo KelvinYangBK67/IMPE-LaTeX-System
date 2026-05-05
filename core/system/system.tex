@@ -39,9 +39,36 @@
 \tl_new:N \l__nextsystem_fonts_tl
 \tl_new:N \l__nextsystem_features_tl
 \tl_new:N \l__nextsystem_ui_tl
+\tl_new:N \l__nextsystem_effective_layout_tl
+\tl_new:N \l__nextsystem_effective_globalfonts_tl
 
 \providecommand{\NextHeaderTitleText}{}
 \providecommand{\HeaderTitle}[1]{\renewcommand{\NextHeaderTitleText}{#1}}
+\providecommand{\NextHeaderStyleText}{title}
+\providecommand{\HeaderStyle}[1]{%
+  \renewcommand{\NextHeaderStyleText}{#1}%
+  \ifcsname NextFeatureHeadersApply\endcsname
+    \NextFeatureHeadersApply
+      \fi
+}
+
+\cs_new_protected:Npn \__nextsystem_resolve_defaults:
+  {
+    \tl_set_eq:NN \l__nextsystem_effective_layout_tl \l__nextsystem_layout_tl
+    \tl_set_eq:NN \l__nextsystem_effective_globalfonts_tl \l__nextsystem_globalfonts_tl
+
+    \tl_if_blank:VT \l__nextsystem_effective_layout_tl
+      {
+        \cs_if_exist:NT \NextDefaultLayout
+          { \tl_set:Nx \l__nextsystem_effective_layout_tl { \NextDefaultLayout } }
+      }
+
+    \tl_if_blank:VT \l__nextsystem_effective_globalfonts_tl
+      {
+        \cs_if_exist:NT \NextDefaultGlobalFonts
+          { \tl_set:Nx \l__nextsystem_effective_globalfonts_tl { \NextDefaultGlobalFonts } }
+      }
+  }
 
 \keys_define:nn { nextsystem/setup }
   {
@@ -54,11 +81,13 @@
 
 \cs_new_protected:Npn \__nextsystem_setup_apply:
   {
-    \tl_if_blank:VF \l__nextsystem_layout_tl
-      { \exp_args:NV \UseLayout \l__nextsystem_layout_tl }
+    \__nextsystem_resolve_defaults:
 
-    \tl_if_blank:VF \l__nextsystem_globalfonts_tl
-      { \exp_args:NV \UseFonts \l__nextsystem_globalfonts_tl [global] }
+    \tl_if_blank:VF \l__nextsystem_effective_layout_tl
+      { \exp_args:NV \UseLayout \l__nextsystem_effective_layout_tl }
+
+    \tl_if_blank:VF \l__nextsystem_effective_globalfonts_tl
+      { \exp_args:NV \UseFonts \l__nextsystem_effective_globalfonts_tl [global] }
 
     \tl_if_blank:VF \l__nextsystem_fonts_tl
       { \exp_args:NV \UseFonts \l__nextsystem_fonts_tl }

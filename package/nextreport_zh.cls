@@ -5,6 +5,8 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
 \ProcessOptions\relax
 \def\NextSystemUiTag{zh}
+\def\NextDefaultLayout{zh_doc}
+\def\NextDefaultGlobalFonts{cmu,shanggu}
 \LoadClass{report}
 \RequirePackage{nextsystem}
 \makeatother
