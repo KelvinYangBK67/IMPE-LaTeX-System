@@ -50,10 +50,34 @@
 \tl_new:N \l__font_external_engine_tl
 \tl_new:N \l__font_external_render_command_tl
 \tl_new:N \l__font_external_clusterwise_tl
+\clist_new:N \l__font_unicode_blocks_clist
 \bool_new:N \l__font_use_latex_fallback_bool
 \bool_new:N \l__font_nextsystem_installed_bool
 \bool_new:N \l__font_reapply_style_bool
 \seq_new:N \g__font_loaded_special_modules_seq
+\seq_new:N \g__font_range_global_blocks_seq
+\prop_new:N \g__font_range_global_name_prop
+\prop_new:N \g__font_unicode_block_range_prop
+\tl_new:N \g__font_devanagari_akshara_name_tl
+
+\cs_new_protected:Npn \__font_declare_unicode_block:nnn #1#2#3
+  { \prop_gput:Nnn \g__font_unicode_block_range_prop {#1} { {#2} {#3} } }
+
+\__font_declare_unicode_block:nnn { DevanagariPreMarks } { "0900 } { "0950 }
+\__font_declare_unicode_block:nnn { DevanagariMarks } { "0951 } { "0954 }
+\__font_declare_unicode_block:nnn { DevanagariPostMarks } { "0955 } { "0963 }
+\__font_declare_unicode_block:nnn { DevanagariDanDa } { "0964 } { "0965 }
+\__font_declare_unicode_block:nnn { DevanagariPostDanDa } { "0966 } { "097F }
+\__font_declare_unicode_block:nnn { DevanagariExtended } { "A8E0 } { "A8FF }
+\__font_declare_unicode_block:nnn { DevanagariExtendedA } { "11B00 } { "11B5F }
+\__font_declare_unicode_block:nnn { VedicExtensions } { "1CD0 } { "1CFF }
+\__font_declare_unicode_block:nnn { Tibetan } { "0F00 } { "0FFF }
+
+\cs_new_protected:Npn \__font_devanagari_akshara_break:
+  { \penalty 300 \hskip 0pt \relax }
+
+\cs_new_protected:Npn \__font_devanagari_danda_break:
+  { \penalty 50 \hskip 0pt \relax }
 
 \cs_if_exist:NTF \ifNextSystemInstalled
   {
@@ -100,6 +124,7 @@
     \tl_clear:N \l__font_external_engine_tl
     \tl_clear:N \l__font_external_render_command_tl
     \tl_clear:N \l__font_external_clusterwise_tl
+    \clist_clear:N \l__font_unicode_blocks_clist
     \tl_clear:N \l__font_backend_tl
     \tl_clear:N \l__font_script_class_tl
     \tl_clear:N \l__font_scope_tl
@@ -160,6 +185,8 @@
     externalengine .tl_set:N = \l__font_external_engine_tl,
     externalrendercommand .tl_set:N = \l__font_external_render_command_tl,
     externalclusterwise .tl_set:N = \l__font_external_clusterwise_tl,
+    unicodeblocks .clist_set:N = \l__font_unicode_blocks_clist,
+    unicodeblock .clist_set:N = \l__font_unicode_blocks_clist,
   }
 
 \cs_new_protected:Npn \__font_special_use_generic:
@@ -872,6 +899,412 @@
       }
   }
 
+\cs_new_protected:Npn \__font_define_range_enter_command:
+  {
+    \use:x
+      {
+        \exp_not:N \cs_set_protected:cpn
+          { __font_enter_range_\l__font_name_tl : }
+          {
+            \exp_not:N \begingroup
+            \exp_not:c { __fontglobal_\l__font_name_tl }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_assign_unicode_block_class:nnn #1#2#3
+  {
+    \cs_if_exist:cF { __font_unicode_block_#1_class }
+      {
+        \exp_args:Nc \newXeTeXintercharclass { __font_unicode_block_#1_class }
+        \int_step_inline:nnn {#2} {#3}
+          {
+            \XeTeXcharclass ##1 =
+              \use:c { __font_unicode_block_#1_class }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_ensure_unicode_block_class:n #1
+  {
+    \prop_get:NnNTF \g__font_unicode_block_range_prop {#1} \l_tmpa_tl
+      {
+        \use:x
+          {
+            \exp_not:N \__font_assign_unicode_block_class:nnn
+              {#1}
+              \exp_not:V \l_tmpa_tl
+          }
+      }
+      {
+        \PackageWarning{font-defaults}
+          {Unicode~block~`#1'~is~not~registered;~skipping~range~global~binding}
+      }
+  }
+
+\cs_new_protected:Npn \__font_set_range_transition:nnn #1#2#3
+  {
+    \use:x
+      {
+        \exp_not:N \XeTeXinterchartoks
+          #1
+          \exp_not:c { __font_unicode_block_#2_class }
+          =
+          {
+            \exp_not:c { __font_enter_range_#3: }
+          }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_unicode_block_#2_class }
+          #1
+          =
+          {
+            \exp_not:N \endgroup
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_set_transition_for_range_block:nn #1#2
+  {
+    \int_step_inline:nnn { 0 } { 4095 }
+      {
+        \int_compare:nNnF
+          {##1} =
+          { \use:c { __font_unicode_block_#1_class } }
+          { \__font_set_range_transition:nnn {##1} {#1} {#2} }
+      }
+  }
+
+\cs_new_protected:Npn \__font_devanagari_class_map_inline:n #1
+  {
+    \clist_map_inline:nn { Start, Mark, Virama, EndMark, Danda } {#1}
+  }
+
+\cs_new_protected:Npn \__font_assign_devanagari_range:nnn #1#2#3
+  {
+    \int_step_inline:nnn {#1} {#2}
+      {
+        \XeTeXcharclass ##1 =
+          \use:c { __font_devanagari_#3_class }
+      }
+  }
+
+\cs_new_protected:Npn \__font_ensure_devanagari_akshara_classes:
+  {
+    \cs_if_exist:cF { __font_devanagari_Start_class }
+      {
+        \__font_devanagari_class_map_inline:n
+          { \exp_args:Nc \newXeTeXintercharclass { __font_devanagari_##1_class } }
+
+        \__font_assign_devanagari_range:nnn { "0904 } { "0914 } { Start }
+        \__font_assign_devanagari_range:nnn { "0915 } { "0939 } { Start }
+        \__font_assign_devanagari_range:nnn { "0958 } { "095F } { Start }
+        \XeTeXcharclass "0950 =
+          \use:c { __font_devanagari_Start_class }
+
+        \__font_assign_devanagari_range:nnn { "093E } { "094C } { Mark }
+        \XeTeXcharclass "093C =
+          \use:c { __font_devanagari_Mark_class }
+        \XeTeXcharclass "094E =
+          \use:c { __font_devanagari_Mark_class }
+        \XeTeXcharclass "094F =
+          \use:c { __font_devanagari_Mark_class }
+        \__font_assign_devanagari_range:nnn { "0962 } { "0963 } { Mark }
+
+        \XeTeXcharclass "094D =
+          \use:c { __font_devanagari_Virama_class }
+
+        \__font_assign_devanagari_range:nnn { "0900 } { "0903 } { EndMark }
+        \XeTeXcharclass "093D =
+          \use:c { __font_devanagari_EndMark_class }
+        \__font_assign_devanagari_range:nnn { "0951 } { "0957 } { EndMark }
+
+        \XeTeXcharclass "0964 =
+          \use:c { __font_devanagari_Danda_class }
+        \XeTeXcharclass "0965 =
+          \use:c { __font_devanagari_Danda_class }
+      }
+  }
+
+\cs_new_protected:Npn \__font_set_devanagari_transition:nnn #1#2#3
+  {
+    \use:x
+      {
+        \exp_not:N \XeTeXinterchartoks
+          #1
+          \exp_not:c { __font_devanagari_#2_class }
+          =
+          {
+            \exp_not:c { __font_enter_range_#3: }
+          }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_devanagari_#2_class }
+          #1
+          =
+          {
+            \exp_not:N \endgroup
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_set_devanagari_intra_transition:nnn #1#2#3
+  {
+    \use:x
+      {
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_devanagari_#1_class }
+          \exp_not:c { __font_devanagari_#2_class }
+          =
+          { #3 }
+      }
+  }
+
+\cs_new_protected:Npn \__font_set_devanagari_akshara_transitions:n #1
+  {
+    \int_step_inline:nnn { 0 } { 4095 }
+      {
+        \__font_devanagari_class_map_inline:n
+          {
+            \int_compare:nNnF
+              {##1} =
+              { \use:c { __font_devanagari_####1_class } }
+              { \__font_set_devanagari_transition:nnn {##1} {####1} {#1} }
+          }
+      }
+
+    \__font_devanagari_class_map_inline:n
+      {
+        \__font_devanagari_class_map_inline:n
+          { \__font_set_devanagari_intra_transition:nnn {##1} {####1} { } }
+      }
+    \__font_set_devanagari_intra_transition:nnn
+      { Start } { Start } { \exp_not:N \__font_devanagari_akshara_break: }
+    \__font_set_devanagari_intra_transition:nnn
+      { Mark } { Start } { \exp_not:N \__font_devanagari_akshara_break: }
+    \__font_set_devanagari_intra_transition:nnn
+      { EndMark } { Start } { \exp_not:N \__font_devanagari_akshara_break: }
+    \__font_set_devanagari_intra_transition:nnn
+      { Danda } { Start } { \exp_not:N \__font_devanagari_danda_break: }
+  }
+
+\cs_new_protected:Npn \__font_set_devanagari_akshara_cross_for_block:nn #1#2
+  {
+    \tl_if_blank:VF \g__font_devanagari_akshara_name_tl
+      {
+        \__font_devanagari_class_map_inline:n
+          {
+            \use:x
+              {
+                \exp_not:N \XeTeXinterchartoks
+                  \exp_not:c { __font_unicode_block_#1_class }
+                  \exp_not:c { __font_devanagari_##1_class }
+                  =
+                  {
+                    \exp_not:N \endgroup
+                    \exp_not:c { __font_enter_range_\g__font_devanagari_akshara_name_tl : }
+                  }
+                \exp_not:N \XeTeXinterchartoks
+                  \exp_not:c { __font_devanagari_##1_class }
+                  \exp_not:c { __font_unicode_block_#1_class }
+                  =
+                  {
+                    \exp_not:N \endgroup
+                    \exp_not:c { __font_enter_range_#2: }
+                  }
+              }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_apply_sanskrit_akshara_breaks:
+  {
+    \str_if_eq:VnT \l__font_decl_family_id_tl { sanskrit }
+      {
+        \tl_gset:NV \g__font_devanagari_akshara_name_tl \l__font_name_tl
+        \__font_ensure_devanagari_akshara_classes:
+        \exp_args:NV \__font_set_devanagari_akshara_transitions:n \l__font_name_tl
+        \seq_map_inline:Nn \g__font_range_global_blocks_seq
+          {
+            \prop_get:NnN \g__font_range_global_name_prop {##1} \l_tmpa_tl
+            \use:x
+              {
+                \exp_not:N \__font_set_devanagari_akshara_cross_for_block:nn
+                  {##1}
+                  { \exp_not:V \l_tmpa_tl }
+              }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_ensure_tibetan_tsheg_class:
+  {
+    \cs_if_exist:cF { __font_tibetan_tsheg_class }
+      {
+        \exp_args:Nc \newXeTeXintercharclass { __font_tibetan_tsheg_class }
+        \XeTeXcharclass "0F0B =
+          \use:c { __font_tibetan_tsheg_class }
+        \XeTeXcharclass "0F0C =
+          \use:c { __font_tibetan_tsheg_class }
+      }
+  }
+
+\cs_new_protected:Npn \__font_set_tibetan_tsheg_transition:nn #1#2
+  {
+    \use:x
+      {
+        \exp_not:N \XeTeXinterchartoks
+          #1
+          \exp_not:c { __font_tibetan_tsheg_class }
+          =
+          {
+            \exp_not:c { __font_enter_range_#2: }
+          }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_tibetan_tsheg_class }
+          #1
+          =
+          {
+            \exp_not:N \endgroup
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_set_tibetan_tsheg_cross_transition:nnn #1#2#3
+  {
+    \use:x
+      {
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_unicode_block_#1_class }
+          \exp_not:c { __font_tibetan_tsheg_class }
+          =
+          {
+            \exp_not:N \endgroup
+            \exp_not:c { __font_enter_range_#3: }
+          }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_tibetan_tsheg_class }
+          \exp_not:c { __font_unicode_block_#1_class }
+          =
+          {
+            \exp_not:N \endgroup
+            \exp_not:c { __font_enter_range_#2: }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_set_tibetan_tsheg_transitions:n #1
+  {
+    \__font_ensure_tibetan_tsheg_class:
+    \int_step_inline:nnn { 0 } { 4095 }
+      {
+        \int_compare:nNnF
+          {##1} =
+          { \use:c { __font_tibetan_tsheg_class } }
+          { \__font_set_tibetan_tsheg_transition:nn {##1} {#1} }
+      }
+    \use:x
+      {
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_unicode_block_Tibetan_class }
+          \exp_not:c { __font_tibetan_tsheg_class }
+          = { }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_tibetan_tsheg_class }
+          \exp_not:c { __font_unicode_block_Tibetan_class }
+          = { \exp_not:N \allowbreak }
+      }
+    \seq_map_inline:Nn \g__font_range_global_blocks_seq
+      {
+        \str_if_eq:nnF {##1} { Tibetan }
+          {
+            \prop_get:NnN \g__font_range_global_name_prop {##1} \l_tmpa_tl
+            \__font_set_tibetan_tsheg_cross_transition:nnn
+              {##1}
+              { \l_tmpa_tl }
+              {#1}
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_set_range_cross_transition:nnnn #1#2#3#4
+  {
+    \use:x
+      {
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_unicode_block_#1_class }
+          \exp_not:c { __font_unicode_block_#2_class }
+          =
+          {
+            \exp_not:N \endgroup
+            \exp_not:c { __font_enter_range_#4: }
+          }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_unicode_block_#2_class }
+          \exp_not:c { __font_unicode_block_#1_class }
+          =
+          {
+            \exp_not:N \endgroup
+            \exp_not:c { __font_enter_range_#3: }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_register_range_global_block:n #1
+  {
+    \tl_if_blank:nF {#1}
+      {
+        \__font_ensure_unicode_block_class:n {#1}
+        \cs_if_exist:cTF { __font_unicode_block_#1_class }
+          {
+            \__font_set_transition_for_range_block:nn {#1} { \l__font_name_tl }
+            \str_if_eq:nnT {#1} { Tibetan }
+              { \__font_set_tibetan_tsheg_transitions:n { \l__font_name_tl } }
+            \seq_map_inline:Nn \g__font_range_global_blocks_seq
+              {
+                \prop_get:NnN \g__font_range_global_name_prop {##1} \l_tmpa_tl
+                \__font_set_range_cross_transition:nnnn
+                  {##1}
+                  {#1}
+                  { \l_tmpa_tl }
+                  { \l__font_name_tl }
+              }
+            \__font_set_devanagari_akshara_cross_for_block:nn
+              {#1}
+              { \l__font_name_tl }
+            \prop_put:Nnx \g__font_range_global_name_prop {#1} { \l__font_name_tl }
+            \seq_gput_right:Nn \g__font_range_global_blocks_seq {#1}
+          }
+          { }
+      }
+  }
+
+\cs_new_protected:Npn \__font_define_range_global_binding:
+  {
+    \sys_if_engine_xetex:TF
+      {
+        \XeTeXinterchartokenstate = 1
+        \__font_build_main_options:
+        \tl_if_blank:VTF \l__font_name_tl
+          { \tl_set_eq:NN \l__font_name_tl \l__font_decl_family_id_tl }
+          { }
+        \use:x
+          {
+            \exp_not:N \newfontfamily
+            \exp_not:c { __fontglobal_\l__font_name_tl }
+            [ \tl_use:N \l__font_main_options_tl ]
+            { \l__font_regular_tl }
+          }
+        \__font_define_range_enter_command:
+        \clist_map_inline:Nn \l__font_unicode_blocks_clist
+          { \__font_register_range_global_block:n {##1} }
+        \__font_apply_sanskrit_akshara_breaks:
+      }
+      {
+        \PackageError{font-defaults}
+          {Unicode-range~global~fonts~require~XeLaTeX}
+          {Compile~with~xelatex,~or~use~this~family~in~local~mode.}
+      }
+  }
+
 \cs_new_protected:Npn \__font_apply_declaration:
   {
     \tl_if_blank:VTF \l__font_regular_tl
@@ -913,7 +1346,11 @@
     \str_if_eq:VnTF \l__font_scope_tl { global }
       {
         \bool_if:NF \l__font_use_latex_fallback_bool
-          { \__font_define_global_binding: }
+          {
+            \clist_if_empty:NTF \l__font_unicode_blocks_clist
+              { \__font_define_global_binding: }
+              { \__font_define_range_global_binding: }
+          }
       }
       {
         \bool_if:NF \l__font_use_latex_fallback_bool

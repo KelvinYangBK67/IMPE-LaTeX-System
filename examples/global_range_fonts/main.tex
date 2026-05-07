@@ -1,0 +1,27 @@
+% !TeX program = xelatex
+% Range-limited global font smoke test.
+\documentclass[12pt]{article}
+\usepackage{import}
+
+\subimport{../../package/}{system.tex}
+\UseTemplateSet{
+  globalfonts = {cmu,shanggu,sanskrit,tibetan}
+}
+
+\begin{document}
+
+Latin text remains Latin.
+
+漢字仍然使用 CJK global family。
+
+Sanskrit global range: संस्कृतम् वेदः ॐ
+
+Tibetan global range: བོད་ཡིག་གི་ཚིག
+
+Mixed line: Latin 漢字 संस्कृतम् བོད་ཡིག back to Latin.
+
+\noindent\parbox{2.8cm}{संस्कृतवाक्यानि देवनागर्या लिखितानि सन्ति। धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।}
+
+\noindent\parbox{2.8cm}{བོད་ཡིག་གི་ཚིག་མང་པོ་འདི་དག་ཚེག་རྗེས་སུ་འགྲོལ།}
+
+\end{document}

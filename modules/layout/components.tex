@@ -79,6 +79,15 @@
 \cs_new_protected:cpn { __layout_component_page_a4_1in: }
   { \NextLayoutPageOneIn }
 
+\cs_new_protected:cpn { __layout_component_page_a4_en_doc_145mm: }
+  {
+    \if@twoside
+      \RequirePackage[a4paper,margin=32.5mm,bindingoffset=4mm]{geometry}
+    \else
+      \RequirePackage[a4paper,margin=32.5mm]{geometry}
+    \fi
+  }
+
 \cs_new_protected:cpn { __layout_component_page_a4_26mm: }
   { \NextLayoutPageTwentySixMm }
 
@@ -95,13 +104,37 @@
     ]{geometry}
   }
 
-\cs_new_protected:cpn { __layout_component_text_en: }
+\cs_new_protected:cpn { __layout_component_page_a4_en_book_145mm: }
+  {
+    \RequirePackage[
+      a4paper,
+      twoside,
+      inner=3.6cm,
+      outer=2.5cm,
+      top=2.6cm,
+      bottom=2.6cm,
+      bindingoffset=0.4cm
+    ]{geometry}
+  }
+
+\cs_new_protected:cpn { __layout_component_text_en_doc: }
   {
     \RequirePackage{setspace}
-    \setstretch{1.20}
+    \setstretch{1.40}
     \setlength{\parindent}{15pt}
-    \setlength{\parskip}{0pt}
+    \setlength{\parskip}{0.25em}
   }
+
+\cs_new_protected:cpn { __layout_component_text_en_book: }
+  {
+    \RequirePackage{setspace}
+    \setstretch{1.42}
+    \setlength{\parindent}{15pt}
+    \setlength{\parskip}{0.25em}
+  }
+
+\cs_new_protected:cpn { __layout_component_text_en: }
+  { \use:c { __layout_component_text_en_doc: } }
 
 \cs_new_protected:cpn { __layout_component_text_zh: }
   {

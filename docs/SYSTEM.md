@@ -120,9 +120,7 @@ can usually be omitted:
 ```tex
 \documentclass{nextart_zh}
 
-\UseTemplateSet{
-  features = {headers,citations,hyperlinks}
-}
+\UseFeatures{headers,citations,hyperlinks}
 ```
 
 Current wrapper defaults:
@@ -136,8 +134,19 @@ Current wrapper defaults:
 - `nextbeamer`: `layout = beamer`, `globalfonts = {cmu}`
 - `nextbeamer_zh`: `layout = beamer`, `globalfonts = {cmu,shanggu}`
 
-Explicit `layout` or `globalfonts` values in `\UseTemplateSet{...}` override
-the wrapper defaults.
+Wrapper defaults are applied when the class loads `nextsystem`. Use raw classes
+with an explicit `\UseTemplateSet{...}` when you want to choose every preset by
+hand, or use the shortcut commands below to load only the extra pieces you need.
+
+For single-purpose loading, these shortcuts are equivalent to the corresponding
+single key in `\UseTemplateSet{...}`:
+
+```tex
+\UseFeatures{headers,hyperlinks}
+\UseGlobalFonts{libertinus}
+\UseMainFonts{libertinus}
+\UseLocalFonts{libertinus}
+```
 
 ## Bundled Font Root
 

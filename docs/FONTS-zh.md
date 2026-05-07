@@ -137,7 +137,7 @@ core/fonts/system.tex
 
 ### 全域 Family
 
-只有真正帶有 `global = {...}` 區塊的 family 才能透過 `globalfonts` 載入。目前可作為全域字體的 family 是 Latin / CJK / system 類 family，例如 `cmu`、`noto`、`times`、`gentium`、`charis`、`shanggu`、`sim`。如果某個 family 沒有 `global` 區塊卻被要求以 global mode 載入，registry 會直接回報「no global mode」錯誤，而不是依賴預留狀態佔位。
+只有真正帶有 `global = {...}` 區塊的 family 才能透過 `globalfonts` 載入。大部分可作為全域字體的 family 是 Latin / CJK / system 類 family，例如 `cmu`、`noto`、`times`、`gentium`、`charis`、`libertinus`、`shanggu`、`sim`。`hindi`、`sanskrit`、`tibetan` 這類 complex-script global 會用 `unicodeblocks` 限定 Unicode 區段，因此只在對應文字區段切換字體，不會改掉 Latin、漢字或其他文字。`hindi` range global 使用 Devanagari 區段，但不啟用 Sanskrit 專用斷行規則。`sanskrit` range global 會為 Devanagari 基礎區段加入 akshara-aware 斷行，並保留 virama 後接 consonant 時不斷行。Tibetan range global 也會保留核心 tsheg 行為：只有 `U+0F0B` / `U+0F0C` 後面仍接藏文時才允許斷行。如果某個 family 沒有 `global` 區塊卻被要求以 global mode 載入，registry 會直接回報「no global mode」錯誤，而不是依賴預留狀態佔位。
 
 `cmu` 與 `times` 是 system / bundled 例外：它們可以直接使用字體名稱，不一定需要 `path = \CatalogFontRoot/<id>/`。
 
@@ -198,6 +198,7 @@ catalog/fonts.tex
 - `regular` / `bold` / `italic` / `bolditalic` 指向具體字體檔
 - `local = {...}` 會建立區域命令 family
 - `global = {...}` 會把 family 綁定進文件全域預設
+- `unicodeblocks = {...}` 會讓 global 綁定透過 XeLaTeX Unicode block transitions 限定區段，而不是替換整個 main/sans/mono 字體棧
 - `layout = vertical` 會選擇內建 vertical layout route
 - `verticalstrategy` / `verticalrotation` / `verticalorigin` / `verticaltopcorrection` 會配置 `layout = vertical`
 - `specialmodule` 只在需要外部或自定義 TeX module route 時才需要
@@ -242,6 +243,7 @@ catalog/fonts.tex
 | `times` | `TIM` | `local` | 是 | Windows Times/Arial/Consolas 組合 |
 | `gentium` | `GEN` | `local` | 是 | Gentium Plus 拉丁字族 |
 | `charis` | `CHA` | `local` | 是 | Charis SIL 拉丁字族 |
+| `libertinus` | `LIB` | `local` | 是 | Libertinus Serif/Sans 拉丁字族 |
 | `anatolian` | `CA` | `local` | 否 | Carian |
 | `coptic` | `CO` | `local` | 否 | 科普特文 |
 | `bopomofo` | `ZY` | `local` | 否 | 注音 / Bopomofo |
@@ -251,13 +253,13 @@ catalog/fonts.tex
 | `hungarian` | `OH` | `local` | 否 | 古匈牙利字母 |
 | `runic` | `RU` | `local` | 否 | 如尼字母 |
 | `armenian` | `HY` | `local` | 否 | 亞美尼亞文 |
-| `hindi` | `HI` | `local` | 否 | 印地語 |
-| `sanskrit` | `SA` | `local` | 否 | 梵語 |
+| `hindi` | `HI` | `local` | 是 | 印地語；global 只套用於 Devanagari Unicode 區段，不啟用 Sanskrit 專用斷行規則 |
+| `sanskrit` | `SA` | `local` | 是 | 梵語；global 只套用於 Devanagari 與 Vedic Unicode 區段 |
 | `devanagari` | `DEV` | `local` | 否 | `.impe` 工作流用通用天城體 family |
 | `tamil` | `TA` | `local` | 否 | 泰米爾文 |
 | `brahmi` | `BR` | `local` | 否 | 婆羅米文 |
 | `georgian` | `KA` | `local` | 否 | 格魯吉亞文 |
-| `tibetan` | `TI` | `local` | 否 | 藏文 |
+| `tibetan` | `TI` | `local` | 是 | 藏文；global 只套用於 Tibetan Unicode 區段 |
 | `arabic` | `AR` | `local` | 否 | 阿拉伯文 |
 | `urdu` | `UR` | `local` | 否 | 烏爾都文 |
 | `aramaic` | `IA` | `local` | 否 | 帝國亞蘭文 |

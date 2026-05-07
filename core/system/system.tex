@@ -41,6 +41,8 @@
 \tl_new:N \l__nextsystem_ui_tl
 \tl_new:N \l__nextsystem_effective_layout_tl
 \tl_new:N \l__nextsystem_effective_globalfonts_tl
+\bool_new:N \g__nextsystem_class_defaults_loaded_bool
+\bool_new:N \g__nextsystem_ui_loaded_bool
 
 \providecommand{\NextHeaderTitleText}{}
 \providecommand{\HeaderTitle}[1]{\renewcommand{\NextHeaderTitleText}{#1}}
@@ -49,7 +51,7 @@
   \renewcommand{\NextHeaderStyleText}{#1}%
   \ifcsname NextFeatureHeadersApply\endcsname
     \NextFeatureHeadersApply
-      \fi
+  \fi
 }
 
 \cs_new_protected:Npn \__nextsystem_resolve_defaults:
@@ -67,6 +69,51 @@
       {
         \cs_if_exist:NT \NextDefaultGlobalFonts
           { \tl_set:Nx \l__nextsystem_effective_globalfonts_tl { \NextDefaultGlobalFonts } }
+      }
+  }
+
+\cs_new_protected:Npn \__nextsystem_apply_ui:
+  {
+    \bool_if:NF \g__nextsystem_ui_loaded_bool
+      {
+        \cs_if_exist:NTF \NextSystemUiTag
+          { \tl_set:Nx \l__nextsystem_ui_tl { \NextSystemUiTag } }
+          { \tl_set:Nn \l__nextsystem_ui_tl { en } }
+
+        \str_if_eq:VnT \l__nextsystem_ui_tl { zh }
+          {
+            \bool_if:NTF \g__nextsystem_installed_bool
+              { \input{core/system/ui_zh_internal.tex} }
+              {
+                \cs_if_exist:NTF \NextSystemRoot
+                  { \expandafter\subimport\expandafter{\NextSystemRoot core/system/}{ui_zh_internal.tex} }
+                  { \subimport{./}{ui_zh_internal.tex} }
+              }
+          }
+        \bool_gset_true:N \g__nextsystem_ui_loaded_bool
+      }
+  }
+
+\cs_new_protected:Npn \__nextsystem_apply_class_defaults:
+  {
+    \bool_if:NF \g__nextsystem_class_defaults_loaded_bool
+      {
+        \cs_if_exist:NT \NextDefaultLayout
+          {
+            \tl_set:Nx \l_tmpa_tl { \NextDefaultLayout }
+            \tl_if_blank:VF \l_tmpa_tl
+              { \exp_args:NV \UseLayout \l_tmpa_tl }
+          }
+
+        \cs_if_exist:NT \NextDefaultGlobalFonts
+          {
+            \tl_set:Nx \l_tmpa_tl { \NextDefaultGlobalFonts }
+            \tl_if_blank:VF \l_tmpa_tl
+              { \exp_args:NV \UseFonts \l_tmpa_tl [global] }
+          }
+
+        \__nextsystem_apply_ui:
+        \bool_gset_true:N \g__nextsystem_class_defaults_loaded_bool
       }
   }
 
@@ -92,20 +139,7 @@
     \tl_if_blank:VF \l__nextsystem_fonts_tl
       { \exp_args:NV \UseFonts \l__nextsystem_fonts_tl }
 
-    \cs_if_exist:NTF \NextSystemUiTag
-      { \tl_set:Nx \l__nextsystem_ui_tl { \NextSystemUiTag } }
-      { \tl_set:Nn \l__nextsystem_ui_tl { en } }
-
-    \str_if_eq:VnT \l__nextsystem_ui_tl { zh }
-      {
-        \bool_if:NTF \g__nextsystem_installed_bool
-          { \input{core/system/ui_zh_internal.tex} }
-          {
-            \cs_if_exist:NTF \NextSystemRoot
-              { \expandafter\subimport\expandafter{\NextSystemRoot core/system/}{ui_zh_internal.tex} }
-              { \subimport{./}{ui_zh_internal.tex} }
-          }
-      }
+    \__nextsystem_apply_ui:
 
     \tl_if_blank:VF \l__nextsystem_features_tl
       { \exp_args:NV \UseFeatures \l__nextsystem_features_tl }
@@ -123,5 +157,25 @@
 
 \NewDocumentCommand{\UseNextSystem}{m}
   { \UseTemplateSet{#1} }
+
+\NewDocumentCommand{\UseGlobalFonts}{m}
+  { \UseFonts{#1}[global] }
+
+\NewDocumentCommand{\UseGlobalFont}{m}
+  { \UseFont{#1}[global] }
+
+\NewDocumentCommand{\UseMainFonts}{m}
+  { \UseGlobalFonts{#1} }
+
+\NewDocumentCommand{\UseMainFont}{m}
+  { \UseGlobalFont{#1} }
+
+\NewDocumentCommand{\UseLocalFonts}{m}
+  { \UseFonts{#1} }
+
+\NewDocumentCommand{\UseLocalFont}{m}
+  { \UseFont{#1} }
+
+\__nextsystem_apply_class_defaults:
 
 \ExplSyntaxOff

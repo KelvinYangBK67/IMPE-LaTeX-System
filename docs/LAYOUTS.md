@@ -117,13 +117,13 @@ The current public presets and their effective settings are:
   Uses: `page_a4_26mm` + `text_zh`
 - `en_doc`
   Targets: `article`, `report`
-  Uses: `page_a4_1in` + `text_en`
+  Uses: `page_a4_en_doc_145mm` + `text_en_doc`
 - `zh_book`
   Targets: `book`, `report`
   Uses: `page_a4_book` + `text_zh` + `head_fancy_chapter` + `book_openright` + `book_blankpage_empty`
 - `en_book`
   Targets: `book`, `report`
-  Uses: `page_a4_book` + `text_en` + `head_fancy_chapter` + `book_openright` + `book_blankpage_empty`
+  Uses: `page_a4_en_book_145mm` + `text_en_book` + `head_fancy_chapter` + `book_openright` + `book_blankpage_empty`
 - `beamer`
   Targets: `beamer`
   Uses: `text_beamer_dense` + `slides_madrid_nav`
@@ -135,12 +135,20 @@ They are the building blocks used by presets:
 
 - `page_a4_1in`
   A4 page with `1in` margins
+- `page_a4_en_doc_145mm`
+  A4 English article/report geometry with approximately `145mm` text width
 - `page_a4_26mm`
   A4 page with `2.6cm` margins
 - `page_a4_book`
   A4 two-sided book geometry with wider inner margin
+- `page_a4_en_book_145mm`
+  A4 two-sided English book geometry with approximately `145mm` text width
+- `text_en_doc`
+  English article/report text spacing with `1.40` line stretch, `0.25em` paragraph spacing, and standard paragraph indent
+- `text_en_book`
+  English book text spacing with `1.42` line stretch, `0.25em` paragraph spacing, and standard paragraph indent
 - `text_en`
-  English text spacing with moderate line stretch and standard paragraph indent
+  Compatibility alias of `text_en_doc`
 - `text_zh`
   Chinese text spacing with larger line stretch, first-paragraph indent, and tuned list spacing
 - `text_beamer_dense`

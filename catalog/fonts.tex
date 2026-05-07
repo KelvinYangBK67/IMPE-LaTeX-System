@@ -131,6 +131,33 @@
   },
 }
 
+\FontRegisterFamily{
+  id = libertinus,
+  defaultmode = local,
+  local = {
+    command = LIB,
+    name = libertinus_local,
+    path = \CatalogFontRoot/libertinus/,
+    regular = LibertinusSerif-Regular.ttf,
+    bold = LibertinusSerif-Bold.ttf,
+    italic = LibertinusSerif-Italic.ttf,
+    bolditalic = LibertinusSerif-BoldItalic.ttf,
+    sans = LibertinusSans-Regular.ttf,
+    sansbold = LibertinusSans-Bold.ttf,
+    sansitalic = LibertinusSans-Italic.ttf
+  },
+  global = {
+    path = \CatalogFontRoot/libertinus/,
+    regular = LibertinusSerif-Regular.ttf,
+    bold = LibertinusSerif-Bold.ttf,
+    italic = LibertinusSerif-Italic.ttf,
+    bolditalic = LibertinusSerif-BoldItalic.ttf,
+    sans = LibertinusSans-Regular.ttf,
+    sansbold = LibertinusSans-Bold.ttf,
+    sansitalic = LibertinusSans-Italic.ttf
+  },
+}
+
 % -----------------------------------------------------------------
 % Simple local scripts
 % -----------------------------------------------------------------
@@ -266,6 +293,25 @@
     script = Devanagari,
     language = Hindi,
   },
+  global = {
+    name = hindi_global,
+    path = \CatalogFontRoot/hindi/,
+    regular = NotoSerifDevanagari-Regular.ttf,
+    bold = NotoSerifDevanagari-Bold.ttf,
+    sans = NotoSansDevanagari-Regular.ttf,
+    sansbold = NotoSansDevanagari-Bold.ttf,
+    script = Devanagari,
+    language = Hindi,
+    unicodeblocks = {
+      DevanagariPreMarks,
+      DevanagariMarks,
+      DevanagariPostMarks,
+      DevanagariDanDa,
+      DevanagariPostDanDa,
+      DevanagariExtended,
+      DevanagariExtendedA
+    },
+  },
 }
 
 \FontRegisterFamily{
@@ -278,6 +324,23 @@
     regular = TiroDevanagariSanskrit-Regular.ttf,
     script = Devanagari,
     language = Sanskrit,
+  },
+  global = {
+    name = sanskrit_global,
+    path = \CatalogFontRoot/sanskrit/,
+    regular = TiroDevanagariSanskrit-Regular.ttf,
+    script = Devanagari,
+    language = Sanskrit,
+    unicodeblocks = {
+      DevanagariPreMarks,
+      DevanagariMarks,
+      DevanagariPostMarks,
+      DevanagariDanDa,
+      DevanagariPostDanDa,
+      DevanagariExtended,
+      DevanagariExtendedA,
+      VedicExtensions
+    },
   },
 }
 
@@ -355,6 +418,18 @@
     script = Tibetan,
     language = Tibetan,
     inlinebehavior = tibetan,
+  },
+  global = {
+    name = tibetan_global,
+    path = \CatalogFontRoot/tibetan/,
+    regular = NotoSerifTibetan-Regular.ttf,
+    bold = NotoSerifTibetan-Bold.ttf,
+    italic = KhaWaBetsugsSans-Text-Normal.ttf,
+    bolditalic = KhaWaBetsugsSans-Text-Bold.ttf,
+    script = Tibetan,
+    language = Tibetan,
+    inlinebehavior = tibetan,
+    unicodeblocks = { Tibetan },
   },
 }
 

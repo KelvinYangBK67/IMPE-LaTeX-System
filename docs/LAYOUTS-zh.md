@@ -115,13 +115,13 @@ core/layout/system.tex
   套用：`page_a4_26mm` + `text_zh`
 - `en_doc`
   目標類別：`article`、`report`
-  套用：`page_a4_1in` + `text_en`
+  套用：`page_a4_en_doc_145mm` + `text_en_doc`
 - `zh_book`
   目標類別：`book`、`report`
   套用：`page_a4_book` + `text_zh` + `head_fancy_chapter` + `book_openright` + `book_blankpage_empty`
 - `en_book`
   目標類別：`book`、`report`
-  套用：`page_a4_book` + `text_en` + `head_fancy_chapter` + `book_openright` + `book_blankpage_empty`
+  套用：`page_a4_en_book_145mm` + `text_en_book` + `head_fancy_chapter` + `book_openright` + `book_blankpage_empty`
 - `beamer`
   目標類別：`beamer`
   套用：`text_beamer_dense` + `slides_madrid_nav`
@@ -132,12 +132,20 @@ core/layout/system.tex
 
 - `page_a4_1in`
   A4 頁面，四邊 `1in` 邊界
+- `page_a4_en_doc_145mm`
+  A4 英文 article/report geometry，正文寬度約 `145mm`
 - `page_a4_26mm`
   A4 頁面，四邊 `2.6cm` 邊界
 - `page_a4_book`
   A4 雙面書籍 geometry，內側留較寬裝訂空間
+- `page_a4_en_book_145mm`
+  A4 英文雙面 book geometry，正文寬度約 `145mm`
+- `text_en_doc`
+  英文 article/report 正文樣式，`1.40` 行距、`0.25em` 段間距與一般段首縮排
+- `text_en_book`
+  英文 book 正文樣式，`1.42` 行距、`0.25em` 段間距與一般段首縮排
 - `text_en`
-  英文正文樣式，較溫和的行距與一般段首縮排
+  `text_en_doc` 的兼容別名
 - `text_zh`
   中文正文樣式，較大的行距、首段縮排與調整過的列表間距
 - `text_beamer_dense`

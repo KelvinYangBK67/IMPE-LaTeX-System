@@ -1,0 +1,23 @@
+% !TeX program = xelatex
+% Hindi range-limited global font smoke test.
+\documentclass[12pt]{article}
+\usepackage{import}
+
+\subimport{../../package/}{system.tex}
+\UseTemplateSet{
+  globalfonts = {cmu,shanggu,hindi}
+}
+
+\begin{document}
+
+Latin text remains Latin.
+
+漢字仍然使用 CJK global family。
+
+Hindi global range: हिन्दी भाषा देवनागरी में लिखी जाती है।
+
+Mixed line: Latin 漢字 हिन्दी back to Latin.
+
+\noindent\parbox{2.8cm}{हिन्दी भाषा देवनागरी में लिखी जाती है और यह पंक्ति Sanskrit विशेष विराम नियमों के बिना चलती है।}
+
+\end{document}

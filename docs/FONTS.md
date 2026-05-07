@@ -147,11 +147,20 @@ Ordinary local families should not contain:
 ### Global Family
 
 Only families with a real `global = {...}` block can be loaded through
-`globalfonts`. Current global-capable families are Latin/CJK/system families such
-as `cmu`, `noto`, `times`, `gentium`, `charis`, `shanggu`, and `sim`. If a
-family has no `global` block and is requested in global mode, the registry now
-reports a direct "no global mode" error instead of relying on a reserved status
-placeholder.
+`globalfonts`. Most global-capable families are Latin/CJK/system families such
+as `cmu`, `noto`, `times`, `gentium`, `charis`, `libertinus`, `shanggu`, and `sim`.
+Complex-script globals such as `hindi`, `sanskrit`, and `tibetan` are
+range-limited with `unicodeblocks`, so they only switch fonts for their Unicode
+blocks and do not remap Latin, Han, or other text. The `hindi` range global uses
+the Devanagari ranges without Sanskrit-specific line-breaking rules. The
+`sanskrit` range global adds Devanagari akshara-aware line breaking for the
+base Devanagari block without breaking after virama before the next consonant.
+Tibetan range globals also
+preserve the core tsheg behavior: line breaks are allowed after `U+0F0B` /
+`U+0F0C` only when the next character is Tibetan. If a family has no `global`
+block and is
+requested in global mode, the registry now reports a direct "no global mode"
+error instead of relying on a reserved status placeholder.
 
 `cmu` and `times` are system/bundled exceptions: they may name fonts directly and
 do not need `path = \CatalogFontRoot/<id>/`.
@@ -221,6 +230,8 @@ In practice:
 - `regular` / `bold` / `italic` / `bolditalic` define concrete files
 - `local = {...}` creates a local command family
 - `global = {...}` binds a family into document-wide defaults
+- `unicodeblocks = {...}` makes a global binding range-limited through XeLaTeX
+  Unicode block transitions instead of replacing the whole main/sans/mono stack
 - `layout = vertical` selects the built-in vertical layout route
 - `verticalstrategy` / `verticalrotation` / `verticalorigin` / `verticaltopcorrection` configure `layout = vertical`
 - `specialmodule` is only needed for external/custom TeX module routes
@@ -265,6 +276,7 @@ The current catalog registers the following families. `globalfonts = {...}` only
 | `times` | `TIM` | `local` | yes | Windows Times/Arial/Consolas bundle |
 | `gentium` | `GEN` | `local` | yes | Gentium Plus Latin family |
 | `charis` | `CHA` | `local` | yes | Charis SIL Latin family |
+| `libertinus` | `LIB` | `local` | yes | Libertinus Serif/Sans Latin family |
 | `anatolian` | `CA` | `local` | no | Carian |
 | `coptic` | `CO` | `local` | no | Coptic |
 | `bopomofo` | `ZY` | `local` | no | Bopomofo / Zhuyin |
@@ -274,13 +286,13 @@ The current catalog registers the following families. `globalfonts = {...}` only
 | `hungarian` | `OH` | `local` | no | Old Hungarian |
 | `runic` | `RU` | `local` | no | Runic |
 | `armenian` | `HY` | `local` | no | Armenian |
-| `hindi` | `HI` | `local` | no | Hindi |
-| `sanskrit` | `SA` | `local` | no | Sanskrit |
+| `hindi` | `HI` | `local` | yes | Hindi; global applies only to Devanagari Unicode blocks, without Sanskrit line-breaking rules |
+| `sanskrit` | `SA` | `local` | yes | Sanskrit; global applies only to Devanagari and Vedic Unicode blocks |
 | `devanagari` | `DEV` | `local` | no | Devanagari generic family for `.impe` workflows |
 | `tamil` | `TA` | `local` | no | Tamil |
 | `brahmi` | `BR` | `local` | no | Brahmi |
 | `georgian` | `KA` | `local` | no | Georgian |
-| `tibetan` | `TI` | `local` | no | Tibetan |
+| `tibetan` | `TI` | `local` | yes | Tibetan; global applies only to the Tibetan Unicode block |
 | `arabic` | `AR` | `local` | no | Arabic |
 | `urdu` | `UR` | `local` | no | Urdu |
 | `aramaic` | `IA` | `local` | no | Imperial Aramaic |
