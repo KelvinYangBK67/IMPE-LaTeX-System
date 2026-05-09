@@ -1,0 +1,44 @@
+% !TeX program = xelatex
+% Header title smoke test.
+\documentclass[12pt]{book}
+\usepackage{import}
+
+\subimport{../../package/}{system.tex}
+\UseTemplateSet{
+  layout = en_book,
+  globalfonts = {cmu},
+  features = {headers}
+}
+
+\title{Main Book Title}
+\subtitle{Subtitle Not Used In Running Header}
+\HeaderTitle{Custom Running Title}
+\author{Author Name}
+\date{\today}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{First Chapter}
+
+Body text.
+
+\newpage
+
+More body text on the next page.
+
+\newpage
+
+More body text on an odd page.
+
+\chapter{Second Chapter}
+
+More body text.
+
+\end{document}

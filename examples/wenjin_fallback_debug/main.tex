@@ -1,0 +1,21 @@
+% !TeX program = xelatex
+% WenJin P0/P2/P3 fallback smoke test.
+\documentclass[12pt]{article}
+\usepackage{import}
+
+\subimport{../../package/}{system.tex}
+\UseTemplateSet{
+  fonts = {libertinus,wenjin}
+}
+
+\begin{document}
+
+WenJin auto: 一二三中國 𠀀𠮷𡈽𡌛𣎴 𰀀𰀁𰀂𰀃𰀄
+
+\WJ{WenJin local: 一二三中國 𠀀𠮷𡈽𡌛𣎴 𰀀𰀁𰀂𰀃𰀄}
+
+WenJin H/I/J: \symbol{"31350}\symbol{"2EBF0}\symbol{"323B0}
+
+\WJ{WenJin local H/I/J: \symbol{"31350}\symbol{"2EBF0}\symbol{"323B0}}
+
+\end{document}

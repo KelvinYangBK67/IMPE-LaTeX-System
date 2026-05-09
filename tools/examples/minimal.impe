@@ -3,6 +3,7 @@ impe_version: 0.1
 document:
   class: nextreport
   title: "Untitled Document"
+  subtitle: "A concise subtitle"
   author: ""
   language: zh-Hant
 

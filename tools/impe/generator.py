@@ -54,6 +54,7 @@ def _generate_main(data: dict[str, Any]) -> str:
     template = data["template"]
     class_name = _tex_identifier(document.get("class", "nextreport"), "nextreport")
     title = escape_latex(str(document.get("title", "Untitled Document")))
+    subtitle = escape_latex(str(document.get("subtitle", "")))
     author = escape_latex(str(document.get("author", "")))
     layout = _tex_atom(template.get("layout", "report"))
     globalfonts = _tex_list(template.get("globalfonts", []))
@@ -71,6 +72,7 @@ def _generate_main(data: dict[str, Any]) -> str:
         + "}\n\n"
         + "\\input{generated-fonts.tex}\n\n"
         + f"\\title{{{title}}}\n"
+        + (f"\\subtitle{{{subtitle}}}\n" if subtitle else "")
         + f"\\author{{{author}}}\n"
         + "\\date{\\today}\n\n"
         + "\\begin{document}\n"

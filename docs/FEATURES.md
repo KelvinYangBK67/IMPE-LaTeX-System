@@ -116,9 +116,10 @@ Loads `fancyhdr` and enables running heads for article, report, and book-like
 documents.
 
 For article classes, section titles populate `\leftmark`. For report/book-like
-classes, chapter titles populate `\leftmark`. By default, the fixed title uses
-the first line of `\title{...}`. Use `\HeaderTitle{...}` to override it with a
-shorter running title.
+classes, chapter titles populate `\leftmark`. By default, the fixed running
+title uses the first line of `\title{...}` and keeps that value after
+`\maketitle`. Use `\HeaderTitle{...}` to override it with a shorter running
+title.
 
 Example:
 
@@ -131,10 +132,11 @@ Example:
 \HeaderTitle{Short Document Title}
 ```
 
-The default style is `title`: one-sided documents place the title in the
-center header and the page number in the center footer; two-sided documents
-place the title on the outer header and the page number on the outer footer.
-Use `\HeaderStyle{running}` for chapter/section running heads.
+The default style is `running`: one-sided documents place the fixed running
+title on the left and the page number on the right; two-sided documents place
+the fixed running title on the even-page inner header and the chapter/section
+running head on the odd-page inner header. Use `\HeaderStyle{title}` if you want
+a fixed-title-only header style.
 
 Use standard document-class options for one-sided or two-sided output:
 

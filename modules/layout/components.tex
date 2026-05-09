@@ -26,20 +26,19 @@
 
 \newcommand{\NextLayoutHeadFancyChapter}{
   \RequirePackage{fancyhdr}
-  \providecommand{\HeaderTitle}{}
   \pagestyle{fancy}
   \fancyhf{}
-  \renewcommand{\chaptermark}[1]{\markboth{##1}{}}
+  \renewcommand{\chaptermark}[1]{\NextSetRunningHeader{##1}\markboth{##1}{}}
   \renewcommand{\sectionmark}[1]{}
   \renewcommand{\subsectionmark}[1]{}
   \renewcommand{\subsubsectionmark}[1]{}
   \if@twoside
     \fancyhead[LE]{\small\thepage}
-    \fancyhead[RE]{\itshape\small\HeaderTitle}
-    \fancyhead[LO]{\itshape\small\leftmark}
+    \fancyhead[RE]{\itshape\small\NextHeaderTitleContent}
+    \fancyhead[LO]{\itshape\small\NextRunningHeaderContent}
     \fancyhead[RO]{\small\thepage}
   \else
-    \fancyhead[L]{\itshape\small\HeaderTitle}
+    \fancyhead[L]{\itshape\small\NextHeaderTitleContent}
     \fancyhead[R]{\small\thepage}
   \fi
   \renewcommand{\headrulewidth}{0.4pt}
@@ -191,7 +190,10 @@
     \usetheme{Madrid}
     \usefonttheme{professionalfonts}
     \setbeamertemplate{navigation symbols}{}
+    \providecommand{\NextBeamerAuthorShape}{\upshape}
     \setbeamerfont{title}{family=\sffamily,series=\bfseries}
+    \setbeamerfont{subtitle}{family=\sffamily,series=\mdseries,size=\large}
+    \setbeamerfont{author}{family=\sffamily,series=\mdseries,shape=\NextBeamerAuthorShape}
     \setbeamerfont{frametitle}{family=\sffamily,series=\bfseries}
     \setbeamerfont{block title}{family=\sffamily,series=\bfseries}
     \setbeamerfont{block body}{family=\sffamily}

@@ -148,7 +148,8 @@ Ordinary local families should not contain:
 
 Only families with a real `global = {...}` block can be loaded through
 `globalfonts`. Most global-capable families are Latin/CJK/system families such
-as `cmu`, `noto`, `times`, `gentium`, `charis`, `libertinus`, `shanggu`, and `sim`.
+as `cmu`, `noto`, `times`, `gentium`, `charis`, `libertinus`, `japanese`,
+`shanggu`, and `sim`.
 Complex-script globals such as `hindi`, `sanskrit`, and `tibetan` are
 range-limited with `unicodeblocks`, so they only switch fonts for their Unicode
 blocks and do not remap Latin, Han, or other text. The `hindi` range global uses
@@ -157,7 +158,7 @@ the Devanagari ranges without Sanskrit-specific line-breaking rules. The
 base Devanagari block without breaking after virama before the next consonant.
 Tibetan range globals also
 preserve the core tsheg behavior: line breaks are allowed after `U+0F0B` /
-`U+0F0C` only when the next character is Tibetan. If a family has no `global`
+`U+0F0C` only before Tibetan letters/signs, never before Tibetan punctuation. If a family has no `global`
 block and is
 requested in global mode, the registry now reports a direct "no global mode"
 error instead of relying on a reserved status placeholder.
@@ -168,6 +169,8 @@ do not need `path = \CatalogFontRoot/<id>/`.
 ### CJK/Internal Routing
 
 `scriptclass = cjk` is an internal routing hint used to select the xeCJK path.
+CJK global families, including `japanese`, replace the document CJK main/sans/mono
+channels through xeCJK rather than using Unicode-range intercharacter switching.
 Ordinary non-CJK families do not need `scriptclass`; OpenType shaping should be
 expressed with `script`, `language`, and `features`.
 
@@ -313,8 +316,8 @@ The current catalog registers the following families. `globalfonts = {...}` only
 | `sogdian_old` | `SGO` | `local` | no | Old Sogdian |
 | `chinese_simplified` | `SC` | `local` | no | Simplified Chinese |
 | `chinese_traditional` | `TC` | `local` | no | Traditional Chinese |
-| `japanese` | `JP` | `local` | no | Japanese |
-| `wenjin_p0` / `wenjin_p2` / `wenjin_p3` | `WJA` / `WJB` / `WJC` | `local` | no | WenJin Mincho Plane 0 / 2 / 3 |
+| `japanese` | `JP` | `local` | yes | Japanese; global uses the xeCJK CJK font channels |
+| `wenjin` | `WJ` | `local` | yes | WenJin Mincho with P0 primary and P2/P3 xeCJK fallback |
 | `shanggu` | `-` | `global` | yes | Global CJK family for Han text |
 | `sim` | `-` | `global` | yes | Windows CJK family |
 | `korean` | `KR` | `local` | no | Korean |

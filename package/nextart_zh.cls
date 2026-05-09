@@ -7,6 +7,7 @@
 \def\NextSystemUiTag{zh}
 \def\NextDefaultLayout{zh_doc}
 \def\NextDefaultGlobalFonts{cmu,shanggu}
+\providecommand{\NextTitleAuthorFont}{\normalfont\large\itshape}
 \LoadClass{article}
 \RequirePackage{nextsystem}
 \makeatother

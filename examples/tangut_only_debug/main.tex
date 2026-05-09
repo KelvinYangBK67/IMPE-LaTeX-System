@@ -1,0 +1,17 @@
+% !TeX program = xelatex
+% Tangut-only CJK bootstrap smoke test.
+\documentclass[12pt]{article}
+\usepackage{import}
+
+\subimport{../../package/}{system.tex}
+\UseTemplateSet{
+  fonts = {libertinus,tangut}
+}
+
+\begin{document}
+
+Tangut only: 𗼇、𗟲。𘚜𗧻
+
+\TG{𗼇𗟲𘚜𗧻}
+
+\end{document}

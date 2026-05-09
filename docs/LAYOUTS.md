@@ -154,7 +154,9 @@ They are the building blocks used by presets:
 - `text_beamer_dense`
   Compact paragraph spacing for slides
 - `head_fancy_chapter`
-  Fancy chapter-style running heads via `fancyhdr`
+  Fancy chapter-style running heads via `fancyhdr`. The fixed running title
+  defaults to the first line of `\title{...}` and can be overridden with
+  `\HeaderTitle{...}`.
 - `book_openright`
   Force chapters/openings to start on right-hand pages
 - `book_blankpage_empty`

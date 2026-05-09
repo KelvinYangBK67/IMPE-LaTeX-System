@@ -137,13 +137,13 @@ core/fonts/system.tex
 
 ### 全域 Family
 
-只有真正帶有 `global = {...}` 區塊的 family 才能透過 `globalfonts` 載入。大部分可作為全域字體的 family 是 Latin / CJK / system 類 family，例如 `cmu`、`noto`、`times`、`gentium`、`charis`、`libertinus`、`shanggu`、`sim`。`hindi`、`sanskrit`、`tibetan` 這類 complex-script global 會用 `unicodeblocks` 限定 Unicode 區段，因此只在對應文字區段切換字體，不會改掉 Latin、漢字或其他文字。`hindi` range global 使用 Devanagari 區段，但不啟用 Sanskrit 專用斷行規則。`sanskrit` range global 會為 Devanagari 基礎區段加入 akshara-aware 斷行，並保留 virama 後接 consonant 時不斷行。Tibetan range global 也會保留核心 tsheg 行為：只有 `U+0F0B` / `U+0F0C` 後面仍接藏文時才允許斷行。如果某個 family 沒有 `global` 區塊卻被要求以 global mode 載入，registry 會直接回報「no global mode」錯誤，而不是依賴預留狀態佔位。
+只有真正帶有 `global = {...}` 區塊的 family 才能透過 `globalfonts` 載入。大部分可作為全域字體的 family 是 Latin / CJK / system 類 family，例如 `cmu`、`noto`、`times`、`gentium`、`charis`、`libertinus`、`japanese`、`shanggu`、`sim`。`hindi`、`sanskrit`、`tibetan` 這類 complex-script global 會用 `unicodeblocks` 限定 Unicode 區段，因此只在對應文字區段切換字體，不會改掉 Latin、漢字或其他文字。`hindi` range global 使用 Devanagari 區段，但不啟用 Sanskrit 專用斷行規則。`sanskrit` range global 會為 Devanagari 基礎區段加入 akshara-aware 斷行，並保留 virama 後接 consonant 時不斷行。Tibetan range global 也會保留核心 tsheg 行為：只有 `U+0F0B` / `U+0F0C` 後面接藏文字母 / 符號時才允許斷行，且不允許在藏文標點前斷行。如果某個 family 沒有 `global` 區塊卻被要求以 global mode 載入，registry 會直接回報「no global mode」錯誤，而不是依賴預留狀態佔位。
 
 `cmu` 與 `times` 是 system / bundled 例外：它們可以直接使用字體名稱，不一定需要 `path = \CatalogFontRoot/<id>/`。
 
 ### CJK / 內部路由
 
-`scriptclass = cjk` 是內部路由提示，用於選擇 xeCJK 路徑。一般非 CJK family 不需要 `scriptclass`；OpenType shaping 應透過 `script`、`language`、`features` 表達。
+`scriptclass = cjk` 是內部路由提示，用於選擇 xeCJK 路徑。包含 `japanese` 在內的 CJK global family 會透過 xeCJK 替換文件的 CJK main / sans / mono 通道，而不是使用 Unicode range intercharacter switching。一般非 CJK family 不需要 `scriptclass`；OpenType shaping 應透過 `script`、`language`、`features` 表達。
 
 ### Shaping、Layout 與特殊模組
 
@@ -280,8 +280,8 @@ catalog/fonts.tex
 | `sogdian_old` | `SGO` | `local` | 否 | 古粟特文 |
 | `chinese_simplified` | `SC` | `local` | 否 | 簡體中文 |
 | `chinese_traditional` | `TC` | `local` | 否 | 繁體中文 |
-| `japanese` | `JP` | `local` | 否 | 日文 |
-| `wenjin_p0` / `wenjin_p2` / `wenjin_p3` | `WJA` / `WJB` / `WJC` | `local` | 否 | 文津宋體第 0 / 2 / 3 平面 |
+| `japanese` | `JP` | `local` | 是 | 日文；global 使用 xeCJK 的 CJK 字體通道 |
+| `wenjin` | `WJ` | `local` | 是 | 文津宋體，P0 爲主字體，P2/P3 作 xeCJK fallback |
 | `shanggu` | `-` | `global` | 是 | 漢字全域 CJK family |
 | `sim` | `-` | `global` | 是 | Windows CJK 字族 |
 | `korean` | `KR` | `local` | 否 | 韓文 |

@@ -7,6 +7,7 @@
 \def\NextSystemUiTag{zh}
 \def\NextDefaultLayout{beamer}
 \def\NextDefaultGlobalFonts{cmu,shanggu}
+\providecommand{\NextBeamerAuthorShape}{\itshape}
 \LoadClass{beamer}
 \RequirePackage{nextsystem}
 \makeatother

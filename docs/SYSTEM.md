@@ -120,6 +120,10 @@ can usually be omitted:
 ```tex
 \documentclass{nextart_zh}
 
+\title{Main Title}
+\subtitle{A shorter subtitle below the title}
+\author{Author Name}
+
 \UseFeatures{headers,citations,hyperlinks}
 ```
 
@@ -147,6 +151,16 @@ single key in `\UseTemplateSet{...}`:
 \UseMainFonts{libertinus}
 \UseLocalFonts{libertinus}
 ```
+
+Documents may use `\subtitle{...}` alongside LaTeX's standard `\title{...}`.
+The title block prints the main title in a larger bold face, then prints the
+subtitle directly below it in a slightly smaller non-bold face.
+Chinese wrapper classes (`nextart_zh`, `nextreport_zh`, `nextbook_zh`, and
+`nextbeamer_zh`) default the author line to italic.
+Article-like classes keep a compact title top skip, while report/book-like
+classes place the title block lower on the title page. Override
+`\NextTitleTopSkip` if a document needs a different title-page vertical
+position.
 
 ## Bundled Font Root
 

@@ -19,6 +19,16 @@
 \tl_new:N \l__font_inline_behavior_tl
 \tl_new:N \l__font_vertical_strategy_tl
 
+\clist_const:Nn \c__font_tibetan_non_tsheg_punctuation_codepoints_clist
+  {
+    "0F04, "0F05, "0F06, "0F07, "0F08, "0F09, "0F0A,
+    "0F0D, "0F0E, "0F0F, "0F10, "0F11, "0F12, "0F14,
+    "0F3A, "0F3B, "0F3C, "0F3D,
+    "0F85,
+    "0FD0, "0FD1, "0FD2, "0FD3, "0FD4,
+    "0FD9, "0FDA
+  }
+
 \cs_new_protected:Npn \__font_behavior_tibetan_breaks:n #1
   {
     \tl_set:Nn \l_tmpa_tl {#1}

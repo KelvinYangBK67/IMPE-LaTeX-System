@@ -81,6 +81,8 @@
     verticalorigin .code:n = { \__font_family_flat_append:nn { verticalorigin } {#1} },
     verticaltopcorrection .code:n = { \__font_family_flat_append:nn { verticaltopcorrection } {#1} },
     features     .code:n = { \__font_family_flat_append:nn { features } {#1} },
+    cjkfallback  .code:n = { \__font_family_flat_append:nn { cjkfallback } {#1} },
+    cjkfallbacks .code:n = { \__font_family_flat_append:nn { cjkfallback } {#1} },
     backend      .code:n = { \__font_family_flat_append:nn { backend } {#1} },
     fallbackmode .code:n = { \__font_family_flat_append:nn { fallbackmode } {#1} },
     specialmodule .code:n = { \__font_family_flat_append:nn { specialmodule } {#1} },
@@ -228,6 +230,44 @@
       }
   }
 
+\cs_new_protected:Npn \__font_family_use_range_key_global:nn #1#2
+  {
+    \prop_if_in:NnF \g__font_range_key_owner_prop {#2}
+      {
+        \__font_family_append_range_chain:nn {#1} {#2}
+        \prop_gput:Nnn \g__font_range_key_owner_prop {#2} {#1}
+        \prop_get:NnNT \g__font_range_key_blocks_prop {#2} \l_tmpa_tl
+          {
+            \prop_if_in:NnF \g__font_family_loaded_prop { #1 / auto-range / #2 }
+              {
+                \prop_get:NnNTF \g__font_family_global_prop {#1} \l_tmpb_tl
+                  {
+                    \tl_set:Nx \l_tmpc_tl
+                      {
+                        scope = global, familyid = #1,
+                        \exp_not:V \l_tmpb_tl
+                        , unicodeblocks = { \exp_not:V \l_tmpa_tl }
+                      }
+                    \exp_args:NV \FontDeclare \l_tmpc_tl
+                    \prop_put:Nnn \g__font_family_loaded_prop { #1 / auto-range / #2 } { loaded }
+                  }
+                  {
+                    \PackageWarning{font-family-registry}
+                      {Family~`#1'~cannot~provide~range~`#2'~because~it~has~no~global~declaration}
+                  }
+              }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_family_apply_auto_companions:n #1
+  {
+    \str_if_eq:nnT {#1} { tangut }
+      {
+        \__font_family_use_range_key_global:nn { shanggu } { cjk-punctuation }
+      }
+  }
+
 \cs_new_protected:Npn \__font_family_use_auto_global:n #1
   {
     \prop_get:NnNTF \g__font_family_global_route_prop {#1} \l_tmpa_tl
@@ -293,6 +333,7 @@
               }
           }
         \__font_family_use_auto_global:n {#1}
+        \__font_family_apply_auto_companions:n {#1}
         \tl_if_blank:VT \l__font_family_owned_unicode_blocks_tl
           {
             \str_if_eq:VnF \l_tmpa_tl { global }

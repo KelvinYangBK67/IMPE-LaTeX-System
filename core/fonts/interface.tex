@@ -27,6 +27,7 @@
 \tl_new:N \l__font_script_tl
 \tl_new:N \l__font_language_tl
 \tl_new:N \l__font_features_tl
+\tl_new:N \l__font_cjk_fallback_tl
 \tl_new:N \l__font_command_tl
 \tl_new:N \l__font_layout_tl
 \tl_new:N \l__font_special_module_tl
@@ -54,11 +55,17 @@
 \bool_new:N \l__font_use_latex_fallback_bool
 \bool_new:N \l__font_nextsystem_installed_bool
 \bool_new:N \l__font_reapply_style_bool
+\bool_new:N \g__font_cjk_main_declared_bool
 \seq_new:N \g__font_loaded_special_modules_seq
 \seq_new:N \g__font_range_global_blocks_seq
 \prop_new:N \g__font_range_global_name_prop
 \prop_new:N \g__font_unicode_block_range_prop
+\prop_new:N \g__font_cjk_fallback_applied_prop
 \tl_new:N \g__font_devanagari_akshara_name_tl
+
+\cs_generate_variant:Nn \prop_if_in:NnF { NVF }
+\cs_generate_variant:Nn \prop_gput:Nnn { NVn }
+\cs_generate_variant:Nn \tl_to_str:n { V }
 
 \cs_new_protected:Npn \__font_declare_unicode_block:nnn #1#2#3
   { \prop_gput:Nnn \g__font_unicode_block_range_prop {#1} { {#2} {#3} } }
@@ -115,6 +122,7 @@
     \tl_clear:N \l__font_script_tl
     \tl_clear:N \l__font_language_tl
     \tl_clear:N \l__font_features_tl
+    \tl_clear:N \l__font_cjk_fallback_tl
     \tl_clear:N \l__font_command_tl
     \tl_clear:N \l__font_layout_tl
     \tl_clear:N \l__font_special_module_tl
@@ -174,6 +182,8 @@
     verticalorigin .tl_set:N = \l__font_vertical_origin_override_tl,
     verticaltopcorrection .tl_set:N = \l__font_vertical_top_correction_override_tl,
     features     .tl_set:N = \l__font_features_tl,
+    cjkfallback  .tl_set:N = \l__font_cjk_fallback_tl,
+    cjkfallbacks .tl_set:N = \l__font_cjk_fallback_tl,
     command      .tl_set:N = \l__font_command_tl,
     layout       .tl_set:N = \l__font_layout_tl,
     familyid     .tl_set:N = \l__font_decl_family_id_tl,
@@ -507,6 +517,42 @@
       }
   }
 
+\cs_new_protected:Npn \__font_apply_cjk_fallback_family:n #1
+  {
+    \tl_if_blank:VF \l__font_cjk_fallback_tl
+      {
+        \tl_set:Nx \l_tmpa_tl
+          {
+            \tl_to_str:n {#1}
+            /
+            \tl_to_str:V \l__font_cjk_fallback_tl
+          }
+        \prop_if_in:NVF \g__font_cjk_fallback_applied_prop \l_tmpa_tl
+          {
+            \cs_if_exist:NF \setCJKfallbackfamilyfont
+              { \RequirePackage{xeCJK} }
+            \cs_if_exist:NT \xeCJKsetup
+              { \xeCJKsetup { AutoFallBack = true } }
+            \cs_if_exist:NT \xeCJKDeclareCharClass
+              {
+                \xeCJKDeclareCharClass { CJK }
+                  {
+                    "2EBF0 -> "2EE5F ,
+                    "31350 -> "323AF ,
+                    "323B0 -> "3347F
+                  }
+              }
+            \use:x
+              {
+                \exp_not:N \setCJKfallbackfamilyfont
+                { \exp_not:n {#1} }
+                { \exp_not:V \l__font_cjk_fallback_tl }
+              }
+            \prop_gput:NVn \g__font_cjk_fallback_applied_prop \l_tmpa_tl { applied }
+          }
+      }
+  }
+
 \tl_new:N \l__font_vertical_embed_gap_tl
 \tl_new:N \l__font_vertical_base_command_tl
 \tl_new:N \l__font_vertical_base_name_tl
@@ -785,16 +831,30 @@
       {
         \cs_if_exist:NF \newCJKfontfamily
           { \RequirePackage{xeCJK} }
-        \use:x
+        \bool_if:NF \g__font_cjk_main_declared_bool
           {
-            \exp_not:N \newCJKfontfamily
-            \exp_not:c { __fontrm_\l__font_name_tl }
-            [ \tl_use:N \l__font_main_options_tl ]
-            { \l__font_regular_tl }
+            \use:x
+              {
+                \exp_not:N \setCJKmainfont
+                [ \tl_use:N \l__font_main_options_tl ]
+                { \l__font_regular_tl }
+              }
+            \__font_apply_cjk_fallback_family:n { \CJKrmdefault }
+            \bool_gset_true:N \g__font_cjk_main_declared_bool
           }
         \use:x
           {
             \exp_not:N \newCJKfontfamily
+            [ { __fontrm_\l__font_name_tl } ]
+            \exp_not:c { __fontrm_\l__font_name_tl }
+            [ \tl_use:N \l__font_main_options_tl ]
+            { \l__font_regular_tl }
+          }
+        \__font_apply_cjk_fallback_family:n { __fontrm_\l__font_name_tl }
+        \use:x
+          {
+            \exp_not:N \newCJKfontfamily
+            [ { __fontsf_\l__font_name_tl } ]
             \exp_not:c { __fontsf_\l__font_name_tl }
             [ \tl_use:N \l__font_sans_options_tl ]
             { \l__font_resolved_sans_tl }
@@ -802,6 +862,7 @@
         \use:x
           {
             \exp_not:N \newCJKfontfamily
+            [ { __fonttt_\l__font_name_tl } ]
             \exp_not:c { __fonttt_\l__font_name_tl }
             [ \tl_use:N \l__font_mono_options_tl ]
             { \l__font_resolved_mono_tl }
@@ -864,6 +925,7 @@
             [ \tl_use:N \l__font_main_options_tl ]
             { \l__font_regular_tl }
           }
+        \__font_apply_cjk_fallback_family:n { \CJKrmdefault }
         \use:x
           {
             \exp_not:N \setCJKsansfont
@@ -876,6 +938,7 @@
             [ \tl_use:N \l__font_mono_options_tl ]
             { \l__font_resolved_mono_tl }
           }
+        \bool_gset_true:N \g__font_cjk_main_declared_bool
       }
       {
         \use:x
@@ -1383,14 +1446,31 @@
           { }
         \str_if_eq:VnTF \l__font_script_class_tl { cjk }
           {
-            \cs_if_exist:NF \newCJKfontfamily
-              { \RequirePackage{xeCJK} }
-            \use:x
+            \tl_if_blank:VTF \l__font_cjk_fallback_tl
               {
-                \exp_not:N \newCJKfontfamily
-                \exp_not:c { __fontglobal_\l__font_name_tl }
-                [ \tl_use:N \l__font_main_options_tl ]
-                { \l__font_regular_tl }
+                \use:x
+                  {
+                    \exp_not:N \newfontfamily
+                    \exp_not:c { __fontglobal_\l__font_name_tl }
+                    [ \tl_use:N \l__font_main_options_tl ]
+                    { \l__font_regular_tl }
+                  }
+              }
+              {
+                \cs_if_exist:NF \setCJKmainfont
+                  { \RequirePackage{xeCJK} }
+                \bool_if:NF \g__font_cjk_main_declared_bool
+                  {
+                    \use:x
+                      {
+                        \exp_not:N \setCJKmainfont
+                        [ \tl_use:N \l__font_main_options_tl ]
+                        { \l__font_regular_tl }
+                      }
+                    \bool_gset_true:N \g__font_cjk_main_declared_bool
+                  }
+                \__font_apply_cjk_fallback_family:n { \CJKrmdefault }
+                \clist_clear:N \l__font_unicode_blocks_clist
               }
           }
           {

@@ -1,0 +1,23 @@
+% !TeX program = xelatex
+% Title/subtitle smoke test.
+\documentclass[12pt]{article}
+\usepackage{import}
+
+\subimport{../../package/}{system.tex}
+\UseTemplateSet{
+  layout = en_doc,
+  globalfonts = {cmu}
+}
+
+\title{Main Title}
+\subtitle{A concise subtitle below the title}
+\author{Author Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+Body text starts here.
+
+\end{document}

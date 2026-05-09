@@ -9,7 +9,7 @@
 
 \providecommand{\NextHeaderTitleText}{}
 \providecommand{\HeaderTitle}[1]{\renewcommand{\NextHeaderTitleText}{#1}}
-\providecommand{\NextHeaderStyleText}{title}
+\providecommand{\NextHeaderStyleText}{running}
 \providecommand{\HeaderStyle}[1]{%
   \renewcommand{\NextHeaderStyleText}{#1}%
   \ifcsname NextFeatureHeadersApply\endcsname
@@ -18,15 +18,15 @@
 }
 
 \makeatletter
-\newcommand{\NextFeatureHeaderTitleFirstLine}{%
+\providecommand{\NextFeatureHeaderTitleFirstLine}{%
   \@ifundefined{@title}
     {}
     {\expandafter\NextFeatureHeaderTitleFirstLineAux\@title\\\@nil}%
 }
 \def\NextFeatureHeaderTitleFirstLineAux#1\\#2\@nil{#1}
-\newcommand{\NextFeatureHeaderTitleContent}{%
+\providecommand{\NextFeatureHeaderTitleContent}{%
   \ifx\NextHeaderTitleText\@empty
-    \NextFeatureHeaderTitleFirstLine
+    \NextHeaderTitleContent
   \else
     \NextHeaderTitleText
   \fi
@@ -46,7 +46,7 @@
   \if@twoside
     \fancyhead[LE]{\small\thepage}%
     \fancyhead[RE]{\itshape\small\NextFeatureHeaderTitleContent}%
-    \fancyhead[LO]{\itshape\small\leftmark}%
+    \fancyhead[LO]{\itshape\small\NextRunningHeaderContent}%
     \fancyhead[RO]{\small\thepage}%
   \else
     \fancyhead[L]{\itshape\small\NextFeatureHeaderTitleContent}%
@@ -68,12 +68,12 @@
   \fancyhf{}%
   \@ifundefined{chapter}
     {%
-      \renewcommand{\sectionmark}[1]{\markboth{##1}{}}%
+      \renewcommand{\sectionmark}[1]{\NextSetRunningHeader{##1}\markboth{##1}{}}%
       \renewcommand{\subsectionmark}[1]{}%
       \renewcommand{\subsubsectionmark}[1]{}%
     }
     {%
-      \renewcommand{\chaptermark}[1]{\markboth{##1}{}}%
+      \renewcommand{\chaptermark}[1]{\NextSetRunningHeader{##1}\markboth{##1}{}}%
       \renewcommand{\sectionmark}[1]{}%
       \renewcommand{\subsectionmark}[1]{}%
       \renewcommand{\subsubsectionmark}[1]{}%
