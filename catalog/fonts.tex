@@ -535,6 +535,7 @@
 \FontRegisterFamily{
   id = syriac_eastern,
   defaultmode = local,
+  rangeprofile = syriac-eastern,
   local = {
     command = SYE,
     name = syriac_eastern_local,
@@ -566,6 +567,8 @@
 \FontRegisterFamily{
   id = khitan_small,
   defaultmode = local,
+  rangeprofile = khitan-small,
+  globalroute = none,
   local = {
     command = KHS,
     name = khitan_small_local,
@@ -578,6 +581,7 @@
 \FontRegisterFamily{
   id = pahlavi_parthian,
   defaultmode = local,
+  rangeprofile = pahlavi-parthian,
   local = {
     command = PAR,
     name = pahlavi_parthian_local,
@@ -590,6 +594,7 @@
 \FontRegisterFamily{
   id = pahlavi_inscriptional,
   defaultmode = local,
+  rangeprofile = pahlavi-inscriptional,
   local = {
     command = PAH,
     name = pahlavi_inscriptional_local,
@@ -602,6 +607,8 @@
 \FontRegisterFamily{
   id = pahlavi_psalter,
   defaultmode = local,
+  rangeprofile = pahlavi-psalter,
+  globalroute = none,
   local = {
     command = PSP,
     name = pahlavi_psalter_local,
@@ -676,6 +683,7 @@
 \FontRegisterFamily{
   id = sogdian_old,
   defaultmode = local,
+  rangeprofile = sogdian-old,
   local = {
     command = SGO,
     name = sogdian_old_local,
@@ -691,6 +699,7 @@
 \FontRegisterFamily{
   id = chinese_simplified,
   defaultmode = local,
+  rangeprofile = cjk-sc,
   local = {
     command = SC,
     name = chinese_simplified_local,
@@ -706,6 +715,7 @@
 \FontRegisterFamily{
   id = chinese_traditional,
   defaultmode = local,
+  rangeprofile = cjk-tc,
   local = {
     command = TC,
     name = chinese_traditional_local,
@@ -721,6 +731,7 @@
 \FontRegisterFamily{
   id = japanese,
   defaultmode = local,
+  rangeprofile = cjk-jp,
   local = {
     command = JP,
     name = japanese_local,
@@ -731,11 +742,23 @@
     sansbold = NotoSansJP-Bold.ttf,
     scriptclass = cjk,
   },
+  global = {
+    name = japanese_global,
+    path = \CatalogFontRoot/japanese/,
+    regular = NotoSerifJP-Regular.ttf,
+    bold = NotoSerifJP-Bold.ttf,
+    sans = NotoSansJP-Regular.ttf,
+    sansbold = NotoSansJP-Bold.ttf,
+    mono = NotoSerifJP-Regular.ttf,
+    monobold = NotoSerifJP-Bold.ttf,
+    scriptclass = cjk,
+  },
 }
 
 \FontRegisterFamily{
   id = wenjin_p0,
   defaultmode = local,
+  rangeprofile = cjk-tc,
   local = {
     command = WJA,
     name = wenjin_p0_local,
@@ -749,6 +772,7 @@
 \FontRegisterFamily{
   id = wenjin_p2,
   defaultmode = local,
+  rangeprofile = cjk-tc,
   local = {
     command = WJB,
     name = wenjin_p2_local,
@@ -762,6 +786,7 @@
 \FontRegisterFamily{
   id = wenjin_p3,
   defaultmode = local,
+  rangeprofile = cjk-tc,
   local = {
     command = WJC,
     name = wenjin_p3_local,
@@ -775,6 +800,7 @@
 \FontRegisterFamily{
   id = shanggu,
   defaultmode = global,
+  rangeprofile = cjk-tc,
   global = {
     path = \CatalogFontRoot/shanggu/,
     regular = ShangguSerif-Regular.ttf,
@@ -792,6 +818,7 @@
 \FontRegisterFamily{
   id = sim,
   defaultmode = global,
+  rangeprofile = cjk-sc,
   global = {
     regular = simsun.ttc,
     bold = simhei.ttf,
@@ -806,6 +833,7 @@
 \FontRegisterFamily{
   id = korean,
   defaultmode = local,
+  rangeprofile = cjk-kr,
   local = {
     command = KR,
     name = korean_local,

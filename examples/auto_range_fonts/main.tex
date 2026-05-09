@@ -1,0 +1,24 @@
+% !TeX program = xelatex
+% V2 font auto range smoke test.
+\documentclass[12pt]{article}
+\usepackage{import}
+
+\subimport{../../package/}{system.tex}
+\UseTemplateSet{
+  fonts = {libertinus,shanggu,sanskrit,hindi,tibetan,hebrew}
+}
+
+\begin{document}
+
+Latin text uses the selected Latin global family.
+
+Sanskrit owner: धर्मः संस्कृतम्।
+
+Hindi remains available as a local override:
+\HI{यह हिन्दी है।}
+
+Tibetan owner: ཆོས་ བོད་སྐད།
+
+Hebrew owner: שלום
+
+\end{document}

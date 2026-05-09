@@ -1147,6 +1147,19 @@
       }
   }
 
+\cs_new_protected:Npn \__font_ensure_tibetan_punctuation_class:
+  {
+    \cs_if_exist:cF { __font_tibetan_punctuation_class }
+      {
+        \exp_args:Nc \newXeTeXintercharclass { __font_tibetan_punctuation_class }
+        \clist_map_inline:Nn \c__font_tibetan_non_tsheg_punctuation_codepoints_clist
+          {
+            \XeTeXcharclass ##1 =
+              \use:c { __font_tibetan_punctuation_class }
+          }
+      }
+  }
+
 \cs_new_protected:Npn \__font_set_tibetan_tsheg_transition:nn #1#2
   {
     \use:x
@@ -1160,6 +1173,28 @@
           }
         \exp_not:N \XeTeXinterchartoks
           \exp_not:c { __font_tibetan_tsheg_class }
+          #1
+          =
+          {
+            \exp_not:N \endgroup
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_set_tibetan_punctuation_transition:nn #1#2
+  {
+    \use:x
+      {
+        \exp_not:N \XeTeXinterchartoks
+          #1
+          \exp_not:c { __font_tibetan_punctuation_class }
+          =
+          {
+            \exp_not:N \nobreak
+            \exp_not:c { __font_enter_range_#2: }
+          }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_tibetan_punctuation_class }
           #1
           =
           {
@@ -1191,15 +1226,51 @@
       }
   }
 
+\cs_new_protected:Npn \__font_set_tibetan_punctuation_cross_transition:nnn #1#2#3
+  {
+    \use:x
+      {
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_unicode_block_#1_class }
+          \exp_not:c { __font_tibetan_punctuation_class }
+          =
+          {
+            \exp_not:N \endgroup
+            \exp_not:N \nobreak
+            \exp_not:c { __font_enter_range_#3: }
+          }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_tibetan_punctuation_class }
+          \exp_not:c { __font_unicode_block_#1_class }
+          =
+          {
+            \exp_not:N \endgroup
+            \exp_not:c { __font_enter_range_#2: }
+          }
+      }
+  }
+
 \cs_new_protected:Npn \__font_set_tibetan_tsheg_transitions:n #1
   {
     \__font_ensure_tibetan_tsheg_class:
+    \__font_ensure_tibetan_punctuation_class:
     \int_step_inline:nnn { 0 } { 4095 }
       {
-        \int_compare:nNnF
-          {##1} =
-          { \use:c { __font_tibetan_tsheg_class } }
-          { \__font_set_tibetan_tsheg_transition:nn {##1} {#1} }
+        \bool_lazy_and:nnT
+          {
+            ! \int_compare_p:nNn
+              {##1} =
+              { \use:c { __font_tibetan_tsheg_class } }
+          }
+          {
+            ! \int_compare_p:nNn
+              {##1} =
+              { \use:c { __font_tibetan_punctuation_class } }
+          }
+          {
+            \__font_set_tibetan_tsheg_transition:nn {##1} {#1}
+            \__font_set_tibetan_punctuation_transition:nn {##1} {#1}
+          }
       }
     \use:x
       {
@@ -1211,6 +1282,26 @@
           \exp_not:c { __font_tibetan_tsheg_class }
           \exp_not:c { __font_unicode_block_Tibetan_class }
           = { \exp_not:N \allowbreak }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_unicode_block_Tibetan_class }
+          \exp_not:c { __font_tibetan_punctuation_class }
+          = { \exp_not:N \nobreak }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_tibetan_punctuation_class }
+          \exp_not:c { __font_unicode_block_Tibetan_class }
+          = { }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_tibetan_tsheg_class }
+          \exp_not:c { __font_tibetan_punctuation_class }
+          = { \exp_not:N \nobreak }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_tibetan_punctuation_class }
+          \exp_not:c { __font_tibetan_tsheg_class }
+          = { \exp_not:N \nobreak }
+        \exp_not:N \XeTeXinterchartoks
+          \exp_not:c { __font_tibetan_punctuation_class }
+          \exp_not:c { __font_tibetan_punctuation_class }
+          = { }
       }
     \seq_map_inline:Nn \g__font_range_global_blocks_seq
       {
@@ -1218,6 +1309,10 @@
           {
             \prop_get:NnN \g__font_range_global_name_prop {##1} \l_tmpa_tl
             \__font_set_tibetan_tsheg_cross_transition:nnn
+              {##1}
+              { \l_tmpa_tl }
+              {#1}
+            \__font_set_tibetan_punctuation_cross_transition:nnn
               {##1}
               { \l_tmpa_tl }
               {#1}
@@ -1286,12 +1381,26 @@
         \tl_if_blank:VTF \l__font_name_tl
           { \tl_set_eq:NN \l__font_name_tl \l__font_decl_family_id_tl }
           { }
-        \use:x
+        \str_if_eq:VnTF \l__font_script_class_tl { cjk }
           {
-            \exp_not:N \newfontfamily
-            \exp_not:c { __fontglobal_\l__font_name_tl }
-            [ \tl_use:N \l__font_main_options_tl ]
-            { \l__font_regular_tl }
+            \cs_if_exist:NF \newCJKfontfamily
+              { \RequirePackage{xeCJK} }
+            \use:x
+              {
+                \exp_not:N \newCJKfontfamily
+                \exp_not:c { __fontglobal_\l__font_name_tl }
+                [ \tl_use:N \l__font_main_options_tl ]
+                { \l__font_regular_tl }
+              }
+          }
+          {
+            \use:x
+              {
+                \exp_not:N \newfontfamily
+                \exp_not:c { __fontglobal_\l__font_name_tl }
+                [ \tl_use:N \l__font_main_options_tl ]
+                { \l__font_regular_tl }
+              }
           }
         \__font_define_range_enter_command:
         \clist_map_inline:Nn \l__font_unicode_blocks_clist

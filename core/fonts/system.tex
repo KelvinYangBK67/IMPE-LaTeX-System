@@ -13,9 +13,13 @@
 \ifNextSystemInstalled
   \input{core/fonts/defaults.tex}
   \input{core/fonts/registry_modes.tex}
+  \input{catalog/fonts/unicode-blocks.generated.tex}
+  \input{catalog/fonts/range-profiles.tex}
   \input{catalog/fonts.tex}
 \else
   \subimport{./}{defaults.tex}
   \subimport{./}{registry_modes.tex}
+  \subimport{../../catalog/fonts/}{unicode-blocks.generated.tex}
+  \subimport{../../catalog/fonts/}{range-profiles.tex}
   \subimport{../../catalog/}{fonts.tex}
 \fi
