@@ -7,8 +7,11 @@
 \usepackage{catchfile}
 
 \CatchFileEdef{\IMPEVersion}{VERSION}{\endlinechar=-1\relax}
-\ifdefined\pdftrailerid
+\ifdefined\XeTeXversion
+  \special{pdf:trailerid [(IMPE-\IMPEVersion-manual)(IMPE-\IMPEVersion-manual)]}
+\else\ifdefined\pdftrailerid
   \expandafter\pdftrailerid\expandafter{IMPE-\IMPEVersion-manual}
+\fi
 \fi
 
 \title{IMPE LaTeX System\\Manual Scaffold}

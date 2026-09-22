@@ -118,10 +118,28 @@ scripts\build_release.bat
 ```
 
 This creates versioned zip files under `dist/`.
-The CTAN build invokes `scripts/build_manual.ps1` to compile the manual scaffold;
+The CTAN build invokes `scripts/build_manual.ps1` to compile the manual scaffold
+with XeLaTeX;
 the final manual content will be written separately. The PDF and ZIP metadata use
 `SOURCE_DATE_EPOCH` (with the 1.0.0 release date as the default), so identical
 inputs produce byte-for-byte identical CTAN archives.
+
+## Continuous Integration
+
+The workflow at `.github/workflows/ci.yml` runs the public regression suite on
+`ubuntu-latest` and `windows-latest` with TeX Live 2026 and PowerShell. It uses
+TeX Live-distributed fonts in a generated test-only fixture; no private IMPE font
+files are downloaded or committed.
+
+CI covers the canonical `impe*` and compatible `next*` entry points, local-font
+precedence, same-family shaping transitions, routing scalability, Thai line
+breaking with a public Thai font, the TeXLua externalized-render helper, two
+independent reproducible XeLaTeX manual builds, CTAN construction and archive
+reproducibility, the canonical installer, and realistic v0.1.3 migration cleanup.
+The public fixture checks routing mechanics rather than the glyph coverage or
+visual quality of the private full font library. Run
+`tests/run_regressions.ps1` without `-PublicFonts` when that local library is
+available to exercise the original full-font inputs.
 
 ## Installation
 
@@ -159,8 +177,9 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 
 The installer targets the user `texmf` tree, so the package becomes available
 globally on that machine under `tex/latex/impe/`. During an upgrade it removes
-files belonging to a detected managed `tex/latex/nextsystem/` installation,
-migrates local override files, and preserves unrelated user files.
+only files listed in the explicit v0.1.3 managed-path manifest from a detected
+`tex/latex/nextsystem/` installation, migrates recognized local override files,
+and preserves unrelated top-level and nested user files.
 
 Externalized font rendering uses the self-contained
 `impe-externalized-render.lua` helper through `texlua`. XeLaTeX or LuaLaTeX is

@@ -2,6 +2,26 @@
 
 [English](README.md)
 
+## 1.0.0 工程收尾與持續整合
+
+手冊的標準建置引擎已改為 XeLaTeX，並保留 `SOURCE_DATE_EPOCH`、固定 PDF
+識別資訊與逐位元組可重現的建置流程。
+
+`.github/workflows/ci.yml` 會在 `ubuntu-latest` 與 `windows-latest` 上，以
+TeX Live 2026 與 PowerShell 執行公開 regression suite。CI 會用 TeX Live
+提供的字體建立僅供測試的 fixture，不會下載或提交 IMPE 私有字體。
+
+CI 涵蓋標準 `impe*` 與相容 `next*` 入口、局部字體優先權、同 family
+shaping transition、routing scalability、使用公開泰文字體的斷行測試、
+TeXLua helper、兩次獨立且可重現的 XeLaTeX 手冊建置、CTAN 建置與封裝
+可重現性、標準安裝路徑，以及真實 v0.1.3 佈局的遷移清理。公開 fixture
+驗證 routing 機制，不涵蓋私有完整字體庫的 glyph 覆蓋率與視覺品質；
+本機具備該字體庫時，可不帶 `-PublicFonts` 執行
+`tests/run_regressions.ps1`，保留原有完整字體測試流程。
+
+安裝器只會清理由明確 v0.1.3 managed-path manifest 列出的舊 runtime，
+會安全遷移已識別的本地 override，並保留未知的頂層與巢狀使用者檔案。
+
 `IMPE LaTeX System` 是本專案的正式名稱；現有專案資料並未把 **IMPE**
 定義為具有英文全稱的縮寫。它是一套模組化 LaTeX 文檔系統，主要由四層組成：
 

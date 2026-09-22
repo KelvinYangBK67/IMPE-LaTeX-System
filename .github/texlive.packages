@@ -1,0 +1,18 @@
+# Baseline engines, formats, and standard LaTeX packages.
+scheme-small
+xetex
+
+# IMPE runtime and manual dependencies exercised by the regression suite.
+bidi
+catchfile
+ctex
+fontspec
+geometry
+hyperref
+import
+setspace
+xecjk
+xstring
+
+# Small, public Thai OpenType/TrueType family used by the CI-safe fixture.
+fonts-arundina

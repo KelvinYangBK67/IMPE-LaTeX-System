@@ -6,12 +6,12 @@ $ErrorActionPreference = "Stop"
 
 $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $ScriptRoot
-$ManualSource = Join-Path $RepoRoot "doc\impe-manual.tex"
+$ManualSource = Join-Path $RepoRoot "doc/impe-manual.tex"
 $VersionFile = Join-Path $RepoRoot "VERSION"
 $DefaultSourceDateEpoch = [DateTimeOffset]::Parse("2026-09-22T00:00:00Z").ToUnixTimeSeconds().ToString()
 
 if (-not $OutputRoot) {
-    $OutputRoot = Join-Path $RepoRoot "dist\manual"
+    $OutputRoot = Join-Path $RepoRoot "dist/manual"
 }
 
 if (-not (Test-Path -LiteralPath $ManualSource)) {
@@ -21,16 +21,28 @@ if (-not (Test-Path -LiteralPath $VersionFile)) {
     throw "VERSION file not found: $VersionFile"
 }
 
-$pdflatex = Get-Command pdflatex -ErrorAction Stop
+$xelatex = Get-Command xelatex -ErrorAction Stop
 New-Item -ItemType Directory -Force -Path $OutputRoot | Out-Null
 $OutputRoot = (Resolve-Path -LiteralPath $OutputRoot).Path
 
-$stagedSource = Join-Path $OutputRoot "impe-manual.tex"
-$stagedVersion = Join-Path $OutputRoot "VERSION"
-Copy-Item -LiteralPath $ManualSource -Destination $stagedSource -Force
-Copy-Item -LiteralPath $VersionFile -Destination $stagedVersion -Force
+$Version = (Get-Content -LiteralPath $VersionFile -Raw).Trim()
+if (-not $Version) {
+    throw "VERSION file is empty."
+}
 
-Push-Location $OutputRoot
+# xdvipdfmx's subset tags are stable when identical input is converted from a
+# stable absolute work path.  Build in one deterministic staging directory and
+# copy only the public artifacts to the caller's independent output directory.
+$BuildRoot = Join-Path ([IO.Path]::GetTempPath()) "impe-manual-$Version-build"
+if (Test-Path -LiteralPath $BuildRoot) {
+    Remove-Item -LiteralPath $BuildRoot -Recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $BuildRoot | Out-Null
+$BuildSource = Join-Path $BuildRoot "impe-manual.tex"
+$BuildVersion = Join-Path $BuildRoot "VERSION"
+Copy-Item -LiteralPath $ManualSource -Destination $BuildSource -Force
+Copy-Item -LiteralPath $VersionFile -Destination $BuildVersion -Force
+
 $previousSourceDateEpoch = [Environment]::GetEnvironmentVariable("SOURCE_DATE_EPOCH", "Process")
 $previousForceSourceDate = [Environment]::GetEnvironmentVariable("FORCE_SOURCE_DATE", "Process")
 try {
@@ -42,27 +54,31 @@ try {
     }
     $env:FORCE_SOURCE_DATE = "1"
 
+    Push-Location $BuildRoot
     foreach ($pass in 1..2) {
-        & $pdflatex.Source `
+        & $xelatex.Source `
             -interaction=nonstopmode `
             -halt-on-error `
-            "-output-directory=$OutputRoot" `
+            "-output-directory=$BuildRoot" `
             "impe-manual.tex" | Out-Host
         if ($LASTEXITCODE -ne 0) {
-            throw "Failed to build impe-manual.pdf on pass $pass."
+            throw "Failed to build impe-manual.pdf with XeLaTeX on pass $pass."
         }
     }
+
+    Copy-Item -LiteralPath $BuildSource -Destination (Join-Path $OutputRoot "impe-manual.tex") -Force
+    Copy-Item -LiteralPath $BuildVersion -Destination (Join-Path $OutputRoot "VERSION") -Force
+    Copy-Item -LiteralPath (Join-Path $BuildRoot "impe-manual.pdf") `
+        -Destination (Join-Path $OutputRoot "impe-manual.pdf") -Force
 }
 finally {
+    if ((Get-Location).Path -eq $BuildRoot) {
+        Pop-Location
+    }
     [Environment]::SetEnvironmentVariable("SOURCE_DATE_EPOCH", $previousSourceDateEpoch, "Process")
     [Environment]::SetEnvironmentVariable("FORCE_SOURCE_DATE", $previousForceSourceDate, "Process")
-    Pop-Location
-}
-
-foreach ($extension in @("aux", "log", "out", "toc")) {
-    $artifact = Join-Path $OutputRoot "impe-manual.$extension"
-    if (Test-Path -LiteralPath $artifact) {
-        Remove-Item -LiteralPath $artifact -Force
+    if (Test-Path -LiteralPath $BuildRoot) {
+        Remove-Item -LiteralPath $BuildRoot -Recurse -Force
     }
 }
 
@@ -71,5 +87,6 @@ if (-not (Test-Path -LiteralPath $manualPdf)) {
     throw "Manual PDF was not produced: $manualPdf"
 }
 
-Write-Host "Manual source: $stagedSource"
+Write-Host "Manual engine: XeLaTeX"
+Write-Host "Manual source: $(Join-Path $OutputRoot 'impe-manual.tex')"
 Write-Host "Manual PDF:    $manualPdf"

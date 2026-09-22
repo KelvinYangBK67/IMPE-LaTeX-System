@@ -1,5 +1,6 @@
 param(
-    [switch]$SkipRelease
+    [switch]$SkipRelease,
+    [switch]$PublicFonts
 )
 
 $ErrorActionPreference = "Stop"
@@ -14,7 +15,95 @@ New-Item -ItemType Directory -Force -Path $BuildRoot | Out-Null
 
 $xelatex = Get-Command xelatex -ErrorAction Stop
 $oldTexInputs = $env:TEXINPUTS
-$env:TEXINPUTS = "$RepoRoot\package\//;$RepoRoot\//;"
+$texInputSeparator = [IO.Path]::PathSeparator
+$portableRepoRoot = $RepoRoot.Replace([char]92, [char]47)
+$testTexInputs = "$portableRepoRoot/package//$texInputSeparator$portableRepoRoot//$texInputSeparator"
+
+if ($PublicFonts) {
+    Write-Host "Preparing a CI-safe font fixture from TeX Live's Latin Modern font..."
+    $kpsewhich = Get-Command kpsewhich -ErrorAction Stop
+    $publicFontSource = (& $kpsewhich.Source "lmroman10-regular.otf").Trim()
+    if (-not $publicFontSource -or -not (Test-Path -LiteralPath $publicFontSource)) {
+        throw "TeX Live's lmroman10-regular.otf is required for the public-font fixture."
+    }
+    $publicThaiFontSource = & $kpsewhich.Source "ArundinaSerif.ttf"
+    if ($publicThaiFontSource) {
+        $publicThaiFontSource = $publicThaiFontSource.Trim()
+    }
+    if (-not $publicThaiFontSource) {
+        $localThaiFont = Join-Path $RepoRoot "assets/fonts/thai/NotoSerifThai-Regular.ttf"
+        if (Test-Path -LiteralPath $localThaiFont) {
+            $publicThaiFontSource = $localThaiFont
+            Write-Warning "TeX Live's ArundinaSerif.ttf is unavailable; using the local Thai font only for this local run."
+        }
+        else {
+            throw "The public-font regression requires TeX Live package fonts-arundina (ArundinaSerif.ttf)."
+        }
+    }
+
+    $publicFontRoot = Join-Path $BuildRoot "public-fonts"
+    $publicInputRoot = Join-Path $BuildRoot "public-input"
+    New-Item -ItemType Directory -Force -Path $publicFontRoot, $publicInputRoot | Out-Null
+
+    $publicFontFamilies = @(
+        "cmu", "shanggu", "korean", "sanskrit", "hindi", "armenian",
+        "tamil", "georgian", "tibetan", "arabic", "aramaic", "hebrew",
+        "syriac", "avestan", "phoenician", "samaritan", "sogdian", "thai",
+        "coptic", "glagolitic", "runic", "cuneiform"
+    )
+    $catalogText = Get-Content -LiteralPath (Join-Path $RepoRoot "catalog/impe-fonts-catalog.tex") -Raw
+    $familyBlocks = [regex]::Matches(
+        $catalogText,
+        '(?ms)\\FontRegisterFamily\{(?<body>.*?^\})'
+    )
+    foreach ($familyId in $publicFontFamilies) {
+        $block = $familyBlocks | Where-Object {
+            $_.Groups["body"].Value -match "(?m)^\s*id\s*=\s*$([regex]::Escape($familyId))\s*,"
+        } | Select-Object -First 1
+        if (-not $block) {
+            throw "Public-font fixture could not find catalog family: $familyId"
+        }
+
+        $body = $block.Groups["body"].Value
+        $paths = @([regex]::Matches(
+            $body,
+            '(?m)^\s*path\s*=\s*\\CatalogFontRoot(?:/(?<path>[^,]*?))?/\s*,'
+        ) | ForEach-Object { $_.Groups["path"].Value.Trim('/') } | Sort-Object -Unique)
+        if ($paths.Count -eq 0) {
+            $paths = @('')
+        }
+        $fontNames = @([regex]::Matches(
+            $body,
+            '(?m)^\s*(?:regular|bold|italic|bolditalic|sans|sansbold|sansitalic|sansbolditalic|mono|monobold)\s*=\s*(?<name>[^,\r\n]+?)\s*,?\s*$'
+        ) | ForEach-Object { $_.Groups["name"].Value.Trim() } | Sort-Object -Unique)
+        if ($fontNames.Count -eq 0) {
+            throw "Public-font fixture found no font files for catalog family: $familyId"
+        }
+
+        foreach ($relativeDir in $paths) {
+            $targetDir = if ($relativeDir) {
+                Join-Path $publicFontRoot $relativeDir
+            }
+            else {
+                $publicFontRoot
+            }
+            New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
+            $familyFontSource = if ($familyId -eq "thai") { $publicThaiFontSource } else { $publicFontSource }
+            foreach ($fontName in $fontNames) {
+                Copy-Item -LiteralPath $familyFontSource -Destination (Join-Path $targetDir $fontName) -Force
+            }
+        }
+    }
+
+    $portablePublicFontRoot = $publicFontRoot.Replace([char]92, [char]47)
+    Set-Content -LiteralPath (Join-Path $publicInputRoot "impe.local.tex") `
+        -Encoding UTF8 `
+        -Value "\SetCatalogFontRoot{$portablePublicFontRoot}"
+    $portablePublicInputRoot = $publicInputRoot.Replace([char]92, [char]47)
+    $testTexInputs = "$portablePublicInputRoot//$texInputSeparator$testTexInputs"
+}
+
+$env:TEXINPUTS = $testTexInputs
 
 try {
     $tests = @(
@@ -46,7 +135,8 @@ finally {
 
 $localLog = Get-Content (Join-Path $BuildRoot "local-font-override.log") -Raw
 $compactLocalLog = $localLog -replace '\s',''
-if ($compactLocalLog -notmatch 'IMPE-TEST-LOCAL-FONT:.*NotoSerifDevanagari') {
+$expectedLocalFont = if ($PublicFonts) { 'IMPE-TEST-LOCAL-FONT:.*(?:lmroman|LMRoman|NotoSerifDevanagari)' } else { 'IMPE-TEST-LOCAL-FONT:.*NotoSerifDevanagari' }
+if ($compactLocalLog -notmatch $expectedLocalFont) {
     throw "Local Hindi command did not retain its explicit font."
 }
 if ($localLog -notmatch 'IMPE-TEST-GLOBAL-ENTER-BEFORE' -or
@@ -66,7 +156,7 @@ if ($genericRuntime) {
 }
 
 $texlua = Get-Command texlua -ErrorAction Stop
-$helper = Join-Path $RepoRoot "package\impe-externalized-render.lua"
+$helper = Join-Path $RepoRoot "package/impe-externalized-render.lua"
 $helperRoot = Join-Path $BuildRoot "externalized-helper"
 & $texlua.Source $helper mkdir $helperRoot
 if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $helperRoot)) {
@@ -87,9 +177,25 @@ if ($LASTEXITCODE -ne 0 -or
     throw "Portable externalized helper failed to remove sidecar files."
 }
 
+$manualBuildA = Join-Path $BuildRoot "manual-a"
+$manualBuildB = Join-Path $BuildRoot "manual-b"
+& (Join-Path $RepoRoot "scripts/build_manual.ps1") -OutputRoot $manualBuildA
+if ($LASTEXITCODE -ne 0) {
+    throw "First independent XeLaTeX manual build failed."
+}
+& (Join-Path $RepoRoot "scripts/build_manual.ps1") -OutputRoot $manualBuildB
+if ($LASTEXITCODE -ne 0) {
+    throw "Second independent XeLaTeX manual build failed."
+}
+$manualHashA = (Get-FileHash -LiteralPath (Join-Path $manualBuildA "impe-manual.pdf") -Algorithm SHA256).Hash
+$manualHashB = (Get-FileHash -LiteralPath (Join-Path $manualBuildB "impe-manual.pdf") -Algorithm SHA256).Hash
+if ($manualHashA -ne $manualHashB) {
+    throw "Independent XeLaTeX manual builds must be byte-for-byte reproducible."
+}
+
 if (-not $SkipRelease) {
     $releaseRoot = Join-Path $BuildRoot "release"
-    & (Join-Path $RepoRoot "scripts\build_release.ps1") `
+    & (Join-Path $RepoRoot "scripts/build_release.ps1") `
         -OutputRoot $releaseRoot `
         -SkipFull
     if ($LASTEXITCODE -ne 0) {
@@ -122,7 +228,7 @@ if (-not $SkipRelease) {
     }
 
     $reproReleaseRoot = Join-Path $BuildRoot "release-reproducibility"
-    & (Join-Path $RepoRoot "scripts\build_release.ps1") `
+    & (Join-Path $RepoRoot "scripts/build_release.ps1") `
         -OutputRoot $reproReleaseRoot `
         -SkipFull `
         -SkipCore
@@ -162,7 +268,7 @@ if (-not $SkipRelease) {
     if (Test-Path (Join-Path $ctanInspect "impe.sty")) {
         throw "CTAN package files must not be placed directly at zip root."
     }
-    if (Test-Path (Join-Path $ctanPackage "assets\fonts")) {
+    if (Test-Path (Join-Path $ctanPackage "assets/fonts")) {
         throw "CTAN archive must not contain the local font library."
     }
     $ctanFonts = @(Get-ChildItem -LiteralPath $ctanPackage -Recurse -File |
@@ -218,39 +324,76 @@ if (-not $SkipRelease) {
     $coreInspect = Join-Path $BuildRoot "core-inspect"
     Expand-Archive -LiteralPath $coreZip -DestinationPath $coreInspect -Force
     $installTexmf = Join-Path $BuildRoot "install-texmf"
-    $legacyRoot = Join-Path $installTexmf "tex\latex\nextsystem"
-    New-Item -ItemType Directory -Force -Path (Join-Path $legacyRoot "core\system") | Out-Null
-    New-Item -ItemType Directory -Force -Path (Join-Path $legacyRoot "core\user") | Out-Null
-    Copy-Item -LiteralPath (Join-Path $coreInspect "nextsystem.sty") -Destination (Join-Path $legacyRoot "nextsystem.sty")
-    Copy-Item -LiteralPath (Join-Path $coreInspect "core\system\impe-system-core.tex") `
-        -Destination (Join-Path $legacyRoot "core\system\impe-system-core.tex")
+    $legacyRoot = Join-Path $installTexmf "tex/latex/nextsystem"
+    $legacyManagedFixture = @(
+        "core/fonts/writing.tex",
+        "core/fonts/interface.tex",
+        "core/layout/class.tex",
+        "core/system/system.tex",
+        "catalog/fonts.tex",
+        "modules/features/math.tex",
+        "modules/fonts/pahlavi.tex",
+        "system.tex",
+        "nextsystem.sty",
+        "nextsystem-externalized-render.ps1"
+    )
+    foreach ($relativePath in $legacyManagedFixture) {
+        $fixturePath = Join-Path $legacyRoot $relativePath
+        New-Item -ItemType Directory -Force -Path (Split-Path -Parent $fixturePath) | Out-Null
+        if ($relativePath -eq "nextsystem.sty") {
+            Copy-Item -LiteralPath (Join-Path $coreInspect "nextsystem.sty") -Destination $fixturePath
+        }
+        else {
+            Set-Content -LiteralPath $fixturePath -Value "% Representative IMPE v0.1.3 managed runtime file."
+        }
+    }
+    New-Item -ItemType Directory -Force -Path (Join-Path $legacyRoot "core/fonts/user") | Out-Null
     Set-Content -LiteralPath (Join-Path $legacyRoot "nextsystem.local.tex") `
         -Value "% User-managed legacy override regression."
     Set-Content -LiteralPath (Join-Path $legacyRoot "user-notes.txt") `
         -Value "This unmanaged file must be preserved."
-    Set-Content -LiteralPath (Join-Path $legacyRoot "core\user\custom-extension.tex") `
+    Set-Content -LiteralPath (Join-Path $legacyRoot "core/fonts/user/custom-extension.tex") `
         -Value "% Nested user content must be preserved."
 
     & (Join-Path $coreInspect "install.ps1") -TexmfRoot $installTexmf -NoRefresh
     if ($LASTEXITCODE -ne 0) {
         throw "Core installer regression failed."
     }
-    $canonicalInstall = Join-Path $installTexmf "tex\latex\impe"
-    foreach ($required in @("impe.sty", "impeart.cls", "nextsystem.sty", "nextart.cls", "impe-externalized-render.lua")) {
+    $canonicalInstall = Join-Path $installTexmf "tex/latex/impe"
+    foreach ($required in @(
+        "impe-system.tex", "impe.sty", "impeart.cls", "impeart_zh.cls",
+        "impebook.cls", "impebook_zh.cls", "impereport.cls", "impereport_zh.cls",
+        "impebeamer.cls", "impebeamer_zh.cls", "nextsystem.sty", "nextart.cls",
+        "nextart_zh.cls", "nextbook.cls", "nextbook_zh.cls", "nextreport.cls",
+        "nextreport_zh.cls", "nextbeamer.cls", "nextbeamer_zh.cls",
+        "impe-externalized-render.lua", "core/system/impe-system-core.tex",
+        "catalog/impe-fonts-catalog.tex", "modules/features/impe-feature-math.tex"
+    )) {
         if (-not (Test-Path (Join-Path $canonicalInstall $required))) {
             throw "Canonical install is missing $required."
         }
     }
-    if (Test-Path (Join-Path $legacyRoot "nextsystem.sty")) {
-        throw "Managed legacy runtime file was not removed."
+    foreach ($relativePath in $legacyManagedFixture) {
+        if (Test-Path (Join-Path $legacyRoot $relativePath)) {
+            throw "Managed v0.1.3 runtime file was not removed: $relativePath"
+        }
     }
-    if (Test-Path (Join-Path $legacyRoot "core\system\impe-system-core.tex")) {
-        throw "Known managed content in the legacy runtime tree was not removed."
+    $obsoleteLegacyNames = @($legacyManagedFixture |
+        Where-Object { $_ -ne "nextsystem.sty" } |
+        ForEach-Object { Split-Path -Leaf $_ } |
+        Sort-Object -Unique)
+    foreach ($legacyName in $obsoleteLegacyNames) {
+        $staleMatches = @(Get-ChildItem -LiteralPath $installTexmf -Recurse -File |
+            Where-Object { $_.Name -eq $legacyName })
+        if ($staleMatches) {
+            $names = ($staleMatches.FullName -join [Environment]::NewLine)
+            throw "Obsolete v0.1.3 generic filename remains in the user TEXMF tree:$([Environment]::NewLine)$names"
+        }
     }
     if (-not (Test-Path (Join-Path $legacyRoot "user-notes.txt"))) {
         throw "Installer removed an unmanaged legacy file."
     }
-    if (-not (Test-Path (Join-Path $legacyRoot "core\user\custom-extension.tex"))) {
+    if (-not (Test-Path (Join-Path $legacyRoot "core/fonts/user/custom-extension.tex"))) {
         throw "Installer removed nested unmanaged legacy content."
     }
     if (-not (Test-Path (Join-Path $canonicalInstall "nextsystem.local.tex"))) {
@@ -258,7 +401,8 @@ if (-not $SkipRelease) {
     }
 
     $oldInstalledTexInputs = $env:TEXINPUTS
-    $env:TEXINPUTS = "$canonicalInstall\//;"
+    $portableCanonicalInstall = $canonicalInstall.Replace([char]92, [char]47)
+    $env:TEXINPUTS = "$portableCanonicalInstall//$texInputSeparator"
     try {
         foreach ($name in @("canonical-entry", "legacy-entry")) {
             $installOutput = Join-Path $BuildRoot "installed-$name"

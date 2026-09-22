@@ -9,8 +9,8 @@ $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $IsReleaseRoot = Test-Path (Join-Path $ScriptRoot "impe.sty")
 $RepoRoot = if ($IsReleaseRoot) { $ScriptRoot } else { Split-Path -Parent $ScriptRoot }
 $PackageSourceRoot = if ($IsReleaseRoot) { $ScriptRoot } else { Join-Path $RepoRoot "package" }
-$PackageRoot = Join-Path $TexmfRoot "tex\latex\impe"
-$LegacyPackageRoot = Join-Path $TexmfRoot "tex\latex\nextsystem"
+$PackageRoot = Join-Path $TexmfRoot "tex/latex/impe"
+$LegacyPackageRoot = Join-Path $TexmfRoot "tex/latex/nextsystem"
 
 $RuntimeFiles = @(
     "impe-system.tex",
@@ -42,6 +42,62 @@ $RuntimeDirs = @(
     "catalog",
     "modules",
     "assets"
+)
+
+# Exact files installed by the v0.1.3 installer beneath
+# tex/latex/nextsystem/.  Keep this list deliberately version-specific: it is
+# the authority for legacy cleanup, and anything absent from it is treated as
+# user-managed content.
+$LegacyManagedPathsV013 = @(
+    "system.tex",
+    "nextsystem.sty",
+    "nextsystem-externalized-render.ps1",
+    "nextart.cls",
+    "nextart_zh.cls",
+    "nextbook.cls",
+    "nextbook_zh.cls",
+    "nextreport.cls",
+    "nextreport_zh.cls",
+    "nextbeamer.cls",
+    "nextbeamer_zh.cls",
+    "nextsystem.local.example.tex",
+    "core/features/system.tex",
+    "core/fonts/behavior.tex",
+    "core/fonts/defaults.tex",
+    "core/fonts/externalized.tex",
+    "core/fonts/helpers.tex",
+    "core/fonts/interface.tex",
+    "core/fonts/registry.tex",
+    "core/fonts/registry_modes.tex",
+    "core/fonts/script.tex",
+    "core/fonts/style.tex",
+    "core/fonts/system.tex",
+    "core/fonts/writing.tex",
+    "core/layout/class.tex",
+    "core/layout/defaults.tex",
+    "core/layout/preset.tex",
+    "core/layout/registry.tex",
+    "core/layout/system.tex",
+    "core/system/system.tex",
+    "core/system/ui_zh_internal.tex",
+    "catalog/features.tex",
+    "catalog/fonts.tex",
+    "catalog/layouts.tex",
+    "catalog/fonts/range-profiles.tex",
+    "catalog/fonts/unicode-blocks.generated.tex",
+    "modules/features/citations.tex",
+    "modules/features/headers.tex",
+    "modules/features/hyperlinks.tex",
+    "modules/features/image.tex",
+    "modules/features/index.tex",
+    "modules/features/lists_envs.tex",
+    "modules/features/math.tex",
+    "modules/features/tables.tex",
+    "modules/fonts/khitan_small.tex",
+    "modules/fonts/mlmodern.tex",
+    "modules/fonts/pahlavi.tex",
+    "modules/layout/components.tex",
+    "assets/.gitkeep"
 )
 
 $InstallWarnings = New-Object System.Collections.Generic.List[string]
@@ -171,30 +227,15 @@ function Move-LegacyLocalOverrides {
 
 function Remove-LegacyManagedInstall {
     param(
-        [string]$Path,
-        [string]$CanonicalRoot
+        [string]$Path
     )
 
-    $managedFiles = @($RuntimeFiles)
-    $managedFiles += @(
-        "impe-externalized-render.ps1",
-        "nextsystem-externalized-render.ps1",
-        "system.tex"
-    )
-    foreach ($name in $managedFiles) {
-        Remove-StaleItem -Path (Join-Path $Path $name)
+    foreach ($relativePath in $LegacyManagedPathsV013) {
+        Remove-StaleItem -Path (Join-Path $Path $relativePath)
     }
+
     foreach ($name in @("core", "catalog", "modules", "assets")) {
         $legacyManagedRoot = Join-Path $Path $name
-        $canonicalManagedRoot = Join-Path $CanonicalRoot $name
-        if ((Test-Path -LiteralPath $legacyManagedRoot) -and
-            (Test-Path -LiteralPath $canonicalManagedRoot)) {
-            foreach ($canonicalFile in (Get-ChildItem -LiteralPath $canonicalManagedRoot -Recurse -File)) {
-                $relative = $canonicalFile.FullName.Substring($canonicalManagedRoot.Length).TrimStart('\','/')
-                Remove-StaleItem -Path (Join-Path $legacyManagedRoot $relative)
-            }
-        }
-
         if (Test-Path -LiteralPath $legacyManagedRoot) {
             $legacyDirs = Get-ChildItem -LiteralPath $legacyManagedRoot -Recurse -Directory |
                 Sort-Object { $_.FullName.Length } -Descending
@@ -219,7 +260,7 @@ function Remove-LegacyManagedInstall {
     }
 }
 
-$HasBundledAssets = Test-Path (Join-Path $RepoRoot "assets\fonts")
+$HasBundledAssets = Test-Path (Join-Path $RepoRoot "assets/fonts")
 $InstallFlavor = if ($HasBundledAssets) { "full" } else { "core" }
 
 Write-Host "Installing IMPE LaTeX System to user texmf..."
@@ -263,7 +304,7 @@ if ($HasManagedLegacyInstall) {
 
 $InstalledLocalOverride = Join-Path $PackageRoot "impe.local.tex"
 if ($HasBundledAssets) {
-    $InstalledFontRoot = (Join-Path $PackageRoot "assets\fonts") -replace '\\','/'
+    $InstalledFontRoot = (Join-Path $PackageRoot "assets/fonts") -replace '\\','/'
     $writeAutoOverride = $true
     if (Test-Path -LiteralPath $InstalledLocalOverride) {
         $existingOverride = Get-Content -LiteralPath $InstalledLocalOverride -Raw
@@ -289,9 +330,7 @@ elseif (Test-Path $InstalledLocalOverride) {
 
 if ($HasManagedLegacyInstall) {
     if ($InstallWarnings.Count -eq 0) {
-        Remove-LegacyManagedInstall `
-            -Path $LegacyPackageRoot `
-            -CanonicalRoot $PackageRoot
+        Remove-LegacyManagedInstall -Path $LegacyPackageRoot
     }
     else {
         Write-Warning "The legacy installation was preserved because the canonical install completed with warnings."

@@ -14,6 +14,7 @@ For unreleased development notes, see [CHANGELOG.unreleased.md](./CHANGELOG.unre
 * Added the CTAN-oriented `impe.zip` release target alongside the existing full and core archives.
 * Added a deliberately minimal `impe-manual.tex` scaffold and reproducible `impe-manual.pdf` build step for future CTAN documentation.
 * Added regression coverage for canonical and legacy entry points, namespaced runtime files, release construction, local-font precedence, routing scalability, and Thai line breaking.
+* Added Windows and Linux GitHub Actions CI using a public TeX Live font fixture, including release, installation, migration, manual, and reproducibility checks.
 
 ### Changed
 
@@ -23,12 +24,14 @@ For unreleased development notes, see [CHANGELOG.unreleased.md](./CHANGELOG.unre
 * Clarified the separation between the Git checkout, the local `assets/fonts/` library, and the full, core, and CTAN-oriented distributions.
 * Changed `impe.zip` to contain one top-level `impe/` directory and moved the canonical installer destination to `tex/latex/impe/`, with managed legacy-install cleanup.
 * Replaced the PowerShell-only externalized renderer with a portable TeXLua helper that resolves engines from `PATH`.
+* Changed the canonical manual engine from pdfLaTeX to XeLaTeX while preserving byte-for-byte reproducible PDF and CTAN builds.
 
 ### Fixed
 
 * Made explicit local font commands take precedence over automatic Unicode-range routing for the duration of their scope, with normal routing restored afterward.
 * Replaced fixed 4096-class transition generation with sparse generation over allocated XeTeX intercharacter classes, including a begin-document backfill for classes allocated later, and corrected same-owner comparison so adjacent blocks keep one shaping run.
 * Added Thai dictionary line breaking through XeTeX's ICU `th_TH` locale when the Thai family is loaded.
+* Made v0.1.3 migration remove the exact historical generic runtime paths while preserving unknown top-level and nested user content and migrating recognized local overrides.
 
 ## [0.1.3] - 2026-08-29
 

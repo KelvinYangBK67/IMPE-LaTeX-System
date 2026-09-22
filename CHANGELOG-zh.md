@@ -8,6 +8,12 @@ IMPE LaTeX System 的已發佈版本變更記錄於此。
 
 ## [1.0.0] - 未發佈
 
+### 工程收尾
+
+* 新增 Windows 與 Linux GitHub Actions CI；使用 TeX Live 公開字體 fixture，覆蓋既有 regression、CTAN、安裝、v0.1.3 遷移、手冊與可重現性檢查，不納入私有字體檔。
+* 手冊標準建置引擎由 pdfLaTeX 改為 XeLaTeX，並維持 PDF 與 CTAN 封裝逐位元組可重現。
+* v0.1.3 遷移改用真實歷史 runtime 路徑的明確保守清單；只移除受管理的舊 generic 檔名，保留未知的頂層與巢狀使用者內容，並安全遷移已識別的本地 override。
+
 ### 新增
 
 * 新增標準公開入口 `impe`、`impeart`、`impebook`、`impereport`、`impebeamer` 及各 `_zh` class。
