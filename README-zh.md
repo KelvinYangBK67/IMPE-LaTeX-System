@@ -2,18 +2,19 @@
 
 [English](README.md)
 
-`IMPE LaTeX System` 是一套 LaTeX 模板系統，主要由四層組成：
+`IMPE LaTeX System` 是本專案的正式名稱；現有專案資料並未把 **IMPE**
+定義為具有英文全稱的縮寫。它是一套模組化 LaTeX 文檔系統，主要由四層組成：
 
 - `core/`：穩定機制
 - `catalog/`：字體、版面與功能註冊
 - `modules/`：可擴展實作
 - `assets/`：本地執行資源，例如字體
 
-目前已發佈版本：
-- `v0.1.3`
+目前開發版本：
+- `v1.0.0`
 
-維護線：
-- `v0.1.x`
+最近已發佈版本：
+- `v0.1.3`
 
 版本記錄：
 - 已發佈版本：[CHANGELOG-zh.md](./CHANGELOG-zh.md)
@@ -52,12 +53,14 @@ examples/   除錯 / 稽核示例
 
 ## Release 套件
 
-目前生成兩種 release 套件：
+目前生成三種 release 套件：
 
 - `IMPE-LaTeX-System-vX.Y.Z-full.zip`
   由本地字體庫生成的完整安裝包，但會排除再分發狀態未確認或受限制、因此不適合公開發佈的字體。
 - `IMPE-LaTeX-System-vX.Y.Z-core.zip`
   只包含模板邏輯，不包含字體檔案。
+- `impe.zip`
+  以 core 為基礎的 CTAN 導向源碼／執行檔封裝，包含文件與相容入口，但不包含本地字體庫。
 
 生成方式：
 
@@ -88,7 +91,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 最簡示例：
 
 ```tex
-\documentclass{nextbeamer}
+\documentclass{impebeamer}
 \UseTemplateSet{
   layout = beamer,
   globalfonts = {cmu,shanggu},
@@ -101,9 +104,13 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 
 ```tex
 \documentclass{article}
-\usepackage{nextsystem}
+\usepackage{impe}
 \UseTemplateSet{...}
 ```
+
+新文檔應使用 `impe*` 套件與 class 名稱；它們是目前的標準公開介面。
+`next*` 名稱仍是受支持的相容入口，因此既有的
+`\documentclass{nextart}` 與 `\usepackage{nextsystem}` 文檔仍可正常編譯。
 
 ## 倉庫內開發
 
@@ -111,7 +118,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 
 ```tex
 \usepackage{import}
-\subimport{../../package/}{system.tex}
+\subimport{../../package/}{impe-system.tex}
 \UseTemplateSet{...}
 ```
 
@@ -130,5 +137,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 - 第三方字體授權與再分發聲明放在 `font_licenses/`。
 - 一般字體來源與非 bundled 依賴記錄在 `docs/FONTS-zh.md`。
 - Git 倉庫保持 source-only，不追蹤 `assets/fonts/` 下的字體庫。
-- `full` 面向需要本地字體庫完整安裝包的使用者。
-- `core` 面向只需要模板邏輯、不需要 bundled 字體的使用者。
+- `assets/fonts/` 是生成 full 套件時預期的本地字體庫位置；公開 full 套件只會收入允許再分發的資源。
+- 再分發狀態未解決或受限制的字體不會進入公開 release。
+- core 與 CTAN 導向套件都不依賴 Git checkout 中存在完整字體庫。
+- 詳細政策見 `assets/README-zh.md`。

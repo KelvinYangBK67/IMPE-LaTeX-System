@@ -11,7 +11,7 @@ They are different from `examples/`:
 
 These templates are intentionally written in the installed-package style:
 
-- they use `nextart`, `nextbook`, `nextbeamer`, and their `_zh` counterparts
+- they use canonical `impeart`, `impebook`, `impebeamer`, and their `_zh` counterparts
 - English and Chinese use separate wrapper class entrypoints
 - they are meant to be used after IMPE LaTeX System has been installed into `texmf`
 - repository-local smoke testing should still rely on `examples/`

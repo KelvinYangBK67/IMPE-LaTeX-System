@@ -1,0 +1,27 @@
+% !TeX program = xelatex
+\documentclass{article}
+\usepackage{impe}
+\UseTemplateSet{globalfonts={cmu,shanggu},fonts={korean}}
+
+\ExplSyntaxOn
+\cs_new_protected:Npn \__impe_test_assert_empty_transition:nn #1#2
+  {
+    \tl_set:Nx \l_tmpa_tl
+      {
+        \tex_the:D \XeTeXinterchartoks
+          \use:c { __font_unicode_block_#1_class }
+          \use:c { __font_unicode_block_#2_class }
+      }
+    \tl_if_blank:VF \l_tmpa_tl
+      { \msg_fatal:nnn { impe-test } { nonempty-transition } { #1/#2 } }
+  }
+\msg_new:nnn { impe-test } { nonempty-transition }
+  { Same-family~transition~#1~must~remain~empty. }
+\__impe_test_assert_empty_transition:nn { HangulJamoExtendedA } { HangulJamo }
+\__impe_test_assert_empty_transition:nn { HangulJamo } { HangulJamoExtendedB }
+\ExplSyntaxOff
+
+\begin{document}
+Automatic Old Hangul: ꥠᅡퟋ〮
+\typeout{IMPE-TEST-SAME-FAMILY-SHAPING-PASS}
+\end{document}

@@ -124,6 +124,19 @@
       }
   }
 
+\cs_new_protected:Npn \__font_apply_script_line_breaking:
+  {
+    \str_if_eq:VnT \l__font_decl_family_id_tl { thai }
+      {
+        \sys_if_engine_xetex:T
+          {
+            \XeTeXlinebreaklocale "th_TH"
+            \global\XeTeXlinebreakskip = 0pt plus 1pt\relax
+            \global\XeTeXlinebreakpenalty = 100\relax
+          }
+      }
+  }
+
 \cs_new_protected:Npn \__font_define_behavior_hooks:n #1
   {
     \str_if_eq:VnTF \l__font_inline_behavior_tl { rtl }

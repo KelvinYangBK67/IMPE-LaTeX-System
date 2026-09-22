@@ -135,9 +135,9 @@
       { }
       \l_tmpa_tl
     \tl_set:Nx \l_tmpb_tl
-      { \l_tmpa_tl / nextsystem-externalized-render.ps1 }
+      { \l_tmpa_tl / impe-externalized-render.ps1 }
     \tl_set:Nx \l_tmpc_tl
-      { \l_tmpa_tl / package / nextsystem-externalized-render.ps1 }
+      { \l_tmpa_tl / package / impe-externalized-render.ps1 }
     \file_if_exist:VTF \l_tmpb_tl
       { \tl_set_eq:NN \l__font_externalized_runner_path_tl \l_tmpb_tl }
       { \tl_set_eq:NN \l__font_externalized_runner_path_tl \l_tmpc_tl }
@@ -201,7 +201,7 @@
               }
           }
           { \iow_now:Nn \l__font_externalized_iow { \documentclass[varwidth,border=0pt]{standalone} } }
-        \iow_now:Nn \l__font_externalized_iow { \usepackage{nextsystem} }
+        \iow_now:Nn \l__font_externalized_iow { \usepackage{impe} }
         \iow_now:Nx \l__font_externalized_iow
           { \UseTemplateSet { fonts = { \tl_to_str:n {#2} } } }
         \iow_now:Nn \l__font_externalized_iow { \begin{document} }
@@ -268,7 +268,7 @@
             [varwidth=\__font_externalized_current_linewidth:,border=0pt]
             {standalone}
           }
-        \iow_now:Nn \l__font_externalized_iow { \usepackage{nextsystem} }
+        \iow_now:Nn \l__font_externalized_iow { \usepackage{impe} }
         \iow_now:Nx \l__font_externalized_iow
           { \UseTemplateSet { fonts = { \tl_to_str:n {#1} } } }
         \iow_now:Nn \l__font_externalized_iow { \begin{document} }

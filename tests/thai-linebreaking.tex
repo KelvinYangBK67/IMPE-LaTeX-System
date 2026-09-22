@@ -1,0 +1,23 @@
+% !TeX program = xelatex
+\documentclass{article}
+\usepackage{impe}
+\UseTemplateSet{globalfonts={cmu},fonts={thai}}
+
+\newbox\ThaiRegressionBox
+
+\begin{document}
+\setbox\ThaiRegressionBox=\vbox{%
+  \hsize=5cm
+  \noindent
+  \TH{%
+  ภาษาไทยเป็นภาษาที่เขียนต่อเนื่องโดยทั่วไปไม่เว้นวรรคระหว่างคำดังนั้นระบบจัดหน้าเอกสารต้องสามารถค้นหาตำแหน่งตัดคำที่เหมาะสมเพื่อให้ข้อความยาวตัดบรรทัดอยู่ภายในความกว้างปกติของหน้าได้โดยไม่ต้องใส่จุดตัดบรรทัดด้วยมือทุกตำแหน่ง
+  }
+  \par
+}
+\ifdim\ht\ThaiRegressionBox>3\baselineskip
+  \typeout{IMPE-TEST-THAI-LINEBREAK-PASS}
+\else
+  \errmessage{IMPE Thai line-breaking regression failed}
+\fi
+\box\ThaiRegressionBox
+\end{document}

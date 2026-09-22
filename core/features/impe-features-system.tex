@@ -164,7 +164,7 @@
       {
         \PackageError{feature-catalog}
           {Unknown~feature~id~`#1`}
-          {Register~the~feature~in~catalog/features.tex.}
+          {Register~the~feature~in~catalog/impe-features-catalog.tex.}
       }
   }
 
@@ -177,7 +177,7 @@
 \ExplSyntaxOff
 
 \ifNextSystemInstalled
-  \input{catalog/features.tex}
+  \input{catalog/impe-features-catalog.tex}
 \else
-  \subimport{../../catalog/}{features.tex}
+  \subimport{../../catalog/}{impe-features-catalog.tex}
 \fi

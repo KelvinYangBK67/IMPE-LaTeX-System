@@ -55,6 +55,7 @@
 \bool_new:N \l__font_use_latex_fallback_bool
 \bool_new:N \l__font_nextsystem_installed_bool
 \bool_new:N \l__font_reapply_style_bool
+\bool_new:N \l__font_local_override_bool
 \bool_new:N \g__font_cjk_main_declared_bool
 \seq_new:N \g__font_loaded_special_modules_seq
 \seq_new:N \g__font_range_global_blocks_seq
@@ -62,6 +63,7 @@
 \prop_new:N \g__font_unicode_block_range_prop
 \prop_new:N \g__font_cjk_fallback_applied_prop
 \tl_new:N \g__font_devanagari_akshara_name_tl
+\int_new:N \g__font_range_known_class_max_int
 
 \cs_generate_variant:Nn \prop_if_in:NnF { NVF }
 \cs_generate_variant:Nn \prop_gput:Nnn { NVn }
@@ -224,7 +226,7 @@
                   {
                     \exp_not:N \subimport
                       { modules/fonts/ }
-                      { \l__font_special_module_tl .tex }
+                      { impe-font-\l__font_special_module_tl .tex }
                   }
               }
               {
@@ -232,7 +234,7 @@
                   {
                     \exp_not:N \subimport
                       { ../../modules/fonts/ }
-                      { \l__font_special_module_tl .tex }
+                      { impe-font-\l__font_special_module_tl .tex }
                   }
               }
             \seq_gput_right:NV \g__font_loaded_special_modules_seq \l__font_special_module_tl
@@ -511,6 +513,7 @@
     \exp_args:Nc \DeclareDocumentCommand {#1} {+m}
       {
         {
+          \bool_set_true:N \l__font_local_override_bool
           \use:c { __font_prepare_local_#2: }
           \__font_apply_behavior:nn {#2} {##1}
         }
@@ -969,11 +972,27 @@
         \exp_not:N \cs_set_protected:cpn
           { __font_enter_range_\l__font_name_tl : }
           {
-            \exp_not:N \begingroup
-            \exp_not:c { __fontglobal_\l__font_name_tl }
+            \exp_not:N \bool_if:NF
+              \exp_not:N \l__font_local_override_bool
+              {
+                \exp_not:N \begingroup
+                \exp_not:c { __fontglobal_\l__font_name_tl }
+              }
           }
       }
   }
+
+\cs_new_protected:Npn \__font_leave_range:
+  {
+    \bool_if:NF \l__font_local_override_bool
+      { \endgroup }
+  }
+
+\cs_new:Npn \__font_interchar_class_max:
+  { \int_eval:n { \use:c { xe@alloc@intercharclass } } }
+
+\cs_new:Npn \__font_interchar_boundary_class:
+  { \int_eval:n { \use:c { e@alloc@intercharclass@top } } }
 
 \cs_new_protected:Npn \__font_assign_unicode_block_class:nnn #1#2#3
   {
@@ -1021,20 +1040,22 @@
           #1
           =
           {
-            \exp_not:N \endgroup
+            \exp_not:N \__font_leave_range:
           }
       }
   }
 
 \cs_new_protected:Npn \__font_set_transition_for_range_block:nn #1#2
   {
-    \int_step_inline:nnn { 0 } { 4095 }
+    \int_step_inline:nnn { 0 } { \__font_interchar_class_max: }
       {
         \int_compare:nNnF
           {##1} =
           { \use:c { __font_unicode_block_#1_class } }
           { \__font_set_range_transition:nnn {##1} {#1} {#2} }
       }
+    \__font_set_range_transition:nnn
+      { \__font_interchar_boundary_class: } {#1} {#2}
   }
 
 \cs_new_protected:Npn \__font_devanagari_class_map_inline:n #1
@@ -1104,7 +1125,7 @@
           #1
           =
           {
-            \exp_not:N \endgroup
+            \exp_not:N \__font_leave_range:
           }
       }
   }
@@ -1123,7 +1144,7 @@
 
 \cs_new_protected:Npn \__font_set_devanagari_akshara_transitions:n #1
   {
-    \int_step_inline:nnn { 0 } { 4095 }
+    \int_step_inline:nnn { 0 } { \__font_interchar_class_max: }
       {
         \__font_devanagari_class_map_inline:n
           {
@@ -1132,6 +1153,11 @@
               { \use:c { __font_devanagari_####1_class } }
               { \__font_set_devanagari_transition:nnn {##1} {####1} {#1} }
           }
+      }
+    \__font_devanagari_class_map_inline:n
+      {
+        \__font_set_devanagari_transition:nnn
+          { \__font_interchar_boundary_class: } {##1} {#1}
       }
 
     \__font_devanagari_class_map_inline:n
@@ -1162,7 +1188,7 @@
                   \exp_not:c { __font_devanagari_##1_class }
                   =
                   {
-                    \exp_not:N \endgroup
+                    \exp_not:N \__font_leave_range:
                     \exp_not:c { __font_enter_range_\g__font_devanagari_akshara_name_tl : }
                   }
                 \exp_not:N \XeTeXinterchartoks
@@ -1170,7 +1196,7 @@
                   \exp_not:c { __font_unicode_block_#1_class }
                   =
                   {
-                    \exp_not:N \endgroup
+                    \exp_not:N \__font_leave_range:
                     \exp_not:c { __font_enter_range_#2: }
                   }
               }
@@ -1239,7 +1265,7 @@
           #1
           =
           {
-            \exp_not:N \endgroup
+            \exp_not:N \__font_leave_range:
           }
       }
   }
@@ -1261,7 +1287,7 @@
           #1
           =
           {
-            \exp_not:N \endgroup
+            \exp_not:N \__font_leave_range:
           }
       }
   }
@@ -1275,7 +1301,7 @@
           \exp_not:c { __font_tibetan_tsheg_class }
           =
           {
-            \exp_not:N \endgroup
+            \exp_not:N \__font_leave_range:
             \exp_not:c { __font_enter_range_#3: }
           }
         \exp_not:N \XeTeXinterchartoks
@@ -1283,7 +1309,7 @@
           \exp_not:c { __font_unicode_block_#1_class }
           =
           {
-            \exp_not:N \endgroup
+            \exp_not:N \__font_leave_range:
             \exp_not:c { __font_enter_range_#2: }
           }
       }
@@ -1298,7 +1324,7 @@
           \exp_not:c { __font_tibetan_punctuation_class }
           =
           {
-            \exp_not:N \endgroup
+            \exp_not:N \__font_leave_range:
             \exp_not:N \nobreak
             \exp_not:c { __font_enter_range_#3: }
           }
@@ -1307,7 +1333,7 @@
           \exp_not:c { __font_unicode_block_#1_class }
           =
           {
-            \exp_not:N \endgroup
+            \exp_not:N \__font_leave_range:
             \exp_not:c { __font_enter_range_#2: }
           }
       }
@@ -1317,7 +1343,7 @@
   {
     \__font_ensure_tibetan_tsheg_class:
     \__font_ensure_tibetan_punctuation_class:
-    \int_step_inline:nnn { 0 } { 4095 }
+    \int_step_inline:nnn { 0 } { \__font_interchar_class_max: }
       {
         \bool_lazy_and:nnT
           {
@@ -1335,6 +1361,10 @@
             \__font_set_tibetan_punctuation_transition:nn {##1} {#1}
           }
       }
+    \__font_set_tibetan_tsheg_transition:nn
+      { \__font_interchar_boundary_class: } {#1}
+    \__font_set_tibetan_punctuation_transition:nn
+      { \__font_interchar_boundary_class: } {#1}
     \use:x
       {
         \exp_not:N \XeTeXinterchartoks
@@ -1385,7 +1415,7 @@
 
 \cs_new_protected:Npn \__font_set_range_cross_transition:nnnn #1#2#3#4
   {
-    \str_if_eq:nnTF {#3} {#4}
+    \str_if_eq:eeTF {#3} {#4}
       {
         % Keep a shaping run intact when adjacent Unicode blocks are owned by
         % the same range family.  This is essential for clusters such as Old
@@ -1410,7 +1440,7 @@
               \exp_not:c { __font_unicode_block_#2_class }
               =
               {
-                \exp_not:N \endgroup
+                \exp_not:N \__font_leave_range:
                 \exp_not:c { __font_enter_range_#4: }
               }
             \exp_not:N \XeTeXinterchartoks
@@ -1418,7 +1448,7 @@
               \exp_not:c { __font_unicode_block_#1_class }
               =
               {
-                \exp_not:N \endgroup
+                \exp_not:N \__font_leave_range:
                 \exp_not:c { __font_enter_range_#3: }
               }
           }
@@ -1505,6 +1535,8 @@
         \clist_map_inline:Nn \l__font_unicode_blocks_clist
           { \__font_register_range_global_block:n {##1} }
         \__font_apply_sanskrit_akshara_breaks:
+        \int_gset:Nn \g__font_range_known_class_max_int
+          { \__font_interchar_class_max: }
       }
       {
         \PackageError{font-defaults}
@@ -1524,6 +1556,7 @@
     \__font_apply_script_hooks:
     \__font_apply_behavior_defaults:
     \__font_validate_behavior_state:
+    \__font_apply_script_line_breaking:
     \__font_resolve_style_fallbacks:
     \bool_set_false:N \l__font_use_latex_fallback_bool
     \__font_all_faces_exist:TF
@@ -1592,5 +1625,35 @@
 
 \NewDocumentCommand{\FontDeclareLocalDefault}{m}
   { \FontDeclare{scope=local,#1} }
+
+\cs_new_protected:Npn \__font_backfill_external_class:n #1
+  {
+    \seq_map_inline:Nn \g__font_range_global_blocks_seq
+      {
+        \prop_get:NnN \g__font_range_global_name_prop {##1} \l_tmpa_tl
+        \__font_set_range_transition:nnn {#1} {##1} { \l_tmpa_tl }
+      }
+  }
+
+\cs_new_protected:Npn \__font_refresh_late_interchar_classes:
+  {
+    \sys_if_engine_xetex:T
+      {
+        \int_set:Nn \l_tmpa_int { \__font_interchar_class_max: }
+        \int_compare:nNnT
+          { \l_tmpa_int } > { \g__font_range_known_class_max_int }
+          {
+            \int_step_inline:nnn
+              { \g__font_range_known_class_max_int + 1 }
+              { \l_tmpa_int }
+              { \__font_backfill_external_class:n {##1} }
+            \int_gset_eq:NN
+              \g__font_range_known_class_max_int
+              \l_tmpa_int
+          }
+      }
+  }
+
+\AtBeginDocument{\__font_refresh_late_interchar_classes:}
 
 \ExplSyntaxOff

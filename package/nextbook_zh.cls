@@ -1,13 +1,8 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextbook_zh}[2026/03/19 IMPE LaTeX System wrapper for Chinese book]
+\ProvidesClass{nextbook_zh}[2026/09/22 v1.0.0 Compatibility alias for impebook_zh]
 
 \makeatletter
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{impebook_zh}}
 \ProcessOptions\relax
-\def\NextSystemUiTag{zh}
-\def\NextDefaultLayout{zh_book}
-\def\NextDefaultGlobalFonts{cmu,shanggu}
-\providecommand{\NextTitleAuthorFont}{\normalfont\large\itshape}
-\LoadClass{book}
-\RequirePackage{nextsystem}
+\LoadClass{impebook_zh}
 \makeatother

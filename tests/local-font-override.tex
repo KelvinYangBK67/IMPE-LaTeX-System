@@ -1,0 +1,35 @@
+% !TeX program = xelatex
+\documentclass{article}
+\usepackage{impe}
+\UseTemplateSet{
+  globalfonts = {cmu},
+  fonts = {sanskrit,hindi}
+}
+
+\ExplSyntaxOn
+\tl_new:N \g__impe_test_route_stage_tl
+\cs_new_eq:NN
+  \__impe_test_original_sanskrit_enter:
+  \__font_enter_range_sanskrit_global:
+\cs_set_protected:Npn \__font_enter_range_sanskrit_global:
+  {
+    \bool_if:NF \l__font_local_override_bool
+      {
+        \typeout{IMPE-TEST-GLOBAL-ENTER-\tl_use:N \g__impe_test_route_stage_tl}
+      }
+    \__impe_test_original_sanskrit_enter:
+  }
+\ExplSyntaxOff
+
+\begin{document}
+\ExplSyntaxOn\tl_gset:Nn \g__impe_test_route_stage_tl {BEFORE}\ExplSyntaxOff
+संस्कृत
+
+\ExplSyntaxOn\tl_gset:Nn \g__impe_test_route_stage_tl {LOCAL}\ExplSyntaxOff
+\HI{ह\typeout{IMPE-TEST-LOCAL-FONT:\fontname\font}िन्दी}
+
+\ExplSyntaxOn\tl_gset:Nn \g__impe_test_route_stage_tl {RESTORED}\ExplSyntaxOff
+संस्कृत
+\ExplSyntaxOn\tl_gset:Nn \g__impe_test_route_stage_tl {BOUNDARY}\ExplSyntaxOff
+Latin \HI{हिन्दी} Latin.
+\end{document}

@@ -9,13 +9,13 @@
 ```text
 core/layout/       穩定 layout 框架
 modules/layout/    內部 layout component 庫
-catalog/layouts.tex
+catalog/impe-layouts-catalog.tex
 ```
 
 公開的子系統入口為：
 
 ```text
-core/layout/system.tex
+core/layout/impe-layout-system.tex
 ```
 
 ## 分工
@@ -32,15 +32,15 @@ core/layout/system.tex
 
 目前的 core 檔案分工如下：
 
-- `system.tex`
+- `impe-layout-system.tex`
   layout 子系統的公開入口。它會載入 defaults 層與集中式 preset catalog。
-- `defaults.tex`
+- `impe-layout-defaults.tex`
   載入內部 layout 各層邏輯，並定義系統預設的 target set。
-- `class.tex`
+- `impe-layout-class.tex`
   偵測目前文件類別，並提供 layout preset 相容性檢查所需的 helper。
-- `preset.tex`
+- `impe-layout-preset.tex`
   定義 preset 的套用介面。它會解析 `targets`、`page`、`text`、`head`、`book`、`slides` 等欄位，再套用相容的 component list。
-- `registry.tex`
+- `impe-layout-registry.tex`
   保存已註冊的 layout preset，並實作公開的 `\UseLayout` / `\UseLayouts` 以及 load-once registry 行為。
 
 ### `modules/layout/`
@@ -49,10 +49,10 @@ core/layout/system.tex
 
 目前檔案為：
 
-- `components.tex`
+- `impe-layout-components.tex`
   定義 preset 會使用到的內部 component id，例如頁面 geometry、正文間距、頁眉樣式、book 行為與 slides helper。
 
-### `catalog/layouts.tex`
+### `catalog/impe-layouts-catalog.tex`
 
 這個檔案負責註冊公開的 layout preset。
 
@@ -128,7 +128,7 @@ core/layout/system.tex
 
 ## 目前的內部 Components
 
-目前 `modules/layout/components.tex` 中存在的內部 component id 如下；它們正是各 preset 的實際構件：
+目前 `modules/layout/impe-layout-components.tex` 中存在的內部 component id 如下；它們正是各 preset 的實際構件：
 
 - `page_a4_1in`
   A4 頁面，四邊 `1in` 邊界
@@ -177,4 +177,4 @@ core/layout/system.tex
 
 來建立與套用 preset。不過它們比較屬於系統建構介面，而不是日常使用者 API。
 
-在倉庫內，一般會透過 `package/system.tex` 的總入口載入，而不是單獨直接載入 layout 子系統。
+在倉庫內，一般會透過 `package/impe-system.tex` 的總入口載入，而不是單獨直接載入 layout 子系統。

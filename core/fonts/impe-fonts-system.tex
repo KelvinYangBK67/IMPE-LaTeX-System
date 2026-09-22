@@ -1,0 +1,25 @@
+% Single entry point for the next-generation font system.
+% This keeps the font stack self-contained and tied to the new structure.
+
+\RequirePackage{import}
+\providecommand{\CatalogFontRoot}{}
+
+\makeatletter
+\@ifundefined{ifNextSystemInstalled}
+  {\newif\ifNextSystemInstalled\NextSystemInstalledfalse}
+  {}
+\makeatother
+
+\ifNextSystemInstalled
+  \input{core/fonts/impe-fonts-defaults.tex}
+  \input{core/fonts/impe-fonts-registry-modes.tex}
+  \input{catalog/fonts/impe-unicode-blocks.generated.tex}
+  \input{catalog/fonts/impe-font-range-profiles.tex}
+  \input{catalog/impe-fonts-catalog.tex}
+\else
+  \subimport{./}{impe-fonts-defaults.tex}
+  \subimport{./}{impe-fonts-registry-modes.tex}
+  \subimport{../../catalog/fonts/}{impe-unicode-blocks.generated.tex}
+  \subimport{../../catalog/fonts/}{impe-font-range-profiles.tex}
+  \subimport{../../catalog/}{impe-fonts-catalog.tex}
+\fi

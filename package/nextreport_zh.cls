@@ -1,13 +1,8 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextreport_zh}[2026/03/19 IMPE LaTeX System wrapper for Chinese report]
+\ProvidesClass{nextreport_zh}[2026/09/22 v1.0.0 Compatibility alias for impereport_zh]
 
 \makeatletter
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{impereport_zh}}
 \ProcessOptions\relax
-\def\NextSystemUiTag{zh}
-\def\NextDefaultLayout{zh_doc}
-\def\NextDefaultGlobalFonts{cmu,shanggu}
-\providecommand{\NextTitleAuthorFont}{\normalfont\large\itshape}
-\LoadClass{report}
-\RequirePackage{nextsystem}
+\LoadClass{impereport_zh}
 \makeatother

@@ -8,14 +8,14 @@ This document describes the current feature subsystem.
 
 ```text
 core/features/        stable feature loader logic
-catalog/features.tex
+catalog/impe-features-catalog.tex
 modules/features/
 ```
 
 The public subsystem entry is:
 
 ```text
-core/features/system.tex
+core/features/impe-features-system.tex
 ```
 
 ## Responsibilities
@@ -31,17 +31,17 @@ This layer owns:
 
 Current core files:
 
-- `system.tex`
+- `impe-features-system.tex`
   The full feature subsystem entry. It defines the feature catalog storage, the
   public loading commands, citation style helpers, load-once behavior, and then
-  loads `catalog/features.tex`.
+  loads `catalog/impe-features-catalog.tex`.
 
 At the moment, the feature subsystem is intentionally small. Unlike `fonts/` and
 `layout/`, it does not yet split into multiple internal helper files under
-`core/features/`; the stable loader logic currently lives in `system.tex`
+`core/features/`; the stable loader logic currently lives in `impe-features-system.tex`
 itself.
 
-### `catalog/features.tex`
+### `catalog/impe-features-catalog.tex`
 
 This file maps public feature ids to module files.
 
@@ -158,7 +158,7 @@ a fixed-title-only header style.
 Use standard document-class options for one-sided or two-sided output:
 
 ```tex
-\documentclass[12pt,twoside]{nextart}
+\documentclass[12pt,twoside]{impeart}
 ```
 
 ### `hyperlinks`

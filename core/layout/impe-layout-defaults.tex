@@ -14,13 +14,13 @@
 \makeatother
 
 \ifNextSystemInstalled
-  \input{core/layout/class.tex}
-  \input{modules/layout/components.tex}
-  \input{core/layout/preset.tex}
-  \input{core/layout/registry.tex}
+  \input{core/layout/impe-layout-class.tex}
+  \input{modules/layout/impe-layout-components.tex}
+  \input{core/layout/impe-layout-preset.tex}
+  \input{core/layout/impe-layout-registry.tex}
 \else
-  \subimport{./}{class.tex}
-  \subimport{../../modules/layout/}{components.tex}
-  \subimport{./}{preset.tex}
-  \subimport{./}{registry.tex}
+  \subimport{./}{impe-layout-class.tex}
+  \subimport{../../modules/layout/}{impe-layout-components.tex}
+  \subimport{./}{impe-layout-preset.tex}
+  \subimport{./}{impe-layout-registry.tex}
 \fi

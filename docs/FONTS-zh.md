@@ -8,7 +8,7 @@
 
 ```text
 core/fonts/      穩定框架邏輯
-catalog/fonts.tex
+catalog/impe-fonts-catalog.tex
 modules/fonts/   特殊字體支持模組
 assets/fonts/    本地字體庫（不由 Git 追蹤）
 ```
@@ -16,7 +16,7 @@ assets/fonts/    本地字體庫（不由 Git 追蹤）
 公開的字體子系統入口為：
 
 ```text
-core/fonts/system.tex
+core/fonts/impe-fonts-system.tex
 ```
 
 ## 分工
@@ -34,30 +34,30 @@ core/fonts/system.tex
 
 目前的 core 檔案分工如下：
 
-- `system.tex`
-  字體子系統的公開入口。它會載入 defaults 層、family registry，以及 `catalog/fonts.tex`。
-- `defaults.tex`
+- `impe-fonts-system.tex`
+  字體子系統的公開入口。它會載入 defaults 層、family registry，以及 `catalog/impe-fonts-catalog.tex`。
+- `impe-fonts-defaults.tex`
   載入內部各層邏輯，並定義 scope、script class、fallback mode、writing model、behavior、backend 等預設值。
-- `style.tex`
+- `impe-fonts-style.tex`
   負責樣式 fallback 鏈的解析，例如 `bold`、`italic`、`bolditalic`、`sans*`、`mono*`。
-- `writing.tex`
+- `impe-fonts-writing.tex`
   定義並驗證 writing model 相關欄位：inline axis、inline direction、block progression。
-- `script.tex`
+- `impe-fonts-script.tex`
   套用 core 預設值，並驗證 `scriptclass`、`preservespaces`、backend 等 script-class 相關狀態。
-- `behavior.tex`
+- `impe-fonts-behavior.tex`
   定義 inline / block 行為路由，目前包括一般行為、RTL 行為與藏文斷行行為 hook。
-- `interface.tex`
+- `impe-fonts-interface.tex`
   主要的宣告引擎。它負責解析 family 註冊欄位、解析實際字體選項、定義 public commands，並且內建 `layout = vertical` route。
-- `registry.tex`
+- `impe-fonts-registry.tex`
   保存底層 declaration entry，之後再把它們轉成可使用的 local / global family。
-- `registry_modes.tex`
+- `impe-fonts-registry-modes.tex`
   追蹤 family 的載入模式（`local` / `global`），並負責 on-demand family activation。
-- `externalized.tex`
+- `impe-fonts-externalized.tex`
   提供穩定的 externalized render 管線，包括快取命名、外部子文件生成、shell-out 與 PDF 嵌回。
-- `helpers.tex`
+- `impe-fonts-helpers.tex`
   提供字體框架共用的小型 helper primitive。
 
-### `catalog/fonts.tex`
+### `catalog/impe-fonts-catalog.tex`
 
 這是集中式字體註冊表。
 
@@ -83,7 +83,7 @@ core/fonts/system.tex
 
 補充說明：
 
-- `layout = vertical` 現在已經內建在 `core/fonts/interface.tex`
+- `layout = vertical` 現在已經內建在 `core/fonts/impe-fonts-interface.tex`
 - 一般 OpenType shaping 由 `script`、`language`、`features` 這些註冊欄位統一表達
 - 對於只需要標準 fontspec shaping 的新 family，正常情況下應該只改註冊，不需要再往 `modules/fonts/` 新增檔案
 
@@ -171,7 +171,7 @@ core/fonts/system.tex
 字體 family 目前集中註冊在：
 
 ```text
-catalog/fonts.tex
+catalog/impe-fonts-catalog.tex
 ```
 
 現行模型以 `\FontRegisterFamily{...}` 宣告為中心。
@@ -205,6 +205,19 @@ catalog/fonts.tex
 - `verticalstrategy` / `verticalrotation` / `verticalorigin` / `verticaltopcorrection` 會配置 `layout = vertical`
 - `specialmodule` 只在需要外部或自定義 TeX module route 時才需要
 - 標準 OpenType shaping 應使用 `script`、`language`、`features` 表達，而不是另外做泛用 shaping module
+
+### 路由優先級與擴展性
+
+明確的局部命令在其大括號作用域內具有最終優先級。IMPE 的 Unicode-range
+transition 會在該作用域內暫停，因此 `\HI{...}` 之類的命令不會再被另一個
+全域 Devanagari owner 接管；離開作用域後會恢復自動路由。
+
+range 路由只為實際已配置的 XeTeX interchar class 與段落邊界 class 建立
+transition，並在文檔開始時補登其他套件較晚配置的 class。同一 family
+擁有的相鄰 Unicode block 之間仍保留空 transition，使 shaping run 可以連續。
+
+載入 `thai` family 時，IMPE 會選用 XeTeX 的 ICU `th_TH` 斷行 locale，
+讓沒有空格的泰文長句取得字典式斷行位置，而不必手工插入斷點。
 
 ## 最小示例
 
@@ -400,7 +413,7 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 現在 catalog 區分標準 shaping、core layout route 與外部 TeX module：
 
 - `script`、`language`、`features` 是標準 fontspec shaping 欄位
-- `layout = vertical` 會選擇 `core/fonts/interface.tex` 內建的 vertical layout route
+- `layout = vertical` 會選擇 `core/fonts/impe-fonts-interface.tex` 內建的 vertical layout route
 - `verticalstrategy`、`verticalrotation`、`verticalorigin`、`verticaltopcorrection` 是 `layout = vertical` 的參數
 - `specialmodule = pahlavi` 與 `specialmodule = khitan_small` 會從 `modules/fonts/` 載入 script-specific 支持模組
 - 自定義擴展模組也透過 `specialmodule = <custom_module_name>` 表達
@@ -409,7 +422,7 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 
 - 已經沒有額外的 dispatch table 檔案
 - 一般 shaping 由 `script`、`language`、`features` 組裝成 fontspec 選項
-- 內建 vertical 能力由 `core/fonts/interface.tex` 處理，不再寫成 `specialmodule`
+- 內建 vertical 能力由 `core/fonts/impe-fonts-interface.tex` 處理，不再寫成 `specialmodule`
 - 只有真正 script-specific 或使用者提供的 TeX 邏輯才繼續留在 `modules/fonts/`
 - Pahlavi 的特殊處理只掛在實際需要的 family 上，例如 `pahlavi_psalter`；Parthian 與 Inscriptional Pahlavi 在 RawFeature 足夠時仍維持標準 fontspec 註冊
 

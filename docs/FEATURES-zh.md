@@ -8,14 +8,14 @@
 
 ```text
 core/features/        穩定 feature loader 邏輯
-catalog/features.tex
+catalog/impe-features-catalog.tex
 modules/features/
 ```
 
 公開的子系統入口是：
 
 ```text
-core/features/system.tex
+core/features/impe-features-system.tex
 ```
 
 ## 分工
@@ -31,12 +31,12 @@ core/features/system.tex
 
 目前 core 檔案：
 
-- `system.tex`
-  feature 子系統的完整入口。它定義 feature catalog 的存放方式、公開載入命令、引用格式輔助命令、load-once 行為，之後再載入 `catalog/features.tex`。
+- `impe-features-system.tex`
+  feature 子系統的完整入口。它定義 feature catalog 的存放方式、公開載入命令、引用格式輔助命令、load-once 行為，之後再載入 `catalog/impe-features-catalog.tex`。
 
-目前 feature 子系統刻意保持精簡。和 `fonts/`、`layout/` 不同，它暫時還沒有再拆成多個 `core/features/` 內部檔案；現階段的穩定 loader 邏輯都集中在 `system.tex` 中。
+目前 feature 子系統刻意保持精簡。和 `fonts/`、`layout/` 不同，它暫時還沒有再拆成多個 `core/features/` 內部檔案；現階段的穩定 loader 邏輯都集中在 `impe-features-system.tex` 中。
 
-### `catalog/features.tex`
+### `catalog/impe-features-catalog.tex`
 
 這個檔案把公開 feature id 對應到 module 檔案。
 

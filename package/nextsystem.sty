@@ -1,8 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{nextsystem}[2026/03/18 Installable entry for next_system]
+\ProvidesPackage{nextsystem}[2026/09/22 v1.0.0 Compatibility alias for impe]
 
-\providecommand{\NextSystemUiTag}{en}
-\newif\ifNextSystemInstalled
-\NextSystemInstalledtrue
-
-\input{system.tex}
+\DeclareOption*{\PassOptionsToPackage{\CurrentOption}{impe}}
+\ProcessOptions\relax
+\RequirePackage{impe}

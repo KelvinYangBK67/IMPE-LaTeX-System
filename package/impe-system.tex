@@ -40,7 +40,8 @@
 \NewDocumentCommand{\SetCatalogFontRoot}{m}
   {\def\CatalogFontRoot{#1}}
 \ifNextSystemInstalled
-  \InputIfFileExists{nextsystem.local.tex}{}{}
+  \InputIfFileExists{impe.local.tex}{}
+    {\InputIfFileExists{nextsystem.local.tex}{}{}}
 \fi
 
 \makeatletter
@@ -66,7 +67,7 @@
 \makeatother
 
 \ifNextSystemInstalled
-  \input{core/system/system.tex}
+  \input{core/system/impe-system-core.tex}
 \else
-  \subimport{../core/system/}{system.tex}
+  \subimport{../core/system/}{impe-system-core.tex}
 \fi

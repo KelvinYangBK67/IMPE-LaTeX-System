@@ -32,9 +32,9 @@ release 與安裝工具位於 `scripts/`。
 
 這一層保存集中式的公開註冊表：
 
-- `catalog/fonts.tex`
-- `catalog/layouts.tex`
-- `catalog/features.tex`
+- `catalog/impe-fonts-catalog.tex`
+- `catalog/impe-layouts-catalog.tex`
+- `catalog/impe-features-catalog.tex`
 
 這些檔案定義公開 id 與 metadata，供 core loader 消費。
 
@@ -43,13 +43,14 @@ release 與安裝工具位於 `scripts/`。
 這一層現在只保留那些不屬於穩定 generic core、而且帶有 script-specific
 或 feature-specific 實作的可擴展檔案。例如：
 
-- `modules/fonts/khitan_small.tex`
-- `modules/fonts/pahlavi.tex`
+- `modules/fonts/impe-font-khitan_small.tex`
+- `modules/fonts/impe-font-pahlavi.tex`
 - `modules/features/` 底下的各 feature 實作
 
 ### `assets/`
 
-這一層保存 bundled 資源，最主要的是 `assets/fonts/` 之下的本地字體庫。
+這一層描述本地 runtime 資源。`assets/fonts/` 下的字體二進位檔刻意不由
+Git 追蹤；詳見 `assets/README-zh.md`。
 
 ## 公開入口層
 
@@ -62,7 +63,7 @@ release 與安裝工具位於 `scripts/`。
 ```tex
 \documentclass{article}
 \usepackage{import}
-\subimport{../../package/}{system.tex}
+\subimport{../../package/}{impe-system.tex}
 \UseTemplateSet{...}
 ```
 
@@ -71,7 +72,7 @@ release 與安裝工具位於 `scripts/`。
 安裝到 TeX 搜尋路徑後，可以用：
 
 ```tex
-\documentclass{nextbeamer}
+\documentclass{impebeamer}
 \UseTemplateSet{...}
 ```
 
@@ -79,15 +80,15 @@ release 與安裝工具位於 `scripts/`。
 
 ```tex
 \documentclass{beamer}
-\usepackage{nextsystem}
+\usepackage{impe}
 \UseTemplateSet{...}
 ```
 
 對 wrapper class 而言，英文與中文使用不同的公開入口，例如：
 
 ```tex
-\documentclass{nextart}
-\documentclass{nextart_zh}
+\documentclass{impeart}
+\documentclass{impeart_zh}
 \UseTemplateSet{...}
 ```
 
@@ -117,15 +118,21 @@ release 與安裝工具位於 `scripts/`。
 
 預設情況下，bundled 字體會從 `assets/fonts` 解析。
 
-只有在你想改用其他字體庫時，才需要使用 `nextsystem.local.tex` 或
+只有在你想改用其他字體庫時，才需要使用 `impe.local.tex` 或
 `\SetCatalogFontRoot{...}`。
+
+## 公開命名與相容性
+
+`impe*` 套件與 class 是目前的標準公開介面。`next*` 入口仍是受支持的
+相容 wrapper，會轉送到同一份實作；v1.0.0 並未移除或棄用它們。
 
 ## Release 模型
 
-目前倉庫支援兩種 release 套件：
+目前倉庫支援三種 release 套件：
 
 - `full`：邏輯 + bundled 字體
 - `core`：只有邏輯
+- `impe.zip`：包含文件、不含字體二進位檔的 CTAN 導向 core 套件
 
 版本化 release 套件由下列腳本生成：
 

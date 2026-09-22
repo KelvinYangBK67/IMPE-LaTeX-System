@@ -8,7 +8,7 @@ This document describes the current font subsystem.
 
 ```text
 core/fonts/      stable framework logic
-catalog/fonts.tex
+catalog/impe-fonts-catalog.tex
 modules/fonts/   special font-support modules
 assets/fonts/    local font library (not tracked in Git)
 ```
@@ -16,7 +16,7 @@ assets/fonts/    local font library (not tracked in Git)
 The public subsystem entry is:
 
 ```text
-core/fonts/system.tex
+core/fonts/impe-fonts-system.tex
 ```
 
 ## Responsibilities
@@ -34,33 +34,33 @@ This layer owns the stable mechanics:
 
 Current core files:
 
-- `system.tex`
-  Public entry for the font subsystem. It loads the defaults layer, the family registry, and `catalog/fonts.tex`.
-- `defaults.tex`
+- `impe-fonts-system.tex`
+  Public entry for the font subsystem. It loads the defaults layer, the family registry, and `catalog/impe-fonts-catalog.tex`.
+- `impe-fonts-defaults.tex`
   Loads the internal font layers and defines the default values for scope, script class, fallback mode, writing model, behavior, and backend.
-- `style.tex`
+- `impe-fonts-style.tex`
   Resolves style fallback chains such as `bold`, `italic`, `bolditalic`, `sans*`, and `mono*`.
-- `writing.tex`
+- `impe-fonts-writing.tex`
   Defines and validates the writing model fields: inline axis, inline direction, and block progression.
-- `script.tex`
+- `impe-fonts-script.tex`
   Applies the core defaults and validates internal routing state such as `scriptclass`, `preservespaces`, and backend choice.
-- `behavior.tex`
+- `impe-fonts-behavior.tex`
   Defines inline/block behavior routing, currently including normal, RTL, and
   Tibetan break behavior hooks.
-- `interface.tex`
+- `impe-fonts-interface.tex`
   The main declaration engine. It parses registered family fields, resolves
   concrete font options, defines public commands, and owns the built-in
   `layout = vertical` route.
-- `registry.tex`
+- `impe-fonts-registry.tex`
   Stores low-level declaration entries before they are turned into usable local/global families.
-- `registry_modes.tex`
+- `impe-fonts-registry-modes.tex`
   Tracks family loading mode (`local` / `global`) and performs on-demand family activation.
-- `externalized.tex`
+- `impe-fonts-externalized.tex`
   Provides the stable externalized-render pipeline: cache naming, external subdocument generation, shell-out, and PDF reinsertion.
-- `helpers.tex`
+- `impe-fonts-helpers.tex`
   Small shared helper primitives used by the font framework.
 
-### `catalog/fonts.tex`
+### `catalog/impe-fonts-catalog.tex`
 
 This is the centralized registration file.
 
@@ -86,7 +86,7 @@ Current modules:
 
 Notes:
 
-- `layout = vertical` is now built into `core/fonts/interface.tex`
+- `layout = vertical` is now built into `core/fonts/impe-fonts-interface.tex`
 - ordinary OpenType shaping is handled by normal registration fields: `script`, `language`, and `features`
 - new families that only need standard fontspec shaping should normally be handled by registration, not by adding a new file under `modules/fonts/`
 
@@ -211,7 +211,7 @@ write `specialmodule = vertical`.
 Font families are registered centrally in:
 
 ```text
-catalog/fonts.tex
+catalog/impe-fonts-catalog.tex
 ```
 
 The current model is based on `\FontRegisterFamily{...}` declarations.
@@ -246,6 +246,23 @@ In practice:
 - `verticalstrategy` / `verticalrotation` / `verticalorigin` / `verticaltopcorrection` configure `layout = vertical`
 - `specialmodule` is only needed for external/custom TeX module routes
 - standard OpenType shaping should be expressed with `script`, `language`, and `features`, not a separate generic shaping module
+
+### Routing precedence and scalability
+
+Explicit local commands have final authority inside their brace scope. IMPE's
+Unicode-range transitions are suspended there, so a command such as `\HI{...}`
+is not recaptured by another global Devanagari owner. Leaving the command scope
+restores automatic routing.
+
+Range routing creates transitions only for XeTeX intercharacter classes that
+have actually been allocated, plus the paragraph-boundary class. A
+begin-document pass adds transitions for classes allocated later by other
+packages. Cross-block transitions owned by the same family remain empty so a
+shaping run can continue across adjacent Unicode blocks.
+
+When the `thai` family is loaded, IMPE selects XeTeX's ICU `th_TH` line-break
+locale. This enables dictionary-based break opportunities in unspaced Thai prose
+without inserting manual breakpoints.
 
 ## Minimal Examples
 
@@ -444,7 +461,7 @@ TeX modules:
 
 - `script`, `language`, and `features` are standard fontspec shaping fields
 - `layout = vertical` selects the built-in vertical layout route in
-  `core/fonts/interface.tex`
+  `core/fonts/impe-fonts-interface.tex`
 - `verticalstrategy`, `verticalrotation`, `verticalorigin`, and
   `verticaltopcorrection` are parameters for `layout = vertical`
 - `specialmodule = pahlavi` and `specialmodule = khitan_small` import
@@ -457,7 +474,7 @@ This means:
 - there is no separate dispatch table file anymore
 - ordinary shaping is handled by fontspec options assembled from `script`,
   `language`, and `features`
-- built-in vertical capabilities are handled inside `core/fonts/interface.tex`
+- built-in vertical capabilities are handled inside `core/fonts/impe-fonts-interface.tex`
   and are not written as a `specialmodule`
 - only genuinely script-specific or user-provided TeX logic remains under
   `modules/fonts/`

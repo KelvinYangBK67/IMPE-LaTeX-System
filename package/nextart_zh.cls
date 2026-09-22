@@ -1,13 +1,8 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextart_zh}[2026/03/19 IMPE LaTeX System wrapper for Chinese article]
+\ProvidesClass{nextart_zh}[2026/09/22 v1.0.0 Compatibility alias for impeart_zh]
 
 \makeatletter
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{impeart_zh}}
 \ProcessOptions\relax
-\def\NextSystemUiTag{zh}
-\def\NextDefaultLayout{zh_doc}
-\def\NextDefaultGlobalFonts{cmu,shanggu}
-\providecommand{\NextTitleAuthorFont}{\normalfont\large\itshape}
-\LoadClass{article}
-\RequirePackage{nextsystem}
+\LoadClass{impeart_zh}
 \makeatother

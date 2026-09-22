@@ -11,7 +11,7 @@
 
 這些模板刻意採用「安裝後使用」的寫法：
 
-- 直接使用 `nextart`、`nextbook`、`nextbeamer` 及其 `_zh` 對應類
+- 直接使用標準入口 `impeart`、`impebook`、`impebeamer` 及其 `_zh` 對應類
 - 英文與中文各自使用獨立的 wrapper class 入口
 - 目標場景是 IMPE LaTeX System 已安裝到 `texmf` 之後直接起稿
 - 倉庫內的 smoke test 與 repo-local 驗證仍以 `examples/` 為主

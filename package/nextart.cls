@@ -1,12 +1,8 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextart}[2026/03/19 IMPE LaTeX System wrapper for article]
+\ProvidesClass{nextart}[2026/09/22 v1.0.0 Compatibility alias for impeart]
 
 \makeatletter
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{impeart}}
 \ProcessOptions\relax
-\def\NextSystemUiTag{en}
-\def\NextDefaultLayout{en_doc}
-\def\NextDefaultGlobalFonts{cmu}
-\LoadClass{article}
-\RequirePackage{nextsystem}
+\LoadClass{impeart}
 \makeatother

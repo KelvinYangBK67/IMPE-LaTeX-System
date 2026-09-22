@@ -31,9 +31,9 @@ new families, presets, or features are added. In practice:
 
 This layer holds the centralized public registrations:
 
-- `catalog/fonts.tex`
-- `catalog/layouts.tex`
-- `catalog/features.tex`
+- `catalog/impe-fonts-catalog.tex`
+- `catalog/impe-layouts-catalog.tex`
+- `catalog/impe-features-catalog.tex`
 
 These files define the public ids and metadata that the core loaders consume.
 
@@ -42,14 +42,14 @@ These files define the public ids and metadata that the core loaders consume.
 This layer now holds only extendable, script-specific, or feature-specific
 implementations that are not part of the stable generic core. Examples include:
 
-- `modules/fonts/khitan_small.tex`
-- `modules/fonts/pahlavi.tex`
+- `modules/fonts/impe-font-khitan_small.tex`
+- `modules/fonts/impe-font-pahlavi.tex`
 - files under `modules/features/`
 
 ### `assets/`
 
-This layer holds bundled resources, mainly the local font library under
-`assets/fonts/`.
+This layer describes local runtime resources. Font binaries under
+`assets/fonts/` are deliberately not tracked by Git; see `assets/README.md`.
 
 ## Public Entry Layers
 
@@ -62,7 +62,7 @@ Inside this repository, examples should load the package-layer entry directly:
 ```tex
 \documentclass{article}
 \usepackage{import}
-\subimport{../../package/}{system.tex}
+\subimport{../../package/}{impe-system.tex}
 \UseTemplateSet{...}
 ```
 
@@ -71,7 +71,7 @@ Inside this repository, examples should load the package-layer entry directly:
 After installation into a TeX search path, use either:
 
 ```tex
-\documentclass{nextbeamer}
+\documentclass{impebeamer}
 \UseTemplateSet{...}
 ```
 
@@ -79,7 +79,7 @@ or:
 
 ```tex
 \documentclass{beamer}
-\usepackage{nextsystem}
+\usepackage{impe}
 \UseTemplateSet{...}
 ```
 
@@ -87,8 +87,8 @@ For wrapper classes, English and Chinese use separate public entrypoints. For
 example:
 
 ```tex
-\documentclass{nextart}
-\documentclass{nextart_zh}
+\documentclass{impeart}
+\documentclass{impeart_zh}
 \UseTemplateSet{...}
 ```
 
@@ -118,7 +118,7 @@ Wrapper classes provide defaults for `layout` and `globalfonts`, so those keys
 can usually be omitted:
 
 ```tex
-\documentclass{nextart_zh}
+\documentclass{impeart_zh}
 
 \title{Main Title}
 \subtitle{A shorter subtitle below the title}
@@ -129,16 +129,16 @@ can usually be omitted:
 
 Current wrapper defaults:
 
-- `nextart`: `layout = en_doc`, `globalfonts = {cmu}`
-- `nextart_zh`: `layout = zh_doc`, `globalfonts = {cmu,shanggu}`
-- `nextbook`: `layout = en_book`, `globalfonts = {cmu}`
-- `nextbook_zh`: `layout = zh_book`, `globalfonts = {cmu,shanggu}`
-- `nextreport`: `layout = en_doc`, `globalfonts = {cmu}`
-- `nextreport_zh`: `layout = zh_doc`, `globalfonts = {cmu,shanggu}`
-- `nextbeamer`: `layout = beamer`, `globalfonts = {cmu}`
-- `nextbeamer_zh`: `layout = beamer`, `globalfonts = {cmu,shanggu}`
+- `impeart`: `layout = en_doc`, `globalfonts = {cmu}`
+- `impeart_zh`: `layout = zh_doc`, `globalfonts = {cmu,shanggu}`
+- `impebook`: `layout = en_book`, `globalfonts = {cmu}`
+- `impebook_zh`: `layout = zh_book`, `globalfonts = {cmu,shanggu}`
+- `impereport`: `layout = en_doc`, `globalfonts = {cmu}`
+- `impereport_zh`: `layout = zh_doc`, `globalfonts = {cmu,shanggu}`
+- `impebeamer`: `layout = beamer`, `globalfonts = {cmu}`
+- `impebeamer_zh`: `layout = beamer`, `globalfonts = {cmu,shanggu}`
 
-Wrapper defaults are applied when the class loads `nextsystem`. Use raw classes
+Wrapper defaults are applied when the class loads `impe`. Use raw classes
 with an explicit `\UseTemplateSet{...}` when you want to choose every preset by
 hand, or use the shortcut commands below to load only the extra pieces you need.
 
@@ -155,8 +155,8 @@ single key in `\UseTemplateSet{...}`:
 Documents may use `\subtitle{...}` alongside LaTeX's standard `\title{...}`.
 The title block prints the main title in a larger bold face, then prints the
 subtitle directly below it in a slightly smaller non-bold face.
-Chinese wrapper classes (`nextart_zh`, `nextreport_zh`, `nextbook_zh`, and
-`nextbeamer_zh`) default the author line to italic.
+Chinese wrapper classes (`impeart_zh`, `impereport_zh`, `impebook_zh`, and
+`impebeamer_zh`) default the author line to italic.
 Article-like classes keep a compact title top skip, while report/book-like
 classes place the title block lower on the title page. Override
 `\NextTitleTopSkip` if a document needs a different title-page vertical
@@ -166,15 +166,22 @@ position.
 
 By default, bundled fonts are resolved from `assets/fonts`.
 
-Use `nextsystem.local.tex` or `\SetCatalogFontRoot{...}` only when you want to
+Use `impe.local.tex` or `\SetCatalogFontRoot{...}` only when you want to
 override that root.
+
+## Public Naming and Compatibility
+
+The `impe*` package and classes are canonical. The `next*` entry points remain
+supported compatibility wrappers and forward to the same implementation; they
+are not removed or deprecated in v1.0.0.
 
 ## Release Model
 
-The repository now supports two release packages:
+The repository supports three release packages:
 
 - `full`: logic + bundled fonts
 - `core`: logic only
+- `impe.zip`: CTAN-oriented core package with documentation and no font binaries
 
 Versioned release packages are generated from:
 

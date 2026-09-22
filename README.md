@@ -2,18 +2,20 @@
 
 [繁體中文](README-zh.md)
 
-`IMPE LaTeX System` is a LaTeX template system organized around four layers:
+`IMPE LaTeX System` is the project's formal name; the project records do not
+currently define **IMPE** as an acronym with an expanded form. It is a modular
+LaTeX document system organized around four layers:
 
 - `core/`: stable mechanisms
 - `catalog/`: registrations and presets
 - `modules/`: extendable implementations
 - `assets/`: local runtime resources such as fonts
 
-Current released version:
-- `v0.1.3`
+Current development version:
+- `v1.0.0`
 
-Maintenance line:
-- `v0.1.x`
+Latest published release:
+- `v0.1.3`
 
 Version history:
 - Released versions: [CHANGELOG.md](./CHANGELOG.md)
@@ -90,17 +92,21 @@ examples/   debug / audit examples
 
 ## Release Packages
 
-Two release packages are generated:
+Three release packages are generated:
 
 - `IMPE-LaTeX-System-vX.Y.Z-full.zip`
   Generated locally with the local font library included, except for fonts excluded from public distribution because their redistribution status is unresolved or restricted.
 - `IMPE-LaTeX-System-vX.Y.Z-core.zip`
   Includes the template logic only, without font files.
+- `impe.zip`
+  CTAN-oriented source/runtime archive based on the core distribution, with
+  documentation and compatibility entry points but without the local font library.
 
 Recommended usage:
 
 - choose `full` if you want a locally generated installable package with your font library included
 - choose `core` if you want the system logic only and will manage fonts separately
+- use `impe.zip` when reviewing or preparing a CTAN submission
 
 Build them with:
 
@@ -118,7 +124,15 @@ For the full package, extract the release zip and run:
 install.bat
 ```
 
-This installs the package into the user `texmf` tree, including:
+This installs the package into the user `texmf` tree, including the canonical entries:
+
+- `impe.sty`
+- `impeart.cls`
+- `impebook.cls`
+- `impereport.cls`
+- `impebeamer.cls`
+
+and the supported legacy compatibility entries:
 
 - `nextsystem.sty`
 - `nextart.cls`
@@ -144,7 +158,7 @@ globally on that machine.
 Minimal example:
 
 ```tex
-\documentclass{nextbeamer}
+\documentclass{impebeamer}
 \UseTemplateSet{
   layout = beamer,
   globalfonts = {cmu,shanggu},
@@ -157,15 +171,20 @@ You can also use:
 
 ```tex
 \documentclass{article}
-\usepackage{nextsystem}
+\usepackage{impe}
 \UseTemplateSet{...}
 ```
 
 This is the intended day-to-day usage style after installation:
 
-- pick a wrapper class such as `nextbeamer`
+- pick a wrapper class such as `impebeamer`
 - declare one template set
 - keep document preambles short
+
+The `impe*` package and class names are the canonical public interface for new
+documents. The `next*` names remain supported compatibility aliases, so existing
+documents using `\documentclass{nextart}` or `\usepackage{nextsystem}` continue
+to compile.
 
 ## Repository-Local Development Usage
 
@@ -173,7 +192,7 @@ Inside this repository, examples use the package-layer entry directly:
 
 ```tex
 \usepackage{import}
-\subimport{../../package/}{system.tex}
+\subimport{../../package/}{impe-system.tex}
 \UseTemplateSet{...}
 ```
 
@@ -202,7 +221,8 @@ Detailed docs are in `docs/`:
 - Third-party font licenses and redistribution notices are stored under `font_licenses/`.
 - General font sourcing notes, including non-bundled dependencies such as `cmu`, are documented in `docs/FONTS.md`.
 - The Git repository itself is intended to remain source-only and does not track the font library under `assets/fonts/`.
-- `full` is intended for users who want a locally generated installable package with fonts included.
-- `core` is intended for users who want the system logic without a bundled font library.
-- The repository is still in the `0.x` stage, so interface cleanup may continue before `1.0.0`.
+- `assets/fonts/` is the expected local input for a full build; only redistributable resources are copied to a public full archive.
+- Fonts with unresolved or restricted redistribution status are excluded from public releases.
+- The core and CTAN-oriented archives do not require the repository to contain a font library.
+- See `assets/README.md` for the repository/release font policy.
 - This project is maintained by the author with Codex-assisted refactoring, scripting, and documentation support.

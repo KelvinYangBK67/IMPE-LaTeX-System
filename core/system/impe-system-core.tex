@@ -17,13 +17,13 @@
 \makeatother
 
 \ifNextSystemInstalled
-  \input{core/layout/system.tex}
-  \input{core/fonts/system.tex}
-  \input{core/features/system.tex}
+  \input{core/layout/impe-layout-system.tex}
+  \input{core/fonts/impe-fonts-system.tex}
+  \input{core/features/impe-features-system.tex}
 \else
-  \subimport{../layout/}{system.tex}
-  \subimport{../fonts/}{system.tex}
-  \subimport{../features/}{system.tex}
+  \subimport{../layout/}{impe-layout-system.tex}
+  \subimport{../fonts/}{impe-fonts-system.tex}
+  \subimport{../features/}{impe-features-system.tex}
 \fi
 
 \ExplSyntaxOn
@@ -115,11 +115,11 @@
         \str_if_eq:VnT \l__nextsystem_ui_tl { zh }
           {
             \bool_if:NTF \g__nextsystem_installed_bool
-              { \input{core/system/ui_zh_internal.tex} }
+              { \input{core/system/impe-ui-zh-internal.tex} }
               {
                 \cs_if_exist:NTF \NextSystemRoot
-                  { \expandafter\subimport\expandafter{\NextSystemRoot core/system/}{ui_zh_internal.tex} }
-                  { \subimport{./}{ui_zh_internal.tex} }
+                  { \expandafter\subimport\expandafter{\NextSystemRoot core/system/}{impe-ui-zh-internal.tex} }
+                  { \subimport{./}{impe-ui-zh-internal.tex} }
               }
           }
         \bool_gset_true:N \g__nextsystem_ui_loaded_bool

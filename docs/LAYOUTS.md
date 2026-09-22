@@ -9,13 +9,13 @@ This document describes the current layout subsystem.
 ```text
 core/layout/       stable layout framework
 modules/layout/    internal layout component library
-catalog/layouts.tex
+catalog/impe-layouts-catalog.tex
 ```
 
 The public subsystem entry is:
 
 ```text
-core/layout/system.tex
+core/layout/impe-layout-system.tex
 ```
 
 ## Responsibilities
@@ -32,15 +32,15 @@ This layer owns the stable mechanics:
 
 Current core files:
 
-- `system.tex`
+- `impe-layout-system.tex`
   Public entry for the layout subsystem. It loads the defaults layer and the centralized preset catalog.
-- `defaults.tex`
+- `impe-layout-defaults.tex`
   Loads the internal layout layers and defines the system default target set.
-- `class.tex`
+- `impe-layout-class.tex`
   Detects the current document class and exposes compatibility helpers used by layout presets.
-- `preset.tex`
+- `impe-layout-preset.tex`
   Defines the preset application interface. It parses preset fields such as `targets`, `page`, `text`, `head`, `book`, and `slides`, then applies compatible component lists.
-- `registry.tex`
+- `impe-layout-registry.tex`
   Stores registered layout presets and implements the public `\UseLayout` / `\UseLayouts` load-once registry behavior.
 
 ### `modules/layout/`
@@ -49,10 +49,10 @@ This layer now holds the internal reusable layout component library.
 
 Current file:
 
-- `components.tex`
+- `impe-layout-components.tex`
   Defines the internal component ids used by presets, such as page geometry, text spacing, header styles, book behavior, and slide helpers.
 
-### `catalog/layouts.tex`
+### `catalog/impe-layouts-catalog.tex`
 
 This file registers public layout presets.
 
@@ -130,7 +130,7 @@ The current public presets and their effective settings are:
 
 ## Current Internal Components
 
-The following internal component ids currently exist in `modules/layout/components.tex`.
+The following internal component ids currently exist in `modules/layout/impe-layout-components.tex`.
 They are the building blocks used by presets:
 
 - `page_a4_1in`
@@ -184,5 +184,5 @@ At a lower level, presets are built with:
 These exist as system-building interfaces rather than the recommended everyday
 user API.
 
-Repository-local loading normally happens through the package-layer `system.tex`
+Repository-local loading normally happens through the package-layer `impe-system.tex`
 rather than by loading the layout subsystem directly.

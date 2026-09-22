@@ -1,6 +1,9 @@
 param(
     [string]$OutputRoot,
-    [switch]$KeepStage
+    [switch]$KeepStage,
+    [switch]$SkipFull,
+    [switch]$SkipCore,
+    [switch]$SkipCtan
 )
 
 $ErrorActionPreference = "Stop"
@@ -19,7 +22,16 @@ if (-not $Version) {
 }
 
 $TopLevelFiles = @(
-    "system.tex",
+    "impe-system.tex",
+    "impe.sty",
+    "impeart.cls",
+    "impeart_zh.cls",
+    "impebook.cls",
+    "impebook_zh.cls",
+    "impereport.cls",
+    "impereport_zh.cls",
+    "impebeamer.cls",
+    "impebeamer_zh.cls",
     "nextsystem.sty",
     "nextart.cls",
     "nextart_zh.cls",
@@ -29,6 +41,8 @@ $TopLevelFiles = @(
     "nextreport_zh.cls",
     "nextbeamer.cls",
     "nextbeamer_zh.cls",
+    "impe-externalized-render.ps1",
+    "impe.local.example.tex",
     "nextsystem.local.example.tex"
 )
 
@@ -41,6 +55,21 @@ Write-Host "  Version:     v$Version"
 Write-Host "  Repository:  $RepoRoot"
 Write-Host "  Output root: $OutputRoot"
 Write-Host ""
+
+function Remove-RuntimeBuildArtifacts {
+    param([string]$StageRoot)
+
+    foreach ($dir in @("core", "catalog", "modules")) {
+        $runtimeRoot = Join-Path $StageRoot $dir
+        if (-not (Test-Path $runtimeRoot)) {
+            continue
+        }
+
+        Get-ChildItem -LiteralPath $runtimeRoot -Recurse -File |
+            Where-Object { $_.Extension -ne ".tex" } |
+            Remove-Item -Force
+    }
+}
 
 function New-ReleasePackage {
     param(
@@ -95,6 +124,8 @@ function New-ReleasePackage {
         }
     }
 
+    Remove-RuntimeBuildArtifacts -StageRoot $StageRoot
+
     if ($Flavor -eq "full") {
         $FontLicensesDir = Join-Path $RepoRoot "font_licenses"
         if (Test-Path $FontLicensesDir) {
@@ -137,12 +168,84 @@ function New-ReleasePackage {
     }
 }
 
-New-ReleasePackage `
-    -Flavor "full" `
-    -RuntimeDirs @("core","catalog","modules","assets") `
-    -Note "Full release generated from the local font library. Fonts with unresolved or restricted redistribution status are intentionally excluded from this public release. Install by running install.bat."
+function New-CtanPackage {
+    $StageRoot = Join-Path $OutputRoot "impe"
+    $ZipPath = Join-Path $OutputRoot "impe.zip"
 
-New-ReleasePackage `
-    -Flavor "core" `
-    -RuntimeDirs @("core","catalog","modules") `
-    -Note "Core release without font files. Install by running install.bat, then point nextsystem.local.tex or your local setup to a font library."
+    Write-Host "Preparing CTAN release..."
+    Write-Host "  Stage root: $StageRoot"
+    Write-Host "  Zip path:   $ZipPath"
+
+    if (Test-Path $StageRoot) {
+        Remove-Item -Recurse -Force $StageRoot
+    }
+    if (Test-Path $ZipPath) {
+        Remove-Item -Force $ZipPath
+    }
+
+    New-Item -ItemType Directory -Force -Path $StageRoot | Out-Null
+
+    foreach ($file in $TopLevelFiles) {
+        Copy-Item -Force (Join-Path (Join-Path $RepoRoot "package") $file) (Join-Path $StageRoot $file)
+    }
+
+    foreach ($dir in @("core", "catalog", "modules", "docs")) {
+        Copy-Item -Recurse -Force (Join-Path $RepoRoot $dir) (Join-Path $StageRoot $dir)
+    }
+
+    Remove-RuntimeBuildArtifacts -StageRoot $StageRoot
+
+    $CtanTopLevelDocs = @(
+        "README.md",
+        "README-zh.md",
+        "CHANGELOG.md",
+        "CHANGELOG-zh.md",
+        "CHANGELOG.unreleased.md",
+        "LICENSE",
+        "VERSION"
+    )
+    foreach ($file in $CtanTopLevelDocs) {
+        Copy-Item -Force (Join-Path $RepoRoot $file) (Join-Path $StageRoot $file)
+    }
+
+    $AssetsReadmes = @("README.md", "README-zh.md")
+    if (Test-Path (Join-Path $RepoRoot "assets")) {
+        $CtanAssets = Join-Path $StageRoot "assets"
+        New-Item -ItemType Directory -Force -Path $CtanAssets | Out-Null
+        foreach ($file in $AssetsReadmes) {
+            $source = Join-Path (Join-Path $RepoRoot "assets") $file
+            if (Test-Path $source) {
+                Copy-Item -Force $source (Join-Path $CtanAssets $file)
+            }
+        }
+    }
+
+    Set-Content -Path (Join-Path $StageRoot "RELEASE.txt") -Value "CTAN-oriented IMPE v$Version source and runtime archive. Font binaries are intentionally excluded."
+    Compress-Archive -Path (Join-Path $StageRoot "*") -DestinationPath $ZipPath -Force
+
+    Write-Host "CTAN directory: $StageRoot"
+    Write-Host "CTAN zip:       $ZipPath"
+    Write-Host ""
+
+    if (-not $KeepStage) {
+        Remove-Item -Recurse -Force $StageRoot
+    }
+}
+
+if (-not $SkipFull) {
+    New-ReleasePackage `
+        -Flavor "full" `
+        -RuntimeDirs @("core","catalog","modules","assets") `
+        -Note "Full release generated from the local font library. Fonts with unresolved or restricted redistribution status are intentionally excluded from this public release. Install by running install.bat."
+}
+
+if (-not $SkipCore) {
+    New-ReleasePackage `
+        -Flavor "core" `
+        -RuntimeDirs @("core","catalog","modules") `
+        -Note "Core release without font files. Install by running install.bat, then point impe.local.tex or your local setup to a font library."
+}
+
+if (-not $SkipCtan) {
+    New-CtanPackage
+}

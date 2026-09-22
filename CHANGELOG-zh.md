@@ -6,6 +6,27 @@ IMPE LaTeX System 的已發佈版本變更記錄於此。
 
 尚未發佈的開發中變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
+## [1.0.0] - 未發佈
+
+### 新增
+
+* 新增標準公開入口 `impe`、`impeart`、`impebook`、`impereport`、`impebeamer` 及各 `_zh` class。
+* 在既有 full 與 core 封裝之外新增 CTAN 導向的 `impe.zip` release target。
+* 新增標準／舊名入口、內部檔名命名空間、release 組裝、局部字體優先級、路由擴展性與泰文斷行的回歸測試。
+
+### 調整
+
+* 將所有 `next*` 套件與 class 入口改為轉送至 `impe*` 標準實作的受支持相容 wrapper。
+* 所有可分發的內部 TeX runtime 檔改用 `impe-` 前綴，避免共享 TeX tree 中的檔名碰撞。
+* 明確記錄 IMPE 是專案正式名稱，目前沒有權威的縮寫全稱。
+* 釐清 Git checkout、本地 `assets/fonts/` 字體庫，以及 full、core、CTAN 導向發佈包之間的關係。
+
+### 修正
+
+* 明確的局部字體命令現在會在其作用域內優先於自動 Unicode-range 路由，離開作用域後恢復正常全域路由。
+* 將固定生成 4096 個 class transition 的方法改為只針對已配置 XeTeX interchar class 的稀疏建表，並在文檔開始時補登較晚配置的 class；同時修正同 owner 比較，讓相鄰 block 維持同一 shaping run。
+* 載入泰文字體 family 時，透過 XeTeX 的 ICU `th_TH` locale 提供泰文字典斷行。
+
 ## [0.1.3] - 2026-08-29
 
 ### 新增

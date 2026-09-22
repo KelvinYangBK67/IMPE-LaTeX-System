@@ -6,13 +6,24 @@ param(
 $ErrorActionPreference = "Stop"
 
 $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$RepoRoot = Split-Path -Parent $ScriptRoot
+$IsReleaseRoot = Test-Path (Join-Path $ScriptRoot "impe.sty")
+$RepoRoot = if ($IsReleaseRoot) { $ScriptRoot } else { Split-Path -Parent $ScriptRoot }
+$PackageSourceRoot = if ($IsReleaseRoot) { $ScriptRoot } else { Join-Path $RepoRoot "package" }
 $PackageRoot = Join-Path $TexmfRoot "tex\latex\nextsystem"
 
 $RuntimeFiles = @(
-    "system.tex",
+    "impe-system.tex",
+    "impe.sty",
+    "impeart.cls",
+    "impeart_zh.cls",
+    "impebook.cls",
+    "impebook_zh.cls",
+    "impereport.cls",
+    "impereport_zh.cls",
+    "impebeamer.cls",
+    "impebeamer_zh.cls",
     "nextsystem.sty",
-    "nextsystem-externalized-render.ps1",
+    "impe-externalized-render.ps1",
     "nextart.cls",
     "nextart_zh.cls",
     "nextbook.cls",
@@ -21,6 +32,7 @@ $RuntimeFiles = @(
     "nextreport_zh.cls",
     "nextbeamer.cls",
     "nextbeamer_zh.cls",
+    "impe.local.example.tex",
     "nextsystem.local.example.tex"
 )
 
@@ -139,7 +151,7 @@ else {
 New-Item -ItemType Directory -Force -Path $PackageRoot | Out-Null
 
 foreach ($file in $RuntimeFiles) {
-    $source = Join-Path (Join-Path $RepoRoot "package") $file
+    $source = Join-Path $PackageSourceRoot $file
     $target = Join-Path $PackageRoot $file
     Copy-ManagedFile -Source $source -Target $target
 }
@@ -153,7 +165,7 @@ foreach ($dir in $RuntimeDirs) {
     Sync-ManagedDirectory -SourceRoot $source -TargetRoot $target
 }
 
-$InstalledLocalOverride = Join-Path $PackageRoot "nextsystem.local.tex"
+$InstalledLocalOverride = Join-Path $PackageRoot "impe.local.tex"
 if ($HasBundledAssets) {
     $InstalledFontRoot = (Join-Path $PackageRoot "assets\fonts") -replace '\\','/'
     @(
@@ -163,7 +175,10 @@ if ($HasBundledAssets) {
     ) | Set-Content -Encoding UTF8 $InstalledLocalOverride
 }
 elseif (Test-Path $InstalledLocalOverride) {
-    Remove-Item -Force $InstalledLocalOverride
+    $localOverrideText = Get-Content -LiteralPath $InstalledLocalOverride -Raw
+    if ($localOverrideText -match "Auto-generated during installation") {
+        Remove-Item -Force $InstalledLocalOverride
+    }
 }
 
 if (-not $NoRefresh) {
@@ -180,8 +195,9 @@ if (-not $NoRefresh) {
 Write-Host ""
 Write-Host "Installation complete."
 Write-Host "You can now use:"
-Write-Host "  \documentclass{nextbeamer}"
+Write-Host "  \documentclass{impebeamer}"
 Write-Host "  \UseTemplateSet{...}"
+Write-Host "Legacy next* package and class names remain available."
 if ($HasBundledAssets) {
     Write-Host "Bundled font assets were installed with this package."
 }
