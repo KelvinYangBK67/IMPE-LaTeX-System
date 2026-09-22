@@ -13,6 +13,7 @@ import
 setspace
 xecjk
 xstring
+zref
 
 # Small, public Thai OpenType family used by the CI-safe fixture.
 fonts-tlwg
