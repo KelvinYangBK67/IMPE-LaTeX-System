@@ -56,7 +56,7 @@ Current core files:
 - `impe-fonts-registry-modes.tex`
   Tracks family loading mode (`local` / `global`) and performs on-demand family activation.
 - `impe-fonts-externalized.tex`
-  Provides the stable externalized-render pipeline: cache naming, external subdocument generation, shell-out, and PDF reinsertion.
+  Provides the stable externalized-render pipeline: cache naming, external subdocument generation, shell-out, and PDF reinsertion. It invokes the portable `impe-externalized-render.lua` helper with `texlua`; the requested TeX engine is resolved from `PATH`.
 - `impe-fonts-helpers.tex`
   Small shared helper primitives used by the font framework.
 

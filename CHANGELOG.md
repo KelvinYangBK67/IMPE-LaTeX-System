@@ -12,6 +12,7 @@ For unreleased development notes, see [CHANGELOG.unreleased.md](./CHANGELOG.unre
 
 * Added canonical `impe`, `impeart`, `impebook`, `impereport`, and `impebeamer` public entry points, including `_zh` class variants.
 * Added the CTAN-oriented `impe.zip` release target alongside the existing full and core archives.
+* Added a deliberately minimal `impe-manual.tex` scaffold and reproducible `impe-manual.pdf` build step for future CTAN documentation.
 * Added regression coverage for canonical and legacy entry points, namespaced runtime files, release construction, local-font precedence, routing scalability, and Thai line breaking.
 
 ### Changed
@@ -20,6 +21,8 @@ For unreleased development notes, see [CHANGELOG.unreleased.md](./CHANGELOG.unre
 * Namespaced distributable runtime TeX filenames with an `impe-` prefix to avoid shared TeX-tree collisions.
 * Documented that IMPE is the formal project name and currently has no authoritative acronym expansion.
 * Clarified the separation between the Git checkout, the local `assets/fonts/` library, and the full, core, and CTAN-oriented distributions.
+* Changed `impe.zip` to contain one top-level `impe/` directory and moved the canonical installer destination to `tex/latex/impe/`, with managed legacy-install cleanup.
+* Replaced the PowerShell-only externalized renderer with a portable TeXLua helper that resolves engines from `PATH`.
 
 ### Fixed
 

@@ -47,6 +47,7 @@ modules/    可擴展實作
 assets/     本地執行資源，字體檔案不由 Git 追蹤
 package/    可安裝的公開入口
 scripts/    安裝與發佈腳本
+doc/        最小手冊源碼 scaffold
 docs/       詳細文件
 examples/   除錯 / 稽核示例
 ```
@@ -61,6 +62,8 @@ examples/   除錯 / 稽核示例
   只包含模板邏輯，不包含字體檔案。
 - `impe.zip`
   以 core 為基礎的 CTAN 導向源碼／執行檔封裝，包含文件與相容入口，但不包含本地字體庫。
+  解壓後只有一個頂層 `impe/` 目錄，當中包含最小的 `impe-manual.tex`
+  scaffold 與生成的 `impe-manual.pdf`。
 
 生成方式：
 
@@ -69,6 +72,8 @@ scripts\build_release.bat
 ```
 
 生成後的 zip 檔會放在 `dist/` 中。
+CTAN 建置會呼叫 `scripts/build_manual.ps1` 編譯手冊 scaffold；正式手冊內容將另行撰寫。
+PDF 與 ZIP metadata 使用 `SOURCE_DATE_EPOCH`（預設為 1.0.0 發佈日期），因此相同輸入會生成逐位元組一致的 CTAN 封裝。
 
 ## 安裝方式
 
@@ -84,7 +89,13 @@ install.bat
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-安裝腳本會把套件放進使用者 `texmf`，因此之後可以全域使用。
+安裝腳本會把套件放進使用者 `texmf` 的 `tex/latex/impe/`，因此之後可以全域使用。
+升級時會辨識舊的受管理 `tex/latex/nextsystem/` 安裝、遷移本地 override，並只移除
+已知的舊 IMPE runtime；無關的使用者檔案會保留。
+
+Externalized 字體渲染透過 `texlua` 執行自足的
+`impe-externalized-render.lua` helper。XeLaTeX 或 LuaLaTeX 由 `PATH` 解析，
+runtime 不再內嵌 TeX Live 年份或 Windows 安裝路徑。
 
 ## 使用方式
 

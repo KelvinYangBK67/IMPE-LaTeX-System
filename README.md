@@ -86,6 +86,7 @@ modules/    extendable implementations
 assets/     local runtime resources (not tracked font files)
 package/    installable public entry files
 scripts/    install and release scripts
+doc/        minimal manual source scaffold
 docs/       detailed subsystem docs
 examples/   debug / audit examples
 ```
@@ -101,6 +102,8 @@ Three release packages are generated:
 - `impe.zip`
   CTAN-oriented source/runtime archive based on the core distribution, with
   documentation and compatibility entry points but without the local font library.
+  It extracts into one top-level `impe/` directory and includes the minimal
+  `impe-manual.tex` scaffold plus its generated `impe-manual.pdf`.
 
 Recommended usage:
 
@@ -115,6 +118,10 @@ scripts\build_release.bat
 ```
 
 This creates versioned zip files under `dist/`.
+The CTAN build invokes `scripts/build_manual.ps1` to compile the manual scaffold;
+the final manual content will be written separately. The PDF and ZIP metadata use
+`SOURCE_DATE_EPOCH` (with the 1.0.0 release date as the default), so identical
+inputs produce byte-for-byte identical CTAN archives.
 
 ## Installation
 
@@ -151,7 +158,14 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
 The installer targets the user `texmf` tree, so the package becomes available
-globally on that machine.
+globally on that machine under `tex/latex/impe/`. During an upgrade it removes
+files belonging to a detected managed `tex/latex/nextsystem/` installation,
+migrates local override files, and preserves unrelated user files.
+
+Externalized font rendering uses the self-contained
+`impe-externalized-render.lua` helper through `texlua`. XeLaTeX or LuaLaTeX is
+resolved from `PATH`; no TeX Live installation year or Windows path is embedded
+in the runtime.
 
 ## Usage After Installation
 

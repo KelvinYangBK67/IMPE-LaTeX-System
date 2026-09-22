@@ -21,6 +21,20 @@ if (-not $Version) {
     throw "VERSION file is empty."
 }
 
+$DefaultSourceDateEpoch = [DateTimeOffset]::Parse("2026-09-22T00:00:00Z").ToUnixTimeSeconds()
+if ($env:SOURCE_DATE_EPOCH) {
+    if ($env:SOURCE_DATE_EPOCH -notmatch '^\d+$') {
+        throw "SOURCE_DATE_EPOCH must be an unsigned Unix timestamp."
+    }
+    $ArchiveTimestamp = [DateTimeOffset]::FromUnixTimeSeconds([long]$env:SOURCE_DATE_EPOCH)
+}
+else {
+    $ArchiveTimestamp = [DateTimeOffset]::FromUnixTimeSeconds($DefaultSourceDateEpoch)
+}
+if ($ArchiveTimestamp.Year -lt 1980 -or $ArchiveTimestamp.Year -gt 2107) {
+    throw "SOURCE_DATE_EPOCH must map to a date supported by the ZIP format (1980-2107)."
+}
+
 $TopLevelFiles = @(
     "impe-system.tex",
     "impe.sty",
@@ -41,7 +55,7 @@ $TopLevelFiles = @(
     "nextreport_zh.cls",
     "nextbeamer.cls",
     "nextbeamer_zh.cls",
-    "impe-externalized-render.ps1",
+    "impe-externalized-render.lua",
     "impe.local.example.tex",
     "nextsystem.local.example.tex"
 )
@@ -68,6 +82,56 @@ function Remove-RuntimeBuildArtifacts {
         Get-ChildItem -LiteralPath $runtimeRoot -Recurse -File |
             Where-Object { $_.Extension -ne ".tex" } |
             Remove-Item -Force
+    }
+}
+
+function New-PortableZip {
+    param(
+        [string]$SourceRoot,
+        [string]$ZipPath,
+        [switch]$IncludeRoot
+    )
+
+    Add-Type -AssemblyName System.IO.Compression
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+    $sourceFull = (Get-Item -LiteralPath $SourceRoot).FullName.TrimEnd([char[]](92, 47))
+    $baseFull = if ($IncludeRoot) { Split-Path -Parent $sourceFull } else { $sourceFull }
+    $zipStream = [System.IO.File]::Open($ZipPath, [System.IO.FileMode]::Create)
+    try {
+        $archive = New-Object System.IO.Compression.ZipArchive(
+            $zipStream,
+            [System.IO.Compression.ZipArchiveMode]::Create,
+            $false
+        )
+        try {
+            Get-ChildItem -LiteralPath $sourceFull -Recurse -File |
+                Sort-Object FullName |
+                ForEach-Object {
+                    $entryName = $_.FullName.Substring($baseFull.Length).TrimStart([char[]](92, 47)).Replace([char]92, [char]47)
+                    $entry = $archive.CreateEntry($entryName, [System.IO.Compression.CompressionLevel]::Optimal)
+                    $entry.LastWriteTime = $ArchiveTimestamp
+                    $entryStream = $entry.Open()
+                    try {
+                        $sourceStream = [System.IO.File]::OpenRead($_.FullName)
+                        try {
+                            $sourceStream.CopyTo($entryStream)
+                        }
+                        finally {
+                            $sourceStream.Dispose()
+                        }
+                    }
+                    finally {
+                        $entryStream.Dispose()
+                    }
+                }
+        }
+        finally {
+            $archive.Dispose()
+        }
+    }
+    finally {
+        $zipStream.Dispose()
     }
 }
 
@@ -157,7 +221,7 @@ function New-ReleasePackage {
         Set-Content -Path (Join-Path $StageRoot "RELEASE.txt") -Value $Note
     }
 
-    Compress-Archive -Path (Join-Path $StageRoot "*") -DestinationPath $ZipPath -Force
+    New-PortableZip -SourceRoot $StageRoot -ZipPath $ZipPath
 
     Write-Host "Release directory: $StageRoot"
     Write-Host "Release zip:       $ZipPath"
@@ -208,6 +272,11 @@ function New-CtanPackage {
         Copy-Item -Force (Join-Path $RepoRoot $file) (Join-Path $StageRoot $file)
     }
 
+    & (Join-Path $ScriptRoot "build_manual.ps1") -OutputRoot $StageRoot
+    if ($LASTEXITCODE -ne 0) {
+        throw "Manual construction failed."
+    }
+
     $AssetsReadmes = @("README.md", "README-zh.md")
     if (Test-Path (Join-Path $RepoRoot "assets")) {
         $CtanAssets = Join-Path $StageRoot "assets"
@@ -221,7 +290,7 @@ function New-CtanPackage {
     }
 
     Set-Content -Path (Join-Path $StageRoot "RELEASE.txt") -Value "CTAN-oriented IMPE v$Version source and runtime archive. Font binaries are intentionally excluded."
-    Compress-Archive -Path (Join-Path $StageRoot "*") -DestinationPath $ZipPath -Force
+    New-PortableZip -SourceRoot $StageRoot -ZipPath $ZipPath -IncludeRoot
 
     Write-Host "CTAN directory: $StageRoot"
     Write-Host "CTAN zip:       $ZipPath"

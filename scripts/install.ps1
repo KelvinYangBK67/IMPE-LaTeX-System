@@ -9,7 +9,8 @@ $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $IsReleaseRoot = Test-Path (Join-Path $ScriptRoot "impe.sty")
 $RepoRoot = if ($IsReleaseRoot) { $ScriptRoot } else { Split-Path -Parent $ScriptRoot }
 $PackageSourceRoot = if ($IsReleaseRoot) { $ScriptRoot } else { Join-Path $RepoRoot "package" }
-$PackageRoot = Join-Path $TexmfRoot "tex\latex\nextsystem"
+$PackageRoot = Join-Path $TexmfRoot "tex\latex\impe"
+$LegacyPackageRoot = Join-Path $TexmfRoot "tex\latex\nextsystem"
 
 $RuntimeFiles = @(
     "impe-system.tex",
@@ -23,7 +24,7 @@ $RuntimeFiles = @(
     "impebeamer.cls",
     "impebeamer_zh.cls",
     "nextsystem.sty",
-    "impe-externalized-render.ps1",
+    "impe-externalized-render.lua",
     "nextart.cls",
     "nextart_zh.cls",
     "nextbook.cls",
@@ -131,6 +132,93 @@ function Sync-ManagedDirectory {
     }
 }
 
+function Test-LegacyManagedInstall {
+    param([string]$Path)
+
+    $legacyEntry = Join-Path $Path "nextsystem.sty"
+    if (-not (Test-Path -LiteralPath $legacyEntry)) {
+        return $false
+    }
+
+    try {
+        $entryText = Get-Content -LiteralPath $legacyEntry -Raw
+        return ($entryText -match '\\ProvidesPackage\{nextsystem\}' -and
+                $entryText -match '(IMPE|next_system|Compatibility alias for impe)')
+    }
+    catch {
+        return $false
+    }
+}
+
+function Move-LegacyLocalOverrides {
+    param(
+        [string]$LegacyRoot,
+        [string]$CanonicalRoot
+    )
+
+    foreach ($name in @("impe.local.tex", "nextsystem.local.tex")) {
+        $source = Join-Path $LegacyRoot $name
+        $target = Join-Path $CanonicalRoot $name
+        if ((Test-Path -LiteralPath $source) -and -not (Test-Path -LiteralPath $target)) {
+            Copy-ManagedFile -Source $source -Target $target
+            if (Test-Path -LiteralPath $target) {
+                Remove-StaleItem -Path $source
+                Write-Host "  Migrated legacy local override: $name"
+            }
+        }
+    }
+}
+
+function Remove-LegacyManagedInstall {
+    param(
+        [string]$Path,
+        [string]$CanonicalRoot
+    )
+
+    $managedFiles = @($RuntimeFiles)
+    $managedFiles += @(
+        "impe-externalized-render.ps1",
+        "nextsystem-externalized-render.ps1",
+        "system.tex"
+    )
+    foreach ($name in $managedFiles) {
+        Remove-StaleItem -Path (Join-Path $Path $name)
+    }
+    foreach ($name in @("core", "catalog", "modules", "assets")) {
+        $legacyManagedRoot = Join-Path $Path $name
+        $canonicalManagedRoot = Join-Path $CanonicalRoot $name
+        if ((Test-Path -LiteralPath $legacyManagedRoot) -and
+            (Test-Path -LiteralPath $canonicalManagedRoot)) {
+            foreach ($canonicalFile in (Get-ChildItem -LiteralPath $canonicalManagedRoot -Recurse -File)) {
+                $relative = $canonicalFile.FullName.Substring($canonicalManagedRoot.Length).TrimStart('\','/')
+                Remove-StaleItem -Path (Join-Path $legacyManagedRoot $relative)
+            }
+        }
+
+        if (Test-Path -LiteralPath $legacyManagedRoot) {
+            $legacyDirs = Get-ChildItem -LiteralPath $legacyManagedRoot -Recurse -Directory |
+                Sort-Object { $_.FullName.Length } -Descending
+            foreach ($dir in $legacyDirs) {
+                if (@(Get-ChildItem -LiteralPath $dir.FullName -Force).Count -eq 0) {
+                    Remove-Item -LiteralPath $dir.FullName -Force
+                }
+            }
+            if (@(Get-ChildItem -LiteralPath $legacyManagedRoot -Force).Count -eq 0) {
+                Remove-Item -LiteralPath $legacyManagedRoot -Force
+            }
+        }
+    }
+
+    $remaining = @(Get-ChildItem -LiteralPath $Path -Force -ErrorAction SilentlyContinue)
+    if ($remaining.Count -eq 0) {
+        Remove-Item -LiteralPath $Path -Force
+        Write-Host "  Removed empty legacy installation directory."
+    }
+    else {
+        Write-Warning "Preserved unmanaged files in legacy installation directory: $Path"
+    }
+}
+
 $HasBundledAssets = Test-Path (Join-Path $RepoRoot "assets\fonts")
 $InstallFlavor = if ($HasBundledAssets) { "full" } else { "core" }
 
@@ -165,19 +253,48 @@ foreach ($dir in $RuntimeDirs) {
     Sync-ManagedDirectory -SourceRoot $source -TargetRoot $target
 }
 
+$HasManagedLegacyInstall = Test-LegacyManagedInstall -Path $LegacyPackageRoot
+if ($HasManagedLegacyInstall) {
+    Write-Host "  Managed legacy installation detected: $LegacyPackageRoot"
+    Move-LegacyLocalOverrides `
+        -LegacyRoot $LegacyPackageRoot `
+        -CanonicalRoot $PackageRoot
+}
+
 $InstalledLocalOverride = Join-Path $PackageRoot "impe.local.tex"
 if ($HasBundledAssets) {
     $InstalledFontRoot = (Join-Path $PackageRoot "assets\fonts") -replace '\\','/'
-    @(
-        "% Auto-generated during installation."
-        "% This file anchors the bundled font root inside the installed texmf tree."
-        "\SetCatalogFontRoot{$InstalledFontRoot}"
-    ) | Set-Content -Encoding UTF8 $InstalledLocalOverride
+    $writeAutoOverride = $true
+    if (Test-Path -LiteralPath $InstalledLocalOverride) {
+        $existingOverride = Get-Content -LiteralPath $InstalledLocalOverride -Raw
+        if ($existingOverride -notmatch "Auto-generated during installation") {
+            $writeAutoOverride = $false
+            Write-Host "  Preserving user-managed impe.local.tex."
+        }
+    }
+    if ($writeAutoOverride) {
+        @(
+            "% Auto-generated during installation."
+            "% This file anchors the bundled font root inside the installed texmf tree."
+            "\SetCatalogFontRoot{$InstalledFontRoot}"
+        ) | Set-Content -Encoding UTF8 $InstalledLocalOverride
+    }
 }
 elseif (Test-Path $InstalledLocalOverride) {
     $localOverrideText = Get-Content -LiteralPath $InstalledLocalOverride -Raw
     if ($localOverrideText -match "Auto-generated during installation") {
         Remove-Item -Force $InstalledLocalOverride
+    }
+}
+
+if ($HasManagedLegacyInstall) {
+    if ($InstallWarnings.Count -eq 0) {
+        Remove-LegacyManagedInstall `
+            -Path $LegacyPackageRoot `
+            -CanonicalRoot $PackageRoot
+    }
+    else {
+        Write-Warning "The legacy installation was preserved because the canonical install completed with warnings."
     }
 }
 

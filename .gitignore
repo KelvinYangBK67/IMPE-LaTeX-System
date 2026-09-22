@@ -29,5 +29,6 @@ dist/
 assets/fonts/
 !assets/.gitkeep
 **/.nextex-externalized/
+**/.impe-externalized/
 !_showcase/main.pdf
 papers/

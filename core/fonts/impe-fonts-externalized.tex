@@ -17,7 +17,6 @@
 \tl_new:N \l__font_externalized_clusterwise_tl
 \tl_new:N \l__font_externalized_cache_key_tl
 \tl_new:N \l__font_externalized_shell_cmd_tl
-\tl_new:N \l__font_externalized_engine_cmd_tl
 \tl_new:N \l__font_externalized_runner_path_tl
 \tl_new:N \l__font_externalized_current_line_tl
 \tl_new:N \l__font_externalized_middle_body_tl
@@ -106,41 +105,17 @@
 \cs_new:Npn \__font_externalized_cmd_space:
   { \char_generate:nn { 32 } { 12 } }
 
-\cs_new_protected:Npn \__font_externalized_resolve_engine:
-  {
-    \str_case:VnF \l__font_externalized_engine_tl
-      {
-        { lualatex }
-          {
-            \tl_set:Nn \l__font_externalized_engine_cmd_tl
-              { C:/texlive/2025/bin/windows/lualatex.exe }
-          }
-        { xelatex }
-          {
-            \tl_set:Nn \l__font_externalized_engine_cmd_tl
-              { C:/texlive/2025/bin/windows/xelatex.exe }
-          }
-      }
-      {
-        \tl_set_eq:NN \l__font_externalized_engine_cmd_tl
-          \l__font_externalized_engine_tl
-      }
-  }
-
 \cs_new_protected:Npn \__font_externalized_resolve_runner:
   {
-    \tl_set:Nx \l_tmpa_tl { \tl_to_str:v { CatalogFontRoot } }
-    \regex_replace_once:nnN
-      { /assets/fonts/?$ }
+    \tl_set:Nx \l__font_externalized_runner_path_tl
+      { \file_full_name:n { impe-externalized-render.lua } }
+    \tl_if_blank:VTF \l__font_externalized_runner_path_tl
+      {
+        \PackageError{font-externalized}
+          {Portable~externalized-render~helper~not~found}
+          {Install~impe-externalized-render.lua~with~the~IMPE~runtime.}
+      }
       { }
-      \l_tmpa_tl
-    \tl_set:Nx \l_tmpb_tl
-      { \l_tmpa_tl / impe-externalized-render.ps1 }
-    \tl_set:Nx \l_tmpc_tl
-      { \l_tmpa_tl / package / impe-externalized-render.ps1 }
-    \file_if_exist:VTF \l_tmpb_tl
-      { \tl_set_eq:NN \l__font_externalized_runner_path_tl \l_tmpb_tl }
-      { \tl_set_eq:NN \l__font_externalized_runner_path_tl \l_tmpc_tl }
   }
 
 \cs_new_protected:Npn \__font_externalized_set_paths:n #1
@@ -162,19 +137,12 @@
   {
     \file_if_exist:nF { \l__font_externalized_cache_dir_tl / . }
       {
+        \__font_externalized_resolve_runner:
         \tl_set:Nx \l__font_externalized_shell_cmd_tl
           {
-            cmd
+            texlua
             \__font_externalized_cmd_space:
-            /C
-            \__font_externalized_cmd_space:
-            if
-            \__font_externalized_cmd_space:
-            not
-            \__font_externalized_cmd_space:
-            exist
-            \__font_externalized_cmd_space:
-            "\tl_use:N \l__font_externalized_cache_dir_tl"
+            "\tl_use:N \l__font_externalized_runner_path_tl"
             \__font_externalized_cmd_space:
             mkdir
             \__font_externalized_cmd_space:
@@ -316,25 +284,16 @@
       { }
       {
         \__font_externalized_ensure_cache_dir:
-        \__font_externalized_resolve_engine:
         \__font_externalized_resolve_runner:
         \tl_set:Nx \l__font_externalized_shell_cmd_tl
           {
-            powershell
-            \__font_externalized_cmd_space:
-            -ExecutionPolicy
-            \__font_externalized_cmd_space:
-            Bypass
-            \__font_externalized_cmd_space:
-            -File
+            texlua
             \__font_externalized_cmd_space:
             "\tl_use:N \l__font_externalized_runner_path_tl"
             \__font_externalized_cmd_space:
-            -Engine
+            render
             \__font_externalized_cmd_space:
             "\tl_use:N \l__font_externalized_engine_tl"
-            \__font_externalized_cmd_space:
-            -Source
             \__font_externalized_cmd_space:
             "\tl_use:N \l__font_externalized_tex_path_tl"
           }
@@ -370,24 +329,16 @@
 \cs_new_protected:Npn \__font_externalized_cleanup_file:n #1
   {
     \tl_set:Nn \l_tmpa_tl {#1}
-    \tl_replace_all:Nnn \l_tmpa_tl { / } { \c_backslash_str }
+    \__font_externalized_resolve_runner:
     \tl_set:Nx \l__font_externalized_shell_cmd_tl
       {
-        cmd
+        texlua
         \__font_externalized_cmd_space:
-        /C
+        "\tl_use:N \l__font_externalized_runner_path_tl"
         \__font_externalized_cmd_space:
-        if
+        remove
         \__font_externalized_cmd_space:
-        exist
-        \__font_externalized_cmd_space:
-        "\l_tmpa_tl"
-        \__font_externalized_cmd_space:
-        del
-        \__font_externalized_cmd_space:
-        /Q
-        \__font_externalized_cmd_space:
-        "\l_tmpa_tl"
+        "\tl_use:N \l_tmpa_tl"
       }
     \exp_args:NV \__font_externalized_shell_now:n \l__font_externalized_shell_cmd_tl
   }

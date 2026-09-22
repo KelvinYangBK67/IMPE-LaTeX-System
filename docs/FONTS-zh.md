@@ -53,7 +53,7 @@ core/fonts/impe-fonts-system.tex
 - `impe-fonts-registry-modes.tex`
   追蹤 family 的載入模式（`local` / `global`），並負責 on-demand family activation。
 - `impe-fonts-externalized.tex`
-  提供穩定的 externalized render 管線，包括快取命名、外部子文件生成、shell-out 與 PDF 嵌回。
+  提供穩定的 externalized render 管線，包括快取命名、外部子文件生成、shell-out 與 PDF 嵌回。它透過 `texlua` 呼叫可攜的 `impe-externalized-render.lua` helper，並從 `PATH` 解析指定的 TeX 引擎。
 - `impe-fonts-helpers.tex`
   提供字體框架共用的小型 helper primitive。
 

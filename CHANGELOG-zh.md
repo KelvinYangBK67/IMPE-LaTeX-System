@@ -12,6 +12,7 @@ IMPE LaTeX System 的已發佈版本變更記錄於此。
 
 * 新增標準公開入口 `impe`、`impeart`、`impebook`、`impereport`、`impebeamer` 及各 `_zh` class。
 * 在既有 full 與 core 封裝之外新增 CTAN 導向的 `impe.zip` release target。
+* 新增刻意保持最小內容的 `impe-manual.tex` scaffold 與可重現的 `impe-manual.pdf` 建置步驟，供後續 CTAN 手冊使用。
 * 新增標準／舊名入口、內部檔名命名空間、release 組裝、局部字體優先級、路由擴展性與泰文斷行的回歸測試。
 
 ### 調整
@@ -20,6 +21,8 @@ IMPE LaTeX System 的已發佈版本變更記錄於此。
 * 所有可分發的內部 TeX runtime 檔改用 `impe-` 前綴，避免共享 TeX tree 中的檔名碰撞。
 * 明確記錄 IMPE 是專案正式名稱，目前沒有權威的縮寫全稱。
 * 釐清 Git checkout、本地 `assets/fonts/` 字體庫，以及 full、core、CTAN 導向發佈包之間的關係。
+* 將 `impe.zip` 改為只含一個頂層 `impe/` 目錄，並把標準安裝位置改為 `tex/latex/impe/`，同時安全清理受管理的舊安裝。
+* 以從 `PATH` 解析引擎的可攜 TeXLua helper 取代只支援 PowerShell 的 externalized renderer。
 
 ### 修正
 
