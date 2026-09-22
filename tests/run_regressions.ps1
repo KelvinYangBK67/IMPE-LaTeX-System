@@ -26,7 +26,7 @@ if ($PublicFonts) {
     if (-not $publicFontSource -or -not (Test-Path -LiteralPath $publicFontSource)) {
         throw "TeX Live's lmroman10-regular.otf is required for the public-font fixture."
     }
-    $publicThaiFontSource = & $kpsewhich.Source "ArundinaSerif.ttf"
+    $publicThaiFontSource = & $kpsewhich.Source "Garuda.otf"
     if ($publicThaiFontSource) {
         $publicThaiFontSource = $publicThaiFontSource.Trim()
     }
@@ -34,10 +34,10 @@ if ($PublicFonts) {
         $localThaiFont = Join-Path $RepoRoot "assets/fonts/thai/NotoSerifThai-Regular.ttf"
         if (Test-Path -LiteralPath $localThaiFont) {
             $publicThaiFontSource = $localThaiFont
-            Write-Warning "TeX Live's ArundinaSerif.ttf is unavailable; using the local Thai font only for this local run."
+            Write-Warning "TeX Live's Garuda.otf is unavailable; using the local Thai font only for this local run."
         }
         else {
-            throw "The public-font regression requires TeX Live package fonts-arundina (ArundinaSerif.ttf)."
+            throw "The public-font regression requires TeX Live package fonts-tlwg (Garuda.otf)."
         }
     }
 

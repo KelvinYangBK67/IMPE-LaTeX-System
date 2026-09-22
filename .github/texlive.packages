@@ -14,5 +14,5 @@ setspace
 xecjk
 xstring
 
-# Small, public Thai OpenType/TrueType family used by the CI-safe fixture.
-fonts-arundina
+# Small, public Thai OpenType family used by the CI-safe fixture.
+fonts-tlwg
