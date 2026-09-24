@@ -7,8 +7,12 @@ $ErrorActionPreference = "Stop"
 $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $ScriptRoot
 $ManualSource = Join-Path $RepoRoot "doc/en/impe-manual-en.tex"
+$ManualSourceRoot = Split-Path -Parent $ManualSource
 $ShowcaseSource = Join-Path $RepoRoot "_showcase/main.pdf"
 $VersionFile = Join-Path $RepoRoot "VERSION"
+$DirectVersionFile = Join-Path $ManualSourceRoot "VERSION"
+$DirectShowcase = Join-Path $ManualSourceRoot "impe-showcase.pdf"
+$TrackedManualPdf = Join-Path $ManualSourceRoot "impe-manual-en.pdf"
 $DefaultSourceDateEpoch = [DateTimeOffset]::Parse("2026-09-22T00:00:00Z").ToUnixTimeSeconds().ToString()
 
 if (-not $OutputRoot) {
@@ -24,6 +28,11 @@ if (-not (Test-Path -LiteralPath $ShowcaseSource)) {
 if (-not (Test-Path -LiteralPath $VersionFile)) {
     throw "VERSION file not found: $VersionFile"
 }
+
+# Keep the source directory independently compilable by normal editor/latexmk
+# workflows without parent-directory resource references in the TeX source.
+Copy-Item -LiteralPath $VersionFile -Destination $DirectVersionFile -Force
+Copy-Item -LiteralPath $ShowcaseSource -Destination $DirectShowcase -Force
 
 $xelatex = Get-Command xelatex -ErrorAction Stop
 New-Item -ItemType Directory -Force -Path $OutputRoot | Out-Null
@@ -113,8 +122,10 @@ $manualPdf = Join-Path $OutputRoot "impe-manual.pdf"
 if (-not (Test-Path -LiteralPath $manualPdf)) {
     throw "Manual PDF was not produced: $manualPdf"
 }
+Copy-Item -LiteralPath $manualPdf -Destination $TrackedManualPdf -Force
 
 Write-Host "Manual engine: XeLaTeX"
 Write-Host "Manual source: $(Join-Path $OutputRoot 'impe-manual.tex')"
 Write-Host "Showcase PDF:  $(Join-Path $OutputRoot 'impe-showcase.pdf')"
 Write-Host "Manual PDF:    $manualPdf"
+Write-Host "Tracked PDF:   $TrackedManualPdf"

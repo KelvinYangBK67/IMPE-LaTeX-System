@@ -9,6 +9,8 @@
 *.fdb_latexmk
 *.synctex.gz
 *.pdf
+!doc/en/impe-manual-en.pdf
+!doc/en/impe-showcase.pdf
 *.idx
 *.ilg
 *.ind

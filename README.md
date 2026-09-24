@@ -125,6 +125,20 @@ XeLaTeX. The PDF and ZIP metadata use
 `SOURCE_DATE_EPOCH` (with the 1.0.0 release date as the default), so identical
 inputs produce byte-for-byte identical CTAN archives.
 
+The authoritative English manual can also be built directly from its source
+directory. The directory-local latexmk configuration selects XeLaTeX, resolves
+this checkout's runtime before any installed copy, and applies the same stable
+build timestamp used by the release script:
+
+```powershell
+Set-Location doc/en
+latexmk -xelatex impe-manual-en.tex
+```
+
+The resulting `doc/en/impe-manual-en.pdf` is a tracked release artifact. Run
+`scripts/build_manual.ps1` from the repository root to refresh both that file
+and the staged files under `dist/manual/`.
+
 ## Continuous Integration
 
 The workflow at `.github/workflows/ci.yml` runs the public regression suite on

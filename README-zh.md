@@ -99,6 +99,17 @@ CTAN 建置會呼叫 `scripts/build_manual.ps1`，暫存 `VERSION`、完整 show
 與倉庫 runtime，再以 XeLaTeX 編譯兩次英文手冊。
 PDF 與 ZIP metadata 使用 `SOURCE_DATE_EPOCH`（預設為 1.0.0 發佈日期），因此相同輸入會生成逐位元組一致的 CTAN 封裝。
 
+權威英文手冊也可直接從源碼目錄建置。該目錄內的 latexmk 設定會選用
+XeLaTeX、優先解析目前 checkout 的 runtime，並套用與發行腳本相同的固定時間戳：
+
+```powershell
+Set-Location doc/en
+latexmk -xelatex impe-manual-en.tex
+```
+
+生成的 `doc/en/impe-manual-en.pdf` 是受 Git 追蹤的發行成品。從倉庫根目錄
+執行 `scripts/build_manual.ps1`，可同時更新該檔案與 `dist/manual/` 下的暫存成品。
+
 ## 安裝方式
 
 對於完整套件，解壓 release zip 後執行：

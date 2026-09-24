@@ -35,6 +35,7 @@ IMPE LaTeX System 的已發佈版本變更記錄於此。
 * `\UseLocalFont` 與 `\UseLocalFonts` 現在會明確要求 local mode；無 mode 的 `\UseFont`、`\UseFonts` 與 `fonts` template key 仍採自動模式。
 * 為可選的 LaTeX tagged-math 定位 hook 增加空操作 fallback，確保標題與 tabular 路徑相容於 TeX Live 2026 的 tools bundle。
 * 倉庫手冊建置現在使用目前的英文源碼、checkout 自有 runtime，以及暫存的 `VERSION` 與 showcase 資源，不再依賴脆弱的上層相對路徑。
+* 現在可在源碼目錄直接以 XeLaTeX/latexmk 建置 `doc/en/impe-manual-en.tex`，並將生成的英文手冊 PDF 納入版本控制。
 * 明確的局部字體命令現在會在其作用域內優先於自動 Unicode-range 路由，離開作用域後恢復正常全域路由。
 * 將固定生成 4096 個 class transition 的方法改為只針對已配置 XeTeX interchar class 的稀疏建表，並在文檔開始時補登較晚配置的 class；同時修正同 owner 比較，讓相鄰 block 維持同一 shaping run。
 * 載入泰文字體 family 時，透過 XeTeX 的 ICU `th_TH` locale 提供泰文字典斷行。

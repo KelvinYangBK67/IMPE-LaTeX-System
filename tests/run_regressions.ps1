@@ -212,7 +212,76 @@ $manualHashB = (Get-FileHash -LiteralPath (Join-Path $manualBuildB "impe-manual.
 if ($manualHashA -ne $manualHashB) {
     throw "Independent XeLaTeX manual builds must be byte-for-byte reproducible."
 }
+$directManualRoot = Join-Path $RepoRoot "doc/en"
+$directManualVersion = Join-Path $directManualRoot "VERSION"
+$directManualShowcase = Join-Path $directManualRoot "impe-showcase.pdf"
+$directManualPdf = Join-Path $directManualRoot "impe-manual-en.pdf"
+$rootVersion = (Get-Content -LiteralPath (Join-Path $RepoRoot "VERSION") -Raw).Trim()
+$directVersion = (Get-Content -LiteralPath $directManualVersion -Raw).Trim()
+if ($rootVersion -ne $directVersion) {
+    throw "Direct-build manual VERSION must match the repository VERSION."
+}
 $showcaseHash = (Get-FileHash -LiteralPath (Join-Path $RepoRoot "_showcase/main.pdf") -Algorithm SHA256).Hash
+$directShowcaseHash = (Get-FileHash -LiteralPath $directManualShowcase -Algorithm SHA256).Hash
+if ($directShowcaseHash -ne $showcaseHash) {
+    throw "Direct-build manual showcase must match _showcase/main.pdf."
+}
+$directManualHash = (Get-FileHash -LiteralPath $directManualPdf -Algorithm SHA256).Hash
+if ($directManualHash -ne $manualHashA) {
+    throw "Tracked direct-build manual PDF must match the reproducible staged build."
+}
+
+$directManualBuild = Join-Path $BuildRoot "manual-direct"
+New-Item -ItemType Directory -Force -Path $directManualBuild | Out-Null
+$directPreviousTexInputs = $env:TEXINPUTS
+$directPreviousSourceDateEpoch = $env:SOURCE_DATE_EPOCH
+$directPreviousForceSourceDate = $env:FORCE_SOURCE_DATE
+try {
+    $directPackageRoot = (Join-Path $RepoRoot "package").Replace([char]92, [char]47)
+    $env:TEXINPUTS = "$directPackageRoot$texInputSeparator$portableRepoRoot$texInputSeparator"
+    if (-not $env:SOURCE_DATE_EPOCH) {
+        $env:SOURCE_DATE_EPOCH = "1790035200"
+    }
+    $env:FORCE_SOURCE_DATE = "1"
+
+    Push-Location $directManualRoot
+    foreach ($pass in 1..2) {
+        & $xelatex.Source `
+            -interaction=nonstopmode `
+            -halt-on-error `
+            -recorder `
+            "-output-directory=$directManualBuild" `
+            "impe-manual-en.tex" | Out-Host
+        if ($LASTEXITCODE -ne 0) {
+            throw "Direct source-directory manual build failed on pass $pass."
+        }
+    }
+}
+finally {
+    if ((Get-Location).Path -eq $directManualRoot) {
+        Pop-Location
+    }
+    $env:TEXINPUTS = $directPreviousTexInputs
+    $env:SOURCE_DATE_EPOCH = $directPreviousSourceDateEpoch
+    $env:FORCE_SOURCE_DATE = $directPreviousForceSourceDate
+}
+
+$directBuildPdf = Join-Path $directManualBuild "impe-manual-en.pdf"
+$directBuildLog = Join-Path $directManualBuild "impe-manual-en.log"
+$directBuildFls = Join-Path $directManualBuild "impe-manual-en.fls"
+if (-not (Test-Path -LiteralPath $directBuildPdf)) {
+    throw "Direct source-directory manual build did not produce a PDF."
+}
+$directBuildLogText = Get-Content -LiteralPath $directBuildLog -Raw
+$directBuildFlsText = Get-Content -LiteralPath $directBuildFls -Raw
+$expectedRepoClass = (Join-Path $RepoRoot "package/impeart.cls").Replace([char]92, [char]47).ToLowerInvariant()
+$normalizedDirectFls = $directBuildFlsText.Replace([char]92, [char]47).ToLowerInvariant()
+if (-not $normalizedDirectFls.Contains($expectedRepoClass)) {
+    throw "Direct manual build did not load impeart.cls from this checkout."
+}
+if ($directBuildLogText -notmatch '(?s)Output written on .*?\(55 pages') {
+    throw "Direct source-directory manual build did not produce the complete 55-page manual."
+}
 foreach ($manualBuild in @($manualBuildA, $manualBuildB)) {
     foreach ($required in @("VERSION", "impe-manual.tex", "impe-manual.pdf", "impe-showcase.pdf")) {
         if (-not (Test-Path -LiteralPath (Join-Path $manualBuild $required))) {

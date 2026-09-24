@@ -1,3 +1,4 @@
+% !TeX program = xelatex
 \documentclass[11pt]{impeart}
 
 % The manual deliberately applies a global house style.  Ordinary documents
@@ -22,7 +23,10 @@
 
 % Keep the generated manual reproducible when SOURCE_DATE_EPOCH is fixed.
 \ifdefined\XeTeXversion
-  \special{pdf:trailerid [(IMPE-\IMPEVersion-manual-en)(IMPE-\IMPEVersion-manual-en)]}
+  \special{pdf:trailerid [
+    <5677bc84f2edee3de328d781062f390b>
+    <778a1a55595b871c7ecbd03469f75deb>
+  ]}
 \else\ifdefined\pdftrailerid
   \expandafter\pdftrailerid\expandafter{IMPE-\IMPEVersion-manual-en}
 \fi
