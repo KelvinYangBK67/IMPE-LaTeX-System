@@ -197,115 +197,169 @@ if ($LASTEXITCODE -ne 0 -or
     throw "Portable externalized helper failed to remove sidecar files."
 }
 
-$manualBuildA = Join-Path $BuildRoot "manual-a"
-$manualBuildB = Join-Path $BuildRoot "manual-b"
-& (Join-Path $RepoRoot "scripts/build_manual.ps1") -OutputRoot $manualBuildA
-if ($LASTEXITCODE -ne 0) {
-    throw "First independent XeLaTeX manual build failed."
-}
-& (Join-Path $RepoRoot "scripts/build_manual.ps1") -OutputRoot $manualBuildB
-if ($LASTEXITCODE -ne 0) {
-    throw "Second independent XeLaTeX manual build failed."
-}
-$manualHashA = (Get-FileHash -LiteralPath (Join-Path $manualBuildA "impe-manual.pdf") -Algorithm SHA256).Hash
-$manualHashB = (Get-FileHash -LiteralPath (Join-Path $manualBuildB "impe-manual.pdf") -Algorithm SHA256).Hash
-if ($manualHashA -ne $manualHashB) {
-    throw "Independent XeLaTeX manual builds must be byte-for-byte reproducible."
-}
-$directManualRoot = Join-Path $RepoRoot "doc/en"
-$directManualVersion = Join-Path $directManualRoot "VERSION"
-$directManualShowcase = Join-Path $directManualRoot "impe-showcase.pdf"
-$directManualPdf = Join-Path $directManualRoot "impe-manual-en.pdf"
-$rootVersion = (Get-Content -LiteralPath (Join-Path $RepoRoot "VERSION") -Raw).Trim()
-$directVersion = (Get-Content -LiteralPath $directManualVersion -Raw).Trim()
-if ($rootVersion -ne $directVersion) {
-    throw "Direct-build manual VERSION must match the repository VERSION."
-}
-$showcaseHash = (Get-FileHash -LiteralPath (Join-Path $RepoRoot "_showcase/main.pdf") -Algorithm SHA256).Hash
-$directShowcaseHash = (Get-FileHash -LiteralPath $directManualShowcase -Algorithm SHA256).Hash
-if ($directShowcaseHash -ne $showcaseHash) {
-    throw "Direct-build manual showcase must match _showcase/main.pdf."
-}
-$directManualHash = (Get-FileHash -LiteralPath $directManualPdf -Algorithm SHA256).Hash
-if ($directManualHash -ne $manualHashA) {
-    throw "Tracked direct-build manual PDF must match the reproducible staged build."
+$manualPreviousTexInputs = $env:TEXINPUTS
+if ($PublicFonts) {
+    $env:TEXINPUTS = "$portablePublicInputRoot//$texInputSeparator"
 }
 
-$directManualBuild = Join-Path $BuildRoot "manual-direct"
-New-Item -ItemType Directory -Force -Path $directManualBuild | Out-Null
-$directPreviousTexInputs = $env:TEXINPUTS
-$directPreviousSourceDateEpoch = $env:SOURCE_DATE_EPOCH
-$directPreviousForceSourceDate = $env:FORCE_SOURCE_DATE
-try {
-    $directPackageRoot = (Join-Path $RepoRoot "package").Replace([char]92, [char]47)
-    $env:TEXINPUTS = "$directPackageRoot$texInputSeparator$portableRepoRoot$texInputSeparator"
-    if (-not $env:SOURCE_DATE_EPOCH) {
-        $env:SOURCE_DATE_EPOCH = "1790035200"
-    }
-    $env:FORCE_SOURCE_DATE = "1"
-
-    Push-Location $directManualRoot
-    foreach ($pass in 1..2) {
-        & $xelatex.Source `
-            -interaction=nonstopmode `
-            -halt-on-error `
-            -recorder `
-            "-output-directory=$directManualBuild" `
-            "impe-manual-en.tex" | Out-Host
-        if ($LASTEXITCODE -ne 0) {
-            throw "Direct source-directory manual build failed on pass $pass."
+foreach ($manualDirectory in @("doc/en", "doc/zh-tw")) {
+    foreach ($forbiddenName in @("VERSION", "impe-showcase.pdf", "main.pdf")) {
+        if (Test-Path -LiteralPath (Join-Path $RepoRoot "$manualDirectory/$forbiddenName")) {
+            throw "$manualDirectory must not contain copied repository resource $forbiddenName."
         }
     }
 }
-finally {
-    if ((Get-Location).Path -eq $directManualRoot) {
+if (Get-ChildItem -LiteralPath (Join-Path $RepoRoot "_showcase") -File |
+    Where-Object { $_.Name -like "*-SAVE-ERROR" }) {
+    throw "The canonical showcase directory contains SAVE-ERROR leftovers."
+}
+if (Test-Path -LiteralPath (Join-Path $RepoRoot "archive")) {
+    throw "A repository-local archive directory must not be introduced."
+}
+
+$manualBuildEn = Join-Path $BuildRoot "manual-en"
+$manualBuildZh = Join-Path $BuildRoot "manual-zh-tw"
+$manualBuildAllA = Join-Path $BuildRoot "manual-all-a"
+$manualBuildAllB = Join-Path $BuildRoot "manual-all-b"
+foreach ($manualInvocation in @(
+    @{ Language = "en"; Output = $manualBuildEn },
+    @{ Language = "zh-tw"; Output = $manualBuildZh },
+    @{ Language = "all"; Output = $manualBuildAllA },
+    @{ Language = "all"; Output = $manualBuildAllB }
+)) {
+    & (Join-Path $RepoRoot "scripts/build_manual.ps1") `
+        -Language $manualInvocation.Language `
+        -OutputRoot $manualInvocation.Output `
+        -NoUpdateTracked
+    if ($LASTEXITCODE -ne 0) {
+        throw "Scripted $($manualInvocation.Language) manual build failed."
+    }
+}
+
+if (-not (Test-Path -LiteralPath (Join-Path $manualBuildEn "impe-manual-en.pdf")) -or
+    (Test-Path -LiteralPath (Join-Path $manualBuildEn "impe-manual-zh-tw.pdf"))) {
+    throw "The English-only manual build produced an incorrect artifact set."
+}
+if (-not (Test-Path -LiteralPath (Join-Path $manualBuildZh "impe-manual-zh-tw.pdf")) -or
+    (Test-Path -LiteralPath (Join-Path $manualBuildZh "impe-manual-en.pdf"))) {
+    throw "The Traditional Chinese-only manual build produced an incorrect artifact set."
+}
+
+$manualPdfNames = @("impe-manual-en.pdf", "impe-manual-zh-tw.pdf")
+foreach ($manualPdfName in $manualPdfNames) {
+    $manualHashA = (Get-FileHash -LiteralPath (Join-Path $manualBuildAllA $manualPdfName) -Algorithm SHA256).Hash
+    $manualHashB = (Get-FileHash -LiteralPath (Join-Path $manualBuildAllB $manualPdfName) -Algorithm SHA256).Hash
+    if ($manualHashA -ne $manualHashB) {
+        throw "Independent builds of $manualPdfName must be byte-for-byte reproducible."
+    }
+    $trackedManual = if ($manualPdfName -eq "impe-manual-en.pdf") {
+        Join-Path $RepoRoot "doc/en/$manualPdfName"
+    }
+    else {
+        Join-Path $RepoRoot "doc/zh-tw/$manualPdfName"
+    }
+    if (-not (Test-Path -LiteralPath $trackedManual)) {
+        throw "Tracked manual PDF is missing: $trackedManual"
+    }
+    if (-not $PublicFonts) {
+        $trackedHash = (Get-FileHash -LiteralPath $trackedManual -Algorithm SHA256).Hash
+        if ($trackedHash -ne $manualHashA) {
+            throw "Tracked $manualPdfName does not match the reproducible scripted build."
+        }
+    }
+}
+
+$latexmk = Get-Command latexmk -ErrorAction Stop
+$directManualSpecs = @(
+    @{ Id = "en"; Root = Join-Path $RepoRoot "doc/en"; Source = "impe-manual-en.tex"; Class = "impeart.cls" },
+    @{ Id = "zh-tw"; Root = Join-Path $RepoRoot "doc/zh-tw"; Source = "impe-manual-zh-tw.tex"; Class = "impeart_zh.cls" }
+)
+foreach ($manualSpec in $directManualSpecs) {
+    $sourceBaseName = [IO.Path]::GetFileNameWithoutExtension($manualSpec.Source)
+    $jobName = "$sourceBaseName-direct"
+    Push-Location $manualSpec.Root
+    try {
+        $previousErrorActionPreference = $ErrorActionPreference
+        try {
+            $ErrorActionPreference = "Continue"
+            $directOutput = & $latexmk.Source `
+                -g `
+                -xelatex `
+                -interaction=nonstopmode `
+                -halt-on-error `
+                "-jobname=$jobName" `
+                $manualSpec.Source 2>&1
+            $directExitCode = $LASTEXITCODE
+        }
+        finally {
+            $ErrorActionPreference = $previousErrorActionPreference
+        }
+        if ($directExitCode -ne 0) {
+            $directOutput | Out-Host
+            throw "Direct latexmk build failed for $($manualSpec.Id)."
+        }
+
+        $directPdf = Join-Path $manualSpec.Root "$jobName.pdf"
+        $directLog = Join-Path $manualSpec.Root "$jobName.log"
+        $directFls = Join-Path $manualSpec.Root "$jobName.fls"
+        foreach ($requiredDirectFile in @($directPdf, $directLog, $directFls)) {
+            if (-not (Test-Path -LiteralPath $requiredDirectFile)) {
+                throw "Direct manual build is missing $requiredDirectFile."
+            }
+        }
+        $directLogText = Get-Content -LiteralPath $directLog -Raw
+        $normalizedDirectFls = (Get-Content -LiteralPath $directFls -Raw).Replace([char]92, [char]47).ToLowerInvariant()
+        $expectedRepoClass = (Join-Path $RepoRoot "package/$($manualSpec.Class)").Replace([char]92, [char]47).ToLowerInvariant()
+        $expectedVersion = "../../version"
+        $expectedShowcase = "../../_showcase/main.pdf"
+        foreach ($expectedInput in @($expectedRepoClass, $expectedVersion, $expectedShowcase)) {
+            if (-not $normalizedDirectFls.Contains($expectedInput)) {
+                throw "Direct $($manualSpec.Id) build did not resolve repository input $expectedInput."
+            }
+        }
+        if ($directLogText -notmatch '(?s)Output written on .*?\([3-9][0-9] pages') {
+            throw "Direct $($manualSpec.Id) build did not include both manual appendices."
+        }
+    }
+    finally {
+        foreach ($extension in @(
+            ".aux", ".fdb_latexmk", ".fls", ".log", ".out", ".pdf",
+            ".synctex.gz", ".toc", ".xdv"
+        )) {
+            $directArtifact = Join-Path $manualSpec.Root "$jobName$extension"
+            if (Test-Path -LiteralPath $directArtifact) {
+                Remove-Item -LiteralPath $directArtifact -Force
+            }
+        }
         Pop-Location
     }
-    $env:TEXINPUTS = $directPreviousTexInputs
-    $env:SOURCE_DATE_EPOCH = $directPreviousSourceDateEpoch
-    $env:FORCE_SOURCE_DATE = $directPreviousForceSourceDate
 }
 
-$directBuildPdf = Join-Path $directManualBuild "impe-manual-en.pdf"
-$directBuildLog = Join-Path $directManualBuild "impe-manual-en.log"
-$directBuildFls = Join-Path $directManualBuild "impe-manual-en.fls"
-if (-not (Test-Path -LiteralPath $directBuildPdf)) {
-    throw "Direct source-directory manual build did not produce a PDF."
-}
-$directBuildLogText = Get-Content -LiteralPath $directBuildLog -Raw
-$directBuildFlsText = Get-Content -LiteralPath $directBuildFls -Raw
-$expectedRepoClass = (Join-Path $RepoRoot "package/impeart.cls").Replace([char]92, [char]47).ToLowerInvariant()
-$normalizedDirectFls = $directBuildFlsText.Replace([char]92, [char]47).ToLowerInvariant()
-if (-not $normalizedDirectFls.Contains($expectedRepoClass)) {
-    throw "Direct manual build did not load impeart.cls from this checkout."
-}
-if ($directBuildLogText -notmatch '(?s)Output written on .*?\(55 pages') {
-    throw "Direct source-directory manual build did not produce the complete 55-page manual."
-}
-foreach ($manualBuild in @($manualBuildA, $manualBuildB)) {
-    foreach ($required in @("VERSION", "impe-manual.tex", "impe-manual.pdf", "impe-showcase.pdf")) {
-        if (-not (Test-Path -LiteralPath (Join-Path $manualBuild $required))) {
-            throw "Staged manual build is missing $required."
+$showcaseHash = (Get-FileHash -LiteralPath (Join-Path $RepoRoot "_showcase/main.pdf") -Algorithm SHA256).Hash
+$englishManualSource = Get-Content -LiteralPath (Join-Path $RepoRoot "doc/en/impe-manual-en.tex") -Raw
+$chineseManualSource = Get-Content -LiteralPath (Join-Path $RepoRoot "doc/zh-tw/impe-manual-zh-tw.tex") -Raw
+foreach ($sourceCheck in @(
+    @{ Text = $englishManualSource; Required = @(
+        "\section{Quick Reference}",
+        "\section{Showcase}",
+        "\includepdf[pages=4-6,landscape=true,pagecommand={}]"
+    ) },
+    @{ Text = $chineseManualSource; Required = @(
+        "\section{快速參考}",
+        "\section{Showcase}",
+        "\includepdf[pages=4-6,landscape=true,pagecommand={}]"
+    ) }
+)) {
+    foreach ($requiredText in $sourceCheck.Required) {
+        if (-not $sourceCheck.Text.Contains($requiredText)) {
+            throw "Manual source is missing required appendix marker: $requiredText"
         }
     }
-    $stagedShowcaseHash = (Get-FileHash -LiteralPath (Join-Path $manualBuild "impe-showcase.pdf") -Algorithm SHA256).Hash
-    if ($stagedShowcaseHash -ne $showcaseHash) {
-        throw "Staged Appendix B showcase does not match _showcase/main.pdf."
+    foreach ($relativeResource in @("../../VERSION", "../../_showcase/main.pdf")) {
+        if (-not $sourceCheck.Text.Contains($relativeResource)) {
+            throw "Manual source does not use canonical repository resource $relativeResource."
+        }
     }
-}
-$manualSourceText = Get-Content -LiteralPath (Join-Path $manualBuildA "impe-manual.tex") -Raw
-foreach ($requiredText in @(
-    "\documentclass[11pt]{impeart}",
-    "\section{Quick Reference}",
-    "\section{Showcase}",
-    "\includepdf[pages=-,pagecommand={}]{impe-showcase.pdf}"
-)) {
-    if (-not $manualSourceText.Contains($requiredText)) {
-        throw "Authoritative manual source is missing required content: $requiredText"
-    }
-}
-if ($manualSourceText.Contains("../")) {
-    throw "Staged manual source must not depend on parent-directory resource paths."
 }
 
 if (-not $SkipRelease) {
@@ -321,6 +375,15 @@ if (-not $SkipRelease) {
     $ctanZip = Join-Path $releaseRoot "impe.zip"
     if (-not (Test-Path $coreZip) -or -not (Test-Path $ctanZip)) {
         throw "Expected core and CTAN archives were not created."
+    }
+    foreach ($releaseAsset in @(
+        "impe-manual-en-1.0.0.pdf",
+        "impe-manual-zh-tw-1.0.0.pdf",
+        "impe-showcase-1.0.0.pdf"
+    )) {
+        if (-not (Test-Path -LiteralPath (Join-Path $releaseRoot $releaseAsset))) {
+            throw "Expected versioned release asset was not created: $releaseAsset"
+        }
     }
 
     Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -346,7 +409,8 @@ if (-not $SkipRelease) {
     & (Join-Path $RepoRoot "scripts/build_release.ps1") `
         -OutputRoot $reproReleaseRoot `
         -SkipFull `
-        -SkipCore
+        -SkipCore `
+        -SkipManualReproducibility
     if ($LASTEXITCODE -ne 0) {
         throw "Reproducible CTAN construction regression failed."
     }
@@ -372,9 +436,12 @@ if (-not $SkipRelease) {
         "nextsystem.sty",
         "README.md",
         "LICENSE",
-        "impe-manual.tex",
-        "impe-manual.pdf",
-        "impe-showcase.pdf",
+        "VERSION",
+        "doc/en/impe-manual-en.tex",
+        "doc/en/impe-manual-en.pdf",
+        "doc/zh-tw/impe-manual-zh-tw.tex",
+        "doc/zh-tw/impe-manual-zh-tw.pdf",
+        "_showcase/main.pdf",
         "impe-externalized-render.lua"
     )) {
         if (-not (Test-Path (Join-Path $ctanPackage $required))) {
@@ -386,6 +453,29 @@ if (-not $SkipRelease) {
     }
     if (Test-Path (Join-Path $ctanPackage "assets/fonts")) {
         throw "CTAN archive must not contain the local font library."
+    }
+    foreach ($forbiddenCtanPath in @(
+        "impe-manual.tex",
+        "impe-manual.pdf",
+        "impe-showcase.pdf",
+        "doc/en/VERSION",
+        "doc/en/impe-showcase.pdf",
+        "doc/zh-tw/VERSION",
+        "doc/zh-tw/impe-showcase.pdf",
+        "archive"
+    )) {
+        if (Test-Path -LiteralPath (Join-Path $ctanPackage $forbiddenCtanPath)) {
+            throw "CTAN archive contains obsolete or duplicated content: $forbiddenCtanPath"
+        }
+    }
+    $ctanSaveErrors = @(Get-ChildItem -LiteralPath $ctanPackage -Recurse -File |
+        Where-Object { $_.Name -like "*-SAVE-ERROR" })
+    if ($ctanSaveErrors) {
+        throw "CTAN archive contains SAVE-ERROR leftovers."
+    }
+    $ctanUnreleasedText = Get-Content -LiteralPath (Join-Path $ctanPackage "CHANGELOG.unreleased.md") -Raw
+    if ($ctanUnreleasedText -match '(?i)\bv1\.0\.0\b|\[1\.0\.0\]') {
+        throw "CHANGELOG.unreleased.md still treats v1.0.0 as unreleased."
     }
     $ctanFonts = @(Get-ChildItem -LiteralPath $ctanPackage -Recurse -File |
         Where-Object { $_.Extension -in @(".ttf", ".otf", ".ttc", ".woff", ".woff2") })
@@ -436,6 +526,8 @@ if (-not $SkipRelease) {
         $names = ($hardCodedRuntime.FullName -join [Environment]::NewLine)
         throw "CTAN runtime contains platform-specific runner assumptions:$([Environment]::NewLine)$names"
     }
+
+    $env:TEXINPUTS = $manualPreviousTexInputs
 
     $coreInspect = Join-Path $BuildRoot "core-inspect"
     Expand-Archive -LiteralPath $coreZip -DestinationPath $coreInspect -Force
@@ -537,5 +629,7 @@ if (-not $SkipRelease) {
         $env:TEXINPUTS = $oldInstalledTexInputs
     }
 }
+
+$env:TEXINPUTS = $manualPreviousTexInputs
 
 Write-Host "All IMPE regression checks passed."

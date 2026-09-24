@@ -15,11 +15,14 @@
 \usepackage{metalogo}
 \usepackage{pdfpages}
 
-\IfFileExists{VERSION}
-  {\CatchFileEdef{\IMPEVersion}{VERSION}{\endlinechar=-1\relax}}
+\newcommand{\IMPEVersionFile}{../../VERSION}
+\newcommand{\IMPEShowcaseFile}{../../_showcase/main.pdf}
+
+\IfFileExists{\IMPEVersionFile}
+  {\CatchFileEdef{\IMPEVersion}{\IMPEVersionFile}{\endlinechar=-1\relax}}
   {\PackageError{impe-manual}
-     {Required staged resource VERSION is missing}
-     {Run scripts/build_manual.ps1 from the repository root.}}
+     {Required repository resource ../../VERSION is missing}
+     {Compile from doc/en or run scripts/build_manual.ps1 from the repository root.}}
 
 % Keep the generated manual reproducible when SOURCE_DATE_EPOCH is fixed.
 \ifdefined\XeTeXversion
@@ -40,6 +43,7 @@
 \newcommand{\IMPERepo}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System}
 \newcommand{\IMPEIssues}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues}
 \newcommand{\IMPEShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/main/_showcase/main.pdf}
+\newcommand{\IMPETaggedShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/v\IMPEVersion/_showcase/main.pdf}
 
 \begin{document}
 
@@ -99,9 +103,10 @@ would be unnecessarily repetitive here.  This English manual is the reference
 edition: translated manuals should follow its structure and technical content.
 
 A visual survey of the system is available in the project showcase at
-\href{\IMPEShowcaseURL}{the IMPE showcase PDF}.  The same showcase is also
-reproduced in Appendix~\ref{app:showcase}; the repository build stages that PDF
-beside the manual source before compilation.  It is intended to demonstrate
+\href{\IMPEShowcaseURL}{the current IMPE showcase PDF}.  The edition frozen
+with this manual is available from the
+\href{\IMPETaggedShowcaseURL}{version tag}.  That canonical repository PDF is
+also reproduced in Appendix~\ref{app:showcase}.  It is intended to demonstrate
 the range of scripts, writing directions, layouts, and feature combinations
 that motivated the system.
 
@@ -1285,19 +1290,23 @@ For the full registration syntax and extension rules, see
 
 \section{Showcase}\label{app:showcase}
 
-The following pages reproduce the complete IMPE showcase staged by the manual
-build.  The showcase is not a second reference manual; it is a visual companion
+The following pages reproduce the complete canonical IMPE showcase.  The
+showcase is not a second reference manual; it is a visual companion
 demonstrating multilingual font routing, complex shaping, right-to-left
 scripts, vertical writing, CJK regional forms, and combinations of document
 features.
 
-The current showcase can always be obtained from the
-\href{\IMPEShowcaseURL}{IMPE showcase page in the project repository}.
+The latest showcase can be obtained from the
+\href{\IMPEShowcaseURL}{current main branch}; the edition belonging to this
+manual is preserved by the
+\href{\IMPETaggedShowcaseURL}{v\IMPEVersion{} tag}.
 
-\IfFileExists{impe-showcase.pdf}
-  {\includepdf[pages=-,pagecommand={}]{impe-showcase.pdf}}
+\IfFileExists{\IMPEShowcaseFile}
+  {\includepdf[pages=1-3,pagecommand={}]{\IMPEShowcaseFile}%
+   \includepdf[pages=4-6,landscape=true,pagecommand={}]{\IMPEShowcaseFile}%
+   \includepdf[pages=7-,pagecommand={}]{\IMPEShowcaseFile}}
   {\PackageError{impe-manual}
-     {Required staged resource impe-showcase.pdf is missing}
-     {Run scripts/build_manual.ps1 from the repository root.}}
+     {Required repository resource ../../_showcase/main.pdf is missing}
+     {Compile from doc/en or run scripts/build_manual.ps1 from the repository root.}}
 
 \end{document}

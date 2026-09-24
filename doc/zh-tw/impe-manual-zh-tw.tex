@@ -1,0 +1,884 @@
+% !TeX program = xelatex
+\documentclass[11pt]{impeart_zh}
+
+% 中文由 impeart_zh 的標準 Shanggu 路由處理；拉丁文字沿用 Libertinus。
+\UseFont{libertinus}[global]
+\setmonofont[
+  BoldFont=lmmonolt10-bold.otf,
+  ItalicFont=lmmono10-italic.otf,
+  BoldItalicFont=lmmonolt10-boldoblique.otf
+]{lmmono10-regular.otf}
+\UseFeatures{hyperlinks,tables}
+
+\usepackage{catchfile}
+\usepackage{metalogo}
+\usepackage{pdfpages}
+
+\newcommand{\IMPEVersionFile}{../../VERSION}
+\newcommand{\IMPEShowcaseFile}{../../_showcase/main.pdf}
+
+\IfFileExists{\IMPEVersionFile}
+  {\CatchFileEdef{\IMPEVersion}{\IMPEVersionFile}{\endlinechar=-1\relax}}
+  {\PackageError{impe-manual}
+     {Required repository resource ../../VERSION is missing}
+     {Compile from doc/zh-tw or run scripts/build_manual.ps1 from the repository root.}}
+
+% SOURCE_DATE_EPOCH 固定時，保持生成的手冊可重現。
+\ifdefined\XeTeXversion
+  \special{pdf:trailerid [
+    <f2f1c967f3905e268855d68445d8351b>
+    <031bcc35a4934255e3bb21323efc4efc>
+  ]}
+\else\ifdefined\pdftrailerid
+  \expandafter\pdftrailerid\expandafter{IMPE-\IMPEVersion-manual-zh-tw}
+\fi
+\fi
+
+\title{IMPE \LaTeX{} System}
+\subtitle{使用者手冊}
+\author{YANG Sikai}
+\date{版本 \IMPEVersion}
+
+\newcommand{\IMPERepo}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System}
+\newcommand{\IMPEIssues}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues}
+\newcommand{\IMPEShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/main/_showcase/main.pdf}
+\newcommand{\IMPETaggedShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/v\IMPEVersion/_showcase/main.pdf}
+
+\begin{document}
+
+\maketitle
+
+\begin{center}
+\small 繁體中文翻譯版；技術內容以英文參考版為準
+\end{center}
+
+\tableofcontents
+
+\section{導論}
+
+IMPE 是 \emph{Integrated Multilingual Publishing Environment}（整合式多語出版環境）
+的縮寫。IMPE \LaTeX{} System 是一套以 \XeLaTeX{} 為主要引擎的模組化文件系統，
+適用於需要重用版面、選用功能、字體選擇與多語排版設定的工作流程。它的核心目標是：
+讓同一份文件能以一致的方式組合多種語言、書寫系統、版面與功能模組，而不必在每個
+preamble 中重新拼裝設定。
+
+傳統 preamble 在加入穩定頁面設計、拉丁文字、CJK、歷史文字、複雜塑形、書目、
+圖片、表格，以及文章、書籍與簡報各自的設定後，很快就會變得難以維護。這些需求單獨
+看來並不罕見，但組合起來容易產生大量重複程式碼與文件專屬例外。
+
+IMPE 將系統拆成可重用的 \emph{layouts}、\emph{fonts} 與 \emph{features}。
+layout 描述文件的主要視覺結構；font family 提供全域或局部字體行為，必要時也處理
+文字系統感知的路由；feature 則提供數學、超連結、引用、表格、圖片等選用功能。
+三者可以個別載入，也可透過統一的範本介面組合。
+
+IMPE 的一般用法刻意保持簡短。wrapper class 先建立合理的版面與預設全域字體，
+使用者只需再載入文件需要的 family 或 feature。需要完整控制時，也可在單一
+\verb|\UseTemplateSet| 宣告中表達相同設定。
+
+IMPE 以 \XeLaTeX{} 為主要文件引擎，因此可以使用 Unicode、OpenType、
+\texttt{fontspec} 與 \XeTeX{} 的 inter-character 機制，同時保留熟悉的 \LaTeX{}
+文件模型。少數特殊內部路徑可能因特定文字或渲染器而呼叫其他引擎，但一般 IMPE 文件
+應以 \XeLaTeX{} 編譯。
+
+本手冊是面向使用者的導論，不是完整的內部 API 文件。更詳細的字體、版面、功能與
+系統說明位於倉庫的 \texttt{docs/}。英文手冊是權威參考版；本繁體中文版維持相同
+結構、範例與技術內容，若翻譯文字與英文版有歧義，應以英文版為準。
+
+系統的視覺概覽可見
+\href{\IMPEShowcaseURL}{目前 main 分支的 IMPE showcase PDF}；與本手冊版本一同
+凍結的版本則由
+\href{\IMPETaggedShowcaseURL}{對應版本標籤}保存。相同的標準 showcase 也完整收錄在
+附錄~\ref{app:showcase}，展示促成本系統設計的多種文字、書寫方向、版面與功能組合。
+
+\section{安裝}
+
+\subsection{發行形式}
+
+IMPE 提供三種發行形式。\emph{CTAN 導向套件}包含可攜 runtime 與公開文件，
+不含私有或僅在本機維護的字體庫，適合標準 \TeX{} 發行。\emph{core 套件}提供相同
+系統邏輯，讓使用者從 release 直接安裝並自行管理字體。\emph{full 套件}則可加入
+預備好的本機字體庫，但仍受各字體的再分發條件限制。
+
+這項區分是刻意的：IMPE 本身是文件系統，大型字體集合並非套件邏輯核心。將兩者分開
+可保持 runtime 可攜，並允許不同電腦或使用者提供自己的字體庫而不必修改框架。
+
+\subsection{安裝位置}
+
+直接安裝會把套件放在使用者 TEXMF tree 的
+
+\begin{verbatim}
+tex/latex/impe/
+\end{verbatim}
+
+標準公開入口為：
+
+\begin{verbatim}
+impe.sty
+impeart.cls
+impebook.cls
+impereport.cls
+impebeamer.cls
+\end{verbatim}
+
+另有對應的 \texttt{\_zh} wrapper classes，提供中文文件預設值。較早的
+\texttt{next*} 名稱仍作為相容入口安裝，詳見第~\ref{sec:compatibility} 節。
+
+直接使用 IMPE release 時，可執行封裝中的 \texttt{install.bat}；它會轉交
+\texttt{install.ps1}。透過 \TeX{} 發行版安裝的使用者則不必使用倉庫端安裝器，
+套件會依標準搜尋規則被找到。
+
+\subsection{字體資源與本機設定}
+
+原始碼倉庫不追蹤完整本機字體庫。本機或 full 安裝通常在
+\texttt{assets/fonts/} 下解析 catalog 字體，也可透過 \texttt{impe.local.tex}
+持久覆寫根目錄，例如：
+
+\begin{verbatim}
+\SetCatalogFontRoot{D:/Fonts/IMPE}
+\end{verbatim}
+
+core 與 CTAN 安裝在沒有私有字體庫時仍可使用；只有明確要求缺少字體檔的文件功能
+才需要補上相應資源。
+
+\subsection{快速安裝檢查}
+
+安裝後，下列檔案應能在提供 Libertinus 的系統上以 \XeLaTeX{} 編譯：
+
+\begin{verbatim}
+\documentclass{impeart}
+\UseFont{libertinus}
+
+\begin{document}
+\LIB{IMPE is ready.}
+\end{document}
+\end{verbatim}
+
+若能成功，即表示標準 wrapper、package 入口與自動字體載入介面皆可見。
+
+\section{快速開始}
+
+最簡單的 IMPE 工作方式是選擇 wrapper class、載入需要的 font family 或 feature，
+再按一般 \LaTeX{} 方式撰寫文件。IMPE 不取代標準文件結構，只在其外提供可重用的
+設定層。
+
+\begin{verbatim}
+\documentclass[11pt]{impeart}
+
+\UseFont{libertinus}
+\UseFeatures{math,hyperlinks}
+
+\title{A Sample Document}
+\subtitle{Typeset with IMPE}
+\author{Author Name}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+\LIB{Hello, world.}
+\end{document}
+\end{verbatim}
+
+\verb|\UseFont{libertinus}| 沒有指定 mode，因此遵循該 family 註冊的自動行為；
+\verb|\UseFeatures| 載入兩個選用模組。其餘內容仍是一般 \LaTeX{}。
+
+相同概念也可集中寫成：
+
+\begin{verbatim}
+\documentclass{impeart}
+
+\UseTemplateSet{
+  fonts = {libertinus},
+  features = {math,hyperlinks}
+}
+\end{verbatim}
+
+若必須保留期刊或出版方提供的標準 class，也可以直接載入 package：
+
+\begin{verbatim}
+\documentclass{article}
+\usepackage{impe}
+
+\UseTemplateSet{
+  layout = en_doc,
+  fonts = {cmu,libertinus},
+  features = {hyperlinks}
+}
+\end{verbatim}
+
+wrapper classes 與 raw package 共用同一套底層系統。
+
+\section{可直接使用的範本}
+
+倉庫的 \texttt{templates/} 提供適合實際寫作的 starter projects；
+\texttt{examples/} 則主要用於除錯與稽核。現有範本包括：
+
+\begin{description}
+  \item[\texttt{article\_en/}] 使用 \texttt{impeart} 的英文文章。
+  \item[\texttt{article\_zh/}] 使用 \texttt{impeart\_zh} 的中文文章。
+  \item[\texttt{book\_en/}] 使用 \texttt{impebook} 的英文書籍。
+  \item[\texttt{book\_zh/}] 使用 \texttt{impebook\_zh} 的中文書籍。
+  \item[\texttt{beamer\_en/}] 使用 \texttt{impebeamer} 的英文簡報。
+  \item[\texttt{beamer\_zh/}] 使用 \texttt{impebeamer\_zh} 的中文簡報。
+\end{description}
+
+每個範本都使用標準 \texttt{impe*} 入口，並包含可編輯的 metadata、章節與具代表性的
+表格、圖片或投影片內容。建立新專案時，可複製最接近的範本，而不必從空白 preamble
+重建設定。
+
+\section{文件類別與公開入口}
+
+\subsection{Wrapper classes}
+
+IMPE 為主要文件形式提供以下 wrappers：
+
+\begin{description}
+  \item[\texttt{impeart}] 英文文章；預設 \texttt{en\_doc} 與 \texttt{cmu}。
+  \item[\texttt{impebook}] 英文書籍；預設 \texttt{en\_book} 與 \texttt{cmu}。
+  \item[\texttt{impereport}] 英文報告；預設 \texttt{en\_doc} 與 \texttt{cmu}。
+  \item[\texttt{impebeamer}] 簡報；預設 \texttt{beamer} 與 \texttt{cmu}。
+\end{description}
+
+中文 counterparts 為 \texttt{impeart\_zh}、\texttt{impebook\_zh}、
+\texttt{impereport\_zh} 與 \texttt{impebeamer\_zh}；它們採用相應中文設定，
+並在全域字體預設中同時載入 \texttt{cmu} 與 \texttt{shanggu}。這只是預設設定，
+不限制文件可包含的語言。
+
+未知 class options 會轉交底層標準 class，因此
+
+\begin{verbatim}
+\documentclass[12pt,twoside]{impeart}
+\end{verbatim}
+
+仍照常控制 \texttt{article}。
+
+\subsection{直接使用 \texttt{impe.sty}}
+
+wrapper 是便利入口，不是另一套實作。需要保留既有 class 時，可使用
+
+\begin{verbatim}
+\usepackage{impe}
+\end{verbatim}
+
+再明確選擇 layout、font 與 feature。
+
+\subsection{標題與副標題}
+
+IMPE 在標準 \verb|\title|、\verb|\author| 之外提供 \verb|\subtitle{...}|：
+
+\begin{verbatim}
+\title{Main Title}
+\subtitle{A More Specific Description}
+\author{Author Name}
+\end{verbatim}
+
+並在文件內呼叫 \verb|\maketitle|。
+
+\section{範本模型}
+
+\subsection{四個設定鍵}
+
+統一設定命令為 \verb|\UseTemplateSet|：
+
+\begin{verbatim}
+\UseTemplateSet{
+  layout = <preset>,
+  fonts = {<families>},
+  globalfonts = {<families>},
+  features = {<features>}
+}
+\end{verbatim}
+
+\begin{description}
+  \item[\texttt{layout}] 選擇與目前 class 相容的公開 layout preset。
+  \item[\texttt{fonts}] 依 family 註冊的自動行為載入字體；這是一般使用的正常選擇。
+  \item[\texttt{globalfonts}] 明確強制使用各 family 的 global mode 或全域路由。
+  \item[\texttt{features}] 載入選用功能模組。
+\end{description}
+
+\texttt{mainfonts} 是 \texttt{globalfonts} 的 alias。wrapper classes 已套用自己的
+layout 與全域字體預設，因此文件只指定差異部分是正常做法。
+
+\subsection{單一用途捷徑}
+
+\begin{verbatim}
+\UseLayout{en_doc}
+\UseLayouts{...}
+
+\UseFont{libertinus}
+\UseFonts{arabic,tibetan}
+
+\UseFont{libertinus}[global]
+\UseLocalFonts{arabic,tibetan} % explicit local override
+\UseGlobalFonts{libertinus}    % explicit global override
+
+\UseFeature{hyperlinks}
+\UseFeatures{math,hyperlinks,tables}
+\end{verbatim}
+
+不帶 mode 的 font 形式是一般使用的建議介面；local/global aliases 用於刻意覆寫
+family 的註冊行為。
+
+\subsection{以組合取代單體範本}
+
+IMPE template 不是不可分割的大型 style file。同一 layout 可搭配不同字體，同一
+feature set 可用於文章或書籍，加入特定文字 family 也不必改動其他功能。例如：
+
+\begin{verbatim}
+% English article
+\UseTemplateSet{
+  layout = en_doc,
+  fonts = {libertinus},
+  features = {math,hyperlinks}
+}
+
+% Chinese book with additional script support
+\UseTemplateSet{
+  layout = zh_book,
+  fonts = {cmu,shanggu,sanskrit,tibetan},
+  features = {citations,index,hyperlinks}
+}
+\end{verbatim}
+
+第二個例子只陳述實際需要的 families 與 features；內部細節仍由字體與版面子系統處理。
+
+\section{字體、文字路由與多語排版}
+
+\subsection{作為註冊能力的 font family}
+
+IMPE 不把字體名稱只視為 \verb|\rmfamily| 的替代品。family 在中央 catalog 中登記
+字面、路徑或系統名稱、OpenType script/language、局部命令、全域路由，以及必要的
+特殊 layout 或 renderer。共同抽象是「已註冊 family」，而不是假設每種書寫系統
+具有相同實作。
+
+\subsection{自動、全域與局部載入}
+
+一般使用時不要指定 mode。IMPE 會遵循 family 的 registered behavior，可能是 local、
+global 或 range-specific；\texttt{fonts} key 對清單套用相同規則。
+
+global family 參與文件級字體選擇。一般拉丁 family 可替換 roman、sans 與 mono；
+文字專用 family 則可只負責選定 Unicode ranges。local family 只供明確呼叫，適合
+指定特定字形、地區字形或編輯選定字體。
+
+\begin{verbatim}
+\UseFont{libertinus}
+\UseFonts{sanskrit,tibetan,arabic}
+
+\UseFont{libertinus}[global]   % deliberate global override
+\UseLocalFonts{sanskrit}       % deliberate local override
+\end{verbatim}
+
+\verb|\UseGlobalFont(s)| 與 \verb|\UseLocalFont(s)| 是明確覆寫，不是預設建議。
+局部字體命令在作用域內優先於自動全域 range router；離開作用域後恢復原有路由。
+
+\subsection{Unicode range 路由}
+
+部分 global families 刻意限制於特定 ranges。例如 Devanagari family 不必因全域載入
+而成為拉丁主字體；IMPE 可只把它分配給負責的 Unicode blocks。塑形仍由 \XeTeX{}、
+\texttt{fontspec} 與選定字體的 OpenType 資料負責。
+
+\subsection{CJK 處理}
+
+IMPE 透過 xeCJK 管理 CJK global families 的 main、sans 與 mono channels。
+共用漢字的 Unicode codepoint 並不包含中文、日文或韓文地區字形資訊，因此自動路由
+讓 kana、Hangul 等語言專屬文字取得各自 family，而共用漢字保留在文件 CJK family。
+需要明確日文或韓文漢字形時，可使用相應 local family command。
+
+\subsection{塑形與斷行}
+
+Indic、Arabic 等複雜文字仍以普通 Unicode 內容出現在文件中；IMPE 提供正確的 script、
+language 與 feature 設定。Sanskrit Devanagari、Tibetan 與 Thai 等需要特殊斷行機會的
+文字，由行為層提供適當處理，同時保留 cluster 與文字專屬標點規則。需要 RTL 的 family
+也會攜帶方向行為，公開載入模型不因此改變。
+
+\subsection{直排與 externalized rendering}
+
+少數書寫系統超出標準橫排 OpenType 的範圍。IMPE 提供註冊式直排路徑，也提供以小型
+輔助 \TeX{} 文件生成 PDF 後再嵌回主文件的 externalized 路徑。portable
+\texttt{texlua} helper 從系統 \texttt{PATH} 解析引擎並管理 cache；一般文件不必自行
+處理臨時檔或引擎路徑。
+
+\subsection{完整字體參考的位置}
+
+family catalog、註冊語法、fallback、全域路由、直排參數、externalized backend 與
+文字專屬說明均見 \texttt{docs/FONTS-zh.md}；新增 family 或調查路由時應以該文件為
+技術參考。
+
+\section{版面與功能}
+
+\subsection{Layout presets}
+
+layout 描述文件級 presentation，由頁面幾何、行距、頁眉、書籍或投影片行為等內部
+components 組成。一般文件選擇完整公開 preset：
+
+\begin{description}
+  \item[\texttt{en\_doc}] 英文 article/report layout。
+  \item[\texttt{zh\_doc}] 中文 article/report layout。
+  \item[\texttt{en\_book}] 英文 book/report layout，含書籍頁面與 running heads。
+  \item[\texttt{zh\_book}] 對應的中文 book/report layout。
+  \item[\texttt{beamer}] Beamer presentation layout。
+\end{description}
+
+preset 會宣告可支援的 class，IMPE 在套用前檢查相容性。wrapper class 會自動選擇
+對應 layout；使用 raw class 或讓 report 採書籍版面時，可明確指定：
+
+\begin{verbatim}
+\UseLayout{en_book}
+\end{verbatim}
+
+詳細 component 值見 \texttt{docs/LAYOUTS-zh.md}。
+
+\subsection{Feature modules}
+
+feature 是扁平、可組合的模組；同一 id 重複請求時不會重複載入。
+
+\begin{description}
+  \item[\texttt{math}] 數學套件、定理環境與選用數學字體。
+  \item[\texttt{hyperlinks}] 超連結、PDF bookmarks、穩定 destinations。
+  \item[\texttt{citations}] \texttt{biblatex}/\texttt{biber} 與引用 style presets。
+  \item[\texttt{index}] 索引生成及 IMPE term/index helpers。
+  \item[\texttt{tables}] 表格套件、column types 與 table environments。
+  \item[\texttt{image}] 圖片、figure 與 multi-panel helpers。
+  \item[\texttt{lists\_envs}] 可重用 ExampleBlock 格式。
+  \item[\texttt{headers}] article、report、book 的 running heads。
+\end{description}
+
+\begin{verbatim}
+\UseFeatures{math,hyperlinks,tables,image}
+\end{verbatim}
+
+或：
+
+\begin{verbatim}
+\UseTemplateSet{
+  features = {citations,index,hyperlinks}
+}
+\end{verbatim}
+
+\subsection{數學}
+
+\texttt{math} 載入 AMS 導向 stack，並定義 \texttt{theorem}、\texttt{lemma}、
+\texttt{proposition}、\texttt{corollary}、\texttt{definition}、
+\texttt{example} 與 \texttt{remark}。載入文字 family 不會自動切換數學字體；
+預設仍是 Computer Modern。需要時可在 feature 前指定：
+
+\begin{verbatim}
+\UseMathFont{libertinus}
+\UseFeature{math}
+\end{verbatim}
+
+\subsection{引用、索引、表格與圖片}
+
+feature 提供實用預設，但不隱藏標準 \LaTeX{} 生態。\texttt{citations} 仍使用
+\verb|\addbibresource|、\verb|\textcite|、\verb|\printbibliography|；可選 APA、
+GB/T 7714、numeric 或 author--year。\texttt{index} 在 \texttt{imakeidx} 上加入
+\verb|\Term|；\texttt{tables} 與 \texttt{image} 提供較高階 environments，
+同時保留 \texttt{booktabs}、\texttt{graphicx} 等原生命令。
+
+\subsection{頁眉與超連結}
+
+\texttt{headers} 以 \texttt{fancyhdr} 提供 running heads；預設從標題第一行取得
+固定 running title，也可用 \verb|\HeaderTitle{...}| 指定短標題。
+\texttt{hyperlinks} 以 \texttt{hyperref} 與 \texttt{bookmark} 提供 Unicode-aware
+PDF 設定、隱藏邊框、可點擊目錄與穩定 anchors。完整命令清單見
+\texttt{docs/FEATURES-zh.md}。
+
+\section{相容性與遷移}\label{sec:compatibility}
+
+IMPE 1.0.0 將 \texttt{impe*} 確立為標準公開介面。較早開發版使用的
+\texttt{next*} 入口在 1.0.0 仍是受支援的相容 wrappers，並未棄用：
+
+\begin{verbatim}
+\documentclass{nextart}
+\usepackage{nextsystem}
+\end{verbatim}
+
+因此可繼續使用同一底層實作。相容層的目的在保存舊文件，而不是為新文件建立平行 API。
+
+安裝器也能辨識 \texttt{tex/latex/nextsystem/} 下受管理的 0.1.x 安裝。遷移時會把標準
+runtime 安裝至 \texttt{tex/latex/impe/}、搬移已識別的 local overrides、移除確定
+屬於舊 runtime 的檔案，並保留無關的使用者檔案與子目錄。新設定應使用
+\texttt{impe.local.tex}。
+
+\section{套件結構與擴展點}
+
+\begin{verbatim}
+package/   public package and class entry points
+core/      stable subsystem mechanisms
+catalog/   public ids and registration data
+modules/   extendable or specialized implementations
+assets/    local runtime resources such as fonts
+scripts/   installation and release tooling
+doc/       manual sources
+docs/      detailed subsystem documentation
+\end{verbatim}
+
+\subsection{穩定核心}
+
+\texttt{core/} 包含不應因新增一般 family、layout 或 feature 而改動的框架：font
+registry 與 routing、layout registry 與相容檢查、feature loader 及共同行為。
+
+\subsection{Catalogs}
+
+\texttt{catalog/} 集中指派公開 ids 與 metadata。標準 OpenType family 通常只需
+catalog registration；layout preset 由既有 components 組成；feature id 則映射到
+實作 module。集中宣告可讓公開介面容易稽核。
+
+\subsection{Modules}
+
+\texttt{modules/} 保留給真正需要個別實作的功能，例如 feature module、特殊文字支援
+或可重用的 layout component。多數文字應使用標準 OpenType shaping 與 catalog
+metadata；只有 generic core 無法清楚表達時才增加特殊 module。
+
+\subsection{擴展 IMPE}
+
+完整註冊介面不屬於本使用手冊範圍。開發者應先讀 \texttt{docs/SYSTEM-zh.md}，
+再查閱 \texttt{docs/FONTS-zh.md}、\texttt{docs/LAYOUTS-zh.md} 或
+\texttt{docs/FEATURES-zh.md}。一般原則是：優先增加 registration；行為確實特殊時，
+優先增加專用 module，而不是修改穩定核心。
+
+\section{進一步文件與回饋}
+
+\begin{description}
+  \item[\texttt{docs/SYSTEM-zh.md}] 架構、公開入口、範本、release model 與擴展邊界。
+  \item[\texttt{docs/FONTS-zh.md}] family 註冊、mode、routing、fallback、shaping、直排與 externalized rendering。
+  \item[\texttt{docs/LAYOUTS-zh.md}] 公開 layouts、相容 targets 與 component model。
+  \item[\texttt{docs/FEATURES-zh.md}] 公開 feature ids、命令、environments 與套件 stack。
+  \item[\texttt{CHANGELOG-zh.md}] 已發佈版本的變更。
+  \item[Showcase] \href{\IMPEShowcaseURL}{目前完整視覺 showcase}。
+\end{description}
+
+專案倉庫位於 \href{\IMPERepo}{\texttt{github.com/KelvinYangBK67/IMPE-LaTeX-System}}；
+bug、功能需求、文件修正與 portability report 可透過
+\href{\IMPEIssues}{GitHub Issues} 提交。排版問題的報告應盡量附上最小文件、\TeX{}
+引擎與版本、IMPE 版本及相關字體資訊。
+
+\appendix
+
+\section{快速參考}
+
+本附錄摘要 IMPE 1.0.0 已記錄的公開介面，用於查找而非取代正文或 \texttt{docs/}
+中的詳細說明。以 \texttt{\string\Next...} 開頭的內部命令不屬於公開參考。
+
+\subsection{建議的字體載入模型}
+
+一般使用請優先以 \texttt{fonts = \{...\}} 或不帶 mode 的
+\texttt{\string\UseFont\{...\}} 直接載入。IMPE 會依 family 註冊行為決定 local、
+global 或 range-specific routing。只有自動行為不符合文件需求時才指定 mode：
+
+\begin{verbatim}
+\UseFont{sanskrit}          % recommended: registered automatic behavior
+\UseFont{sanskrit}[local]   % explicitly local only
+\UseFont{sanskrit}[global]  % explicitly global/range-global
+
+\UseTemplateSet{
+  fonts = {sanskrit,tibetan,arabic},
+  features = {math,hyperlinks}
+}
+\end{verbatim}
+
+\texttt{\string\UseGlobalFont(s)}、\texttt{\string\UseLocalFont(s)}、
+\texttt{globalfonts} 與 \texttt{mainfonts} 都是明確覆寫，不是 \texttt{fonts}
+的一般替代品。
+
+\subsection{文件類別與 package 入口}
+
+\begin{longtable}{@{}p{0.31\linewidth}p{0.63\linewidth}@{}}
+\toprule
+\textbf{入口} & \textbf{用途} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{入口} & \textbf{用途} \\
+\midrule
+\endhead
+\texttt{impeart} & 英文 article；預設 \texttt{en\_doc} 與 CMU。 \\
+\texttt{impeart\_zh} & 中文 article；預設 \texttt{zh\_doc}、CMU 與 Shanggu。 \\
+\texttt{impereport} & 英文 report；預設 \texttt{en\_doc}。 \\
+\texttt{impereport\_zh} & 中文 report；預設 \texttt{zh\_doc}。 \\
+\texttt{impebook} & 英文 book；預設 \texttt{en\_book}。 \\
+\texttt{impebook\_zh} & 中文 book；預設 \texttt{zh\_book}。 \\
+\texttt{impebeamer} & 英文 Beamer；預設 \texttt{beamer}。 \\
+\texttt{impebeamer\_zh} & 中文 Beamer；預設 \texttt{beamer}、CMU 與 Shanggu。 \\
+\texttt{impe.sty} & 在一般 \LaTeX{} class 下直接載入 IMPE。 \\
+\bottomrule
+\end{longtable}
+
+\texttt{next*} 名稱在 1.0.0 仍是相容 aliases，但新文件應使用 \texttt{impe*}。
+
+\subsection{核心設定命令}
+
+\begin{longtable}{@{}p{0.40\linewidth}p{0.54\linewidth}@{}}
+\toprule
+\textbf{命令} & \textbf{用途} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{命令} & \textbf{用途} \\
+\midrule
+\endhead
+\texttt{\string\UseTemplateSet\{...\}} & 在一個宣告中設定 layout、fonts 與 features。 \\
+\texttt{\string\UseFont\{id\}[mode]} & 載入一個 family；省略 mode 為建議的自動行為。 \\
+\texttt{\string\UseFonts\{ids\}[mode]} & 以相同選用 mode 載入多個 families。 \\
+\texttt{\string\UseGlobalFont\{id\}} & 明確要求一個 family 的 global mode。 \\
+\texttt{\string\UseGlobalFonts\{ids\}} & 明確要求多個 families 的 global mode。 \\
+\texttt{\string\UseMainFont\{id\}} & \texttt{\string\UseGlobalFont} 的 alias。 \\
+\texttt{\string\UseMainFonts\{ids\}} & \texttt{\string\UseGlobalFonts} 的 alias。 \\
+\texttt{\string\UseLocalFont\{id\}} & 明確要求一個 family 的 local mode。 \\
+\texttt{\string\UseLocalFonts\{ids\}} & 明確要求多個 families 的 local mode。 \\
+\texttt{\string\UseLayout\{id\}} & 載入一個 layout preset。 \\
+\texttt{\string\UseLayouts\{ids\}} & 載入多個 layout presets。 \\
+\texttt{\string\UseFeature\{id\}} & 載入一個 feature module。 \\
+\texttt{\string\UseFeatures\{ids\}} & 載入多個 feature modules。 \\
+\texttt{\string\SetCatalogFontRoot\{path\}} & 覆寫 catalog 字體根目錄。 \\
+\texttt{\string\subtitle\{text\}} & 設定 IMPE title block 的副標題。 \\
+\texttt{\string\HeaderTitle\{text\}} & 覆寫 headers feature 的固定短標題。 \\
+\texttt{\string\HeaderStyle\{style\}} & 選擇 \texttt{running} 或 \texttt{title}。 \\
+\bottomrule
+\end{longtable}
+
+\subsection{Template-set keys}
+
+\begin{longtable}{@{}p{0.23\linewidth}p{0.69\linewidth}@{}}
+\toprule
+\textbf{Key} & \textbf{意義} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Key} & \textbf{意義} \\
+\midrule
+\endhead
+\texttt{layout} & 選擇一個公開 layout preset。 \\
+\texttt{fonts} & 依註冊的自動行為載入 families；一般字體載入建議使用此 key。 \\
+\texttt{globalfonts} & 明確強制使用 global mode 或全域 routing。 \\
+\texttt{mainfonts} & \texttt{globalfonts} 的 alias。 \\
+\texttt{features} & 載入一個或多個選用 feature modules。 \\
+\bottomrule
+\end{longtable}
+
+\subsection{公開 layout identifiers}
+
+\begin{longtable}{@{}p{0.23\linewidth}p{0.69\linewidth}@{}}
+\toprule
+\textbf{ID} & \textbf{用途} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{用途} \\
+\midrule
+\endhead
+\texttt{en\_doc} & A4 英文 article/report layout。 \\
+\texttt{zh\_doc} & A4 中文 article/report layout。 \\
+\texttt{en\_book} & 含書籍幾何、running heads 與右頁開章的英文 book/report layout。 \\
+\texttt{zh\_book} & 含中文間距、running heads 與右頁開章的中文 book/report layout。 \\
+\texttt{beamer} & IMPE Beamer typography 與 navigation layout。 \\
+\bottomrule
+\end{longtable}
+
+\subsection{公開 feature identifiers}
+
+\begin{longtable}{@{}p{0.23\linewidth}p{0.69\linewidth}@{}}
+\toprule
+\textbf{ID} & \textbf{用途} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{用途} \\
+\midrule
+\endhead
+\texttt{math} & 數學 stack 與 theorem environments。 \\
+\texttt{hyperlinks} & 超連結、PDF bookmarks、linked headings 與雙向 footnote links。 \\
+\texttt{citations} & \texttt{biblatex}/\texttt{csquotes} 與 citation-style helpers。 \\
+\texttt{index} & 索引支援與 \texttt{\string\Term}。 \\
+\texttt{tables} & 表格 stack、column types 與 IMPE table environments。 \\
+\texttt{image} & 圖片、caption 與 panel-figure helpers。 \\
+\texttt{lists\_envs} & \texttt{ExampleBlock} display environment。 \\
+\texttt{headers} & 可設定的 article/report/book running heads。 \\
+\bottomrule
+\end{longtable}
+
+\subsection{Feature 專屬命令與值}
+
+\begin{longtable}{@{}p{0.51\linewidth}p{0.43\linewidth}@{}}
+\toprule
+\textbf{命令或設定} & \textbf{用途／記錄值} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{命令或設定} & \textbf{用途／記錄值} \\
+\midrule
+\endhead
+\texttt{\string\UseMathFont\{value\}} & 在載入 \texttt{math} 前選擇 \texttt{auto}、\texttt{libertinus}、\texttt{newcm}、\texttt{mlmodern} 或傳給 \texttt{\string\setmathfont} 的名稱。 \\
+\texttt{\string\UseCitationStyle\{value\}} & 選擇 \texttt{APA}、\texttt{GB}、\texttt{numeric} 或 \texttt{author-year}。 \\
+\texttt{\string\SetCitationBiblatexOptions\{...\}} & 在載入 \texttt{citations} 前取代有效 \texttt{biblatex} options。 \\
+\texttt{\string\HeaderTitle\{text\}} & 設定 running heads 的短標題。 \\
+\texttt{\string\HeaderStyle\{value\}} & 選擇 \texttt{running} 或 \texttt{title}。 \\
+\texttt{\string\IndexTitle} & 載入 \texttt{index} 前定義的選用索引標題。 \\
+\texttt{\string\Term[options]\{display\}[description]} & 印出粗體 term 並索引首次出現；options 含 \texttt{sort}、\texttt{key}、\texttt{parentheses}。 \\
+\texttt{\string\TablesSetup} & 套用或重新套用 IMPE table setup。 \\
+\texttt{\string\Panel} & 在 \texttt{PanelFigure} 或 \texttt{PanelFigure*} 中插入 panel。 \\
+\texttt{\string\TemplateFigurePaths} & 設定 image feature 的預設搜尋路徑。 \\
+\texttt{\string\OneImageDefaultWidth} & 設定 \texttt{OneImage} 預設寬度。 \\
+\texttt{\string\OneImageMaxHeight} & 設定 \texttt{OneImage} 最大預設高度。 \\
+\texttt{\string\OneImageDefaultPlacement} & 設定 \texttt{OneImage} float placement。 \\
+\texttt{\string\PanelDefaultCols} & 設定 panel figures 的預設欄數。 \\
+\texttt{\string\PanelDefaultHeight} & 設定預設 panel 高度。 \\
+\texttt{\string\PanelDefaultMode} & 設定預設 panel layout mode。 \\
+\texttt{\string\PanelDefaultPlacement} & 設定 panel figures 的 float placement。 \\
+\bottomrule
+\end{longtable}
+
+由 feature 載入套件直接提供的標準命令，例如 \texttt{\string\addbibresource}、
+\texttt{\string\printbibliography}、\texttt{\string\printindex} 與
+\texttt{booktabs} 規則命令，保留其原本語法，不由 IMPE 重新定義。
+
+\subsection{公開 environments 與 table column types}
+
+\begin{longtable}{@{}p{0.37\linewidth}p{0.57\linewidth}@{}}
+\toprule
+\textbf{名稱} & \textbf{用途} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{名稱} & \textbf{用途} \\
+\midrule
+\endhead
+\texttt{theorem}, \texttt{lemma}, \texttt{proposition}, \texttt{corollary} & \texttt{math} 提供的編號 theorem-like environments。 \\
+\texttt{definition}, \texttt{example}, \texttt{remark} & \texttt{math} 提供的其他 theorem-style environments。 \\
+\texttt{TableInlineFit} & 將 inline table 配合可用寬度的 compact environment。 \\
+\texttt{TableLong} & 可跨頁的 long-table environment。 \\
+\texttt{TableBook}, \texttt{TableBookX} & book-style table environments。 \\
+\texttt{TableBookNotes} & 帶 notes 的 book-style table。 \\
+\texttt{NiceBooktable}, \texttt{NiceBooktableX}, \texttt{NiceBooktableNotes} & \texttt{tables} 提供的替代 book-style helpers。 \\
+\texttt{L}, \texttt{C}, \texttt{R} & ragged-right、置中、ragged-left \texttt{tabularx} columns。 \\
+\texttt{P\{w\}}, \texttt{M\{w\}}, \texttt{B\{w\}} & 固定寬度 paragraph columns。 \\
+\texttt{OneImage} & 單圖 figure；在 Beamer 下改為 inline。 \\
+\texttt{OneImageInline} & 置中的 non-floating image。 \\
+\texttt{PanelFigure} & 含 caption 與 subcaptions 的 multi-panel figure。 \\
+\texttt{PanelFigure*} & 不含 caption 的 multi-panel figure。 \\
+\texttt{ExampleBlock} & 適合範例、引文、語料或教材的縮排斜體 display block。 \\
+\bottomrule
+\end{longtable}
+
+\subsection{已註冊 font-family identifiers}
+
+下表列出 IMPE 1.0.0 接受的 font-family IDs。\textbf{Auto} 欄表示不帶 mode 的
+\texttt{\string\UseFont\{id\}} 一般會啟用的行為：\texttt{G} 為文件全域；
+\texttt{L} 為局部 family/command；\texttt{L+G} 同時提供局部存取與完整全域啟用；
+\texttt{L+R} 同時提供局部存取與自動 script/range routing。
+
+\begin{longtable}{@{}p{0.30\linewidth}p{0.11\linewidth}p{0.18\linewidth}p{0.31\linewidth}@{}}
+\toprule
+\textbf{Family ID} & \textbf{Auto} & \textbf{局部命令} & \textbf{典型用途} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Family ID} & \textbf{Auto} & \textbf{局部命令} & \textbf{典型用途} \\
+\midrule
+\endhead
+\texttt{cmu} & G & --- & Computer Modern Unicode 基礎 family。 \\
+\texttt{noto} & L+G & \texttt{\string\NOT} & 一般 Noto 拉丁 family。 \\
+\texttt{times} & L+G & \texttt{\string\TIM} & Times/Arial/Consolas 系統 family route。 \\
+\texttt{gentium} & L+G & \texttt{\string\GEN} & Gentium Plus。 \\
+\texttt{charis} & L+G & \texttt{\string\CHA} & Charis SIL。 \\
+\texttt{libertinus} & L+G & \texttt{\string\LIB} & Libertinus serif/sans/mono。 \\
+\texttt{mlmodern} & L & \texttt{\string\MLM} & Latin Modern / MLModern local route。 \\
+
+\texttt{anatolian} & L & \texttt{\string\CA} & Carian / Anatolian。 \\
+\texttt{coptic} & L & \texttt{\string\CO} & Coptic。 \\
+\texttt{bopomofo} & L & \texttt{\string\ZY} & Bopomofo。 \\
+\texttt{cuneiform} & L & \texttt{\string\CU} & Cuneiform。 \\
+\texttt{glagolitic} & L & \texttt{\string\GL} & Glagolitic。 \\
+\texttt{italic} & L & \texttt{\string\OI} & Old Italic。 \\
+\texttt{hungarian} & L & \texttt{\string\OH} & Old Hungarian。 \\
+\texttt{runic} & L & \texttt{\string\RU} & Runic。 \\
+\texttt{armenian} & L & \texttt{\string\HY} & Armenian。 \\
+\texttt{georgian} & L & \texttt{\string\KA} & Georgian。 \\
+
+\texttt{hindi} & L+R & \texttt{\string\HI} & 含 registered range routing 的 Hindi Devanagari。 \\
+\texttt{sanskrit} & L+R & \texttt{\string\SA} & Sanskrit-aware Devanagari。 \\
+\texttt{devanagari} & L & \texttt{\string\DEV} & 不含語言專屬行為的 generic Devanagari。 \\
+\texttt{tamil} & L & \texttt{\string\TA} & Tamil。 \\
+\texttt{brahmi} & L & \texttt{\string\BR} & Brahmi。 \\
+\texttt{tibetan} & L+R & \texttt{\string\TI} & 含 tsheg-aware line breaking 的 Tibetan。 \\
+\texttt{segoe} & L & \texttt{\string\SEG} & Segoe Historic local route。 \\
+\texttt{thai} & L & \texttt{\string\TH} & Thai。 \\
+
+\texttt{arabic} & L & \texttt{\string\AR} & Arabic 與替代 style faces。 \\
+\texttt{urdu} & L & \texttt{\string\UR} & Urdu Nastaliq。 \\
+\texttt{aramaic} & L & \texttt{\string\IA} & Imperial Aramaic。 \\
+\texttt{nabataean} & L & \texttt{\string\NB} & Nabataean。 \\
+\texttt{hebrew} & L & \texttt{\string\HE} & Hebrew。 \\
+\texttt{syriac} & L & \texttt{\string\SY} & Syriac。 \\
+\texttt{syriac\_eastern} & L+R & \texttt{\string\SYE} & 含 registered range routing 的 Eastern Syriac。 \\
+\texttt{kharosthi} & L & \texttt{\string\KH} & Kharosthi。 \\
+\texttt{khitan\_small} & L & \texttt{\string\KHS} & 含 specialized composer 的 Khitan Small Script。 \\
+\texttt{pahlavi\_parthian} & L+R & \texttt{\string\PAR} & Inscriptional Parthian。 \\
+\texttt{pahlavi\_inscriptional} & L+R & \texttt{\string\PAH} & Inscriptional Pahlavi。 \\
+\texttt{pahlavi\_psalter} & L & \texttt{\string\PSP} & Psalter Pahlavi。 \\
+\texttt{avestan} & L & \texttt{\string\AV} & Avestan。 \\
+\texttt{manichaean} & L & \texttt{\string\MA} & Manichaean。 \\
+\texttt{phoenician} & L & \texttt{\string\PH} & Phoenician。 \\
+\texttt{samaritan} & L & \texttt{\string\SM} & Samaritan。 \\
+\texttt{sogdian} & L & \texttt{\string\SG} & Sogdian。 \\
+\texttt{sogdian\_old} & L+R & \texttt{\string\SGO} & Old Sogdian range routing。 \\
+
+\texttt{chinese\_simplified} & L+R & \texttt{\string\SC} & 簡體中文 CJK family。 \\
+\texttt{chinese\_traditional} & L+R & \texttt{\string\TC} & 繁體中文 CJK family。 \\
+\texttt{japanese} & L+R & \texttt{\string\JP} & Japanese；自動 routing 保留共用漢字優先級。 \\
+\texttt{wenjin} & L+R & \texttt{\string\WJ} & 含 CJK fallback chain 的 WenJin Mincho。 \\
+\texttt{shanggu} & G & --- & 繁體中文導向的全域 CJK family。 \\
+\texttt{sim} & G & --- & 簡體中文導向的系統 CJK family。 \\
+\texttt{korean} & L+R & \texttt{\string\KR} & Korean/Hangul。 \\
+\texttt{tangut} & L+R & \texttt{\string\TG} & CJK-aware Tangut routing。 \\
+
+\texttt{mongolian} & L & \texttt{\string\MO} & 內建直排 route 的 Mongolian。 \\
+\texttt{mongolian\_baiti} & L & \texttt{\string\MOb} & Mongolian Baiti 直排 route。 \\
+\texttt{manchu} & L & \texttt{\string\MC} & Manchu 直排 route。 \\
+\texttt{turkic} & L & \texttt{\string\OT} & Old Turkic。 \\
+\texttt{uyghur} & L & \texttt{\string\UY} & Old Uyghur vertical/rotated route。 \\
+
+\texttt{vietnamese\_quocngu} & L & \texttt{\string\VI} & Vietnamese Quốc Ngữ。 \\
+\texttt{vietnamese\_hannom} & L & \texttt{\string\HN} & Vietnamese Hán-Nôm / CJK。 \\
+\bottomrule
+\end{longtable}
+
+\subsection{進階擴展介面}
+
+下列命令供擴展 IMPE，不是一般文件設定：
+
+\begin{longtable}{@{}p{0.39\linewidth}p{0.55\linewidth}@{}}
+\toprule
+\textbf{命令} & \textbf{用途} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{命令} & \textbf{用途} \\
+\midrule
+\endhead
+\texttt{\string\FontRegisterFamily\{...\}} & 註冊 font family 與 local/global metadata。 \\
+\texttt{\string\LayoutPresetRegister\{...\}} & 從內部 components 註冊 structured layout preset。 \\
+\texttt{\string\LayoutPresetDeclare\{...\}} & 建置系統時使用的低階 layout-preset declaration。 \\
+\bottomrule
+\end{longtable}
+
+完整語法與擴展規則見 \texttt{docs/FONTS-zh.md}、\texttt{docs/LAYOUTS-zh.md}
+與 \texttt{docs/SYSTEM-zh.md}。
+
+\section{Showcase}\label{app:showcase}
+
+以下頁面完整重現標準 IMPE showcase。它不是第二份參考手冊，而是展示多語字體路由、
+複雜塑形、RTL 文字、直排、CJK 地區字形與文件功能組合的視覺 companion。
+
+最新版本可由
+\href{\IMPEShowcaseURL}{目前 main 分支}取得；屬於本手冊版本的版本則由
+\href{\IMPETaggedShowcaseURL}{v\IMPEVersion{} 標籤}保存。
+
+\IfFileExists{\IMPEShowcaseFile}
+  {\includepdf[pages=1-3,pagecommand={}]{\IMPEShowcaseFile}%
+   \includepdf[pages=4-6,landscape=true,pagecommand={}]{\IMPEShowcaseFile}%
+   \includepdf[pages=7-,pagecommand={}]{\IMPEShowcaseFile}}
+  {\PackageError{impe-manual}
+     {Required repository resource ../../_showcase/main.pdf is missing}
+     {Compile from doc/zh-tw or run scripts/build_manual.ps1 from the repository root.}}
+
+\end{document}

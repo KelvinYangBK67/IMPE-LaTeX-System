@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impebook_zh}[2026/09/22 v1.0.0 IMPE class for Chinese book]
+\ProvidesClass{impebook_zh}[2026/09/24 v1.0.0 IMPE class for Chinese book]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}

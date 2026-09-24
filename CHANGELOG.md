@@ -6,13 +6,13 @@ All notable released changes to IMPE LaTeX System are documented in this file.
 
 For unreleased development notes, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
-## [1.0.0] - Unreleased
+## [1.0.0] - 2026-09-24
 
 ### Added
 
 * Added canonical `impe`, `impeart`, `impebook`, `impereport`, and `impebeamer` public entry points, including `_zh` class variants.
 * Added the CTAN-oriented `impe.zip` release target alongside the existing full and core archives.
-* Added the authoritative English `impe-manual.tex`, including a public-API quick reference and the complete staged showcase, with a reproducible `impe-manual.pdf` build step for CTAN documentation.
+* Added authoritative English and Traditional Chinese manuals at `doc/en/impe-manual-en.tex` and `doc/zh-tw/impe-manual-zh-tw.tex`, each with a public-API quick reference, the complete canonical showcase, and a reproducible tracked PDF.
 * Added regression coverage for canonical and legacy entry points, font-mode aliases, namespaced runtime files, release construction, manual resources, local-font precedence, routing scalability, and Thai line breaking.
 * Added Windows and Linux GitHub Actions CI using a public TeX Live font fixture, including release, installation, migration, manual, and reproducibility checks.
 
@@ -25,13 +25,14 @@ For unreleased development notes, see [CHANGELOG.unreleased.md](./CHANGELOG.unre
 * Changed `impe.zip` to contain one top-level `impe/` directory and moved the canonical installer destination to `tex/latex/impe/`, with managed legacy-install cleanup.
 * Replaced the PowerShell-only externalized renderer with a portable TeXLua helper that resolves engines from `PATH`.
 * Changed the canonical manual engine from pdfLaTeX to XeLaTeX while preserving byte-for-byte reproducible PDF and CTAN builds.
+* Made Git tags and GitHub Releases the historical archive for source snapshots and versioned manual/showcase assets; no duplicate repository-local archive is maintained.
 
 ### Fixed
 
 * Made `\UseLocalFont` and `\UseLocalFonts` request local mode explicitly while keeping mode-free `\UseFont`, `\UseFonts`, and the `fonts` template key automatic.
 * Added a no-op fallback for the optional LaTeX tagged-math positioning hook, keeping title/tabular paths compatible with the TeX Live 2026 tools bundle.
-* Made the repository manual build use the current English source, the checkout's own runtime, and staged `VERSION` and showcase resources without fragile parent-directory paths.
-* Made `doc/en/impe-manual-en.tex` directly buildable with XeLaTeX/latexmk from its source directory and added the generated English manual PDF to version control.
+* Made the repository manual build use a deterministic repository-shaped staging tree, the checkout's own runtime, the root `VERSION`, and the single canonical `_showcase/main.pdf` without duplicated documentation resources.
+* Made both language manuals directly buildable with XeLaTeX/latexmk from their source directories and added both generated PDFs to version control.
 * Made explicit local font commands take precedence over automatic Unicode-range routing for the duration of their scope, with normal routing restored afterward.
 * Replaced fixed 4096-class transition generation with sparse generation over allocated XeTeX intercharacter classes, including a begin-document backfill for classes allocated later, and corrected same-owner comparison so adjacent blocks keep one shaping run.
 * Added Thai dictionary line breaking through XeTeX's ICU `th_TH` locale when the Thai family is loaded.

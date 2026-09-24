@@ -6,7 +6,7 @@ IMPE LaTeX System 的已發佈版本變更記錄於此。
 
 尚未發佈的開發中變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
-## [1.0.0] - 未發佈
+## [1.0.0] - 2026-09-24
 
 ### 工程收尾
 
@@ -18,7 +18,7 @@ IMPE LaTeX System 的已發佈版本變更記錄於此。
 
 * 新增標準公開入口 `impe`、`impeart`、`impebook`、`impereport`、`impebeamer` 及各 `_zh` class。
 * 在既有 full 與 core 封裝之外新增 CTAN 導向的 `impe.zip` release target。
-* 新增權威英文 `impe-manual.tex`，包含公開 API quick reference 與完整暫存 showcase，並提供可重現的 `impe-manual.pdf` CTAN 建置步驟。
+* 新增 `doc/en/impe-manual-en.tex` 與 `doc/zh-tw/impe-manual-zh-tw.tex` 兩份權威英語／繁體中文手冊；兩者都包含公開 API 快速參考、完整標準 showcase 與可重現且受追蹤的 PDF。
 * 新增標準／舊名入口、字體 mode alias、內部檔名命名空間、release 組裝、手冊資源、局部字體優先級、路由擴展性與泰文斷行的回歸測試。
 
 ### 調整
@@ -29,13 +29,14 @@ IMPE LaTeX System 的已發佈版本變更記錄於此。
 * 釐清 Git checkout、本地 `assets/fonts/` 字體庫，以及 full、core、CTAN 導向發佈包之間的關係。
 * 將 `impe.zip` 改為只含一個頂層 `impe/` 目錄，並把標準安裝位置改為 `tex/latex/impe/`，同時安全清理受管理的舊安裝。
 * 以從 `PATH` 解析引擎的可攜 TeXLua helper 取代只支援 PowerShell 的 externalized renderer。
+* 以 Git tag 與 GitHub Release 保存歷史源碼快照及帶版本號的手冊／showcase 成品；倉庫內不維護重複的歷史封存目錄。
 
 ### 修正
 
 * `\UseLocalFont` 與 `\UseLocalFonts` 現在會明確要求 local mode；無 mode 的 `\UseFont`、`\UseFonts` 與 `fonts` template key 仍採自動模式。
 * 為可選的 LaTeX tagged-math 定位 hook 增加空操作 fallback，確保標題與 tabular 路徑相容於 TeX Live 2026 的 tools bundle。
-* 倉庫手冊建置現在使用目前的英文源碼、checkout 自有 runtime，以及暫存的 `VERSION` 與 showcase 資源，不再依賴脆弱的上層相對路徑。
-* 現在可在源碼目錄直接以 XeLaTeX/latexmk 建置 `doc/en/impe-manual-en.tex`，並將生成的英文手冊 PDF 納入版本控制。
+* 倉庫手冊建置現在使用可重現且與倉庫同形的暫存目錄、checkout 自有 runtime、根目錄 `VERSION` 與唯一的 `_showcase/main.pdf`，不再複製文件資源。
+* 現在可在各自源碼目錄直接以 XeLaTeX/latexmk 建置兩種語言的手冊，並將兩份生成 PDF 納入版本控制。
 * 明確的局部字體命令現在會在其作用域內優先於自動 Unicode-range 路由，離開作用域後恢復正常全域路由。
 * 將固定生成 4096 個 class transition 的方法改為只針對已配置 XeTeX interchar class 的稀疏建表，並在文檔開始時補登較晚配置的 class；同時修正同 owner 比較，讓相鄰 block 維持同一 shaping run。
 * 載入泰文字體 family 時，透過 XeTeX 的 ICU `th_TH` locale 提供泰文字典斷行。

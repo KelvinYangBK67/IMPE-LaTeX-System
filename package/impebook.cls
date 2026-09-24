@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impebook}[2026/09/22 v1.0.0 IMPE class for book]
+\ProvidesClass{impebook}[2026/09/24 v1.0.0 IMPE class for book]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}

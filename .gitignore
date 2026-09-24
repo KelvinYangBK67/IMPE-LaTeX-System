@@ -10,7 +10,8 @@
 *.synctex.gz
 *.pdf
 !doc/en/impe-manual-en.pdf
-!doc/en/impe-showcase.pdf
+!doc/zh-tw/impe-manual-zh-tw.pdf
+*-SAVE-ERROR
 *.idx
 *.ilg
 *.ind

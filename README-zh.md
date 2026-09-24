@@ -32,15 +32,16 @@ showcase 的 XeLaTeX 手冊建置、CTAN 建置與封裝可重現性、標準安
 - `modules/`：可擴展實作
 - `assets/`：本地執行資源，例如字體
 
-目前開發版本：
-- `v1.0.0`
+目前發佈版本：
 
-最近已發佈版本：
-- `v0.1.3`
+- `v1.0.0`（2026-09-24）
 
 版本記錄：
+
 - 已發佈版本：[CHANGELOG-zh.md](./CHANGELOG-zh.md)
 - 未發佈變更：[CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)
+- 歷史源碼快照與二進位成品由 Git tag 與 GitHub Release 保存；倉庫內不另設
+  重複的 `archive/` 目錄。
 
 ## 展示
 
@@ -69,7 +70,9 @@ modules/    可擴展實作
 assets/     本地執行資源，字體檔案不由 Git 追蹤
 package/    可安裝的公開入口
 scripts/    安裝與發佈腳本
-doc/        權威英文手冊源碼
+doc/en/     權威英文手冊源碼與受追蹤 PDF
+doc/zh-tw/  權威繁體中文手冊源碼與受追蹤 PDF
+doc/common/ 手冊直接建置共用的 checkout 本地字體根設定
 docs/       詳細文件
 examples/   除錯 / 稽核示例
 ```
@@ -84,9 +87,16 @@ examples/   除錯 / 稽核示例
   只包含模板邏輯，不包含字體檔案。
 - `impe.zip`
   以 core 為基礎的 CTAN 導向源碼／執行檔封裝，包含文件與相容入口，但不包含本地字體庫。
-  解壓後只有一個頂層 `impe/` 目錄，當中包含權威英文
-  `impe-manual.tex`、生成的 `impe-manual.pdf`，以及供附錄 B 使用的
-  `impe-showcase.pdf`。
+  解壓後只有一個頂層 `impe/` 目錄，並保留倉庫的文件結構：
+  `doc/en/impe-manual-en.{tex,pdf}` 與
+  `doc/zh-tw/impe-manual-zh-tw.{tex,pdf}`。兩份手冊的附錄 B 都使用唯一的
+  標準 `_showcase/main.pdf`。
+
+發行建置另外輸出三個帶版本號的 GitHub Release 成品：
+
+- `impe-manual-en-X.Y.Z.pdf`
+- `impe-manual-zh-tw-X.Y.Z.pdf`
+- `impe-showcase-X.Y.Z.pdf`
 
 生成方式：
 
@@ -95,20 +105,34 @@ scripts\build_release.bat
 ```
 
 生成後的 zip 檔會放在 `dist/` 中。
-CTAN 建置會呼叫 `scripts/build_manual.ps1`，暫存 `VERSION`、完整 showcase
-與倉庫 runtime，再以 XeLaTeX 編譯兩次英文手冊。
-PDF 與 ZIP metadata 使用 `SOURCE_DATE_EPOCH`（預設為 1.0.0 發佈日期），因此相同輸入會生成逐位元組一致的 CTAN 封裝。
+CTAN 建置會呼叫 `scripts/build_manual.ps1`，建立可重現且與倉庫同形的暫存
+目錄，再以 XeLaTeX 建置兩份手冊。源碼仍依正常相對路徑解析根目錄
+`VERSION`、唯一的 showcase 與目前 checkout 的 runtime。PDF 與 ZIP metadata
+使用固定的 `SOURCE_DATE_EPOCH` 基準（預設為 2026-09-22）；這是可重現性
+基準，不是發佈日期。相同輸入因此會生成逐位元組一致的成品。
 
-權威英文手冊也可直接從源碼目錄建置。該目錄內的 latexmk 設定會選用
+兩份權威手冊都可直接從各自源碼目錄建置。目錄內的 latexmk 設定會選用
 XeLaTeX、優先解析目前 checkout 的 runtime，並套用與發行腳本相同的固定時間戳：
 
 ```powershell
 Set-Location doc/en
 latexmk -xelatex impe-manual-en.tex
+
+Set-Location ../zh-tw
+latexmk -xelatex impe-manual-zh-tw.tex
 ```
 
-生成的 `doc/en/impe-manual-en.pdf` 是受 Git 追蹤的發行成品。從倉庫根目錄
-執行 `scripts/build_manual.ps1`，可同時更新該檔案與 `dist/manual/` 下的暫存成品。
+生成的兩份 PDF 都是受 Git 追蹤的發行成品。從倉庫根目錄可選擇建置單一
+語言或兩者（預設為 `all`）：
+
+```powershell
+scripts\build_manual.ps1 -Language en
+scripts\build_manual.ps1 -Language zh-tw
+scripts\build_manual.ps1 -Language all
+```
+
+各語言 PDF 也會複製至 `dist/manual/`；驗證建置若不應改寫受追蹤 PDF，請加上
+`-NoUpdateTracked`。
 
 ## 安裝方式
 

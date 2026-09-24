@@ -3,7 +3,8 @@ param(
     [switch]$KeepStage,
     [switch]$SkipFull,
     [switch]$SkipCore,
-    [switch]$SkipCtan
+    [switch]$SkipCtan,
+    [switch]$SkipManualReproducibility
 )
 
 $ErrorActionPreference = "Stop"
@@ -63,6 +64,8 @@ $TopLevelFiles = @(
 if (-not $OutputRoot) {
     $OutputRoot = Join-Path $RepoRoot "dist"
 }
+New-Item -ItemType Directory -Force -Path $OutputRoot | Out-Null
+$OutputRoot = (Resolve-Path -LiteralPath $OutputRoot).Path
 
 Write-Host "Building IMPE LaTeX System release packages..."
 Write-Host "  Version:     v$Version"
@@ -272,10 +275,18 @@ function New-CtanPackage {
         Copy-Item -Force (Join-Path $RepoRoot $file) (Join-Path $StageRoot $file)
     }
 
-    & (Join-Path $ScriptRoot "build_manual.ps1") -OutputRoot $StageRoot
-    if ($LASTEXITCODE -ne 0) {
-        throw "Manual construction failed."
+    foreach ($languageId in @("en", "zh-tw")) {
+        $manualName = "impe-manual-$languageId"
+        $manualDocRoot = Join-Path $StageRoot "doc/$languageId"
+        New-Item -ItemType Directory -Force -Path $manualDocRoot | Out-Null
+        Copy-Item -LiteralPath (Join-Path $RepoRoot "doc/$languageId/$manualName.tex") `
+            -Destination (Join-Path $manualDocRoot "$manualName.tex") -Force
+        Copy-Item -LiteralPath (Join-Path $ManualBuildPrimary "$manualName.pdf") `
+            -Destination (Join-Path $manualDocRoot "$manualName.pdf") -Force
     }
+    $CtanShowcaseRoot = Join-Path $StageRoot "_showcase"
+    New-Item -ItemType Directory -Force -Path $CtanShowcaseRoot | Out-Null
+    Copy-Item -LiteralPath $ShowcasePdf -Destination (Join-Path $CtanShowcaseRoot "main.pdf") -Force
 
     $AssetsReadmes = @("README.md", "README-zh.md")
     if (Test-Path (Join-Path $RepoRoot "assets")) {
@@ -301,6 +312,58 @@ function New-CtanPackage {
     }
 }
 
+$ShowcaseSource = Join-Path $RepoRoot "_showcase/main.tex"
+$ShowcasePdf = Join-Path $RepoRoot "_showcase/main.pdf"
+foreach ($requiredShowcaseFile in @($ShowcaseSource, $ShowcasePdf)) {
+    if (-not (Test-Path -LiteralPath $requiredShowcaseFile)) {
+        throw "Canonical showcase resource is missing: $requiredShowcaseFile"
+    }
+}
+$showcaseSourceText = Get-Content -LiteralPath $ShowcaseSource -Raw
+if (-not $showcaseSourceText.Contains("\date{v$Version}")) {
+    throw "Canonical showcase source does not declare release version v$Version."
+}
+if ((Get-Item -LiteralPath $ShowcasePdf).Length -eq 0) {
+    throw "Canonical showcase PDF is empty."
+}
+
+$ManualBuildPrimary = Join-Path $OutputRoot ".manual-primary"
+$ManualBuildSecondary = Join-Path $OutputRoot ".manual-secondary"
+foreach ($manualBuildRoot in @($ManualBuildPrimary, $ManualBuildSecondary)) {
+    if (Test-Path -LiteralPath $manualBuildRoot) {
+        Remove-Item -LiteralPath $manualBuildRoot -Recurse -Force
+    }
+}
+
+& (Join-Path $ScriptRoot "build_manual.ps1") `
+    -Language all `
+    -OutputRoot $ManualBuildPrimary `
+    -NoUpdateTracked
+if ($LASTEXITCODE -ne 0) {
+    throw "Primary manual construction failed."
+}
+
+if (-not $SkipManualReproducibility) {
+    & (Join-Path $ScriptRoot "build_manual.ps1") `
+        -Language all `
+        -OutputRoot $ManualBuildSecondary `
+        -NoUpdateTracked
+    if ($LASTEXITCODE -ne 0) {
+        throw "Independent manual construction failed."
+    }
+    foreach ($manualPdfName in @("impe-manual-en.pdf", "impe-manual-zh-tw.pdf")) {
+        $primaryHash = (Get-FileHash -LiteralPath (Join-Path $ManualBuildPrimary $manualPdfName) -Algorithm SHA256).Hash
+        $secondaryHash = (Get-FileHash -LiteralPath (Join-Path $ManualBuildSecondary $manualPdfName) -Algorithm SHA256).Hash
+        if ($primaryHash -ne $secondaryHash) {
+            throw "Independent builds of $manualPdfName are not byte-for-byte reproducible."
+        }
+    }
+}
+
+if (-not $SkipCtan) {
+    New-CtanPackage
+}
+
 if (-not $SkipFull) {
     New-ReleasePackage `
         -Flavor "full" `
@@ -315,6 +378,20 @@ if (-not $SkipCore) {
         -Note "Core release without font files. Install by running install.bat, then point impe.local.tex or your local setup to a font library."
 }
 
-if (-not $SkipCtan) {
-    New-CtanPackage
+Copy-Item -LiteralPath (Join-Path $ManualBuildPrimary "impe-manual-en.pdf") `
+    -Destination (Join-Path $OutputRoot "impe-manual-en-$Version.pdf") -Force
+Copy-Item -LiteralPath (Join-Path $ManualBuildPrimary "impe-manual-zh-tw.pdf") `
+    -Destination (Join-Path $OutputRoot "impe-manual-zh-tw-$Version.pdf") -Force
+Copy-Item -LiteralPath $ShowcasePdf `
+    -Destination (Join-Path $OutputRoot "impe-showcase-$Version.pdf") -Force
+
+foreach ($manualBuildRoot in @($ManualBuildPrimary, $ManualBuildSecondary)) {
+    if (Test-Path -LiteralPath $manualBuildRoot) {
+        Remove-Item -LiteralPath $manualBuildRoot -Recurse -Force
+    }
 }
+
+Write-Host "GitHub release assets:"
+Write-Host "  $(Join-Path $OutputRoot "impe-manual-en-$Version.pdf")"
+Write-Host "  $(Join-Path $OutputRoot "impe-manual-zh-tw-$Version.pdf")"
+Write-Host "  $(Join-Path $OutputRoot "impe-showcase-$Version.pdf")"

@@ -11,15 +11,16 @@ system organized around four layers:
 - `modules/`: extendable implementations
 - `assets/`: local runtime resources such as fonts
 
-Current development version:
-- `v1.0.0`
+Current release:
 
-Latest published release:
-- `v0.1.3`
+- `v1.0.0` (2026-09-24)
 
 Version history:
+
 - Released versions: [CHANGELOG.md](./CHANGELOG.md)
 - Unreleased development notes: [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)
+- Historical source snapshots and binary assets belong in Git tags and GitHub
+  Releases; the repository does not maintain a parallel `archive/` directory.
   
 ## Showcase
 
@@ -86,7 +87,9 @@ modules/    extendable implementations
 assets/     local runtime resources (not tracked font files)
 package/    installable public entry files
 scripts/    install and release scripts
-doc/        authoritative English manual source
+doc/en/     authoritative English manual source and tracked PDF
+doc/zh-tw/  authoritative Traditional Chinese manual source and tracked PDF
+doc/common/ shared checkout-local manual font-root configuration
 docs/       detailed subsystem docs
 examples/   debug / audit examples
 ```
@@ -102,9 +105,16 @@ Three release packages are generated:
 - `impe.zip`
   CTAN-oriented source/runtime archive based on the core distribution, with
   documentation and compatibility entry points but without the local font library.
-  It extracts into one top-level `impe/` directory and includes the authoritative
-  English `impe-manual.tex`, its generated `impe-manual.pdf`, and the staged
-  `impe-showcase.pdf` used by Appendix B.
+  It extracts into one top-level `impe/` directory and preserves the repository
+  documentation layout: `doc/en/impe-manual-en.{tex,pdf}` and
+  `doc/zh-tw/impe-manual-zh-tw.{tex,pdf}`. Appendix B in both manuals uses the
+  single canonical `_showcase/main.pdf`.
+
+The release build also emits three versioned GitHub Release assets:
+
+- `impe-manual-en-X.Y.Z.pdf`
+- `impe-manual-zh-tw-X.Y.Z.pdf`
+- `impe-showcase-X.Y.Z.pdf`
 
 Recommended usage:
 
@@ -119,25 +129,38 @@ scripts\build_release.bat
 ```
 
 This creates versioned zip files under `dist/`.
-The CTAN build invokes `scripts/build_manual.ps1` to stage `VERSION`, the full
-showcase, and the repository runtime, then compile the English manual twice with
-XeLaTeX. The PDF and ZIP metadata use
-`SOURCE_DATE_EPOCH` (with the 1.0.0 release date as the default), so identical
-inputs produce byte-for-byte identical CTAN archives.
+The CTAN build invokes `scripts/build_manual.ps1` to create a deterministic,
+repository-shaped temporary tree and compile both manuals with XeLaTeX. Sources
+continue to resolve the root `VERSION`, the canonical showcase, and this
+checkout's runtime at their normal relative paths. PDF and ZIP metadata use a
+stable `SOURCE_DATE_EPOCH` baseline (2026-09-22 by default), so identical inputs
+produce byte-for-byte identical artifacts; this reproducibility baseline is not
+the release date.
 
-The authoritative English manual can also be built directly from its source
-directory. The directory-local latexmk configuration selects XeLaTeX, resolves
+Either authoritative manual can also be built directly from its source
+directory. Each directory-local latexmk configuration selects XeLaTeX, resolves
 this checkout's runtime before any installed copy, and applies the same stable
 build timestamp used by the release script:
 
 ```powershell
 Set-Location doc/en
 latexmk -xelatex impe-manual-en.tex
+
+Set-Location ../zh-tw
+latexmk -xelatex impe-manual-zh-tw.tex
 ```
 
-The resulting `doc/en/impe-manual-en.pdf` is a tracked release artifact. Run
-`scripts/build_manual.ps1` from the repository root to refresh both that file
-and the staged files under `dist/manual/`.
+Both resulting PDFs are tracked release artifacts. From the repository root,
+the manual builder can refresh one language or both (the default):
+
+```powershell
+scripts\build_manual.ps1 -Language en
+scripts\build_manual.ps1 -Language zh-tw
+scripts\build_manual.ps1 -Language all
+```
+
+Language-specific PDFs are also copied to `dist/manual/`. Use
+`-NoUpdateTracked` for verification builds that must not rewrite tracked PDFs.
 
 ## Continuous Integration
 
@@ -149,8 +172,9 @@ files are downloaded or committed.
 CI covers the canonical `impe*` and compatible `next*` entry points, local-font
 precedence, same-family shaping transitions, routing scalability, Thai line
 breaking with a public Thai font, the TeXLua externalized-render helper, two
-independent reproducible XeLaTeX manual builds with both appendices and the full
-showcase, explicit font-mode alias forwarding, CTAN construction and archive
+independent reproducible XeLaTeX builds of both manuals with both appendices and
+the full showcase, direct source-directory builds, explicit font-mode alias
+forwarding, CTAN construction and archive
 reproducibility, the canonical installer, and realistic v0.1.3 migration cleanup.
 The public fixture checks routing mechanics rather than the glyph coverage or
 visual quality of the private full font library. Run

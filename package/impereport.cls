@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impereport}[2026/09/22 v1.0.0 IMPE class for report]
+\ProvidesClass{impereport}[2026/09/24 v1.0.0 IMPE class for report]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
