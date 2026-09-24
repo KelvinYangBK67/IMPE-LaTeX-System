@@ -2,9 +2,9 @@
 
 [繁體中文](README-zh.md)
 
-`IMPE LaTeX System` is the project's formal name; the project records do not
-currently define **IMPE** as an acronym with an expanded form. It is a modular
-LaTeX document system organized around four layers:
+**IMPE** stands for **Integrated Multilingual Publishing Environment**. The
+formal project name remains `IMPE LaTeX System`. It is a modular LaTeX document
+system organized around four layers:
 
 - `core/`: stable mechanisms
 - `catalog/`: registrations and presets
@@ -86,7 +86,7 @@ modules/    extendable implementations
 assets/     local runtime resources (not tracked font files)
 package/    installable public entry files
 scripts/    install and release scripts
-doc/        minimal manual source scaffold
+doc/        authoritative English manual source
 docs/       detailed subsystem docs
 examples/   debug / audit examples
 ```
@@ -102,8 +102,9 @@ Three release packages are generated:
 - `impe.zip`
   CTAN-oriented source/runtime archive based on the core distribution, with
   documentation and compatibility entry points but without the local font library.
-  It extracts into one top-level `impe/` directory and includes the minimal
-  `impe-manual.tex` scaffold plus its generated `impe-manual.pdf`.
+  It extracts into one top-level `impe/` directory and includes the authoritative
+  English `impe-manual.tex`, its generated `impe-manual.pdf`, and the staged
+  `impe-showcase.pdf` used by Appendix B.
 
 Recommended usage:
 
@@ -118,9 +119,9 @@ scripts\build_release.bat
 ```
 
 This creates versioned zip files under `dist/`.
-The CTAN build invokes `scripts/build_manual.ps1` to compile the manual scaffold
-with XeLaTeX;
-the final manual content will be written separately. The PDF and ZIP metadata use
+The CTAN build invokes `scripts/build_manual.ps1` to stage `VERSION`, the full
+showcase, and the repository runtime, then compile the English manual twice with
+XeLaTeX. The PDF and ZIP metadata use
 `SOURCE_DATE_EPOCH` (with the 1.0.0 release date as the default), so identical
 inputs produce byte-for-byte identical CTAN archives.
 
@@ -134,7 +135,8 @@ files are downloaded or committed.
 CI covers the canonical `impe*` and compatible `next*` entry points, local-font
 precedence, same-family shaping transitions, routing scalability, Thai line
 breaking with a public Thai font, the TeXLua externalized-render helper, two
-independent reproducible XeLaTeX manual builds, CTAN construction and archive
+independent reproducible XeLaTeX manual builds with both appendices and the full
+showcase, explicit font-mode alias forwarding, CTAN construction and archive
 reproducibility, the canonical installer, and realistic v0.1.3 migration cleanup.
 The public fixture checks routing mechanics rather than the glyph coverage or
 visual quality of the private full font library. Run
@@ -194,8 +196,7 @@ Minimal example:
 \documentclass{impebeamer}
 \UseTemplateSet{
   layout = beamer,
-  globalfonts = {cmu,shanggu},
-  fonts = {hebrew,arabic},
+  fonts = {cmu,shanggu,hebrew,arabic},
   features = {tables,image}
 }
 ```

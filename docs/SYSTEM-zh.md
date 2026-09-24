@@ -2,7 +2,9 @@
 
 [English](SYSTEM.md)
 
-`IMPE LaTeX System` 目前按四層結構組織：
+**IMPE** 是 **Integrated Multilingual Publishing Environment**（整合式多語
+出版環境）的縮寫；正式專案名稱仍是 `IMPE LaTeX System`。系統目前按四層
+結構組織：
 
 - `core/`：穩定機制層
 - `catalog/`：註冊表與公開 id
@@ -99,8 +101,8 @@ Git 追蹤；詳見 `assets/README-zh.md`。
 ```tex
 \UseTemplateSet{
   layout = <preset>,
-  globalfonts = {a,b,c},
   fonts = {a,b,c},
+  globalfonts = {a,b,c},
   features = {a,b,c}
 }
 ```
@@ -108,11 +110,28 @@ Git 追蹤；詳見 `assets/README-zh.md`。
 目前支援的 key：
 
 - `layout`
-- `globalfonts`
-- `mainfonts`
-  `globalfonts` 的別名
 - `fonts`
+  一般使用時的建議介面；每個 family 依其註冊的自動模式載入
+- `globalfonts`
+  明確強制使用 global 或 range-global 模式
+- `mainfonts`
+  `globalfonts` 的別名，同樣是明確的 global override
 - `features`
+
+不需要完整 template 宣告時，可使用：
+
+```tex
+\UseFeatures{headers,hyperlinks}
+\UseFont{libertinus}
+\UseFonts{arabic,tibetan}
+\UseFont{libertinus}[global]
+\UseLocalFonts{arabic,tibetan}
+\UseGlobalFonts{libertinus}
+```
+
+無 mode 的 `\UseFont` / `\UseFonts` 與 `fonts` key 是一般情況下的自動
+介面；`\UseLocalFont(s)`、`\UseGlobalFont(s)`、`globalfonts` 與
+`mainfonts` 都是明確指定 mode 的 override。
 
 ## Bundled 字體根目錄
 

@@ -2,7 +2,9 @@
 
 [繁體中文](SYSTEM-zh.md)
 
-`IMPE LaTeX System` is organized around four layers:
+IMPE stands for **Integrated Multilingual Publishing Environment**; the formal
+project name remains `IMPE LaTeX System`. The system is organized around four
+layers:
 
 - `core/`: stable mechanisms
 - `catalog/`: registrations and public ids
@@ -99,8 +101,8 @@ The main public command is:
 ```tex
 \UseTemplateSet{
   layout = <preset>,
-  globalfonts = {a,b,c},
   fonts = {a,b,c},
+  globalfonts = {a,b,c},
   features = {a,b,c}
 }
 ```
@@ -108,10 +110,12 @@ The main public command is:
 Supported keys:
 
 - `layout`
-- `globalfonts`
-- `mainfonts`
-  Alias of `globalfonts`
 - `fonts`
+  Recommended for normal use; each family follows its registered automatic mode.
+- `globalfonts`
+  Explicitly forces global or range-global mode.
+- `mainfonts`
+  Alias of `globalfonts`; also an explicit global override.
 - `features`
 
 Wrapper classes provide defaults for `layout` and `globalfonts`, so those keys
@@ -147,10 +151,16 @@ single key in `\UseTemplateSet{...}`:
 
 ```tex
 \UseFeatures{headers,hyperlinks}
+\UseFont{libertinus}
+\UseFonts{arabic,tibetan}
+\UseFont{libertinus}[global]
+\UseLocalFonts{arabic,tibetan}
 \UseGlobalFonts{libertinus}
-\UseMainFonts{libertinus}
-\UseLocalFonts{libertinus}
 ```
+
+Mode-free `\UseFont` / `\UseFonts` and the `fonts` key are the normal
+automatic interface. `\UseLocalFont(s)`, `\UseGlobalFont(s)`, `globalfonts`,
+and `mainfonts` are explicit mode overrides.
 
 Documents may use `\subtitle{...}` alongside LaTeX's standard `\title{...}`.
 The title block prints the main title in a larger bold face, then prints the

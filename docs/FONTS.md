@@ -146,8 +146,8 @@ Ordinary local families should not contain:
 
 ### Global Family
 
-Only families with a real `global = {...}` block can be loaded through
-`globalfonts`. Most global-capable families are Latin/CJK/system families such
+Only families with a real `global = {...}` block can be requested through the
+explicit `globalfonts` override. Most global-capable families are Latin/CJK/system families such
 as `cmu`, `noto`, `times`, `gentium`, `charis`, `libertinus`, `japanese`,
 `shanggu`, and `sim`.
 Complex-script globals such as `hindi`, `sanskrit`, and `tibetan` are
@@ -266,35 +266,36 @@ without inserting manual breakpoints.
 
 ## Minimal Examples
 
-Local-family example:
+Automatic family-loading example:
 
 ```tex
 \UseTemplateSet{
-  globalfonts = {cmu,shanggu},
-  fonts = {hebrew,arabic}
+  fonts = {cmu,shanggu,hebrew,arabic}
 }
 
 \HE{שלום}
 \AR{السلام}
 ```
 
-Global-font example:
+Deliberate global override:
 
 ```tex
-\UseTemplateSet{
-  globalfonts = {cmu,shanggu}
-}
+\UseFont{libertinus}[global]
 ```
 
 This means:
 
-- Latin text uses the configured global Latin family
-- CJK text uses the configured global CJK family
-- extra script families can then be loaded locally through `fonts = {...}`
+- mode-free `fonts = {...}` follows each family's registered behavior
+- `cmu` and `shanggu` apply their registered global behavior
+- `hebrew` and `arabic` define their registered local commands
+- an explicit `[global]` mode is used only when overriding that behavior on purpose
 
 ## Registered Families
 
-The current catalog registers the following families. `globalfonts = {...}` only loads global bindings; `fonts = {...}` loads the local command family when one exists.
+The current catalog registers the following families. `fonts = {...}` follows
+each family's registered automatic behavior; `globalfonts = {...}` is an
+explicit request for global bindings and fails when a family has no global
+definition.
 
 | Family id | Local command | Default mode | Global available | Notes |
 |---|---|---|---|---|

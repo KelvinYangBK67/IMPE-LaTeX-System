@@ -18,20 +18,22 @@ IMPE LaTeX System 的已發佈版本變更記錄於此。
 
 * 新增標準公開入口 `impe`、`impeart`、`impebook`、`impereport`、`impebeamer` 及各 `_zh` class。
 * 在既有 full 與 core 封裝之外新增 CTAN 導向的 `impe.zip` release target。
-* 新增刻意保持最小內容的 `impe-manual.tex` scaffold 與可重現的 `impe-manual.pdf` 建置步驟，供後續 CTAN 手冊使用。
-* 新增標準／舊名入口、內部檔名命名空間、release 組裝、局部字體優先級、路由擴展性與泰文斷行的回歸測試。
+* 新增權威英文 `impe-manual.tex`，包含公開 API quick reference 與完整暫存 showcase，並提供可重現的 `impe-manual.pdf` CTAN 建置步驟。
+* 新增標準／舊名入口、字體 mode alias、內部檔名命名空間、release 組裝、手冊資源、局部字體優先級、路由擴展性與泰文斷行的回歸測試。
 
 ### 調整
 
 * 將所有 `next*` 套件與 class 入口改為轉送至 `impe*` 標準實作的受支持相容 wrapper。
 * 所有可分發的內部 TeX runtime 檔改用 `impe-` 前綴，避免共享 TeX tree 中的檔名碰撞。
-* 明確記錄 IMPE 是專案正式名稱，目前沒有權威的縮寫全稱。
+* 將 IMPE 定義為 Integrated Multilingual Publishing Environment（整合式多語出版環境），正式專案名稱仍為 `IMPE LaTeX System`。
 * 釐清 Git checkout、本地 `assets/fonts/` 字體庫，以及 full、core、CTAN 導向發佈包之間的關係。
 * 將 `impe.zip` 改為只含一個頂層 `impe/` 目錄，並把標準安裝位置改為 `tex/latex/impe/`，同時安全清理受管理的舊安裝。
 * 以從 `PATH` 解析引擎的可攜 TeXLua helper 取代只支援 PowerShell 的 externalized renderer。
 
 ### 修正
 
+* `\UseLocalFont` 與 `\UseLocalFonts` 現在會明確要求 local mode；無 mode 的 `\UseFont`、`\UseFonts` 與 `fonts` template key 仍採自動模式。
+* 倉庫手冊建置現在使用目前的英文源碼、checkout 自有 runtime，以及暫存的 `VERSION` 與 showcase 資源，不再依賴脆弱的上層相對路徑。
 * 明確的局部字體命令現在會在其作用域內優先於自動 Unicode-range 路由，離開作用域後恢復正常全域路由。
 * 將固定生成 4096 個 class transition 的方法改為只針對已配置 XeTeX interchar class 的稀疏建表，並在文檔開始時補登較晚配置的 class；同時修正同 owner 比較，讓相鄰 block 維持同一 shaping run。
 * 載入泰文字體 family 時，透過 XeTeX 的 ICU `th_TH` locale 提供泰文字典斷行。

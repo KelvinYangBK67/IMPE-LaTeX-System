@@ -1,0 +1,23 @@
+\documentclass{article}
+\usepackage{impe}
+
+% Intercept the public loaders after IMPE has initialized so this regression
+% checks exactly which mode each public alias and template key forwards.
+\RenewDocumentCommand{\UseFont}{m O{}}
+  {\typeout{IMPE-TEST-MODE-SINGLE:#1:#2}}
+\RenewDocumentCommand{\UseFonts}{m O{}}
+  {\typeout{IMPE-TEST-MODE-MULTI:#1:#2}}
+
+\UseFont{auto-single}
+\UseLocalFont{local-single}
+\UseLocalFonts{local-a,local-b}
+\UseGlobalFont{global-single}
+\UseGlobalFonts{global-a,global-b}
+\UseTemplateSet{fonts={template-auto}}
+\UseTemplateSet{globalfonts={template-global}}
+\UseTemplateSet{mainfonts={template-main}}
+
+\begin{document}
+\typeout{IMPE-TEST-FONT-MODE-ALIASES-PASS}
+Font mode alias regression.
+\end{document}

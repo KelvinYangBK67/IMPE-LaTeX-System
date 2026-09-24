@@ -4,13 +4,24 @@ xetex
 
 # IMPE runtime and manual dependencies exercised by the regression suite.
 bidi
+booktabs
 catchfile
+caption
+cm-unicode
 ctex
 fontspec
 geometry
 hyperref
 import
+libertinus-fonts
+metalogo
+multirow
+pdfpages
+pdflscape
+ragged2e
 setspace
+threeparttable
+tools
 xecjk
 xstring
 zref

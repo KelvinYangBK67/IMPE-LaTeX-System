@@ -109,6 +109,7 @@ try {
     $tests = @(
         "canonical-entry",
         "legacy-entry",
+        "font-mode-aliases",
         "local-font-override",
         "same-family-shaping",
         "routing-scalability",
@@ -131,6 +132,25 @@ try {
 }
 finally {
     $env:TEXINPUTS = $oldTexInputs
+}
+
+$fontModeLog = Get-Content (Join-Path $BuildRoot "font-mode-aliases.log") -Raw
+$compactFontModeLog = $fontModeLog -replace '\s',''
+$expectedFontModes = @(
+    "IMPE-TEST-MODE-SINGLE:auto-single:",
+    "IMPE-TEST-MODE-SINGLE:local-single:local",
+    "IMPE-TEST-MODE-MULTI:local-a,local-b:local",
+    "IMPE-TEST-MODE-SINGLE:global-single:global",
+    "IMPE-TEST-MODE-MULTI:global-a,global-b:global",
+    "IMPE-TEST-MODE-MULTI:template-auto:",
+    "IMPE-TEST-MODE-MULTI:template-global:global",
+    "IMPE-TEST-MODE-MULTI:template-main:global",
+    "IMPE-TEST-FONT-MODE-ALIASES-PASS"
+)
+foreach ($marker in $expectedFontModes) {
+    if ($compactFontModeLog -notmatch [regex]::Escape($marker)) {
+        throw "Font mode alias regression is missing marker: $marker"
+    }
 }
 
 $localLog = Get-Content (Join-Path $BuildRoot "local-font-override.log") -Raw
@@ -191,6 +211,32 @@ $manualHashA = (Get-FileHash -LiteralPath (Join-Path $manualBuildA "impe-manual.
 $manualHashB = (Get-FileHash -LiteralPath (Join-Path $manualBuildB "impe-manual.pdf") -Algorithm SHA256).Hash
 if ($manualHashA -ne $manualHashB) {
     throw "Independent XeLaTeX manual builds must be byte-for-byte reproducible."
+}
+$showcaseHash = (Get-FileHash -LiteralPath (Join-Path $RepoRoot "_showcase/main.pdf") -Algorithm SHA256).Hash
+foreach ($manualBuild in @($manualBuildA, $manualBuildB)) {
+    foreach ($required in @("VERSION", "impe-manual.tex", "impe-manual.pdf", "impe-showcase.pdf")) {
+        if (-not (Test-Path -LiteralPath (Join-Path $manualBuild $required))) {
+            throw "Staged manual build is missing $required."
+        }
+    }
+    $stagedShowcaseHash = (Get-FileHash -LiteralPath (Join-Path $manualBuild "impe-showcase.pdf") -Algorithm SHA256).Hash
+    if ($stagedShowcaseHash -ne $showcaseHash) {
+        throw "Staged Appendix B showcase does not match _showcase/main.pdf."
+    }
+}
+$manualSourceText = Get-Content -LiteralPath (Join-Path $manualBuildA "impe-manual.tex") -Raw
+foreach ($requiredText in @(
+    "\documentclass[11pt]{impeart}",
+    "\section{Quick Reference}",
+    "\section{Showcase}",
+    "\includepdf[pages=-,pagecommand={}]{impe-showcase.pdf}"
+)) {
+    if (-not $manualSourceText.Contains($requiredText)) {
+        throw "Authoritative manual source is missing required content: $requiredText"
+    }
+}
+if ($manualSourceText.Contains("../")) {
+    throw "Staged manual source must not depend on parent-directory resource paths."
 }
 
 if (-not $SkipRelease) {
@@ -259,6 +305,7 @@ if (-not $SkipRelease) {
         "LICENSE",
         "impe-manual.tex",
         "impe-manual.pdf",
+        "impe-showcase.pdf",
         "impe-externalized-render.lua"
     )) {
         if (-not (Test-Path (Join-Path $ctanPackage $required))) {

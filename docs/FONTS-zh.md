@@ -137,7 +137,7 @@ core/fonts/impe-fonts-system.tex
 
 ### 全域 Family
 
-只有真正帶有 `global = {...}` 區塊的 family 才能透過 `globalfonts` 載入。大部分可作為全域字體的 family 是 Latin / CJK / system 類 family，例如 `cmu`、`noto`、`times`、`gentium`、`charis`、`libertinus`、`japanese`、`shanggu`、`sim`。`hindi`、`sanskrit`、`tibetan` 這類 complex-script global 會用 `unicodeblocks` 限定 Unicode 區段，因此只在對應文字區段切換字體，不會改掉 Latin、漢字或其他文字。`hindi` range global 使用 Devanagari 區段，但不啟用 Sanskrit 專用斷行規則。`sanskrit` range global 會為 Devanagari 基礎區段加入 akshara-aware 斷行，並保留 virama 後接 consonant 時不斷行。Tibetan range global 也會保留核心 tsheg 行為：只有 `U+0F0B` / `U+0F0C` 後面接藏文字母 / 符號時才允許斷行，且不允許在藏文標點前斷行。如果某個 family 沒有 `global` 區塊卻被要求以 global mode 載入，registry 會直接回報「no global mode」錯誤，而不是依賴預留狀態佔位。
+只有真正帶有 `global = {...}` 區塊的 family 才能透過明確的 `globalfonts` override 載入。大部分可作為全域字體的 family 是 Latin / CJK / system 類 family，例如 `cmu`、`noto`、`times`、`gentium`、`charis`、`libertinus`、`japanese`、`shanggu`、`sim`。`hindi`、`sanskrit`、`tibetan` 這類 complex-script global 會用 `unicodeblocks` 限定 Unicode 區段，因此只在對應文字區段切換字體，不會改掉 Latin、漢字或其他文字。`hindi` range global 使用 Devanagari 區段，但不啟用 Sanskrit 專用斷行規則。`sanskrit` range global 會為 Devanagari 基礎區段加入 akshara-aware 斷行，並保留 virama 後接 consonant 時不斷行。Tibetan range global 也會保留核心 tsheg 行為：只有 `U+0F0B` / `U+0F0C` 後面接藏文字母 / 符號時才允許斷行，且不允許在藏文標點前斷行。如果某個 family 沒有 `global` 區塊卻被要求以 global mode 載入，registry 會直接回報「no global mode」錯誤，而不是依賴預留狀態佔位。
 
 `cmu` 與 `times` 是 system / bundled 例外：它們可以直接使用字體名稱，不一定需要 `path = \CatalogFontRoot/<id>/`。
 
@@ -221,35 +221,35 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 
 ## 最小示例
 
-區域字體 family 的例子：
+自動載入 family 的例子：
 
 ```tex
 \UseTemplateSet{
-  globalfonts = {cmu,shanggu},
-  fonts = {hebrew,arabic}
+  fonts = {cmu,shanggu,hebrew,arabic}
 }
 
 \HE{שלום}
 \AR{السلام}
 ```
 
-全域字體的例子：
+明確指定全域模式的例子：
 
 ```tex
-\UseTemplateSet{
-  globalfonts = {cmu,shanggu}
-}
+\UseFont{libertinus}[global]
 ```
 
 這代表：
 
-- Latin 文字使用設定好的全域 Latin family
-- CJK 文字使用設定好的全域 CJK family
-- 額外 script family 再透過 `fonts = {...}` 以區域方式載入
+- 無 mode 的 `fonts = {...}` 會依每個 family 的註冊行為載入
+- `cmu` 與 `shanggu` 會採用其註冊的 global 行為
+- `hebrew` 與 `arabic` 會建立其註冊的 local 命令
+- 只有刻意覆寫註冊行為時才使用明確的 `[global]` mode
 
 ## 已註冊 Families
 
-目前 catalog 中已註冊的 family 如下。`globalfonts = {...}` 只會載入全域綁定；`fonts = {...}` 則會在有對應定義時載入 local 命令 family。
+目前 catalog 中已註冊的 family 如下。`fonts = {...}` 會依各 family 註冊的
+自動行為載入；`globalfonts = {...}` 是明確的 global 綁定要求，family
+沒有 global 定義時會直接報錯。
 
 | Family id | Local 命令 | 預設模式 | 提供 global | 說明 |
 |---|---|---|---|---|

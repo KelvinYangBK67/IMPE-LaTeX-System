@@ -13,8 +13,9 @@ TeX Live 2026 與 PowerShell 執行公開 regression suite。CI 會用 TeX Live
 
 CI 涵蓋標準 `impe*` 與相容 `next*` 入口、局部字體優先權、同 family
 shaping transition、routing scalability、使用公開泰文字體的斷行測試、
-TeXLua helper、兩次獨立且可重現的 XeLaTeX 手冊建置、CTAN 建置與封裝
-可重現性、標準安裝路徑，以及真實 v0.1.3 佈局的遷移清理。公開 fixture
+TeXLua helper、字體 mode alias、兩次獨立且可重現並包含兩個附錄與完整
+showcase 的 XeLaTeX 手冊建置、CTAN 建置與封裝可重現性、標準安裝路徑，
+以及真實 v0.1.3 佈局的遷移清理。公開 fixture
 驗證 routing 機制，不涵蓋私有完整字體庫的 glyph 覆蓋率與視覺品質；
 本機具備該字體庫時，可不帶 `-PublicFonts` 執行
 `tests/run_regressions.ps1`，保留原有完整字體測試流程。
@@ -22,8 +23,9 @@ TeXLua helper、兩次獨立且可重現的 XeLaTeX 手冊建置、CTAN 建置�
 安裝器只會清理由明確 v0.1.3 managed-path manifest 列出的舊 runtime，
 會安全遷移已識別的本地 override，並保留未知的頂層與巢狀使用者檔案。
 
-`IMPE LaTeX System` 是本專案的正式名稱；現有專案資料並未把 **IMPE**
-定義為具有英文全稱的縮寫。它是一套模組化 LaTeX 文檔系統，主要由四層組成：
+**IMPE** 是 **Integrated Multilingual Publishing Environment**（整合式多語
+出版環境）的縮寫；本專案的正式名稱仍是 `IMPE LaTeX System`。它是一套
+模組化 LaTeX 文檔系統，主要由四層組成：
 
 - `core/`：穩定機制
 - `catalog/`：字體、版面與功能註冊
@@ -67,7 +69,7 @@ modules/    可擴展實作
 assets/     本地執行資源，字體檔案不由 Git 追蹤
 package/    可安裝的公開入口
 scripts/    安裝與發佈腳本
-doc/        最小手冊源碼 scaffold
+doc/        權威英文手冊源碼
 docs/       詳細文件
 examples/   除錯 / 稽核示例
 ```
@@ -82,8 +84,9 @@ examples/   除錯 / 稽核示例
   只包含模板邏輯，不包含字體檔案。
 - `impe.zip`
   以 core 為基礎的 CTAN 導向源碼／執行檔封裝，包含文件與相容入口，但不包含本地字體庫。
-  解壓後只有一個頂層 `impe/` 目錄，當中包含最小的 `impe-manual.tex`
-  scaffold 與生成的 `impe-manual.pdf`。
+  解壓後只有一個頂層 `impe/` 目錄，當中包含權威英文
+  `impe-manual.tex`、生成的 `impe-manual.pdf`，以及供附錄 B 使用的
+  `impe-showcase.pdf`。
 
 生成方式：
 
@@ -92,7 +95,8 @@ scripts\build_release.bat
 ```
 
 生成後的 zip 檔會放在 `dist/` 中。
-CTAN 建置會呼叫 `scripts/build_manual.ps1` 編譯手冊 scaffold；正式手冊內容將另行撰寫。
+CTAN 建置會呼叫 `scripts/build_manual.ps1`，暫存 `VERSION`、完整 showcase
+與倉庫 runtime，再以 XeLaTeX 編譯兩次英文手冊。
 PDF 與 ZIP metadata 使用 `SOURCE_DATE_EPOCH`（預設為 1.0.0 發佈日期），因此相同輸入會生成逐位元組一致的 CTAN 封裝。
 
 ## 安裝方式
@@ -125,8 +129,7 @@ runtime 不再內嵌 TeX Live 年份或 Windows 安裝路徑。
 \documentclass{impebeamer}
 \UseTemplateSet{
   layout = beamer,
-  globalfonts = {cmu,shanggu},
-  fonts = {hebrew,arabic},
+  fonts = {cmu,shanggu,hebrew,arabic},
   features = {tables,image}
 }
 ```
