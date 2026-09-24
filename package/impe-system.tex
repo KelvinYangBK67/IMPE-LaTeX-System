@@ -6,6 +6,11 @@
 \RequirePackage{import}
 \RequirePackage{xstring}
 
+% The 2026 tools bundle may call this latex-lab developer hook from array
+% even when tagged-math support is not loaded. Keep ordinary tabular users
+% working; latex-lab replaces this no-op definition when it is active.
+\providecommand{\UseMathForPositioningText}{}
+
 \makeatletter
 \@ifundefined{ifNextSystemInstalled}
   {\newif\ifNextSystemInstalled\NextSystemInstalledfalse}

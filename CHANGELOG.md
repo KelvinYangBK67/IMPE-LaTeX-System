@@ -29,6 +29,7 @@ For unreleased development notes, see [CHANGELOG.unreleased.md](./CHANGELOG.unre
 ### Fixed
 
 * Made `\UseLocalFont` and `\UseLocalFonts` request local mode explicitly while keeping mode-free `\UseFont`, `\UseFonts`, and the `fonts` template key automatic.
+* Added a no-op fallback for the optional LaTeX tagged-math positioning hook, keeping title/tabular paths compatible with the TeX Live 2026 tools bundle.
 * Made the repository manual build use the current English source, the checkout's own runtime, and staged `VERSION` and showcase resources without fragile parent-directory paths.
 * Made explicit local font commands take precedence over automatic Unicode-range routing for the duration of their scope, with normal routing restored afterward.
 * Replaced fixed 4096-class transition generation with sparse generation over allocated XeTeX intercharacter classes, including a begin-document backfill for classes allocated later, and corrected same-owner comparison so adjacent blocks keep one shaping run.
