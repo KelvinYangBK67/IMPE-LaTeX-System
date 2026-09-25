@@ -87,6 +87,7 @@ modules/    extendable implementations
 assets/     local runtime resources (not tracked font files)
 package/    installable public entry files
 scripts/    install and release scripts
+doc/de/     authoritative German manual source and tracked PDF
 doc/en/     authoritative English manual source and tracked PDF
 doc/zh-tw/  authoritative Traditional Chinese manual source and tracked PDF
 doc/common/ shared checkout-local manual font-root configuration
@@ -106,12 +107,15 @@ Three release packages are generated:
   CTAN-oriented source/runtime archive based on the core distribution, with
   documentation and compatibility entry points but without the local font library.
   It extracts into one top-level `impe/` directory and preserves the repository
-  documentation layout: `doc/en/impe-manual-en.{tex,pdf}` and
-  `doc/zh-tw/impe-manual-zh-tw.{tex,pdf}`. Appendix B in both manuals uses the
-  single canonical `_showcase/main.pdf`.
+  documentation layout for every discovered `doc/<language>/impe-manual-<language>.tex`
+  source. The current set is German (`de`), English (`en`), and Traditional Chinese
+  (`zh-tw`), each with its matching PDF. Every Appendix B uses the single canonical
+  `_showcase/main.pdf`.
 
-The release build also emits three versioned GitHub Release assets:
+The release build also emits one versioned manual asset per discovered language,
+plus the showcase:
 
+- `impe-manual-de-X.Y.Z.pdf`
 - `impe-manual-en-X.Y.Z.pdf`
 - `impe-manual-zh-tw-X.Y.Z.pdf`
 - `impe-showcase-X.Y.Z.pdf`
@@ -130,16 +134,16 @@ scripts\build_release.bat
 
 This creates versioned zip files under `dist/`.
 The CTAN build invokes `scripts/build_manual.ps1` to create a deterministic,
-repository-shaped temporary tree and compile both manuals with XeLaTeX. Sources
+repository-shaped temporary tree and compile every discovered manual with XeLaTeX. Sources
 continue to resolve the root `VERSION`, the canonical showcase, and this
 checkout's runtime at their normal relative paths. PDF and ZIP metadata use a
 stable `SOURCE_DATE_EPOCH` baseline (2026-09-22 by default), so identical inputs
 produce byte-for-byte identical artifacts; this reproducibility baseline is not
 the release date.
 
-Either authoritative manual can also be built directly from its source
-directory. Each directory-local latexmk configuration selects XeLaTeX, resolves
-this checkout's runtime before any installed copy, and applies the same stable
+The English and Traditional Chinese manuals can also be built directly from their
+source directories. Their directory-local latexmk configurations select XeLaTeX, resolve
+this checkout's runtime before any installed copy, and apply the same stable
 build timestamp used by the release script:
 
 ```powershell
@@ -150,13 +154,16 @@ Set-Location ../zh-tw
 latexmk -xelatex impe-manual-zh-tw.tex
 ```
 
-Both resulting PDFs are tracked release artifacts. From the repository root,
-the manual builder can refresh one language or both (the default):
+All three resulting PDFs are tracked release artifacts. From the repository root,
+the manual builder discovers canonical sources automatically. With no `-Language`
+argument it builds all discovered manuals; selections remain available when needed:
 
 ```powershell
+scripts\build_manual.ps1 -ListLanguages
+scripts\build_manual.ps1
+scripts\build_manual.ps1 -Language de
 scripts\build_manual.ps1 -Language en
-scripts\build_manual.ps1 -Language zh-tw
-scripts\build_manual.ps1 -Language all
+scripts\build_manual.ps1 -Language en,zh-tw
 ```
 
 Language-specific PDFs are also copied to `dist/manual/`. Use
@@ -172,7 +179,7 @@ files are downloaded or committed.
 CI covers the canonical `impe*` and compatible `next*` entry points, local-font
 precedence, same-family shaping transitions, routing scalability, Thai line
 breaking with a public Thai font, the TeXLua externalized-render helper, two
-independent reproducible XeLaTeX builds of both manuals with both appendices and
+independent reproducible XeLaTeX builds of every discovered manual with both appendices and
 the full showcase, direct source-directory builds, explicit font-mode alias
 forwarding, CTAN construction and archive
 reproducibility, the canonical installer, and realistic v0.1.3 migration cleanup.

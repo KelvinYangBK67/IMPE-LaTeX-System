@@ -70,6 +70,7 @@ modules/    可擴展實作
 assets/     本地執行資源，字體檔案不由 Git 追蹤
 package/    可安裝的公開入口
 scripts/    安裝與發佈腳本
+doc/de/     權威德文手冊源碼與受追蹤 PDF
 doc/en/     權威英文手冊源碼與受追蹤 PDF
 doc/zh-tw/  權威繁體中文手冊源碼與受追蹤 PDF
 doc/common/ 手冊直接建置共用的 checkout 本地字體根設定
@@ -87,13 +88,14 @@ examples/   除錯 / 稽核示例
   只包含模板邏輯，不包含字體檔案。
 - `impe.zip`
   以 core 為基礎的 CTAN 導向源碼／執行檔封裝，包含文件與相容入口，但不包含本地字體庫。
-  解壓後只有一個頂層 `impe/` 目錄，並保留倉庫的文件結構：
-  `doc/en/impe-manual-en.{tex,pdf}` 與
-  `doc/zh-tw/impe-manual-zh-tw.{tex,pdf}`。兩份手冊的附錄 B 都使用唯一的
-  標準 `_showcase/main.pdf`。
+  解壓後只有一個頂層 `impe/` 目錄，並依
+  `doc/<language>/impe-manual-<language>.tex` 慣例保留所有自動發現的手冊。
+  目前包含德文（`de`）、英文（`en`）與繁體中文（`zh-tw`）的源碼及 PDF；
+  每份手冊的附錄 B 都使用唯一的標準 `_showcase/main.pdf`。
 
-發行建置另外輸出三個帶版本號的 GitHub Release 成品：
+發行建置會為每個自動發現的語言輸出一份帶版本號的手冊，另加 showcase：
 
+- `impe-manual-de-X.Y.Z.pdf`
 - `impe-manual-en-X.Y.Z.pdf`
 - `impe-manual-zh-tw-X.Y.Z.pdf`
 - `impe-showcase-X.Y.Z.pdf`
@@ -106,12 +108,12 @@ scripts\build_release.bat
 
 生成後的 zip 檔會放在 `dist/` 中。
 CTAN 建置會呼叫 `scripts/build_manual.ps1`，建立可重現且與倉庫同形的暫存
-目錄，再以 XeLaTeX 建置兩份手冊。源碼仍依正常相對路徑解析根目錄
+目錄，再以 XeLaTeX 建置所有自動發現的手冊。源碼仍依正常相對路徑解析根目錄
 `VERSION`、唯一的 showcase 與目前 checkout 的 runtime。PDF 與 ZIP metadata
 使用固定的 `SOURCE_DATE_EPOCH` 基準（預設為 2026-09-22）；這是可重現性
 基準，不是發佈日期。相同輸入因此會生成逐位元組一致的成品。
 
-兩份權威手冊都可直接從各自源碼目錄建置。目錄內的 latexmk 設定會選用
+英文與繁體中文手冊也可直接從各自源碼目錄建置。目錄內的 latexmk 設定會選用
 XeLaTeX、優先解析目前 checkout 的 runtime，並套用與發行腳本相同的固定時間戳：
 
 ```powershell
@@ -122,13 +124,15 @@ Set-Location ../zh-tw
 latexmk -xelatex impe-manual-zh-tw.tex
 ```
 
-生成的兩份 PDF 都是受 Git 追蹤的發行成品。從倉庫根目錄可選擇建置單一
-語言或兩者（預設為 `all`）：
+三份生成 PDF 都是受 Git 追蹤的發行成品。從倉庫根目錄執行時，腳本會自動
+發現標準命名的手冊；未指定 `-Language` 時會建置全部，也可按需選擇：
 
 ```powershell
+scripts\build_manual.ps1 -ListLanguages
+scripts\build_manual.ps1
+scripts\build_manual.ps1 -Language de
 scripts\build_manual.ps1 -Language en
-scripts\build_manual.ps1 -Language zh-tw
-scripts\build_manual.ps1 -Language all
+scripts\build_manual.ps1 -Language en,zh-tw
 ```
 
 各語言 PDF 也會複製至 `dist/manual/`；驗證建置若不應改寫受追蹤 PDF，請加上

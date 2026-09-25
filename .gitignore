@@ -9,8 +9,7 @@
 *.fdb_latexmk
 *.synctex.gz
 *.pdf
-!doc/en/impe-manual-en.pdf
-!doc/zh-tw/impe-manual-zh-tw.pdf
+!doc/*/impe-manual-*.pdf
 *-SAVE-ERROR
 *.idx
 *.ilg

@@ -11,6 +11,7 @@ $ErrorActionPreference = "Stop"
 
 $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $ScriptRoot
+$DocRoot = Join-Path $RepoRoot "doc"
 $VersionFile = Join-Path $RepoRoot "VERSION"
 
 if (-not (Test-Path $VersionFile)) {
@@ -21,6 +22,36 @@ $Version = (Get-Content $VersionFile -Raw).Trim()
 if (-not $Version) {
     throw "VERSION file is empty."
 }
+
+# Discover manuals using the same public convention as build_manual.ps1:
+#
+#   doc/<language>/impe-manual-<language>.tex
+#
+# One ordered list drives every release step so adding a language never needs a
+# second release-script edit.
+$Manuals = [ordered]@{}
+Get-ChildItem -LiteralPath $DocRoot -Directory |
+    Sort-Object Name |
+    ForEach-Object {
+        $languageId = $_.Name
+        $manualName = "impe-manual-$languageId"
+        $source = Join-Path $_.FullName "$manualName.tex"
+
+        if (Test-Path -LiteralPath $source) {
+            $Manuals[$languageId] = [PSCustomObject]@{
+                Language         = $languageId
+                Source           = $source
+                PdfName          = "$manualName.pdf"
+                VersionedPdfName = "$manualName-$Version.pdf"
+            }
+        }
+    }
+
+if ($Manuals.Count -eq 0) {
+    throw "No manuals were discovered under $DocRoot. Expected doc/<language>/impe-manual-<language>.tex."
+}
+
+$ManualLanguages = @($Manuals.Keys)
 
 $DefaultSourceDateEpoch = [DateTimeOffset]::Parse("2026-09-22T00:00:00Z").ToUnixTimeSeconds()
 if ($env:SOURCE_DATE_EPOCH) {
@@ -71,6 +102,7 @@ Write-Host "Building IMPE LaTeX System release packages..."
 Write-Host "  Version:     v$Version"
 Write-Host "  Repository:  $RepoRoot"
 Write-Host "  Output root: $OutputRoot"
+Write-Host "  Manuals:     $($ManualLanguages -join ', ')"
 Write-Host ""
 
 function Remove-RuntimeBuildArtifacts {
@@ -275,14 +307,14 @@ function New-CtanPackage {
         Copy-Item -Force (Join-Path $RepoRoot $file) (Join-Path $StageRoot $file)
     }
 
-    foreach ($languageId in @("en", "zh-tw")) {
-        $manualName = "impe-manual-$languageId"
+    foreach ($languageId in $ManualLanguages) {
+        $manual = $Manuals[$languageId]
         $manualDocRoot = Join-Path $StageRoot "doc/$languageId"
         New-Item -ItemType Directory -Force -Path $manualDocRoot | Out-Null
-        Copy-Item -LiteralPath (Join-Path $RepoRoot "doc/$languageId/$manualName.tex") `
-            -Destination (Join-Path $manualDocRoot "$manualName.tex") -Force
-        Copy-Item -LiteralPath (Join-Path $ManualBuildPrimary "$manualName.pdf") `
-            -Destination (Join-Path $manualDocRoot "$manualName.pdf") -Force
+        Copy-Item -LiteralPath $manual.Source `
+            -Destination (Join-Path $manualDocRoot ([IO.Path]::GetFileName($manual.Source))) -Force
+        Copy-Item -LiteralPath (Join-Path $ManualBuildPrimary $manual.PdfName) `
+            -Destination (Join-Path $manualDocRoot $manual.PdfName) -Force
     }
     $CtanShowcaseRoot = Join-Path $StageRoot "_showcase"
     New-Item -ItemType Directory -Force -Path $CtanShowcaseRoot | Out-Null
@@ -336,7 +368,7 @@ foreach ($manualBuildRoot in @($ManualBuildPrimary, $ManualBuildSecondary)) {
 }
 
 & (Join-Path $ScriptRoot "build_manual.ps1") `
-    -Language all `
+    -Language $ManualLanguages `
     -OutputRoot $ManualBuildPrimary `
     -NoUpdateTracked
 if ($LASTEXITCODE -ne 0) {
@@ -345,13 +377,14 @@ if ($LASTEXITCODE -ne 0) {
 
 if (-not $SkipManualReproducibility) {
     & (Join-Path $ScriptRoot "build_manual.ps1") `
-        -Language all `
+        -Language $ManualLanguages `
         -OutputRoot $ManualBuildSecondary `
         -NoUpdateTracked
     if ($LASTEXITCODE -ne 0) {
         throw "Independent manual construction failed."
     }
-    foreach ($manualPdfName in @("impe-manual-en.pdf", "impe-manual-zh-tw.pdf")) {
+    foreach ($languageId in $ManualLanguages) {
+        $manualPdfName = $Manuals[$languageId].PdfName
         $primaryHash = (Get-FileHash -LiteralPath (Join-Path $ManualBuildPrimary $manualPdfName) -Algorithm SHA256).Hash
         $secondaryHash = (Get-FileHash -LiteralPath (Join-Path $ManualBuildSecondary $manualPdfName) -Algorithm SHA256).Hash
         if ($primaryHash -ne $secondaryHash) {
@@ -378,10 +411,14 @@ if (-not $SkipCore) {
         -Note "Core release without font files. Install by running install.bat, then point impe.local.tex or your local setup to a font library."
 }
 
-Copy-Item -LiteralPath (Join-Path $ManualBuildPrimary "impe-manual-en.pdf") `
-    -Destination (Join-Path $OutputRoot "impe-manual-en-$Version.pdf") -Force
-Copy-Item -LiteralPath (Join-Path $ManualBuildPrimary "impe-manual-zh-tw.pdf") `
-    -Destination (Join-Path $OutputRoot "impe-manual-zh-tw-$Version.pdf") -Force
+$GeneratedManualAssets = @()
+foreach ($languageId in $ManualLanguages) {
+    $manual = $Manuals[$languageId]
+    $versionedManual = Join-Path $OutputRoot $manual.VersionedPdfName
+    Copy-Item -LiteralPath (Join-Path $ManualBuildPrimary $manual.PdfName) `
+        -Destination $versionedManual -Force
+    $GeneratedManualAssets += $versionedManual
+}
 Copy-Item -LiteralPath $ShowcasePdf `
     -Destination (Join-Path $OutputRoot "impe-showcase-$Version.pdf") -Force
 
@@ -392,6 +429,7 @@ foreach ($manualBuildRoot in @($ManualBuildPrimary, $ManualBuildSecondary)) {
 }
 
 Write-Host "GitHub release assets:"
-Write-Host "  $(Join-Path $OutputRoot "impe-manual-en-$Version.pdf")"
-Write-Host "  $(Join-Path $OutputRoot "impe-manual-zh-tw-$Version.pdf")"
+foreach ($manualAsset in $GeneratedManualAssets) {
+    Write-Host "  $manualAsset"
+}
 Write-Host "  $(Join-Path $OutputRoot "impe-showcase-$Version.pdf")"

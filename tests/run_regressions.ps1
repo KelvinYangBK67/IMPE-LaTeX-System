@@ -102,6 +102,23 @@ if ($PublicFonts) {
     $portablePublicInputRoot = $publicInputRoot.Replace([char]92, [char]47)
     $testTexInputs = "$portablePublicInputRoot//$texInputSeparator$testTexInputs"
 }
+else {
+    # The shared doc/common override is relative to a manual source directory.
+    # Root-level regressions need their own absolute override so recursive
+    # TEXINPUTS lookup cannot resolve that manual-only configuration first.
+    $localFontRoot = Join-Path $RepoRoot "assets/fonts"
+    if (-not (Test-Path -LiteralPath $localFontRoot)) {
+        throw "Local-font regressions require $localFontRoot or the -PublicFonts fixture."
+    }
+    $localInputRoot = Join-Path $BuildRoot "local-input"
+    New-Item -ItemType Directory -Force -Path $localInputRoot | Out-Null
+    $portableLocalFontRoot = $localFontRoot.Replace([char]92, [char]47)
+    Set-Content -LiteralPath (Join-Path $localInputRoot "impe.local.tex") `
+        -Encoding UTF8 `
+        -Value "\SetCatalogFontRoot{$portableLocalFontRoot}"
+    $portableLocalInputRoot = $localInputRoot.Replace([char]92, [char]47)
+    $testTexInputs = "$portableLocalInputRoot//$texInputSeparator$testTexInputs"
+}
 
 $env:TEXINPUTS = $testTexInputs
 
@@ -202,7 +219,30 @@ if ($PublicFonts) {
     $env:TEXINPUTS = "$portablePublicInputRoot//$texInputSeparator"
 }
 
-foreach ($manualDirectory in @("doc/en", "doc/zh-tw")) {
+$manuals = [ordered]@{}
+Get-ChildItem -LiteralPath (Join-Path $RepoRoot "doc") -Directory |
+    Sort-Object Name |
+    ForEach-Object {
+        $languageId = $_.Name
+        $manualName = "impe-manual-$languageId"
+        $source = Join-Path $_.FullName "$manualName.tex"
+        if (Test-Path -LiteralPath $source) {
+            $manuals[$languageId] = [PSCustomObject]@{
+                Language        = $languageId
+                SourceDirectory = $_.FullName
+                Source          = $source
+                PdfName         = "$manualName.pdf"
+                TrackedPdf      = Join-Path $_.FullName "$manualName.pdf"
+            }
+        }
+    }
+if ($manuals.Count -eq 0) {
+    throw "No manuals were discovered for regression testing."
+}
+$manualLanguages = @($manuals.Keys)
+
+foreach ($languageId in $manualLanguages) {
+    $manualDirectory = "doc/$languageId"
     foreach ($forbiddenName in @("VERSION", "impe-showcase.pdf", "main.pdf")) {
         if (Test-Path -LiteralPath (Join-Path $RepoRoot "$manualDirectory/$forbiddenName")) {
             throw "$manualDirectory must not contain copied repository resource $forbiddenName."
@@ -217,16 +257,20 @@ if (Test-Path -LiteralPath (Join-Path $RepoRoot "archive")) {
     throw "A repository-local archive directory must not be introduced."
 }
 
-$manualBuildEn = Join-Path $BuildRoot "manual-en"
-$manualBuildZh = Join-Path $BuildRoot "manual-zh-tw"
+$singleManualBuildRoots = [ordered]@{}
+$manualInvocations = @()
+foreach ($languageId in $manualLanguages) {
+    $singleBuildRoot = Join-Path $BuildRoot "manual-$languageId"
+    $singleManualBuildRoots[$languageId] = $singleBuildRoot
+    $manualInvocations += @{ Language = $languageId; Output = $singleBuildRoot }
+}
 $manualBuildAllA = Join-Path $BuildRoot "manual-all-a"
 $manualBuildAllB = Join-Path $BuildRoot "manual-all-b"
-foreach ($manualInvocation in @(
-    @{ Language = "en"; Output = $manualBuildEn },
-    @{ Language = "zh-tw"; Output = $manualBuildZh },
+$manualInvocations += @(
     @{ Language = "all"; Output = $manualBuildAllA },
     @{ Language = "all"; Output = $manualBuildAllB }
-)) {
+)
+foreach ($manualInvocation in $manualInvocations) {
     & (Join-Path $RepoRoot "scripts/build_manual.ps1") `
         -Language $manualInvocation.Language `
         -OutputRoot $manualInvocation.Output `
@@ -236,28 +280,25 @@ foreach ($manualInvocation in @(
     }
 }
 
-if (-not (Test-Path -LiteralPath (Join-Path $manualBuildEn "impe-manual-en.pdf")) -or
-    (Test-Path -LiteralPath (Join-Path $manualBuildEn "impe-manual-zh-tw.pdf"))) {
-    throw "The English-only manual build produced an incorrect artifact set."
-}
-if (-not (Test-Path -LiteralPath (Join-Path $manualBuildZh "impe-manual-zh-tw.pdf")) -or
-    (Test-Path -LiteralPath (Join-Path $manualBuildZh "impe-manual-en.pdf"))) {
-    throw "The Traditional Chinese-only manual build produced an incorrect artifact set."
+foreach ($languageId in $manualLanguages) {
+    $expectedPdfName = $manuals[$languageId].PdfName
+    $actualPdfNames = @(
+        Get-ChildItem -LiteralPath $singleManualBuildRoots[$languageId] -Filter "impe-manual-*.pdf" -File |
+            ForEach-Object { $_.Name }
+    )
+    if ($actualPdfNames.Count -ne 1 -or $actualPdfNames[0] -ne $expectedPdfName) {
+        throw "The $languageId-only manual build produced an incorrect artifact set: $($actualPdfNames -join ', ')"
+    }
 }
 
-$manualPdfNames = @("impe-manual-en.pdf", "impe-manual-zh-tw.pdf")
-foreach ($manualPdfName in $manualPdfNames) {
+foreach ($languageId in $manualLanguages) {
+    $manualPdfName = $manuals[$languageId].PdfName
     $manualHashA = (Get-FileHash -LiteralPath (Join-Path $manualBuildAllA $manualPdfName) -Algorithm SHA256).Hash
     $manualHashB = (Get-FileHash -LiteralPath (Join-Path $manualBuildAllB $manualPdfName) -Algorithm SHA256).Hash
     if ($manualHashA -ne $manualHashB) {
         throw "Independent builds of $manualPdfName must be byte-for-byte reproducible."
     }
-    $trackedManual = if ($manualPdfName -eq "impe-manual-en.pdf") {
-        Join-Path $RepoRoot "doc/en/$manualPdfName"
-    }
-    else {
-        Join-Path $RepoRoot "doc/zh-tw/$manualPdfName"
-    }
+    $trackedManual = $manuals[$languageId].TrackedPdf
     if (-not (Test-Path -LiteralPath $trackedManual)) {
         throw "Tracked manual PDF is missing: $trackedManual"
     }
@@ -271,8 +312,22 @@ foreach ($manualPdfName in $manualPdfNames) {
 
 $latexmk = Get-Command latexmk -ErrorAction Stop
 $directManualSpecs = @(
-    @{ Id = "en"; Root = Join-Path $RepoRoot "doc/en"; Source = "impe-manual-en.tex"; Class = "impeart.cls" },
-    @{ Id = "zh-tw"; Root = Join-Path $RepoRoot "doc/zh-tw"; Source = "impe-manual-zh-tw.tex"; Class = "impeart_zh.cls" }
+    foreach ($languageId in $manualLanguages) {
+        $manual = $manuals[$languageId]
+        if (-not (Test-Path -LiteralPath (Join-Path $manual.SourceDirectory ".latexmkrc"))) {
+            continue
+        }
+        $manualSourceText = Get-Content -LiteralPath $manual.Source -Raw -Encoding UTF8
+        if ($manualSourceText -notmatch '\\documentclass(?:\[[^\]]*\])?\{(?<class>[^}]+)\}') {
+            throw "Could not discover the document class for direct manual build: $($manual.Source)"
+        }
+        [PSCustomObject]@{
+            Id     = $languageId
+            Root   = $manual.SourceDirectory
+            Source = [IO.Path]::GetFileName($manual.Source)
+            Class  = "$($Matches['class']).cls"
+        }
+    }
 )
 foreach ($manualSpec in $directManualSpecs) {
     $sourceBaseName = [IO.Path]::GetFileNameWithoutExtension($manualSpec.Source)
@@ -336,28 +391,23 @@ foreach ($manualSpec in $directManualSpecs) {
 }
 
 $showcaseHash = (Get-FileHash -LiteralPath (Join-Path $RepoRoot "_showcase/main.pdf") -Algorithm SHA256).Hash
-$englishManualSource = Get-Content -LiteralPath (Join-Path $RepoRoot "doc/en/impe-manual-en.tex") -Raw
-$chineseManualSource = Get-Content -LiteralPath (Join-Path $RepoRoot "doc/zh-tw/impe-manual-zh-tw.tex") -Raw
-foreach ($sourceCheck in @(
-    @{ Text = $englishManualSource; Required = @(
-        "\section{Quick Reference}",
-        "\section{Showcase}",
+foreach ($languageId in $manualLanguages) {
+    $manualSourceText = Get-Content -LiteralPath $manuals[$languageId].Source -Raw -Encoding UTF8
+    foreach ($requiredText in @(
+        "\appendix",
+        "\label{app:showcase}",
         "\includepdf[pages=4-6,landscape=true,pagecommand={}]"
-    ) },
-    @{ Text = $chineseManualSource; Required = @(
-        "\section{快速參考}",
-        "\section{Showcase}",
-        "\includepdf[pages=4-6,landscape=true,pagecommand={}]"
-    ) }
-)) {
-    foreach ($requiredText in $sourceCheck.Required) {
-        if (-not $sourceCheck.Text.Contains($requiredText)) {
-            throw "Manual source is missing required appendix marker: $requiredText"
+    )) {
+        if (-not $manualSourceText.Contains($requiredText)) {
+            throw "$languageId manual source is missing required appendix marker: $requiredText"
         }
     }
+    if ($manualSourceText -notmatch '(?s)\\appendix\s+\\section\{[^}]+\}.*\\section\{[^}]+\}\\label\{app:showcase\}') {
+        throw "$languageId manual source must contain Appendix A before Appendix B Showcase."
+    }
     foreach ($relativeResource in @("../../VERSION", "../../_showcase/main.pdf")) {
-        if (-not $sourceCheck.Text.Contains($relativeResource)) {
-            throw "Manual source does not use canonical repository resource $relativeResource."
+        if (-not $manualSourceText.Contains($relativeResource)) {
+            throw "$languageId manual source does not use canonical repository resource $relativeResource."
         }
     }
 }
@@ -376,11 +426,13 @@ if (-not $SkipRelease) {
     if (-not (Test-Path $coreZip) -or -not (Test-Path $ctanZip)) {
         throw "Expected core and CTAN archives were not created."
     }
-    foreach ($releaseAsset in @(
-        "impe-manual-en-1.0.0.pdf",
-        "impe-manual-zh-tw-1.0.0.pdf",
+    $expectedReleaseAssets = @(
+        foreach ($languageId in $manualLanguages) {
+            "impe-manual-$languageId-1.0.0.pdf"
+        }
         "impe-showcase-1.0.0.pdf"
-    )) {
+    )
+    foreach ($releaseAsset in $expectedReleaseAssets) {
         if (-not (Test-Path -LiteralPath (Join-Path $releaseRoot $releaseAsset))) {
             throw "Expected versioned release asset was not created: $releaseAsset"
         }
@@ -430,20 +482,21 @@ if (-not $SkipRelease) {
         throw "CTAN archive must contain exactly one top-level impe directory."
     }
     $ctanPackage = Join-Path $ctanInspect "impe"
-    foreach ($required in @(
+    $requiredCtanPaths = @(
         "impe.sty",
         "impeart.cls",
         "nextsystem.sty",
         "README.md",
         "LICENSE",
         "VERSION",
-        "doc/en/impe-manual-en.tex",
-        "doc/en/impe-manual-en.pdf",
-        "doc/zh-tw/impe-manual-zh-tw.tex",
-        "doc/zh-tw/impe-manual-zh-tw.pdf",
         "_showcase/main.pdf",
         "impe-externalized-render.lua"
-    )) {
+    )
+    foreach ($languageId in $manualLanguages) {
+        $requiredCtanPaths += "doc/$languageId/impe-manual-$languageId.tex"
+        $requiredCtanPaths += "doc/$languageId/impe-manual-$languageId.pdf"
+    }
+    foreach ($required in $requiredCtanPaths) {
         if (-not (Test-Path (Join-Path $ctanPackage $required))) {
             throw "CTAN archive is missing $required."
         }
@@ -454,16 +507,17 @@ if (-not $SkipRelease) {
     if (Test-Path (Join-Path $ctanPackage "assets/fonts")) {
         throw "CTAN archive must not contain the local font library."
     }
-    foreach ($forbiddenCtanPath in @(
+    $forbiddenCtanPaths = @(
         "impe-manual.tex",
         "impe-manual.pdf",
         "impe-showcase.pdf",
-        "doc/en/VERSION",
-        "doc/en/impe-showcase.pdf",
-        "doc/zh-tw/VERSION",
-        "doc/zh-tw/impe-showcase.pdf",
         "archive"
-    )) {
+    )
+    foreach ($languageId in $manualLanguages) {
+        $forbiddenCtanPaths += "doc/$languageId/VERSION"
+        $forbiddenCtanPaths += "doc/$languageId/impe-showcase.pdf"
+    }
+    foreach ($forbiddenCtanPath in $forbiddenCtanPaths) {
         if (Test-Path -LiteralPath (Join-Path $ctanPackage $forbiddenCtanPath)) {
             throw "CTAN archive contains obsolete or duplicated content: $forbiddenCtanPath"
         }
