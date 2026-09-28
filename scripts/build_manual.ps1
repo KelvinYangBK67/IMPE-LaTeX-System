@@ -9,31 +9,31 @@ $ErrorActionPreference = "Stop"
 
 $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $ScriptRoot
-$DocRoot = Join-Path $RepoRoot "doc"
+$ManualRoot = Join-Path $RepoRoot "manual"
 $VersionFile = Join-Path $RepoRoot "VERSION"
-$ShowcaseSource = Join-Path $RepoRoot "_showcase/main.pdf"
+$ShowcaseSource = Join-Path $RepoRoot "manual/showcase/impe-showcase.pdf"
 $DefaultSourceDateEpoch = "1790035200"
 
-if (-not (Test-Path -LiteralPath $DocRoot)) {
-    throw "Manual root not found: $DocRoot"
+if (-not (Test-Path -LiteralPath $ManualRoot)) {
+    throw "Manual root not found: $ManualRoot"
 }
 
 # ------------------------------------------------------------
 # Discover manuals by convention:
 #
-#   doc/<language>/impe-manual-<language>.tex
+#   manual/<language>/impe-manual-<language>.tex
 #
 # Adding a new language therefore requires no change to this script.
 # Example:
 #
-#   doc/de/impe-manual-de.tex
-#   doc/fr/impe-manual-fr.tex
-#   doc/ja/impe-manual-ja.tex
+#   manual/de/impe-manual-de.tex
+#   manual/fr/impe-manual-fr.tex
+#   manual/ja/impe-manual-ja.tex
 # ------------------------------------------------------------
 
 $Manuals = [ordered]@{}
 
-Get-ChildItem -LiteralPath $DocRoot -Directory |
+Get-ChildItem -LiteralPath $ManualRoot -Directory |
     Sort-Object Name |
     ForEach-Object {
         $languageId = $_.Name
@@ -45,7 +45,7 @@ Get-ChildItem -LiteralPath $DocRoot -Directory |
                 Language          = $languageId
                 SourceDirectory   = $_.FullName
                 Source            = $source
-                RelativeDirectory = "doc/$languageId"
+                RelativeDirectory = "manual/$languageId"
                 FileName          = $fileName
                 PdfName           = "impe-manual-$languageId.pdf"
                 TrackedPdf        = Join-Path $_.FullName "impe-manual-$languageId.pdf"
@@ -54,7 +54,7 @@ Get-ChildItem -LiteralPath $DocRoot -Directory |
     }
 
 if ($Manuals.Count -eq 0) {
-    throw "No manuals were discovered under $DocRoot. Expected doc/<language>/impe-manual-<language>.tex."
+    throw "No manuals were discovered under $ManualRoot. Expected manual/<language>/impe-manual-<language>.tex."
 }
 
 $AvailableLanguages = @($Manuals.Keys)
@@ -142,15 +142,14 @@ if (Test-Path -LiteralPath $BuildRoot) {
 }
 
 New-Item -ItemType Directory -Force -Path $BuildRoot | Out-Null
-New-Item -ItemType Directory -Force -Path (Join-Path $BuildRoot "_showcase") | Out-Null
-New-Item -ItemType Directory -Force -Path (Join-Path $BuildRoot "doc") | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $BuildRoot "manual/showcase") | Out-Null
 
 Copy-Item -LiteralPath $VersionFile `
     -Destination (Join-Path $BuildRoot "VERSION") `
     -Force
 
 Copy-Item -LiteralPath $ShowcaseSource `
-    -Destination (Join-Path $BuildRoot "_showcase/main.pdf") `
+    -Destination (Join-Path $BuildRoot "manual/showcase/impe-showcase.pdf") `
     -Force
 
 # Stage the checkout's own runtime. This ensures the manual is built against
@@ -171,10 +170,10 @@ foreach ($runtimeDir in @("core", "catalog", "modules")) {
 }
 
 # Preserve shared manual material if present.
-$CommonDocRoot = Join-Path $DocRoot "common"
-if (Test-Path -LiteralPath $CommonDocRoot) {
-    Copy-Item -LiteralPath $CommonDocRoot `
-        -Destination (Join-Path $BuildRoot "doc/common") `
+$CommonManualRoot = Join-Path $ManualRoot "common"
+if (Test-Path -LiteralPath $CommonManualRoot) {
+    Copy-Item -LiteralPath $CommonManualRoot `
+        -Destination (Join-Path $BuildRoot "manual/common") `
         -Recurse -Force
 }
 

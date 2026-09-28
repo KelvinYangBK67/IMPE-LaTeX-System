@@ -2,8 +2,6 @@
 
 [English](FEATURES.md)
 
-本文件說明目前的 feature 子系統。
-
 ## 結構
 
 ```text
@@ -34,8 +32,6 @@ core/features/impe-features-system.tex
 - `impe-features-system.tex`
   feature 子系統的完整入口。它定義 feature catalog 的存放方式、公開載入命令、引用格式輔助命令、load-once 行為，之後再載入 `catalog/impe-features-catalog.tex`。
 
-目前 feature 子系統刻意保持精簡。和 `fonts/`、`layout/` 不同，它暫時還沒有再拆成多個 `core/features/` 內部檔案；現階段的穩定 loader 邏輯都集中在 `impe-features-system.tex` 中。
-
 ### `catalog/impe-features-catalog.tex`
 
 這個檔案把公開 feature id 對應到 module 檔案。
@@ -46,9 +42,7 @@ core/features/impe-features-system.tex
 
 ## 公開 Feature 模型
 
-features 保持扁平、可組合。
-
-目前沒有另外再做 feature preset 層。
+Features 保持扁平、可組合，沒有另外的 feature preset 層。
 
 目前公開 feature 包括：
 
@@ -59,6 +53,9 @@ features 保持扁平、可組合。
 - `tables`
 - `image`
 - `lists_envs`
+- `headers`
+
+相容別名：`bib` 載入 `citations`，`header` 載入 `headers`。
 
 中文 UI 覆寫是綁定在 `_zh` wrapper class 上的內部機制，不屬於對外公開的 feature 介面。
 
@@ -116,6 +113,35 @@ Computer Modern 設定。如果已經載入 `fonts={mlmodern}`，`math` feature
 \begin{theorem}
 Every finite set has finitely many subsets.
 \end{theorem}
+```
+
+### `headers`
+
+載入 `fancyhdr`，為 article、report 與 book 類文件提供頁眉。
+
+Article 類文件以 section 標題更新變動頁眉；report 與 book 類文件則使用 chapter
+標題。固定頁眉標題預設取自 `\title{...}` 第一行，並在 `\maketitle` 後保留。
+可用 `\HeaderTitle{...}` 指定較短文字。
+
+例：
+
+```tex
+\UseTemplateSet{
+  layout = en_doc,
+  features = {headers}
+}
+
+\HeaderTitle{Short Document Title}
+```
+
+預設樣式是 `running`。單面文件左側顯示固定標題、右側顯示頁碼；雙面文件在偶數頁
+內側顯示固定標題，在奇數頁內側顯示 chapter/section 變動頁眉。若只需要固定標題，
+可用 `\HeaderStyle{title}`。
+
+單面或雙面輸出使用標準 document class option：
+
+```tex
+\documentclass[12pt,twoside]{impeart}
 ```
 
 ### `hyperlinks`

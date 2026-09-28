@@ -17,13 +17,13 @@
 \usepackage[ngerman]{babel}
 
 \newcommand{\IMPEVersionFile}{../../VERSION}
-\newcommand{\IMPEShowcaseFile}{../../_showcase/main.pdf}
+\newcommand{\IMPEShowcaseFile}{../showcase/impe-showcase.pdf}
 
 \IfFileExists{\IMPEVersionFile}
   {\CatchFileEdef{\IMPEVersion}{\IMPEVersionFile}{\endlinechar=-1\relax}}
   {\PackageError{impe-manual}
      {Erforderliche Repository-Ressource ../../VERSION fehlt}
-     {Aus doc/de kompilieren oder scripts/build_manual.ps1 aus dem Repository-Stammverzeichnis ausfuehren.}}
+     {Aus manual/de kompilieren oder scripts/build_manual.ps1 aus dem Repository-Stammverzeichnis ausfuehren.}}
 
 % Das erzeugte Handbuch bleibt reproduzierbar, wenn SOURCE_DATE_EPOCH festgelegt ist.
 \ifdefined\XeTeXversion
@@ -43,8 +43,8 @@
 
 \newcommand{\IMPERepo}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System}
 \newcommand{\IMPEIssues}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues}
-\newcommand{\IMPEShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/main/_showcase/main.pdf}
-\newcommand{\IMPETaggedShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/v\IMPEVersion/_showcase/main.pdf}
+\newcommand{\IMPEShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/main/manual/showcase/impe-showcase.pdf}
+\newcommand{\IMPETaggedShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/v\IMPEVersion/manual/showcase/impe-showcase.pdf}
 
 \begin{document}
 
@@ -58,24 +58,10 @@
 
 \section{Einführung}
 
-IMPE steht für \emph{Integrated Multilingual Publishing Environment}.
-Das IMPE \LaTeX{} System ist ein modulares Dokumentsystem für \XeLaTeX{}, das
-für Arbeitsabläufe entwickelt wurde, in denen Dokumentlayout, optionale
-Funktionalität, Schriftauswahl und mehrsprachiger Satz wiederverwendbar sein
-sollen, anstatt im Vorspann jedes Dokuments neu aufgebaut zu werden. Der
-ausgeschriebene Name beschreibt das Hauptziel des Systems: eine integrierte
-Publikationsumgebung für Dokumente bereitzustellen, die mehrere Sprachen,
-Schriftsysteme, Layouts und Funktionsmodule miteinander verbinden können.
-
-Das System entstand aus mehrsprachiger Dokumentarbeit, bei der ein
-konventioneller Vorspann schnell schwer wartbar wurde. Ein Dokument kann ein
-stabiles Seitendesign, eine lateinische Textschrift, CJK-Unterstützung, ein oder
-mehrere historische Schriftsysteme, schriftspezifisches Shaping,
-Bibliographieunterstützung, Bilder, Tabellen sowie unterschiedliche
-Einstellungen für Artikel, Bücher und Folien benötigen. Keine dieser Aufgaben
-ist für sich genommen ungewöhnlich, doch ihre Kombination führt leicht zu
-wiederholtem Einrichtungscode und einer wachsenden Zahl dokumentspezifischer
-Ausnahmen.
+IMPE steht für \emph{Integrated Multilingual Publishing Environment}.  Das
+IMPE \LaTeX{} System ist ein modulares \XeLaTeX{}-Framework für
+wiederverwendbare Layouts, Schriftrouting, mehrsprachigen Satz und optionale
+Dokumentfunktionen.
 
 IMPE begegnet diesem Problem, indem das System in wiederverwendbare Teile
 aufgeteilt wird. Aus Sicht des Benutzers ist die wichtigste Unterscheidung die
@@ -126,10 +112,12 @@ Feature-Kombinationen demonstrieren, aus denen das System hervorgegangen ist.
 IMPE wird in drei Distributionsformen vorbereitet, die jeweils für einen
 anderen Anwendungsfall vorgesehen sind.
 
-Die \emph{CTAN-orientierte Distribution} enthält die portable Laufzeitumgebung
-und die öffentliche Dokumentation, jedoch nicht die private oder lokal
-gepflegte Schriftbibliothek. Diese Form ist für die reguläre
-\TeX{}-Distribution vorgesehen. Die \emph{Core-Distribution} enthält dieselbe
+Die \emph{CTAN-orientierte Distribution} ist das Archiv
+\texttt{impe-framework.zip} mit dem Wurzelverzeichnis
+\texttt{impe-framework/}. Sie enthält die portable Laufzeitumgebung und die
+öffentliche Dokumentation, jedoch keine private oder lokal gepflegte
+Schriftbibliothek und nur kanonische \texttt{impe*}-Einstiegspunkte. Die
+\emph{Core-Distribution} enthält dieselbe
 Systemlogik für Benutzer, die IMPE lieber direkt aus einem Release installieren
 und ihre Schriften separat verwalten. Die \emph{Full-Distribution} kann eine
 vorbereitete lokale Schriftbibliothek hinzufügen, soweit der
@@ -789,16 +777,10 @@ Schnittstelle. Neue Dokumente sollten daher \texttt{impe.sty},
 
 Frühere Entwicklungsversionen verwendeten das Namensschema \texttt{next*}.
 Diese Einstiegspunkte bleiben in 1.0.0 als Kompatibilitäts-Wrapper unterstützt;
-sie sind in dieser Version nicht als veraltet markiert. Bestehende Dokumente
-wie
-
-\begin{verbatim}
-\documentclass{nextart}
-\usepackage{nextsystem}
-\end{verbatim}
-
-können daher weiterhin gegen dieselbe zugrunde liegende Implementierung
-kompiliert werden. Die Kompatibilitätsschicht dient der Bewahrung alter
+sie sind in dieser Version nicht als veraltet markiert. Bestehende Dokumente,
+die die Klasse \texttt{nextart} oder das Paket \texttt{nextsystem} laden,
+können weiterhin gegen dieselbe zugrunde liegende Implementierung kompiliert
+werden. Die Kompatibilitätsschicht dient der Bewahrung alter
 Dokumente und nicht der Definition eines parallelen API-Satzes für neue
 Arbeiten.
 
@@ -831,7 +813,7 @@ catalog/   public ids and registration data
 modules/   extendable or specialized implementations
 assets/    local runtime resources such as fonts
 scripts/   installation and release tooling
-doc/       manual sources
+manual/    manual sources
 docs/      detailed subsystem documentation
 \end{verbatim}
 
@@ -1101,6 +1083,8 @@ Lädt ein oder mehrere optionale Feature-Module. \\
 Englisches Artikel-/Report-Layout mit A4-Geometrie und englischen Textabständen. \\
 \texttt{zh\_doc} &
 Chinesisches Artikel-/Report-Layout mit A4-Geometrie und chinesischen Textabständen. \\
+\texttt{report} &
+Report-spezifische Kompatibilitätsvoreinstellung mit denselben Seiten- und Textkomponenten wie \texttt{zh\_doc}. \\
 \texttt{en\_book} &
 Englisches Buch-/Report-Layout mit Buchgeometrie, Kolumnentiteln und Kapitelbeginn auf rechten Seiten. \\
 \texttt{zh\_book} &
@@ -1137,6 +1121,8 @@ Lädt Helfer für Bilder, Bildunterschriften und Panel-Abbildungen. \\
 Lädt die Anzeigeumgebung \texttt{ExampleBlock}. \\
 \texttt{headers} &
 Lädt konfigurierbare Kolumnentitel für artikel-, report- und buchartige Dokumente. \\
+\texttt{bib}, \texttt{header} &
+Kompatibilitätsaliasnamen für \texttt{citations} und \texttt{headers}. \\
 \bottomrule
 \end{longtable}
 
@@ -1376,7 +1362,7 @@ Handbuch gehörige Ausgabe wird durch den
    \includepdf[pages=4-6,landscape=true,pagecommand={}]{\IMPEShowcaseFile}%
    \includepdf[pages=7-,pagecommand={}]{\IMPEShowcaseFile}}
   {\PackageError{impe-manual}
-     {Erforderliche Repository-Ressource ../../_showcase/main.pdf fehlt}
-     {Aus doc/de kompilieren oder scripts/build_manual.ps1 aus dem Repository-Stammverzeichnis ausfuehren.}}
+     {Erforderliche Repository-Ressource ../showcase/impe-showcase.pdf fehlt}
+     {Aus manual/de kompilieren oder scripts/build_manual.ps1 aus dem Repository-Stammverzeichnis ausfuehren.}}
 
 \end{document}

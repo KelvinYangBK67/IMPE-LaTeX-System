@@ -9,7 +9,7 @@
 *.fdb_latexmk
 *.synctex.gz
 *.pdf
-!doc/*/impe-manual-*.pdf
+!manual/*/impe-manual-*.pdf
 *-SAVE-ERROR
 *.idx
 *.ilg
@@ -32,5 +32,5 @@ assets/fonts/
 !assets/.gitkeep
 **/.nextex-externalized/
 **/.impe-externalized/
-!_showcase/main.pdf
+!manual/showcase/impe-showcase.pdf
 papers/

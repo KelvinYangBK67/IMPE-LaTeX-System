@@ -2,8 +2,6 @@
 
 [English](LAYOUTS.md)
 
-本文件說明目前的 layout 子系統。
-
 ## 結構
 
 ```text
@@ -59,6 +57,7 @@ core/layout/impe-layout-system.tex
 目前公開 preset 包括：
 
 - `zh_doc`
+- `report`
 - `en_doc`
 - `zh_book`
 - `en_book`
@@ -76,7 +75,7 @@ core/layout/impe-layout-system.tex
 
 系統會在執行 module code 之前，先根據目前的 document class 做相容性檢查。
 
-也就是說，preset 不是單一不可分的樣式包，而是一組有 slot 結構的設定。例如：
+Preset 是一組有 slot 結構的設定：
 
 ```tex
 \LayoutPresetRegister{
@@ -112,6 +111,9 @@ core/layout/impe-layout-system.tex
 
 - `zh_doc`
   目標類別：`article`、`report`
+  套用：`page_a4_26mm` + `text_zh`
+- `report`
+  目標類別：`report`
   套用：`page_a4_26mm` + `text_zh`
 - `en_doc`
   目標類別：`article`、`report`
@@ -151,7 +153,8 @@ core/layout/impe-layout-system.tex
 - `text_beamer_dense`
   投影片用的緊湊段落間距
 - `head_fancy_chapter`
-  透過 `fancyhdr` 提供章節型頁眉
+  透過 `fancyhdr` 提供章節型頁眉。固定頁眉標題預設取自
+  `\title{...}` 第一行，也可用 `\HeaderTitle{...}` 覆寫
 - `book_openright`
   強制章節從右頁開啟
 - `book_blankpage_empty`

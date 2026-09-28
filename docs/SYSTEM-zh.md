@@ -2,101 +2,80 @@
 
 [English](SYSTEM.md)
 
-**IMPE** 是 **Integrated Multilingual Publishing Environment**（整合式多語
-出版環境）的縮寫；正式專案名稱仍是 `IMPE LaTeX System`。系統目前按四層
-結構組織：
+IMPE 的執行環境分為四層：
 
-- `core/`：穩定機制層
-- `catalog/`：註冊表與公開 id
-- `modules/`：可擴展實作層
-- `assets/`：bundled 資源層
+```text
+core/       穩定子系統機制
+catalog/    公開 id 與註冊資料
+modules/    具體且可擴充的實作
+assets/     本地執行資源
+```
 
-可安裝的公開入口檔案位於 `package/`。
-release 與安裝工具位於 `scripts/`。
+公開 package 與 class 入口位於 `package/`；建置與安裝工具位於 `scripts/`。
 
-## 分層職責
+## 執行環境分層
 
 ### `core/`
 
-這一層保存穩定框架邏輯。理想情況下，新增新的 family、preset 或 feature
-時，不應該需要改這一層。本層目前大致包括：
-
-- `core/fonts/`
-  負責字體宣告引擎、fallback 解析、writing model、behavior routing、
-  family registry 行為、externalized rendering、標準 fontspec shaping
-  選項，以及目前已內建的 `vertical` route
-- `core/layout/`
-  負責 class 偵測、preset 套用、component 載入與 layout registry 行為
-- `core/features/`
-  負責 feature catalog loader，以及 `\UseFeature` / `\UseFeatures`
+- `core/fonts/`：宣告、fallback 解析、writing model、路由、shaping 選項、
+  registry 行為與 externalized rendering
+- `core/layout/`：class 偵測、preset 解析、component 套用與 layout registry
+- `core/features/impe-features-system.tex`：feature catalog 載入、
+  `\UseFeature` 與 `\UseFeatures`
+- `core/system/`：統一設定、wrapper 預設值、標題處理與中文 UI 行為
 
 ### `catalog/`
-
-這一層保存集中式的公開註冊表：
 
 - `catalog/impe-fonts-catalog.tex`
 - `catalog/impe-layouts-catalog.tex`
 - `catalog/impe-features-catalog.tex`
 
-這些檔案定義公開 id 與 metadata，供 core loader 消費。
+這些檔案註冊公開 id，以及 core loader 使用的 metadata。
 
 ### `modules/`
 
-這一層現在只保留那些不屬於穩定 generic core、而且帶有 script-specific
-或 feature-specific 實作的可擴展檔案。例如：
+具體的版面、字體與功能實作放在這一層。特定文字的字體模組使用帶 namespace 的
+檔名，例如：
 
 - `modules/fonts/impe-font-khitan_small.tex`
 - `modules/fonts/impe-font-pahlavi.tex`
-- `modules/features/` 底下的各 feature 實作
+- `modules/fonts/impe-font-mlmodern.tex`
 
 ### `assets/`
 
-這一層描述本地 runtime 資源。`assets/fonts/` 下的字體二進位檔刻意不由
-Git 追蹤；詳見 `assets/README-zh.md`。
+`assets/fonts/` 是選用的本地字體根目錄。字體二進位檔不由 Git 追蹤，也不收錄於
+core 或 CTAN 封裝。詳見 `assets/README-zh.md`。
 
-## 公開入口層
+## 公開入口
 
-目前有兩種實際使用方式。
-
-### 倉庫內使用
-
-在本倉庫中，示例應直接載入 `package/` 下的入口：
-
-```tex
-\documentclass{article}
-\usepackage{import}
-\subimport{../../package/}{impe-system.tex}
-\UseTemplateSet{...}
-```
-
-### 安裝後使用
-
-安裝到 TeX 搜尋路徑後，可以用：
+安裝後可使用 wrapper class：
 
 ```tex
 \documentclass{impebeamer}
 \UseTemplateSet{...}
 ```
 
-或者：
+或使用標準 class 加上 package：
 
 ```tex
-\documentclass{beamer}
+\documentclass{article}
 \usepackage{impe}
 \UseTemplateSet{...}
 ```
 
-對 wrapper class 而言，英文與中文使用不同的公開入口，例如：
+倉庫內示例載入 package 層原始碼：
 
 ```tex
-\documentclass{impeart}
-\documentclass{impeart_zh}
+\usepackage{import}
+\subimport{../../package/}{impe-system.tex}
 \UseTemplateSet{...}
 ```
 
-## 統一設定介面
+標準入口是 `impe.sty`，以及 `impeart`、`impebook`、`impereport`、
+`impebeamer` 的中英文 class。`next*` 入口只作相容 wrapper；新程式碼與文件使用
+`impe*`。
 
-主要公開指令為：
+## 統一設定
 
 ```tex
 \UseTemplateSet{
@@ -107,18 +86,15 @@ Git 追蹤；詳見 `assets/README-zh.md`。
 }
 ```
 
-目前支援的 key：
+支援的 key：
 
-- `layout`
-- `fonts`
-  一般使用時的建議介面；每個 family 依其註冊的自動模式載入
-- `globalfonts`
-  明確強制使用 global 或 range-global 模式
-- `mainfonts`
-  `globalfonts` 的別名，同樣是明確的 global override
-- `features`
+- `layout`：一個公開 layout preset
+- `fonts`：每個 family 使用其註冊的自動模式
+- `globalfonts`：強制使用 global 或 range-global 模式
+- `mainfonts`：`globalfonts` 的別名
+- `features`：以逗號分隔的 feature id
 
-不需要完整 template 宣告時，可使用：
+對應的單項命令包括：
 
 ```tex
 \UseFeatures{headers,hyperlinks}
@@ -129,35 +105,49 @@ Git 追蹤；詳見 `assets/README-zh.md`。
 \UseGlobalFonts{libertinus}
 ```
 
-無 mode 的 `\UseFont` / `\UseFonts` 與 `fonts` key 是一般情況下的自動
-介面；`\UseLocalFont(s)`、`\UseGlobalFont(s)`、`globalfonts` 與
-`mainfonts` 都是明確指定 mode 的 override。
+無 mode 的 `\UseFont`、`\UseFonts` 與 `fonts` key 是一般介面。
+`\UseLocalFont(s)`、`\UseGlobalFont(s)`、`globalfonts` 與 `mainfonts` 是
+明確的 mode override。
 
-## Bundled 字體根目錄
+## Wrapper 預設值
 
-預設情況下，bundled 字體會從 `assets/fonts` 解析。
+| Class | Layout | Global fonts | UI |
+| --- | --- | --- | --- |
+| `impeart` | `en_doc` | `cmu` | 英文 |
+| `impeart_zh` | `zh_doc` | `cmu,shanggu` | 中文 |
+| `impebook` | `en_book` | `cmu` | 英文 |
+| `impebook_zh` | `zh_book` | `cmu,shanggu` | 中文 |
+| `impereport` | `en_doc` | `cmu` | 英文 |
+| `impereport_zh` | `zh_doc` | `cmu,shanggu` | 中文 |
+| `impebeamer` | `beamer` | `cmu` | 英文 |
+| `impebeamer_zh` | `beamer` | `cmu,shanggu` | 中文 |
 
-只有在你想改用其他字體庫時，才需要使用 `impe.local.tex` 或
-`\SetCatalogFontRoot{...}`。
+Wrapper 載入 `impe` 時會套用這些預設值。若要手動選擇每個 component，請使用標準
+class 加上明確的 `\UseTemplateSet`。
 
-## 公開命名與相容性
+## 標題與頁眉狀態
 
-`impe*` 套件與 class 是目前的標準公開介面。`next*` 入口仍是受支持的
-相容 wrapper，會轉送到同一份實作；v1.0.0 並未移除或棄用它們。
+`\subtitle{...}` 可與標準 `\title{...}` 一起使用。article 的標題區上方留白較
+緊湊；report 與 book 的標題區位置較低。中文 wrapper 的作者列預設使用斜體。可在
+`\maketitle` 前覆寫相關格式與間距命令：`\NextTitleFont`、
+`\NextSubtitleFont`、`\NextTitleAuthorFont`、`\NextTitleDateFont`、
+`\NextTitleTopSkip` 與 `\NextTitleBottomSkip`。
 
-## Release 模型
+`\title{...}` 第一行也是 `headers` feature 與書籍頁眉版面的預設固定頁眉標題。
+`\HeaderTitle{...}` 可指定較短文字；在 feature 模組中，
+`\HeaderStyle{title}` 會改用只有固定標題的頁眉。
 
-目前倉庫支援三種 release 套件：
+## 字體根目錄
 
-- `full`：邏輯 + bundled 字體
-- `core`：只有邏輯
-- `impe.zip`：包含文件、不含字體二進位檔的 CTAN 導向 core 套件
+預設本地字體根目錄是 `assets/fonts`。可用 `impe.local.tex` 或
+`\SetCatalogFontRoot{...}` 覆寫。
 
-版本化 release 套件由下列腳本生成：
+## 發佈封裝
 
-```text
-scripts/build_release.ps1
-scripts/build_release.bat
-```
+- `IMPE-LaTeX-System-vX.Y.Z-full.zip`：執行環境、相容入口與允許收錄的本地字體
+- `IMPE-LaTeX-System-vX.Y.Z-core.zip`：執行環境與相容入口，不含字體
+- `impe-framework.zip`：根目錄為 `impe-framework/` 的 CTAN archive，包含標準
+  入口與文件，不含 `next*` 檔案或字體二進位檔
 
-目前 release 版本號由倉庫根目錄的 `VERSION` 檔案決定。
+CTAN id 不會改變 `\ProvidesPackage{impe}`、class 名稱、執行檔前綴或
+`tex/latex/impe/` 安裝 namespace。版本號取自倉庫根目錄的 `VERSION`。

@@ -10,7 +10,7 @@ my @texinputs = (
     File::Spec->catdir($repo_root, 'package')
 );
 push @texinputs, $existing_texinputs if length $existing_texinputs;
-push @texinputs, File::Spec->catdir($repo_root, 'doc', 'common');
+push @texinputs, File::Spec->catdir($repo_root, 'manual', 'common');
 push @texinputs, $repo_root;
 push @texinputs, '';
 

@@ -2,8 +2,6 @@
 
 [繁體中文](FONTS-zh.md)
 
-This document describes the current font subsystem.
-
 ## Structure
 
 ```text
@@ -79,10 +77,12 @@ This layer now holds only script-specific special implementations that are not p
 
 Current modules:
 
-- `pahlavi.tex`
+- `impe-font-pahlavi.tex`
   Pahlavi-specific shaping routing
-- `khitan_small.tex`
-  Khitan Small Script cluster composer for LuaLaTeX
+- `impe-font-khitan_small.tex`
+  Khitan Small Script linear and explicit stacked rendering commands
+- `impe-font-mlmodern.tex`
+  NFSS/package integration for the `mlmodern` family
 
 Notes:
 
@@ -382,10 +382,10 @@ Only families with non-trivial internal mapping are listed here. Simple families
 - `urdu`
   Keeps Nastaliq as its dedicated local family and does not share that mapping with `arabic`.
 - `khitan_small`
-  Correct stacked composition is currently supported under LuaLaTeX only. Input clusters are separated
-  by spaces; Type B inserts `U+16FE4 KHITAN SMALL SCRIPT FILLER` after the first character. Under
-  XeLaTeX, the family currently falls back to linear local font rendering and should not be relied
-  on for correct cluster stacking.
+  `\KHS{...}` is the linear local-font command used by the showcase.
+  `\KHSstack{...}` and `\KHSstackblock{...}` invoke the explicit cluster
+  composer. Input clusters are separated by spaces; Type B inserts
+  `U+16FE4 KHITAN SMALL SCRIPT FILLER` after the first character.
 
 ## Font Library Model
 
@@ -465,7 +465,8 @@ TeX modules:
   `core/fonts/impe-fonts-interface.tex`
 - `verticalstrategy`, `verticalrotation`, `verticalorigin`, and
   `verticaltopcorrection` are parameters for `layout = vertical`
-- `specialmodule = pahlavi` and `specialmodule = khitan_small` import
+- `specialmodule = pahlavi`, `specialmodule = khitan_small`, and
+  `specialmodule = mlmodern` import
   script-specific support modules from `modules/fonts/`
 - custom extension modules are also expressed through
   `specialmodule = <custom_module_name>`

@@ -2,101 +2,84 @@
 
 [繁體中文](SYSTEM-zh.md)
 
-IMPE stands for **Integrated Multilingual Publishing Environment**; the formal
-project name remains `IMPE LaTeX System`. The system is organized around four
-layers:
+IMPE is organized into four runtime layers:
 
-- `core/`: stable mechanisms
-- `catalog/`: registrations and public ids
-- `modules/`: extendable implementations
-- `assets/`: bundled resources
+```text
+core/       stable subsystem mechanisms
+catalog/    public ids and registrations
+modules/    concrete, extensible implementations
+assets/     local runtime resources
+```
 
-The installable public entry files live under `package/`.
-Release and install tooling lives under `scripts/`.
+Public package and class entries are under `package/`; build and installation
+tools are under `scripts/`.
 
-## Layer Roles
+## Runtime Layers
 
 ### `core/`
 
-This layer holds the stable framework logic that should not need to change when
-new families, presets, or features are added. In practice:
-
-- `core/fonts/` owns the font declaration engine, fallback resolution, writing
-  model, behavior routing, family registry behavior, externalized rendering,
-  standard fontspec shaping options, and built-in routes such as `vertical`
-- `core/layout/` owns class detection, preset application, component loading,
-  and layout registry behavior
-- `core/features/` owns the feature catalog loader and `\UseFeature` /
-  `\UseFeatures`
+- `core/fonts/`: declarations, fallback resolution, writing models, routing,
+  shaping options, registry behavior, and externalized rendering
+- `core/layout/`: class detection, preset parsing, component application, and
+  the layout registry
+- `core/features/impe-features-system.tex`: feature catalog loading,
+  `\UseFeature`, and `\UseFeatures`
+- `core/system/`: unified setup, wrapper defaults, title handling, and Chinese
+  UI behavior
 
 ### `catalog/`
-
-This layer holds the centralized public registrations:
 
 - `catalog/impe-fonts-catalog.tex`
 - `catalog/impe-layouts-catalog.tex`
 - `catalog/impe-features-catalog.tex`
 
-These files define the public ids and metadata that the core loaders consume.
+These files register public ids and the metadata consumed by the core loaders.
 
 ### `modules/`
 
-This layer now holds only extendable, script-specific, or feature-specific
-implementations that are not part of the stable generic core. Examples include:
+Concrete layout, font, and feature implementations live here. Script-specific
+font modules use namespaced filenames, including:
 
 - `modules/fonts/impe-font-khitan_small.tex`
 - `modules/fonts/impe-font-pahlavi.tex`
-- files under `modules/features/`
+- `modules/fonts/impe-font-mlmodern.tex`
 
 ### `assets/`
 
-This layer describes local runtime resources. Font binaries under
-`assets/fonts/` are deliberately not tracked by Git; see `assets/README.md`.
+`assets/fonts/` is the optional local font root. Font binaries are not tracked
+by Git and are not included in core or CTAN distributions. See
+`assets/README.md`.
 
-## Public Entry Layers
+## Public Entries
 
-There are two practical entry modes.
-
-### Repository-local usage
-
-Inside this repository, examples should load the package-layer entry directly:
-
-```tex
-\documentclass{article}
-\usepackage{import}
-\subimport{../../package/}{impe-system.tex}
-\UseTemplateSet{...}
-```
-
-### Installed usage
-
-After installation into a TeX search path, use either:
+Installed documents use a wrapper class:
 
 ```tex
 \documentclass{impebeamer}
 \UseTemplateSet{...}
 ```
 
-or:
+or a standard class with the package:
 
 ```tex
-\documentclass{beamer}
+\documentclass{article}
 \usepackage{impe}
 \UseTemplateSet{...}
 ```
 
-For wrapper classes, English and Chinese use separate public entrypoints. For
-example:
+Repository-local examples load the package-layer source:
 
 ```tex
-\documentclass{impeart}
-\documentclass{impeart_zh}
+\usepackage{import}
+\subimport{../../package/}{impe-system.tex}
 \UseTemplateSet{...}
 ```
 
-## Unified Setup Interface
+Canonical entries are `impe.sty` and the `impeart`, `impebook`, `impereport`,
+and `impebeamer` class pairs. The `next*` entries are compatibility wrappers;
+new code and documentation use `impe*`.
 
-The main public command is:
+## Unified Setup
 
 ```tex
 \UseTemplateSet{
@@ -109,45 +92,13 @@ The main public command is:
 
 Supported keys:
 
-- `layout`
-- `fonts`
-  Recommended for normal use; each family follows its registered automatic mode.
-- `globalfonts`
-  Explicitly forces global or range-global mode.
-- `mainfonts`
-  Alias of `globalfonts`; also an explicit global override.
-- `features`
+- `layout`: one public layout preset
+- `fonts`: each family uses its registered automatic mode
+- `globalfonts`: forces global or range-global mode
+- `mainfonts`: alias of `globalfonts`
+- `features`: comma-separated feature ids
 
-Wrapper classes provide defaults for `layout` and `globalfonts`, so those keys
-can usually be omitted:
-
-```tex
-\documentclass{impeart_zh}
-
-\title{Main Title}
-\subtitle{A shorter subtitle below the title}
-\author{Author Name}
-
-\UseFeatures{headers,citations,hyperlinks}
-```
-
-Current wrapper defaults:
-
-- `impeart`: `layout = en_doc`, `globalfonts = {cmu}`
-- `impeart_zh`: `layout = zh_doc`, `globalfonts = {cmu,shanggu}`
-- `impebook`: `layout = en_book`, `globalfonts = {cmu}`
-- `impebook_zh`: `layout = zh_book`, `globalfonts = {cmu,shanggu}`
-- `impereport`: `layout = en_doc`, `globalfonts = {cmu}`
-- `impereport_zh`: `layout = zh_doc`, `globalfonts = {cmu,shanggu}`
-- `impebeamer`: `layout = beamer`, `globalfonts = {cmu}`
-- `impebeamer_zh`: `layout = beamer`, `globalfonts = {cmu,shanggu}`
-
-Wrapper defaults are applied when the class loads `impe`. Use raw classes
-with an explicit `\UseTemplateSet{...}` when you want to choose every preset by
-hand, or use the shortcut commands below to load only the extra pieces you need.
-
-For single-purpose loading, these shortcuts are equivalent to the corresponding
-single key in `\UseTemplateSet{...}`:
+Equivalent focused commands include:
 
 ```tex
 \UseFeatures{headers,hyperlinks}
@@ -158,46 +109,54 @@ single key in `\UseTemplateSet{...}`:
 \UseGlobalFonts{libertinus}
 ```
 
-Mode-free `\UseFont` / `\UseFonts` and the `fonts` key are the normal
-automatic interface. `\UseLocalFont(s)`, `\UseGlobalFont(s)`, `globalfonts`,
-and `mainfonts` are explicit mode overrides.
+Mode-free `\UseFont`, `\UseFonts`, and the `fonts` key are the normal
+interface. `\UseLocalFont(s)`, `\UseGlobalFont(s)`, `globalfonts`, and
+`mainfonts` are explicit overrides.
 
-Documents may use `\subtitle{...}` alongside LaTeX's standard `\title{...}`.
-The title block prints the main title in a larger bold face, then prints the
-subtitle directly below it in a slightly smaller non-bold face.
-Chinese wrapper classes (`impeart_zh`, `impereport_zh`, `impebook_zh`, and
-`impebeamer_zh`) default the author line to italic.
-Article-like classes keep a compact title top skip, while report/book-like
-classes place the title block lower on the title page. Override
-`\NextTitleTopSkip` if a document needs a different title-page vertical
-position.
+## Wrapper Defaults
 
-## Bundled Font Root
+| Class | Layout | Global fonts | UI |
+| --- | --- | --- | --- |
+| `impeart` | `en_doc` | `cmu` | English |
+| `impeart_zh` | `zh_doc` | `cmu,shanggu` | Chinese |
+| `impebook` | `en_book` | `cmu` | English |
+| `impebook_zh` | `zh_book` | `cmu,shanggu` | Chinese |
+| `impereport` | `en_doc` | `cmu` | English |
+| `impereport_zh` | `zh_doc` | `cmu,shanggu` | Chinese |
+| `impebeamer` | `beamer` | `cmu` | English |
+| `impebeamer_zh` | `beamer` | `cmu,shanggu` | Chinese |
 
-By default, bundled fonts are resolved from `assets/fonts`.
+Defaults are applied when the wrapper loads `impe`. Use a standard class and
+an explicit `\UseTemplateSet` to select every component manually.
 
-Use `impe.local.tex` or `\SetCatalogFontRoot{...}` only when you want to
-override that root.
+## Title and Header State
 
-## Public Naming and Compatibility
+`\subtitle{...}` is available with the standard `\title{...}`. The article
+title block uses a compact top skip; report and book title blocks begin lower
+on the page. Chinese wrappers italicize the author line. The corresponding
+format and spacing commands (`\NextTitleFont`, `\NextSubtitleFont`,
+`\NextTitleAuthorFont`, `\NextTitleDateFont`, `\NextTitleTopSkip`, and
+`\NextTitleBottomSkip`) may be overridden before `\maketitle`.
 
-The `impe*` package and classes are canonical. The `next*` entry points remain
-supported compatibility wrappers and forward to the same implementation; they
-are not removed or deprecated in v1.0.0.
+The first line of `\title{...}` is also the default fixed running title used by
+the `headers` feature and book header layout. `\HeaderTitle{...}` supplies a
+shorter value; `\HeaderStyle{title}` selects fixed-title-only headers in the
+feature module.
 
-## Release Model
+## Font Root
 
-The repository supports three release packages:
+The default local font root is `assets/fonts`. Override it with
+`impe.local.tex` or `\SetCatalogFontRoot{...}`.
 
-- `full`: logic + bundled fonts
-- `core`: logic only
-- `impe.zip`: CTAN-oriented core package with documentation and no font binaries
+## Releases
 
-Versioned release packages are generated from:
+- `IMPE-LaTeX-System-vX.Y.Z-full.zip`: runtime, compatibility entries, and
+  permitted local fonts
+- `IMPE-LaTeX-System-vX.Y.Z-core.zip`: runtime and compatibility entries,
+  without fonts
+- `impe-framework.zip`: CTAN archive rooted at `impe-framework/`, containing
+  canonical entries and documentation but no `next*` files or font binaries
 
-```text
-scripts/build_release.ps1
-scripts/build_release.bat
-```
-
-The current release version is read from the repository `VERSION` file.
+The CTAN id does not change `\ProvidesPackage{impe}`, class names, runtime file
+prefixes, or the `tex/latex/impe/` installation namespace. The version comes
+from the repository `VERSION` file.

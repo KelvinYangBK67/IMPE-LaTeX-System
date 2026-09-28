@@ -8,7 +8,7 @@ public GitHub Release contains only font resources whose redistribution terms
 permit inclusion; fonts with unresolved or restricted redistribution status are
 explicitly removed by the release builder.
 
-The core distribution and the CTAN-oriented `impe.zip` do not include or depend
+The core distribution and the CTAN-oriented `impe-framework.zip` do not include or depend
 on the local font library. Their users may provide fonts separately through
 `impe.local.tex` or `\SetCatalogFontRoot{...}`.
 

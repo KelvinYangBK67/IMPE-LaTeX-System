@@ -15,13 +15,13 @@
 \usepackage{pdfpages}
 
 \newcommand{\IMPEVersionFile}{../../VERSION}
-\newcommand{\IMPEShowcaseFile}{../../_showcase/main.pdf}
+\newcommand{\IMPEShowcaseFile}{../showcase/impe-showcase.pdf}
 
 \IfFileExists{\IMPEVersionFile}
   {\CatchFileEdef{\IMPEVersion}{\IMPEVersionFile}{\endlinechar=-1\relax}}
   {\PackageError{impe-manual}
      {缺少必要的程式碼倉庫資源 ../../VERSION}
-     {請從 doc/zh-tw 編譯，或在程式碼倉庫根目錄執行 scripts/build_manual.ps1。}}
+     {請從 manual/zh-tw 編譯，或在程式碼倉庫根目錄執行 scripts/build_manual.ps1。}}
 
 % SOURCE_DATE_EPOCH 固定時，保持生成的手冊可重現。
 \ifdefined\XeTeXversion
@@ -41,8 +41,8 @@
 
 \newcommand{\IMPERepo}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System}
 \newcommand{\IMPEIssues}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues}
-\newcommand{\IMPEShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/main/_showcase/main.pdf}
-\newcommand{\IMPETaggedShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/v\IMPEVersion/_showcase/main.pdf}
+\newcommand{\IMPEShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/main/manual/showcase/impe-showcase.pdf}
+\newcommand{\IMPETaggedShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/v\IMPEVersion/manual/showcase/impe-showcase.pdf}
 
 \begin{document}
 
@@ -56,17 +56,9 @@
 
 \section{導論}
 
-IMPE 是 \emph{Integrated Multilingual Publishing Environment}（整合式多語出版環境）
-的縮寫。IMPE \LaTeX{} System 是一套面向 \XeLaTeX{} 的模組化文件系統，適用於這類
-工作流程：文件版面、選用功能、字體選擇與多語排版應能重複使用，而不必在每一份文件的
-導言區中重新搭建。其全稱概括了系統的主要目標：為可能同時包含多種語言、書寫系統、
-版面與功能模組的文件，提供一個整合的出版環境。
-
-本系統源於多語文件排版的實際需要。在這類工作中，傳統導言區往往很快就變得難以維護。
-一份文件可能同時需要穩定的頁面設計、拉丁文字字體、CJK 支援、一種或多種歷史文字、
-針對特定文字的塑形、書目支援、圖片、表格，以及文章、書籍與投影片各自不同的設定。
-這些工作單獨看都不罕見，但組合在一起時，往往會造成大量重複設定與愈來愈多的文件專屬
-例外。
+IMPE 是 \emph{Integrated Multilingual Publishing Environment} 的縮寫。
+IMPE \LaTeX{} System 是一套模組化 \XeLaTeX{} 框架，提供可重用的版面、字體路由、
+多語排版與選用文件功能。
 
 IMPE 透過把系統拆分成可重用的部分來處理這個問題。對使用者而言，最重要的區分是
 \emph{版面}、\emph{字體}與\emph{功能}。版面描述文件主要的視覺組織方式；字體族提供
@@ -100,8 +92,9 @@ OpenType 字體、\texttt{fontspec} 以及 \XeTeX{} 的字元間機制，同時�
 
 IMPE 準備了三種發行形式，分別面向不同的使用情境。
 
-\emph{面向 CTAN 的發行版}包含可攜的執行環境與公開文件，但不包含私有或僅在本機
-維護的字體庫；這是面向標準 \TeX{} 發行體系的形式。\emph{核心發行版}包含相同的系統
+\emph{面向 CTAN 的發行版}是根目錄為 \texttt{impe-framework/} 的
+\texttt{impe-framework.zip}；它包含可攜的執行環境與公開文件，但不包含私有或僅在本機
+維護的字體庫，也只收錄標準 \texttt{impe*} 入口。\emph{核心發行版}包含相同的系統
 邏輯，供希望直接從發行版安裝 IMPE、並自行管理字體的使用者使用。\emph{完整發行版}
 則可在字體再分發條件允許的範圍內，附帶一套準備好的本機字體庫。
 
@@ -616,14 +609,9 @@ IMPE 1.0.0 將 \texttt{impe*} 名稱確立為標準公開介面。因此，新�
 \texttt{impereport}、\texttt{impebeamer} 以及相應的中文版本。
 
 較早的開發版本使用 \texttt{next*} 命名方式。這些入口在 1.0.0 中仍是受支援的相容
-包裝入口；本版本並未將其標記為棄用。既有文件例如
-
-\begin{verbatim}
-\documentclass{nextart}
-\usepackage{nextsystem}
-\end{verbatim}
-
-仍可使用同一套底層實作正常編譯。相容層的目的，是保留舊文件的可用性，而不是為新文件
+包裝入口；本版本並未將其標記為棄用。載入 \texttt{nextart} class 或
+\texttt{nextsystem} package 的既有文件仍可使用同一套底層實作正常編譯。相容層的目的，
+是保留舊文件的可用性，而不是為新文件
 建立另一套平行 API。
 
 直接安裝器也能識別 \texttt{tex/latex/nextsystem/} 下由 0.1.x 系列建立的受管理
@@ -649,7 +637,7 @@ catalog/   公開識別碼與登錄資料
 modules/   可擴充或專門化的實作
 assets/    字體等本機執行資源
 scripts/   安裝與發行工具
-doc/       手冊原始碼
+manual/    手冊原始碼
 docs/      詳細子系統文件
 \end{verbatim}
 
@@ -887,6 +875,8 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 採用 A4 頁面幾何與英文文字間距的英文文章／報告版面。 \\
 \texttt{zh\_doc} &
 採用 A4 頁面幾何與中文文字間距的中文文章／報告版面。 \\
+\texttt{report} &
+只適用於 report、並使用與 \texttt{zh\_doc} 相同頁面與正文 component 的相容 preset。 \\
 \texttt{en\_book} &
 採用書籍頁面幾何、頁眉與右頁開章的英文書籍／報告版面。 \\
 \texttt{zh\_book} &
@@ -923,6 +913,8 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 載入 \texttt{ExampleBlock} 顯示環境。 \\
 \texttt{headers} &
 為文章、報告與書籍類文件載入可設定的頁眉。 \\
+\texttt{bib}、\texttt{header} &
+分別是 \texttt{citations} 與 \texttt{headers} 的相容別名。 \\
 \bottomrule
 \end{longtable}
 
@@ -1156,7 +1148,7 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
    \includepdf[pages=4-6,landscape=true,pagecommand={}]{\IMPEShowcaseFile}%
    \includepdf[pages=7-,pagecommand={}]{\IMPEShowcaseFile}}
   {\PackageError{impe-manual}
-     {缺少必要的程式碼倉庫資源 ../../_showcase/main.pdf}
-     {請從 doc/zh-tw 編譯，或在程式碼倉庫根目錄執行 scripts/build_manual.ps1。}}
+     {缺少必要的程式碼倉庫資源 ../showcase/impe-showcase.pdf}
+     {請從 manual/zh-tw 編譯，或在程式碼倉庫根目錄執行 scripts/build_manual.ps1。}}
 
 \end{document}

@@ -16,13 +16,13 @@
 \usepackage{pdfpages}
 
 \newcommand{\IMPEVersionFile}{../../VERSION}
-\newcommand{\IMPEShowcaseFile}{../../_showcase/main.pdf}
+\newcommand{\IMPEShowcaseFile}{../showcase/impe-showcase.pdf}
 
 \IfFileExists{\IMPEVersionFile}
   {\CatchFileEdef{\IMPEVersion}{\IMPEVersionFile}{\endlinechar=-1\relax}}
   {\PackageError{impe-manual}
      {Required repository resource ../../VERSION is missing}
-     {Compile from doc/en or run scripts/build_manual.ps1 from the repository root.}}
+     {Compile from manual/en or run scripts/build_manual.ps1 from the repository root.}}
 
 % Keep the generated manual reproducible when SOURCE_DATE_EPOCH is fixed.
 \ifdefined\XeTeXversion
@@ -42,8 +42,8 @@
 
 \newcommand{\IMPERepo}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System}
 \newcommand{\IMPEIssues}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues}
-\newcommand{\IMPEShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/main/_showcase/main.pdf}
-\newcommand{\IMPETaggedShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/v\IMPEVersion/_showcase/main.pdf}
+\newcommand{\IMPEShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/main/manual/showcase/impe-showcase.pdf}
+\newcommand{\IMPETaggedShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/v\IMPEVersion/manual/showcase/impe-showcase.pdf}
 
 \begin{document}
 
@@ -57,21 +57,9 @@
 
 \section{Introduction}
 
-IMPE stands for \emph{Integrated Multilingual Publishing Environment}.
-The IMPE \LaTeX{} System is a modular document system for \XeLaTeX{} designed
-for workflows in which document layout, optional functionality, font selection,
-and multilingual typesetting should be reusable rather than reconstructed in
-the preamble of every document.  The expanded name describes the system's main
-goal: to provide one integrated publishing environment for documents that may
-combine multiple languages, writing systems, layouts, and functional modules.
-
-The system grew out of multilingual document work in which a conventional
-preamble quickly became difficult to maintain.  A document might need a stable
-page design, a Latin text family, CJK support, one or more historical scripts,
-script-specific shaping, bibliography support, images, tables, and different
-settings for articles, books, and slides.  None of these tasks is unusual by
-itself, but the combination tends to produce repeated setup code and a growing
-number of document-specific exceptions.
+IMPE stands for \emph{Integrated Multilingual Publishing Environment}.  The
+IMPE \LaTeX{} System is a modular \XeLaTeX{} framework for reusable layouts,
+font routing, multilingual typesetting, and optional document features.
 
 IMPE addresses this by separating the system into reusable parts.  From the
 user's point of view, the most important distinction is between \emph{layouts},
@@ -119,7 +107,9 @@ use case.
 
 The \emph{CTAN-oriented distribution} contains the portable runtime and public
 documentation without the private or locally maintained font library.  This is
-the form intended for standard \TeX{} distribution.  The \emph{core distribution}
+the \texttt{impe-framework.zip} archive, rooted at
+\texttt{impe-framework/}, and is intended for standard \TeX{} distribution.
+It contains only canonical \texttt{impe*} entries.  The \emph{core distribution}
 contains the same system logic for users who prefer to install IMPE directly
 from a release and manage fonts separately.  The \emph{full distribution} may
 add a prepared local font library, subject to the redistribution status of the
@@ -730,14 +720,9 @@ interface.  New documents should therefore use \texttt{impe.sty},
 
 Earlier development releases used the \texttt{next*} naming scheme.  Those
 entry points remain supported compatibility wrappers in 1.0.0; they are not
-deprecated in this release.  Existing documents such as
-
-\begin{verbatim}
-\documentclass{nextart}
-\usepackage{nextsystem}
-\end{verbatim}
-
-can therefore continue to compile against the same underlying implementation.
+deprecated in this release.  Existing documents that load the
+\texttt{nextart} class or \texttt{nextsystem} package continue to compile
+against the same underlying implementation.
 The compatibility layer exists to preserve old documents, not to define a
 parallel set of APIs for new work.
 
@@ -769,7 +754,7 @@ catalog/   public ids and registration data
 modules/   extendable or specialized implementations
 assets/    local runtime resources such as fonts
 scripts/   installation and release tooling
-doc/       manual sources
+manual/    manual sources
 docs/      detailed subsystem documentation
 \end{verbatim}
 
@@ -1034,6 +1019,8 @@ Load one or more optional feature modules. \\
 English article/report layout with A4 geometry and English text spacing. \\
 \texttt{zh\_doc} &
 Chinese article/report layout with A4 geometry and Chinese text spacing. \\
+\texttt{report} &
+Report-only compatibility preset with the same page and text components as \texttt{zh\_doc}. \\
 \texttt{en\_book} &
 English book/report layout with book geometry, running heads, and right-hand chapter openings. \\
 \texttt{zh\_book} &
@@ -1070,6 +1057,8 @@ Load image, caption, and panel-figure helpers. \\
 Load the \texttt{ExampleBlock} display environment. \\
 \texttt{headers} &
 Load configurable running heads for article-, report-, and book-like documents. \\
+\texttt{bib}, \texttt{header} &
+Compatibility aliases for \texttt{citations} and \texttt{headers}. \\
 \bottomrule
 \end{longtable}
 
@@ -1306,7 +1295,7 @@ manual is preserved by the
    \includepdf[pages=4-6,landscape=true,pagecommand={}]{\IMPEShowcaseFile}%
    \includepdf[pages=7-,pagecommand={}]{\IMPEShowcaseFile}}
   {\PackageError{impe-manual}
-     {Required repository resource ../../_showcase/main.pdf is missing}
-     {Compile from doc/en or run scripts/build_manual.ps1 from the repository root.}}
+     {Required repository resource ../showcase/impe-showcase.pdf is missing}
+     {Compile from manual/en or run scripts/build_manual.ps1 from the repository root.}}
 
 \end{document}

@@ -103,7 +103,7 @@ if ($PublicFonts) {
     $testTexInputs = "$portablePublicInputRoot//$texInputSeparator$testTexInputs"
 }
 else {
-    # The shared doc/common override is relative to a manual source directory.
+    # The shared manual/common override is relative to a manual source directory.
     # Root-level regressions need their own absolute override so recursive
     # TEXINPUTS lookup cannot resolve that manual-only configuration first.
     $localFontRoot = Join-Path $RepoRoot "assets/fonts"
@@ -192,6 +192,26 @@ if ($genericRuntime) {
     throw "Non-namespaced runtime TeX files remain:$([Environment]::NewLine)$names"
 }
 
+# Canonical sources may not acquire legacy entry points. The compatibility
+# regression fixture is the only current .tex document allowed to use next*.
+$legacyTexWhitelist = @("tests/legacy-entry.tex")
+$legacyEntryPattern = '\\(?:documentclass|usepackage)(?:\[[^\]]*\])?\{next(?:system|art(?:_zh)?|book(?:_zh)?|report(?:_zh)?|beamer(?:_zh)?)\}'
+$legacyTexUses = foreach ($file in Get-ChildItem -LiteralPath $RepoRoot -Recurse -File -Filter "*.tex") {
+    $relativePath = $file.FullName.Substring($RepoRoot.Length).TrimStart([char[]](92, 47)).Replace([char]92, [char]47)
+    if ($relativePath.StartsWith("papers/", [StringComparison]::OrdinalIgnoreCase) -or
+        $relativePath.StartsWith("tests/build/", [StringComparison]::OrdinalIgnoreCase) -or
+        $relativePath.StartsWith("dist/", [StringComparison]::OrdinalIgnoreCase) -or
+        $legacyTexWhitelist -contains $relativePath) {
+        continue
+    }
+    if ((Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8) -match $legacyEntryPattern) {
+        $relativePath
+    }
+}
+if ($legacyTexUses) {
+    throw "Legacy next* entry points are used outside the compatibility whitelist:$([Environment]::NewLine)$($legacyTexUses -join [Environment]::NewLine)"
+}
+
 $texlua = Get-Command texlua -ErrorAction Stop
 $helper = Join-Path $RepoRoot "package/impe-externalized-render.lua"
 $helperRoot = Join-Path $BuildRoot "externalized-helper"
@@ -220,7 +240,7 @@ if ($PublicFonts) {
 }
 
 $manuals = [ordered]@{}
-Get-ChildItem -LiteralPath (Join-Path $RepoRoot "doc") -Directory |
+Get-ChildItem -LiteralPath (Join-Path $RepoRoot "manual") -Directory |
     Sort-Object Name |
     ForEach-Object {
         $languageId = $_.Name
@@ -242,14 +262,14 @@ if ($manuals.Count -eq 0) {
 $manualLanguages = @($manuals.Keys)
 
 foreach ($languageId in $manualLanguages) {
-    $manualDirectory = "doc/$languageId"
+    $manualDirectory = "manual/$languageId"
     foreach ($forbiddenName in @("VERSION", "impe-showcase.pdf", "main.pdf")) {
         if (Test-Path -LiteralPath (Join-Path $RepoRoot "$manualDirectory/$forbiddenName")) {
             throw "$manualDirectory must not contain copied repository resource $forbiddenName."
         }
     }
 }
-if (Get-ChildItem -LiteralPath (Join-Path $RepoRoot "_showcase") -File |
+if (Get-ChildItem -LiteralPath (Join-Path $RepoRoot "manual/showcase") -File |
     Where-Object { $_.Name -like "*-SAVE-ERROR" }) {
     throw "The canonical showcase directory contains SAVE-ERROR leftovers."
 }
@@ -366,7 +386,7 @@ foreach ($manualSpec in $directManualSpecs) {
         $normalizedDirectFls = (Get-Content -LiteralPath $directFls -Raw).Replace([char]92, [char]47).ToLowerInvariant()
         $expectedRepoClass = (Join-Path $RepoRoot "package/$($manualSpec.Class)").Replace([char]92, [char]47).ToLowerInvariant()
         $expectedVersion = "../../version"
-        $expectedShowcase = "../../_showcase/main.pdf"
+        $expectedShowcase = "../showcase/impe-showcase.pdf"
         foreach ($expectedInput in @($expectedRepoClass, $expectedVersion, $expectedShowcase)) {
             if (-not $normalizedDirectFls.Contains($expectedInput)) {
                 throw "Direct $($manualSpec.Id) build did not resolve repository input $expectedInput."
@@ -390,7 +410,6 @@ foreach ($manualSpec in $directManualSpecs) {
     }
 }
 
-$showcaseHash = (Get-FileHash -LiteralPath (Join-Path $RepoRoot "_showcase/main.pdf") -Algorithm SHA256).Hash
 foreach ($languageId in $manualLanguages) {
     $manualSourceText = Get-Content -LiteralPath $manuals[$languageId].Source -Raw -Encoding UTF8
     foreach ($requiredText in @(
@@ -405,7 +424,7 @@ foreach ($languageId in $manualLanguages) {
     if ($manualSourceText -notmatch '(?s)\\appendix\s+\\section\{[^}]+\}.*\\section\{[^}]+\}\\label\{app:showcase\}') {
         throw "$languageId manual source must contain Appendix A before Appendix B Showcase."
     }
-    foreach ($relativeResource in @("../../VERSION", "../../_showcase/main.pdf")) {
+    foreach ($relativeResource in @("../../VERSION", "../showcase/impe-showcase.pdf")) {
         if (-not $manualSourceText.Contains($relativeResource)) {
             throw "$languageId manual source does not use canonical repository resource $relativeResource."
         }
@@ -422,7 +441,7 @@ if (-not $SkipRelease) {
     }
 
     $coreZip = Join-Path $releaseRoot "IMPE-LaTeX-System-v1.0.0-core.zip"
-    $ctanZip = Join-Path $releaseRoot "impe.zip"
+    $ctanZip = Join-Path $releaseRoot "impe-framework.zip"
     if (-not (Test-Path $coreZip) -or -not (Test-Path $ctanZip)) {
         throw "Expected core and CTAN archives were not created."
     }
@@ -449,8 +468,8 @@ if (-not $SkipRelease) {
             Where-Object { $_ } |
             ForEach-Object { ($_ -split "/")[0] } |
             Sort-Object -Unique)
-        if ($ctanEntryRoots.Count -ne 1 -or $ctanEntryRoots[0] -ne "impe") {
-            throw "CTAN archive must contain exactly one raw top-level impe directory."
+        if ($ctanEntryRoots.Count -ne 1 -or $ctanEntryRoots[0] -ne "impe-framework") {
+            throw "CTAN archive must contain exactly one raw top-level impe-framework directory."
         }
     }
     finally {
@@ -466,7 +485,7 @@ if (-not $SkipRelease) {
     if ($LASTEXITCODE -ne 0) {
         throw "Reproducible CTAN construction regression failed."
     }
-    $reproCtanZip = Join-Path $reproReleaseRoot "impe.zip"
+    $reproCtanZip = Join-Path $reproReleaseRoot "impe-framework.zip"
     $ctanHash = (Get-FileHash -LiteralPath $ctanZip -Algorithm SHA256).Hash
     $reproCtanHash = (Get-FileHash -LiteralPath $reproCtanZip -Algorithm SHA256).Hash
     if ($ctanHash -ne $reproCtanHash) {
@@ -478,23 +497,31 @@ if (-not $SkipRelease) {
     $ctanTopLevel = @(Get-ChildItem -LiteralPath $ctanInspect -Force)
     if ($ctanTopLevel.Count -ne 1 -or
         -not $ctanTopLevel[0].PSIsContainer -or
-        $ctanTopLevel[0].Name -ne "impe") {
-        throw "CTAN archive must contain exactly one top-level impe directory."
+        $ctanTopLevel[0].Name -ne "impe-framework") {
+        throw "CTAN archive must contain exactly one top-level impe-framework directory."
     }
-    $ctanPackage = Join-Path $ctanInspect "impe"
+    $ctanPackage = Join-Path $ctanInspect "impe-framework"
     $requiredCtanPaths = @(
         "impe.sty",
         "impeart.cls",
-        "nextsystem.sty",
+        "impeart_zh.cls",
+        "impebook.cls",
+        "impebook_zh.cls",
+        "impereport.cls",
+        "impereport_zh.cls",
+        "impebeamer.cls",
+        "impebeamer_zh.cls",
         "README.md",
         "LICENSE",
         "VERSION",
-        "_showcase/main.pdf",
+        "manual/showcase/impe-showcase.tex",
+        "manual/showcase/impe-showcase.pdf",
+        "manual/showcase/references.bib",
         "impe-externalized-render.lua"
     )
     foreach ($languageId in $manualLanguages) {
-        $requiredCtanPaths += "doc/$languageId/impe-manual-$languageId.tex"
-        $requiredCtanPaths += "doc/$languageId/impe-manual-$languageId.pdf"
+        $requiredCtanPaths += "manual/$languageId/impe-manual-$languageId.tex"
+        $requiredCtanPaths += "manual/$languageId/impe-manual-$languageId.pdf"
     }
     foreach ($required in $requiredCtanPaths) {
         if (-not (Test-Path (Join-Path $ctanPackage $required))) {
@@ -507,15 +534,23 @@ if (-not $SkipRelease) {
     if (Test-Path (Join-Path $ctanPackage "assets/fonts")) {
         throw "CTAN archive must not contain the local font library."
     }
+    $ctanLegacyEntries = @(Get-ChildItem -LiteralPath $ctanPackage -Recurse -File |
+        Where-Object { $_.Name -like "next*" })
+    if ($ctanLegacyEntries) {
+        $names = ($ctanLegacyEntries.FullName -join [Environment]::NewLine)
+        throw "CTAN archive contains legacy next* compatibility files:$([Environment]::NewLine)$names"
+    }
     $forbiddenCtanPaths = @(
         "impe-manual.tex",
         "impe-manual.pdf",
         "impe-showcase.pdf",
+        "doc",
+        "_showcase",
         "archive"
     )
     foreach ($languageId in $manualLanguages) {
-        $forbiddenCtanPaths += "doc/$languageId/VERSION"
-        $forbiddenCtanPaths += "doc/$languageId/impe-showcase.pdf"
+        $forbiddenCtanPaths += "manual/$languageId/VERSION"
+        $forbiddenCtanPaths += "manual/$languageId/impe-showcase.pdf"
     }
     foreach ($forbiddenCtanPath in $forbiddenCtanPaths) {
         if (Test-Path -LiteralPath (Join-Path $ctanPackage $forbiddenCtanPath)) {

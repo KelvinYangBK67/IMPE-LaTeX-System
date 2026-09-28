@@ -2,192 +2,53 @@
 
 [English](README.md)
 
-## 1.0.0 工程收尾與持續整合
+IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
+文件功能。IMPE 的正式全稱是 *Integrated Multilingual Publishing Environment*。
 
-手冊的標準建置引擎已改為 XeLaTeX，並保留 `SOURCE_DATE_EPOCH`、固定 PDF
-識別資訊與逐位元組可重現的建置流程。
+目前版本：`v1.0.0`（2026-09-24）。版本記錄見
+[CHANGELOG-zh.md](CHANGELOG-zh.md) 與
+[CHANGELOG.unreleased.md](CHANGELOG.unreleased.md)。
 
-`.github/workflows/ci.yml` 會在 `ubuntu-latest` 與 `windows-latest` 上，以
-TeX Live 2026 與 PowerShell 執行公開 regression suite。CI 會用 TeX Live
-提供的字體建立僅供測試的 fixture，不會下載或提交 IMPE 私有字體。
+## 快速開始
 
-CI 涵蓋標準 `impe*` 與相容 `next*` 入口、局部字體優先權、同 family
-shaping transition、routing scalability、使用公開泰文字體的斷行測試、
-TeXLua helper、字體 mode alias、兩次獨立且可重現並包含兩個附錄與完整
-showcase 的 XeLaTeX 手冊建置、CTAN 建置與封裝可重現性、標準安裝路徑，
-以及真實 v0.1.3 佈局的遷移清理。公開 fixture
-驗證 routing 機制，不涵蓋私有完整字體庫的 glyph 覆蓋率與視覺品質；
-本機具備該字體庫時，可不帶 `-PublicFonts` 執行
-`tests/run_regressions.ps1`，保留原有完整字體測試流程。
+若 wrapper class 的預設值符合文件需求，可直接使用：
 
-安裝器只會清理由明確 v0.1.3 managed-path manifest 列出的舊 runtime，
-會安全遷移已識別的本地 override，並保留未知的頂層與巢狀使用者檔案。
+```tex
+\documentclass{impeart_zh}
 
-**IMPE** 是 **Integrated Multilingual Publishing Environment**（整合式多語
-出版環境）的縮寫；本專案的正式名稱仍是 `IMPE LaTeX System`。它是一套
-模組化 LaTeX 文檔系統，主要由四層組成：
+\title{範例文件}
+\author{作者}
 
-- `core/`：穩定機制
-- `catalog/`：字體、版面與功能註冊
-- `modules/`：可擴展實作
-- `assets/`：本地執行資源，例如字體
+\UseTemplateSet{
+  fonts = {libertinus},
+  features = {math,hyperlinks,headers}
+}
 
-目前發佈版本：
-
-- `v1.0.0`（2026-09-24）
-
-版本記錄：
-
-- 已發佈版本：[CHANGELOG-zh.md](./CHANGELOG-zh.md)
-- 未發佈變更：[CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)
-- 歷史源碼快照與二進位成品由 Git tag 與 GitHub Release 保存；倉庫內不另設
-  重複的 `archive/` 目錄。
-
-## 展示
-
-完整的 IMPE 展示文件涵蓋多語種字體路由、複雜文字塑形、從右至左書寫、豎排、CJK 地區字形以及常規文檔功能。
-
-[查看完整 PDF 展示文件](_showcase/main.pdf)
-
-## 目標
-
-IMPE LaTeX System 的目標不是堆疊零散 preamble，而是提供一套一致、可重用的模板系統：
-
-- layout presets
-- 全域與局部字體管理
-- 多文字系統支持
-- 可組合 feature 載入
-- 可在多份文件與多台機器之間重用的專案設定
-
-它特別適合混排 CJK、歷史文字、非拉丁文字、教學材料、研究筆記、長篇文稿與 beamer 簡報。
-
-## 倉庫結構
-
-```text
-core/       穩定子系統邏輯
-catalog/    字體 / 版面 / 功能註冊
-modules/    可擴展實作
-assets/     本地執行資源，字體檔案不由 Git 追蹤
-package/    可安裝的公開入口
-scripts/    安裝與發佈腳本
-doc/de/     權威德文手冊源碼與受追蹤 PDF
-doc/en/     權威英文手冊源碼與受追蹤 PDF
-doc/zh-tw/  權威繁體中文手冊源碼與受追蹤 PDF
-doc/common/ 手冊直接建置共用的 checkout 本地字體根設定
-docs/       詳細文件
-examples/   除錯 / 稽核示例
+\begin{document}
+\maketitle
+\section{導論}
+Hello, IMPE.
+\end{document}
 ```
 
-## Release 套件
+標準入口是 `impe.sty`、`impeart`、`impeart_zh`、`impebook`、
+`impebook_zh`、`impereport`、`impereport_zh`、`impebeamer` 與
+`impebeamer_zh`。舊的 `next*` 名稱只作為既有文件的相容 wrapper，且只收錄於
+full 與 core release。
 
-目前生成三種 release 套件：
+## 安裝
 
-- `IMPE-LaTeX-System-vX.Y.Z-full.zip`
-  由本地字體庫生成的完整安裝包，但會排除再分發狀態未確認或受限制、因此不適合公開發佈的字體。
-- `IMPE-LaTeX-System-vX.Y.Z-core.zip`
-  只包含模板邏輯，不包含字體檔案。
-- `impe.zip`
-  以 core 為基礎的 CTAN 導向源碼／執行檔封裝，包含文件與相容入口，但不包含本地字體庫。
-  解壓後只有一個頂層 `impe/` 目錄，並依
-  `doc/<language>/impe-manual-<language>.tex` 慣例保留所有自動發現的手冊。
-  目前包含德文（`de`）、英文（`en`）與繁體中文（`zh-tw`）的源碼及 PDF；
-  每份手冊的附錄 B 都使用唯一的標準 `_showcase/main.pdf`。
-
-發行建置會為每個自動發現的語言輸出一份帶版本號的手冊，另加 showcase：
-
-- `impe-manual-de-X.Y.Z.pdf`
-- `impe-manual-en-X.Y.Z.pdf`
-- `impe-manual-zh-tw-X.Y.Z.pdf`
-- `impe-showcase-X.Y.Z.pdf`
-
-生成方式：
-
-```bat
-scripts\build_release.bat
-```
-
-生成後的 zip 檔會放在 `dist/` 中。
-CTAN 建置會呼叫 `scripts/build_manual.ps1`，建立可重現且與倉庫同形的暫存
-目錄，再以 XeLaTeX 建置所有自動發現的手冊。源碼仍依正常相對路徑解析根目錄
-`VERSION`、唯一的 showcase 與目前 checkout 的 runtime。PDF 與 ZIP metadata
-使用固定的 `SOURCE_DATE_EPOCH` 基準（預設為 2026-09-22）；這是可重現性
-基準，不是發佈日期。相同輸入因此會生成逐位元組一致的成品。
-
-英文與繁體中文手冊也可直接從各自源碼目錄建置。目錄內的 latexmk 設定會選用
-XeLaTeX、優先解析目前 checkout 的 runtime，並套用與發行腳本相同的固定時間戳：
-
-```powershell
-Set-Location doc/en
-latexmk -xelatex impe-manual-en.tex
-
-Set-Location ../zh-tw
-latexmk -xelatex impe-manual-zh-tw.tex
-```
-
-三份生成 PDF 都是受 Git 追蹤的發行成品。從倉庫根目錄執行時，腳本會自動
-發現標準命名的手冊；未指定 `-Language` 時會建置全部，也可按需選擇：
-
-```powershell
-scripts\build_manual.ps1 -ListLanguages
-scripts\build_manual.ps1
-scripts\build_manual.ps1 -Language de
-scripts\build_manual.ps1 -Language en
-scripts\build_manual.ps1 -Language en,zh-tw
-```
-
-各語言 PDF 也會複製至 `dist/manual/`；驗證建置若不應改寫受追蹤 PDF，請加上
-`-NoUpdateTracked`。
-
-## 安裝方式
-
-對於完整套件，解壓 release zip 後執行：
+使用 GitHub 的 full 或 core release 時，解壓後執行：
 
 ```bat
 install.bat
 ```
 
-也可以直接執行 PowerShell 腳本：
+安裝器會寫入使用者 TEXMF 樹的 `tex/latex/impe/`。full 封裝包含允許再分發的
+本地字體；core 封裝只含執行環境。若要使用其他字體庫，請設定
+`impe.local.tex` 或 `\SetCatalogFontRoot{...}`。
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1
-```
-
-安裝腳本會把套件放進使用者 `texmf` 的 `tex/latex/impe/`，因此之後可以全域使用。
-升級時會辨識舊的受管理 `tex/latex/nextsystem/` 安裝、遷移本地 override，並只移除
-已知的舊 IMPE runtime；無關的使用者檔案會保留。
-
-Externalized 字體渲染透過 `texlua` 執行自足的
-`impe-externalized-render.lua` helper。XeLaTeX 或 LuaLaTeX 由 `PATH` 解析，
-runtime 不再內嵌 TeX Live 年份或 Windows 安裝路徑。
-
-## 使用方式
-
-最簡示例：
-
-```tex
-\documentclass{impebeamer}
-\UseTemplateSet{
-  layout = beamer,
-  fonts = {cmu,shanggu,hebrew,arabic},
-  features = {tables,image}
-}
-```
-
-也可以使用一般 class 加 package：
-
-```tex
-\documentclass{article}
-\usepackage{impe}
-\UseTemplateSet{...}
-```
-
-新文檔應使用 `impe*` 套件與 class 名稱；它們是目前的標準公開介面。
-`next*` 名稱仍是受支持的相容入口，因此既有的
-`\documentclass{nextart}` 與 `\usepackage{nextsystem}` 文檔仍可正常編譯。
-
-## 倉庫內開發
-
-倉庫內示例直接載入 `package/` 下的入口：
+倉庫內的示例直接載入 `package/impe-system.tex`：
 
 ```tex
 \usepackage{import}
@@ -197,20 +58,68 @@ runtime 不再內嵌 TeX Live 年份或 Windows 安裝路徑。
 
 ## 文件
 
-更詳細的說明在 `docs/` 中：
+- [英文手冊](manual/en/impe-manual-en.pdf)——技術參考版
+- [繁體中文手冊](manual/zh-tw/impe-manual-zh-tw.pdf)
+- [德文手冊](manual/de/impe-manual-de.pdf)
+- [標準展示 PDF](manual/showcase/impe-showcase.pdf) 與
+  [原始碼](manual/showcase/impe-showcase.tex)
+- [系統](docs/SYSTEM-zh.md)、[字體](docs/FONTS-zh.md)、
+  [版面](docs/LAYOUTS-zh.md)與[功能](docs/FEATURES-zh.md)參考文件
 
-- `docs/SYSTEM-zh.md`
-- `docs/FONTS-zh.md`
-- `docs/LAYOUTS-zh.md`
-- `docs/FEATURES-zh.md`
+建置全部手冊：
 
-## 說明
+```powershell
+scripts\build_manual.ps1
+```
 
-- 倉庫根層的 MIT 授權只適用於 IMPE LaTeX System 程式碼本身，不會自動套用到第三方字體。
-- 第三方字體授權與再分發聲明放在 `font_licenses/`。
-- 一般字體來源與非 bundled 依賴記錄在 `docs/FONTS-zh.md`。
-- Git 倉庫保持 source-only，不追蹤 `assets/fonts/` 下的字體庫。
-- `assets/fonts/` 是生成 full 套件時預期的本地字體庫位置；公開 full 套件只會收入允許再分發的資源。
-- 再分發狀態未解決或受限制的字體不會進入公開 release。
-- core 與 CTAN 導向套件都不依賴 Git checkout 中存在完整字體庫。
-- 詳細政策見 `assets/README-zh.md`。
+可用 `-Language en`、`-Language de` 或 `-Language zh-tw` 只建置一種語言。
+`manual/en/` 與 `manual/zh-tw/` 中的 `.latexmkrc` 可供 XeLaTeX 直接建置。
+
+## 倉庫結構
+
+```text
+package/          公開 package 與 class 入口
+core/             穩定子系統邏輯
+catalog/          公開字體、版面與功能註冊
+modules/          具體版面、字體與功能模組
+assets/           本地執行資源；字體二進位檔不由 Git 追蹤
+manual/           手冊原始碼、受追蹤 PDF 與 showcase
+docs/             子系統參考文件
+examples/         聚焦示例與稽核文件
+scripts/          建置與安裝工具
+tests/            回歸測試
+```
+
+## 發佈封裝
+
+`scripts\build_release.bat` 會生成：
+
+- `IMPE-LaTeX-System-vX.Y.Z-full.zip`：執行環境、相容 wrapper 與允許收錄的
+  本地字體庫
+- `IMPE-LaTeX-System-vX.Y.Z-core.zip`：執行環境與相容 wrapper，不含字體
+- `impe-framework.zip`：CTAN 發佈；只有一個 `impe-framework/` 根目錄，包含
+  標準 `impe*` 入口、手冊及 showcase 原始碼/PDF，不含 `next*` 入口與字體
+  二進位檔
+
+獨立發佈的手冊與 showcase PDF 繼續使用 `impe-` 專案前綴。CTAN id
+`impe-framework` 不會改變專案名稱、package 名稱、class 名稱或 TEXMF namespace。
+
+## 開發與測試
+
+使用本地字體設定執行回歸測試：
+
+```powershell
+tests\run_regressions.ps1
+```
+
+使用 CI 可用的公開字體 fixture：
+
+```powershell
+tests\run_regressions.ps1 -PublicFonts
+```
+
+測試涵蓋標準與相容入口、字體路由、手冊建置、可重現 CTAN 封裝、archive
+內容與安裝遷移。倉庫不追蹤 `assets/fonts/`；第三方授權資料在
+`font_licenses/`，分發政策見 [assets/README-zh.md](assets/README-zh.md)。
+
+本專案由作者維護，並使用 Codex 協助實作與文件工作。

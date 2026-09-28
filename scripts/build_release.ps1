@@ -11,7 +11,7 @@ $ErrorActionPreference = "Stop"
 
 $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $ScriptRoot
-$DocRoot = Join-Path $RepoRoot "doc"
+$ManualRoot = Join-Path $RepoRoot "manual"
 $VersionFile = Join-Path $RepoRoot "VERSION"
 
 if (-not (Test-Path $VersionFile)) {
@@ -25,12 +25,12 @@ if (-not $Version) {
 
 # Discover manuals using the same public convention as build_manual.ps1:
 #
-#   doc/<language>/impe-manual-<language>.tex
+#   manual/<language>/impe-manual-<language>.tex
 #
 # One ordered list drives every release step so adding a language never needs a
 # second release-script edit.
 $Manuals = [ordered]@{}
-Get-ChildItem -LiteralPath $DocRoot -Directory |
+Get-ChildItem -LiteralPath $ManualRoot -Directory |
     Sort-Object Name |
     ForEach-Object {
         $languageId = $_.Name
@@ -48,7 +48,7 @@ Get-ChildItem -LiteralPath $DocRoot -Directory |
     }
 
 if ($Manuals.Count -eq 0) {
-    throw "No manuals were discovered under $DocRoot. Expected doc/<language>/impe-manual-<language>.tex."
+    throw "No manuals were discovered under $ManualRoot. Expected manual/<language>/impe-manual-<language>.tex."
 }
 
 $ManualLanguages = @($Manuals.Keys)
@@ -67,7 +67,7 @@ if ($ArchiveTimestamp.Year -lt 1980 -or $ArchiveTimestamp.Year -gt 2107) {
     throw "SOURCE_DATE_EPOCH must map to a date supported by the ZIP format (1980-2107)."
 }
 
-$TopLevelFiles = @(
+$CanonicalTopLevelFiles = @(
     "impe-system.tex",
     "impe.sty",
     "impeart.cls",
@@ -78,6 +78,11 @@ $TopLevelFiles = @(
     "impereport_zh.cls",
     "impebeamer.cls",
     "impebeamer_zh.cls",
+    "impe-externalized-render.lua",
+    "impe.local.example.tex"
+)
+
+$LegacyCompatibilityFiles = @(
     "nextsystem.sty",
     "nextart.cls",
     "nextart_zh.cls",
@@ -87,8 +92,6 @@ $TopLevelFiles = @(
     "nextreport_zh.cls",
     "nextbeamer.cls",
     "nextbeamer_zh.cls",
-    "impe-externalized-render.lua",
-    "impe.local.example.tex",
     "nextsystem.local.example.tex"
 )
 
@@ -194,7 +197,7 @@ function New-ReleasePackage {
 
     New-Item -ItemType Directory -Force -Path $StageRoot | Out-Null
 
-    foreach ($file in $TopLevelFiles) {
+    foreach ($file in @($CanonicalTopLevelFiles + $LegacyCompatibilityFiles)) {
         Copy-Item -Force (Join-Path (Join-Path $RepoRoot "package") $file) (Join-Path $StageRoot $file)
     }
 
@@ -268,8 +271,8 @@ function New-ReleasePackage {
 }
 
 function New-CtanPackage {
-    $StageRoot = Join-Path $OutputRoot "impe"
-    $ZipPath = Join-Path $OutputRoot "impe.zip"
+    $StageRoot = Join-Path $OutputRoot "impe-framework"
+    $ZipPath = Join-Path $OutputRoot "impe-framework.zip"
 
     Write-Host "Preparing CTAN release..."
     Write-Host "  Stage root: $StageRoot"
@@ -284,7 +287,7 @@ function New-CtanPackage {
 
     New-Item -ItemType Directory -Force -Path $StageRoot | Out-Null
 
-    foreach ($file in $TopLevelFiles) {
+    foreach ($file in $CanonicalTopLevelFiles) {
         Copy-Item -Force (Join-Path (Join-Path $RepoRoot "package") $file) (Join-Path $StageRoot $file)
     }
 
@@ -309,16 +312,18 @@ function New-CtanPackage {
 
     foreach ($languageId in $ManualLanguages) {
         $manual = $Manuals[$languageId]
-        $manualDocRoot = Join-Path $StageRoot "doc/$languageId"
+        $manualDocRoot = Join-Path $StageRoot "manual/$languageId"
         New-Item -ItemType Directory -Force -Path $manualDocRoot | Out-Null
         Copy-Item -LiteralPath $manual.Source `
             -Destination (Join-Path $manualDocRoot ([IO.Path]::GetFileName($manual.Source))) -Force
         Copy-Item -LiteralPath (Join-Path $ManualBuildPrimary $manual.PdfName) `
             -Destination (Join-Path $manualDocRoot $manual.PdfName) -Force
     }
-    $CtanShowcaseRoot = Join-Path $StageRoot "_showcase"
+    $CtanShowcaseRoot = Join-Path $StageRoot "manual/showcase"
     New-Item -ItemType Directory -Force -Path $CtanShowcaseRoot | Out-Null
-    Copy-Item -LiteralPath $ShowcasePdf -Destination (Join-Path $CtanShowcaseRoot "main.pdf") -Force
+    Copy-Item -LiteralPath $ShowcaseSource -Destination (Join-Path $CtanShowcaseRoot "impe-showcase.tex") -Force
+    Copy-Item -LiteralPath $ShowcasePdf -Destination (Join-Path $CtanShowcaseRoot "impe-showcase.pdf") -Force
+    Copy-Item -LiteralPath $ShowcaseBibliography -Destination (Join-Path $CtanShowcaseRoot "references.bib") -Force
 
     $AssetsReadmes = @("README.md", "README-zh.md")
     if (Test-Path (Join-Path $RepoRoot "assets")) {
@@ -344,9 +349,10 @@ function New-CtanPackage {
     }
 }
 
-$ShowcaseSource = Join-Path $RepoRoot "_showcase/main.tex"
-$ShowcasePdf = Join-Path $RepoRoot "_showcase/main.pdf"
-foreach ($requiredShowcaseFile in @($ShowcaseSource, $ShowcasePdf)) {
+$ShowcaseSource = Join-Path $RepoRoot "manual/showcase/impe-showcase.tex"
+$ShowcasePdf = Join-Path $RepoRoot "manual/showcase/impe-showcase.pdf"
+$ShowcaseBibliography = Join-Path $RepoRoot "manual/showcase/references.bib"
+foreach ($requiredShowcaseFile in @($ShowcaseSource, $ShowcasePdf, $ShowcaseBibliography)) {
     if (-not (Test-Path -LiteralPath $requiredShowcaseFile)) {
         throw "Canonical showcase resource is missing: $requiredShowcaseFile"
     }

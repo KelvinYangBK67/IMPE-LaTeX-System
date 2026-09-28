@@ -2,8 +2,6 @@
 
 [English](FONTS.md)
 
-本文件說明目前的字體子系統。
-
 ## 結構
 
 ```text
@@ -76,10 +74,12 @@ core/fonts/impe-fonts-system.tex
 
 目前模組包括：
 
-- `pahlavi.tex`
+- `impe-font-pahlavi.tex`
   Pahlavi 專用的 shaping routing
-- `khitan_small.tex`
-  契丹小字的 LuaLaTeX cluster composer
+- `impe-font-khitan_small.tex`
+  契丹小字的線性輸出與明確堆疊命令
+- `impe-font-mlmodern.tex`
+  `mlmodern` family 的 NFSS/package 整合
 
 補充說明：
 
@@ -336,9 +336,10 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 - `urdu`
   Nastaliq 僅作為烏爾都文 family 的專用字體，不與 `arabic` 共用。
 - `khitan_small`
-  目前只有 LuaLaTeX 提供正確的契丹小字堆疊。輸入時以空格分隔 cluster；
-  Type B 則在首字後插入 `U+16FE4 KHITAN SMALL SCRIPT FILLER`。在 XeLaTeX 下，
-  目前會退回線性的 local font rendering，不能依賴其輸出正確的 cluster stacking。
+  `\KHS{...}` 是 showcase 使用的線性 local-font 命令；
+  `\KHSstack{...}` 與 `\KHSstackblock{...}` 會呼叫明確的 cluster composer。
+  輸入時以空格分隔 cluster；Type B 會在首字後插入
+  `U+16FE4 KHITAN SMALL SCRIPT FILLER`。
 
 ## 字體庫模型
 
@@ -415,7 +416,9 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 - `script`、`language`、`features` 是標準 fontspec shaping 欄位
 - `layout = vertical` 會選擇 `core/fonts/impe-fonts-interface.tex` 內建的 vertical layout route
 - `verticalstrategy`、`verticalrotation`、`verticalorigin`、`verticaltopcorrection` 是 `layout = vertical` 的參數
-- `specialmodule = pahlavi` 與 `specialmodule = khitan_small` 會從 `modules/fonts/` 載入 script-specific 支持模組
+- `specialmodule = pahlavi`、`specialmodule = khitan_small` 與
+  `specialmodule = mlmodern` 會從 `modules/fonts/` 載入 script-specific 或
+  package-specific 支援模組
 - 自定義擴展模組也透過 `specialmodule = <custom_module_name>` 表達
 
 這代表：

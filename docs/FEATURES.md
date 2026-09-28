@@ -2,8 +2,6 @@
 
 [繁體中文](FEATURES-zh.md)
 
-This document describes the current feature subsystem.
-
 ## Structure
 
 ```text
@@ -36,11 +34,6 @@ Current core files:
   public loading commands, citation style helpers, load-once behavior, and then
   loads `catalog/impe-features-catalog.tex`.
 
-At the moment, the feature subsystem is intentionally small. Unlike `fonts/` and
-`layout/`, it does not yet split into multiple internal helper files under
-`core/features/`; the stable loader logic currently lives in `impe-features-system.tex`
-itself.
-
 ### `catalog/impe-features-catalog.tex`
 
 This file maps public feature ids to module files.
@@ -51,9 +44,7 @@ This layer holds the concrete feature implementations.
 
 ## Public Feature Model
 
-Features stay flat and composable.
-
-There is no separate preset layer for features.
+Features are flat and composable; there is no feature preset layer.
 
 Current public features include:
 
@@ -65,6 +56,8 @@ Current public features include:
 - `image`
 - `lists_envs`
 - `headers`
+
+Compatibility aliases: `bib` loads `citations`, and `header` loads `headers`.
 
 Chinese UI override is an internal mechanism bound to the `_zh` wrapper
 classes. It is not part of the public feature surface.

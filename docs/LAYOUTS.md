@@ -2,8 +2,6 @@
 
 [繁體中文](LAYOUTS-zh.md)
 
-This document describes the current layout subsystem.
-
 ## Structure
 
 ```text
@@ -59,6 +57,7 @@ This file registers public layout presets.
 Current public presets:
 
 - `zh_doc`
+- `report`
 - `en_doc`
 - `zh_book`
 - `en_book`
@@ -77,8 +76,7 @@ Public layout presets are built from internal component slots such as:
 Compatibility is enforced against the active document class before module code
 is executed.
 
-In other words, a preset is not a single monolithic style. It is a structured
-bundle of slot assignments, for example:
+A preset is a structured bundle of slot assignments:
 
 ```tex
 \LayoutPresetRegister{
@@ -114,6 +112,9 @@ The current public presets and their effective settings are:
 
 - `zh_doc`
   Targets: `article`, `report`
+  Uses: `page_a4_26mm` + `text_zh`
+- `report`
+  Targets: `report`
   Uses: `page_a4_26mm` + `text_zh`
 - `en_doc`
   Targets: `article`, `report`
