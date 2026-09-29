@@ -6,6 +6,24 @@ All notable released changes to IMPE LaTeX System are documented in this file.
 
 For unreleased development notes, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
+## [1.0.1] - 2026-09-29
+
+### Added
+
+* Added a compact engine/platform support matrix covering XeLaTeX, backend-specific engine use, TeX Live 2026, and CI status for Windows, Linux, and macOS.
+* Added an API and compatibility policy distinguishing the canonical public API, deprecated and internal interfaces, and the supported legacy `next*` boundary.
+* Added a concise bilingual extension guide for catalog-first font, script, layout, and feature additions.
+
+### Changed
+
+* Adopted `impe-framework` as the CTAN archive and root-directory id while retaining the IMPE project name, canonical `impe*` runtime namespace, and existing TEXMF namespace.
+* Excluded legacy `next*` compatibility entries from CTAN while retaining and testing them in the repository and full/core releases.
+* Renamed the manual tree from `doc/` to `manual/`, moved the canonical showcase to `manual/showcase/`, and included its source, PDF, and bibliography in CTAN.
+* Converted current manuals, templates, and maintained tests to canonical `impe*` entries, with an automated guard against new legacy entry use outside the compatibility fixture and the separately maintained `papers/` tree.
+* Retired the tracked `examples/` scratch tree, moved its distinct hyperlink-anchor and Libertinus-math cases into the regression suite, and kept examples out of release packages.
+* Synchronized and tightened the English and Traditional Chinese README and subsystem references, corrected implementation details, and updated all current package/class metadata to v1.0.1 dated 2026-09-29.
+* Made release regressions derive archive and standalone-document filenames from `VERSION`, and retained deterministic CTAN and manual construction.
+
 ## [1.0.0] - 2026-09-24
 
 ### Added

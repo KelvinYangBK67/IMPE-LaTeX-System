@@ -232,7 +232,7 @@ IMPE 也可以作為套件載入到標準 \LaTeX{} 類別之下：
 \section{可直接使用的範本}
 
 程式碼倉庫在 \texttt{templates/} 下提供一小組起始專案。這些範本面向實際寫作，
-而不是回歸測試或內部展示。相對地，\texttt{examples/} 下的檔案主要用於除錯與稽核。
+而不是回歸測試或內部展示。
 
 目前提供的起始範本包括：
 
@@ -249,9 +249,8 @@ IMPE 也可以作為套件載入到標準 \LaTeX{} 類別之下：
 在適合的情況下，也附有具代表性的表格、圖片或投影片內容。因此，新專案可以直接複製
 最接近的範本目錄並修改正文，而不必從頭重建導言區。
 
-這些範本刻意使用標準的 \texttt{impe*} 公開入口。它們代表一般使用者應採用的常規
-寫法；程式碼倉庫中的 \texttt{examples/} 則可能使用只適合開發與回歸測試的路徑或
-測試資料。
+這些範本刻意使用標準的 \texttt{impe*} 公開入口，代表一般使用者應採用的常規
+寫法。僅供開發使用的 fixture 位於 \texttt{tests/}。
 
 \section{文件類別與公開入口}
 
@@ -500,7 +499,7 @@ IMPE 提供讓文字引擎正確塑形所需要的字體設定。
 書籍行為或投影片行為等項目組成的結構化組合。各低階組件屬於內部實作；一般文件直接
 選擇完整的公開預設即可。
 
-IMPE 1.0.0 提供的公開預設為：
+IMPE 1.0.1 提供的公開預設為：
 
 \begin{description}
   \item[\texttt{en\_doc}] 英文文章／報告版面。
@@ -604,11 +603,11 @@ APA、GB/T 7714、數字式或作者—年份式等引用預設，可在功能�
 
 \section{相容性與遷移}\label{sec:compatibility}
 
-IMPE 1.0.0 將 \texttt{impe*} 名稱確立為標準公開介面。因此，新文件應使用
+IMPE 1.0.1 將 \texttt{impe*} 名稱確立為標準公開介面。因此，新文件應使用
 \texttt{impe.sty}、\texttt{impeart}、\texttt{impebook}、
 \texttt{impereport}、\texttt{impebeamer} 以及相應的中文版本。
 
-較早的開發版本使用 \texttt{next*} 命名方式。這些入口在 1.0.0 中仍是受支援的相容
+較早的開發版本使用 \texttt{next*} 命名方式。這些入口在 1.0.1 中仍是受支援的相容
 包裝入口；本版本並未將其標記為棄用。載入 \texttt{nextart} class 或
 \texttt{nextsystem} package 的既有文件仍可使用同一套底層實作正常編譯。相容層的目的，
 是保留舊文件的可用性，而不是為新文件
@@ -722,7 +721,7 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 \section{快速參考}
 \label{app:quick-reference}
 
-本附錄概述 IMPE 1.0.0 已記錄的公開介面。它用於快速查找，而不是取代正文中的說明，
+本附錄概述 IMPE 1.0.1 已記錄的公開介面。它用於快速查找，而不是取代正文中的說明，
 也不是取代 \texttt{docs/} 下更詳細的子系統文件。內部實作命令，尤其是以
 \texttt{\string\Next...} 開頭的命令，不屬於本參考。
 
@@ -784,7 +783,7 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 \bottomrule
 \end{longtable}
 
-舊的 \texttt{next*} 套件與類別名稱在 1.0.0 中仍保留為相容別名，但新文件應使用
+舊的 \texttt{next*} 套件與類別名稱在 1.0.1 中仍保留為相容別名，但新文件應使用
 標準的 \texttt{impe*} 入口。
 
 \subsection{核心設定命令}
@@ -1019,7 +1018,7 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 
 \subsection{已登錄字體族識別碼}
 
-下表列出 IMPE 1.0.0 中可傳給 \texttt{\string\UseFont} 的字體族 ID。
+下表列出 IMPE 1.0.1 中可傳給 \texttt{\string\UseFont} 的字體族 ID。
 \textbf{自動}欄概括未指定模式的 \texttt{\string\UseFont\{id\}} 一般會啟用的行為：
 
 \begin{description}

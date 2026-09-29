@@ -5,7 +5,7 @@
 IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
 文件功能。IMPE 的正式全稱是 *Integrated Multilingual Publishing Environment*。
 
-目前版本：`v1.0.0`（2026-09-24）。版本記錄見
+目前版本：`v1.0.1`（2026-09-29）。版本記錄見
 [CHANGELOG-zh.md](CHANGELOG-zh.md) 與
 [CHANGELOG.unreleased.md](CHANGELOG.unreleased.md)。
 
@@ -36,6 +36,24 @@ Hello, IMPE.
 `impebeamer_zh`。舊的 `next*` 名稱只作為既有文件的相容 wrapper，且只收錄於
 full 與 core release。
 
+## 支援矩陣
+
+| 項目 | 支援狀態 |
+| --- | --- |
+| 主要文件引擎 | XeLaTeX |
+| XeLaTeX | 受支援；手冊、showcase 與一般回歸測試皆使用此引擎 |
+| LuaLaTeX | 不屬於受支援或受測的一般文件路線；只有明確設定的 backend hook 可能使用 |
+| Unicode-range 全域路由 | 僅支援 XeLaTeX |
+| 特殊／externalized backend | 從 `PATH` 解析明確指定的引擎；需要 shell escape；helper 回歸使用 XeLaTeX |
+| TeX Live | 已測試 2026 |
+| Windows | 經 CI 測試 |
+| Linux | 經 CI 測試 |
+| macOS | best effort；目前未經 CI 測試 |
+
+[API 與相容性政策](docs/STABILITY-zh.md)定義 1.x 的公開契約；
+[擴充指南](docs/EXTENDING-zh.md)說明新增字體、文字、版面與功能時應採用的
+catalog-first 原則。
+
 ## 安裝
 
 使用 GitHub 的 full 或 core release 時，解壓後執行：
@@ -48,7 +66,7 @@ install.bat
 本地字體；core 封裝只含執行環境。若要使用其他字體庫，請設定
 `impe.local.tex` 或 `\SetCatalogFontRoot{...}`。
 
-倉庫內的示例直接載入 `package/impe-system.tex`：
+checkout 內的文件可直接載入 `package/impe-system.tex`：
 
 ```tex
 \usepackage{import}
@@ -65,6 +83,7 @@ install.bat
   [原始碼](manual/showcase/impe-showcase.tex)
 - [系統](docs/SYSTEM-zh.md)、[字體](docs/FONTS-zh.md)、
   [版面](docs/LAYOUTS-zh.md)與[功能](docs/FEATURES-zh.md)參考文件
+- [API 穩定性](docs/STABILITY-zh.md)與[擴充指南](docs/EXTENDING-zh.md)
 
 建置全部手冊：
 
@@ -85,7 +104,6 @@ modules/          具體版面、字體與功能模組
 assets/           本地執行資源；字體二進位檔不由 Git 追蹤
 manual/           手冊原始碼、受追蹤 PDF 與 showcase
 docs/             子系統參考文件
-examples/         聚焦示例與稽核文件
 scripts/          建置與安裝工具
 tests/            回歸測試
 ```

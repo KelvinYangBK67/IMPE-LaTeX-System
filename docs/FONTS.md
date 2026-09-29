@@ -554,12 +554,8 @@ The `syriac_eastern` family uses:
 
 The bundled `SyrCOM*.otf` files now have their license text stored under `font_licenses/`.
 
-## Debug / Audit Entry
+## Audit Surface
 
-The current font audit entry is:
-
-```text
-examples/font_catalog_debug/main.tex
-```
-
-This is the single retained font debug entry.
+The canonical public font audit is
+`manual/showcase/impe-showcase.tex`. Focused automated checks live under
+`tests/`.

@@ -6,7 +6,7 @@ IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
 multilingual typesetting, and optional document features. The formal expansion
 of IMPE is *Integrated Multilingual Publishing Environment*.
 
-Current release: `v1.0.0` (2026-09-24). See [CHANGELOG.md](CHANGELOG.md) and
+Current release: `v1.0.1` (2026-09-29). See [CHANGELOG.md](CHANGELOG.md) and
 [CHANGELOG.unreleased.md](CHANGELOG.unreleased.md).
 
 ## Quick Start
@@ -36,6 +36,24 @@ The canonical entry points are `impe.sty`, `impeart`, `impeart_zh`,
 `impebeamer_zh`. The older `next*` names remain compatibility wrappers for
 existing documents and are shipped only in the full and core releases.
 
+## Support Matrix
+
+| Area | Support |
+| --- | --- |
+| Primary document engine | XeLaTeX |
+| XeLaTeX | Supported and used by manuals, showcase, and general regressions |
+| LuaLaTeX | Not a supported or tested general document route; only explicit backend hooks may use it |
+| Unicode-range global routing | XeLaTeX only |
+| Special/externalized backends | Explicit engine resolved from `PATH`; shell escape required; helper regression uses XeLaTeX |
+| TeX Live | 2026 tested |
+| Windows | CI tested |
+| Linux | CI tested |
+| macOS | Best effort; not currently CI tested |
+
+The [API and compatibility policy](docs/STABILITY.md) defines the 1.x public
+contract. The [extension guide](docs/EXTENDING.md) describes the catalog-first
+rule for new fonts, scripts, layouts, and features.
+
 ## Installation
 
 For a GitHub full or core release, extract the archive and run:
@@ -49,7 +67,7 @@ archive includes redistributable local fonts; the core archive contains the
 runtime only. Configure another font library with `impe.local.tex` or
 `\SetCatalogFontRoot{...}`.
 
-Repository-local examples load `package/impe-system.tex` directly:
+Checkout-local documents may load `package/impe-system.tex` directly:
 
 ```tex
 \usepackage{import}
@@ -66,6 +84,7 @@ Repository-local examples load `package/impe-system.tex` directly:
   [source](manual/showcase/impe-showcase.tex)
 - [System](docs/SYSTEM.md), [fonts](docs/FONTS.md),
   [layouts](docs/LAYOUTS.md), and [features](docs/FEATURES.md)
+- [API stability](docs/STABILITY.md) and [extension guide](docs/EXTENDING.md)
 
 Build every manual with:
 
@@ -87,7 +106,6 @@ modules/          concrete layout, font, and feature modules
 assets/           local runtime resources; font binaries are untracked
 manual/           manual sources, tracked PDFs, and showcase
 docs/             subsystem reference documentation
-examples/         focused examples and audit documents
 scripts/          build and install tooling
 tests/            regression suite
 ```

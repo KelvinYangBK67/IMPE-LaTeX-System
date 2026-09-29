@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impeart}[2026/09/24 v1.0.0 IMPE class for article]
+\ProvidesClass{impeart}[2026/09/29 v1.0.1 IMPE class for article]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}

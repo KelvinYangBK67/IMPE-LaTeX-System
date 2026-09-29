@@ -53,7 +53,7 @@ if ($Manuals.Count -eq 0) {
 
 $ManualLanguages = @($Manuals.Keys)
 
-$DefaultSourceDateEpoch = [DateTimeOffset]::Parse("2026-09-22T00:00:00Z").ToUnixTimeSeconds()
+$DefaultSourceDateEpoch = [DateTimeOffset]::Parse("2026-09-29T00:00:00Z").ToUnixTimeSeconds()
 if ($env:SOURCE_DATE_EPOCH) {
     if ($env:SOURCE_DATE_EPOCH -notmatch '^\d+$') {
         throw "SOURCE_DATE_EPOCH must be an unsigned Unix timestamp."

@@ -1,0 +1,23 @@
+% !TeX program = xelatex
+% Explicit math-font selection must coexist with the catalog text family.
+\documentclass{article}
+\usepackage{impe}
+
+\UseMathFont{libertinus}
+\UseTemplateSet{
+  layout = en_doc,
+  fonts = {libertinus},
+  features = {math}
+}
+
+\begin{document}
+\[
+  \lim_{n \to \infty}\left(1 + \frac{x}{n}\right)^n = e^x,
+  \qquad
+  \mathbb{R} \subset \mathbb{C},
+  \qquad
+  \int_0^1 x^2\,dx = \frac{1}{3}.
+\]
+\typeout{IMPE-TEST-MATH-FONT:\NextMathFontSelection}
+\typeout{IMPE-TEST-LIBERTINUS-MATH-PASS}
+\end{document}

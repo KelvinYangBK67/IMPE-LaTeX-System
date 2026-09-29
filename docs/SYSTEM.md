@@ -67,7 +67,7 @@ or a standard class with the package:
 \UseTemplateSet{...}
 ```
 
-Repository-local examples load the package-layer source:
+Checkout-local documents may load the package-layer source:
 
 ```tex
 \usepackage{import}
@@ -147,6 +147,18 @@ feature module.
 
 The default local font root is `assets/fonts`. Override it with
 `impe.local.tex` or `\SetCatalogFontRoot{...}`.
+
+## Support and Extension Contracts
+
+The tested engine and platform matrix is in the project [README](../README.md).
+The 1.x public, deprecated, internal, and legacy compatibility boundaries are
+defined in [STABILITY.md](STABILITY.md).
+
+Extensions should be catalog-first: ordinary font and script differences that
+fit existing metadata belong in `catalog/`, with a namespaced module only when
+custom behavior is required. Change `core/` only for a generic mechanism that
+the current catalog/module interfaces cannot express. See
+[EXTENDING.md](EXTENDING.md).
 
 ## Releases
 

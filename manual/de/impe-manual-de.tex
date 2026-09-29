@@ -285,9 +285,7 @@ System.
 
 Das Repository enthält unter \texttt{templates/} eine kleine Sammlung von
 Starterprojekten. Sie sind für das tatsächliche Schreiben vorgesehen und nicht
-für Regressionstests oder interne Demonstrationen. Die Dateien unter
-\texttt{examples/} dienen dagegen in erster Linie dem Debugging und der
-Überprüfung.
+für Regressionstests oder interne Demonstrationen.
 
 Die derzeitigen Startervorlagen sind:
 
@@ -307,10 +305,9 @@ beginnen, das nächstgelegene Vorlagenverzeichnis zu kopieren und den
 Dokumentinhalt zu bearbeiten, anstatt einen Vorspann von Grund auf neu
 aufzubauen.
 
-Die Vorlagen verwenden bewusst die kanonischen \texttt{impe*}-Einstiegspunkte.
-Sie zeigen die normale benutzerseitige Praxis, während Repository-lokale
-\texttt{examples/} Pfade oder Fixtures verwenden können, die ausschließlich
-für Entwicklung und Regressionstests bestimmt sind.
+Die Vorlagen verwenden bewusst die kanonischen \texttt{impe*}-Einstiegspunkte
+und zeigen die normale benutzerseitige Praxis. Reine Entwicklungs-Fixtures
+liegen unter \texttt{tests/}.
 
 \section{Dokumentklassen und öffentliche Einstiegspunkte}
 
@@ -639,7 +636,7 @@ Textabständen, Kopfzeilenverhalten, Buchverhalten oder Folienverhalten. Die
 einzelnen Low-Level-Komponenten sind intern; gewöhnliche Dokumente wählen die
 öffentliche Voreinstellung als Ganzes.
 
-Die öffentlichen Voreinstellungen in IMPE 1.0.0 sind:
+Die öffentlichen Voreinstellungen in IMPE 1.0.1 sind:
 
 \begin{description}
   \item[\texttt{en\_doc}] Englisches Artikel-/Report-Layout.
@@ -770,13 +767,13 @@ API-Katalog.
 
 \section{Kompatibilität und Migration}\label{sec:compatibility}
 
-IMPE 1.0.0 etabliert die \texttt{impe*}-Namen als kanonische öffentliche
+IMPE 1.0.1 etabliert die \texttt{impe*}-Namen als kanonische öffentliche
 Schnittstelle. Neue Dokumente sollten daher \texttt{impe.sty},
 \texttt{impeart}, \texttt{impebook}, \texttt{impereport},
 \texttt{impebeamer} und ihre chinesischen Varianten verwenden.
 
 Frühere Entwicklungsversionen verwendeten das Namensschema \texttt{next*}.
-Diese Einstiegspunkte bleiben in 1.0.0 als Kompatibilitäts-Wrapper unterstützt;
+Diese Einstiegspunkte bleiben in 1.0.1 als Kompatibilitäts-Wrapper unterstützt;
 sie sind in dieser Version nicht als veraltet markiert. Bestehende Dokumente,
 die die Klasse \texttt{nextart} oder das Paket \texttt{nextsystem} laden,
 können weiterhin gegen dieselbe zugrunde liegende Implementierung kompiliert
@@ -924,7 +921,7 @@ IMPE-Verhaltens sollen mit dieser Ausgabe synchron bleiben.
 \section{Kurzreferenz}
 \label{app:quick-reference}
 
-Dieser Anhang fasst die dokumentierte öffentliche Schnittstelle von IMPE 1.0.0
+Dieser Anhang fasst die dokumentierte öffentliche Schnittstelle von IMPE 1.0.1
 zusammen. Er dient zum Nachschlagen und nicht als Ersatz für die Erläuterungen
 im Haupttext oder die detaillierte Subsystemdokumentation unter
 \texttt{docs/}. Interne Implementierungsbefehle, insbesondere Befehle, die mit
@@ -992,7 +989,7 @@ Lädt IMPE unter einer gewöhnlichen \LaTeX{}-Klasse, wenn keine Wrapper-Klasse 
 \bottomrule
 \end{longtable}
 
-Die alten \texttt{next*}-Paket- und Klassennamen bleiben in Version 1.0.0
+Die alten \texttt{next*}-Paket- und Klassennamen bleiben in Version 1.0.1
 Kompatibilitätsaliase; neue Dokumente sollten jedoch die kanonischen
 \texttt{impe*}-Einstiegspunkte verwenden.
 
@@ -1224,7 +1221,7 @@ Eingerückter kursiver Anzeige-Block für Beispiele, Zitate, linguistische Daten
 
 \subsection{Registrierte Schriftfamilien-IDs}
 
-Die folgende Tabelle listet die von \texttt{\string\UseFont} in IMPE 1.0.0
+Die folgende Tabelle listet die von \texttt{\string\UseFont} in IMPE 1.0.1
 akzeptierten Schriftfamilien-IDs auf. Die Spalte \textbf{Auto} fasst zusammen,
 was ein Aufruf von \texttt{\string\UseFont\{id\}} ohne Modus normalerweise
 aktiviert:

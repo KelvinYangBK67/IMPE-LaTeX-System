@@ -6,6 +6,24 @@ IMPE LaTeX System 的已發佈版本變更記錄於此。
 
 尚未發佈的開發中變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
+## [1.0.1] - 2026-09-29
+
+### 新增
+
+* 新增精簡的引擎／平台支援矩陣，記錄 XeLaTeX、特定 backend 的引擎使用、TeX Live 2026，以及 Windows、Linux、macOS 的 CI 狀態。
+* 新增 API 與相容性政策，區分標準公開 API、deprecated／內部介面，以及受支援的舊 `next*` 相容邊界。
+* 新增精簡的雙語擴充指南，說明新增字體、文字、版面與功能時採用 catalog-first 的方式。
+
+### 調整
+
+* 採用 `impe-framework` 作為 CTAN archive 與根目錄 id，同時保留 IMPE 專案名稱、標準 `impe*` runtime namespace 與既有 TEXMF namespace。
+* CTAN 不再收錄舊 `next*` 相容入口；倉庫與 full/core release 仍保留並測試這些 wrapper。
+* 將手冊樹由 `doc/` 改名為 `manual/`，把標準 showcase 移至 `manual/showcase/`，並在 CTAN 收錄其原始碼、PDF 與參考書目。
+* 目前的手冊、模板與受維護測試都改用標準 `impe*` 入口，並加入自動檢查，防止相容性 fixture 與獨立維護的 `papers/` 樹以外重新使用舊入口。
+* 停止追蹤作為 scratch 的 `examples/` 樹，把其中獨立的 hyperlink-anchor 與 Libertinus-math 案例移入回歸測試，並確保發佈包不含 examples。
+* 同步並精簡英文與繁體中文 README 及子系統參考文件，修正實作細節，並把目前所有 package/class metadata 更新為日期 2026-09-29 的 v1.0.1。
+* 發佈回歸測試改由 `VERSION` 推導 archive 與獨立文件檔名，同時維持 CTAN 與手冊的確定性建置。
+
 ## [1.0.0] - 2026-09-24
 
 ### 工程收尾

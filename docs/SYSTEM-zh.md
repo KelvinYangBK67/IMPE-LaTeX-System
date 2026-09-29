@@ -63,7 +63,7 @@ core 或 CTAN 封裝。詳見 `assets/README-zh.md`。
 \UseTemplateSet{...}
 ```
 
-倉庫內示例載入 package 層原始碼：
+checkout 內的文件可載入 package 層原始碼：
 
 ```tex
 \usepackage{import}
@@ -141,6 +141,16 @@ class 加上明確的 `\UseTemplateSet`。
 
 預設本地字體根目錄是 `assets/fonts`。可用 `impe.local.tex` 或
 `\SetCatalogFontRoot{...}` 覆寫。
+
+## 支援與擴充契約
+
+已測試的引擎與平台矩陣見專案 [README](../README-zh.md)。1.x 的公開、deprecated、
+內部及舊版相容邊界定義於 [STABILITY-zh.md](STABILITY-zh.md)。
+
+擴充應優先使用 catalog：可由既有 metadata 表達的一般字體與文字差異應放在
+`catalog/`；只有需要自定義行為時才加入帶 namespace 的 module。只有現有
+catalog/module 介面無法表達新的通用機制時，才修改 `core/`。詳見
+[EXTENDING-zh.md](EXTENDING-zh.md)。
 
 ## 發佈封裝
 

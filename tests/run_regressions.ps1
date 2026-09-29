@@ -7,6 +7,19 @@ $ErrorActionPreference = "Stop"
 $TestRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $TestRoot
 $BuildRoot = Join-Path $TestRoot "build"
+$VersionFile = Join-Path $RepoRoot "VERSION"
+$Version = (Get-Content -LiteralPath $VersionFile -Raw -Encoding UTF8).Trim()
+if ($Version -notmatch '^\d+\.\d+\.\d+$') {
+    throw "VERSION must contain a semantic release version: $Version"
+}
+$ChangelogText = Get-Content -LiteralPath (Join-Path $RepoRoot "CHANGELOG.md") -Raw -Encoding UTF8
+$releaseHeadingPattern = "(?m)^## \[$([regex]::Escape($Version))\] - (?<date>\d{4}-\d{2}-\d{2})$"
+$releaseHeading = [regex]::Match($ChangelogText, $releaseHeadingPattern)
+if (-not $releaseHeading.Success) {
+    throw "CHANGELOG.md has no dated entry for v$Version."
+}
+$ReleaseDateIso = $releaseHeading.Groups["date"].Value
+$ReleaseDateTeX = $ReleaseDateIso.Replace('-', '/')
 
 if (Test-Path $BuildRoot) {
     Remove-Item -Recurse -Force $BuildRoot
@@ -130,20 +143,25 @@ try {
         "local-font-override",
         "same-family-shaping",
         "routing-scalability",
-        "thai-linebreaking"
+        "thai-linebreaking",
+        "hyperlink-anchors",
+        "libertinus-math"
     )
 
     foreach ($name in $tests) {
-        Write-Host "Running $name..."
-        $texInput = "tests/$name.tex"
-        $texOutput = "tests/build"
-        & $xelatex.Source `
-            -interaction=nonstopmode `
-            -halt-on-error `
-            "-output-directory=$texOutput" `
-            $texInput | Out-Host
-        if ($LASTEXITCODE -ne 0) {
-            throw "XeLaTeX regression failed: $name"
+        $passes = if ($name -eq "hyperlink-anchors") { 2 } else { 1 }
+        foreach ($pass in 1..$passes) {
+            Write-Host "Running $name (pass $pass of $passes)..."
+            $texInput = "tests/$name.tex"
+            $texOutput = "tests/build"
+            & $xelatex.Source `
+                -interaction=nonstopmode `
+                -halt-on-error `
+                "-output-directory=$texOutput" `
+                $texInput | Out-Host
+            if ($LASTEXITCODE -ne 0) {
+                throw "XeLaTeX regression failed: $name (pass $pass)"
+            }
         }
     }
 }
@@ -182,6 +200,50 @@ if ($localLog -notmatch 'IMPE-TEST-GLOBAL-ENTER-BEFORE' -or
     throw "Global routing did not suspend and restore around the local scope."
 }
 
+$hyperlinkLog = Get-Content (Join-Path $BuildRoot "hyperlink-anchors.log") -Raw
+if ($hyperlinkLog -notmatch 'IMPE-TEST-HYPERLINK-ANCHORS-PASS') {
+    throw "Hyperlink anchor regression is missing its pass marker."
+}
+if (($hyperlinkLog -replace '\s+', ' ') -match 'destination with the same identifier|duplicate ignored') {
+    throw "Hyperlink anchor regression produced duplicate PDF destinations."
+}
+
+$mathLog = (Get-Content (Join-Path $BuildRoot "libertinus-math.log") -Raw) -replace '\s+', ''
+foreach ($marker in @("IMPE-TEST-MATH-FONT:libertinus", "IMPE-TEST-LIBERTINUS-MATH-PASS")) {
+    if ($mathLog -notmatch [regex]::Escape($marker)) {
+        throw "Libertinus math regression is missing marker: $marker"
+    }
+}
+
+$packageEntryFiles = @(
+    "impe.sty",
+    "impeart.cls",
+    "impeart_zh.cls",
+    "impebook.cls",
+    "impebook_zh.cls",
+    "impereport.cls",
+    "impereport_zh.cls",
+    "impebeamer.cls",
+    "impebeamer_zh.cls",
+    "nextsystem.sty",
+    "nextart.cls",
+    "nextart_zh.cls",
+    "nextbook.cls",
+    "nextbook_zh.cls",
+    "nextreport.cls",
+    "nextreport_zh.cls",
+    "nextbeamer.cls",
+    "nextbeamer_zh.cls"
+)
+foreach ($entryFile in $packageEntryFiles) {
+    $entryName = [IO.Path]::GetFileNameWithoutExtension($entryFile)
+    $entryText = Get-Content -LiteralPath (Join-Path $RepoRoot "package/$entryFile") -Raw -Encoding UTF8
+    $metadataPattern = "\\Provides(?:Package|Class)\{$([regex]::Escape($entryName))\}\[$([regex]::Escape($ReleaseDateTeX)) v$([regex]::Escape($Version))\b"
+    if ($entryText -notmatch $metadataPattern) {
+        throw "$entryFile does not report $ReleaseDateTeX v$Version in its package/class metadata."
+    }
+}
+
 $runtimeRoots = @("core", "catalog", "modules")
 $genericRuntime = foreach ($root in $runtimeRoots) {
     Get-ChildItem (Join-Path $RepoRoot $root) -Recurse -File -Filter "*.tex" |
@@ -199,6 +261,7 @@ $legacyEntryPattern = '\\(?:documentclass|usepackage)(?:\[[^\]]*\])?\{next(?:sys
 $legacyTexUses = foreach ($file in Get-ChildItem -LiteralPath $RepoRoot -Recurse -File -Filter "*.tex") {
     $relativePath = $file.FullName.Substring($RepoRoot.Length).TrimStart([char[]](92, 47)).Replace([char]92, [char]47)
     if ($relativePath.StartsWith("papers/", [StringComparison]::OrdinalIgnoreCase) -or
+        $relativePath.StartsWith("examples/", [StringComparison]::OrdinalIgnoreCase) -or
         $relativePath.StartsWith("tests/build/", [StringComparison]::OrdinalIgnoreCase) -or
         $relativePath.StartsWith("dist/", [StringComparison]::OrdinalIgnoreCase) -or
         $legacyTexWhitelist -contains $relativePath) {
@@ -440,16 +503,16 @@ if (-not $SkipRelease) {
         throw "Release construction regression failed."
     }
 
-    $coreZip = Join-Path $releaseRoot "IMPE-LaTeX-System-v1.0.0-core.zip"
+    $coreZip = Join-Path $releaseRoot "IMPE-LaTeX-System-v$Version-core.zip"
     $ctanZip = Join-Path $releaseRoot "impe-framework.zip"
     if (-not (Test-Path $coreZip) -or -not (Test-Path $ctanZip)) {
         throw "Expected core and CTAN archives were not created."
     }
     $expectedReleaseAssets = @(
         foreach ($languageId in $manualLanguages) {
-            "impe-manual-$languageId-1.0.0.pdf"
+            "impe-manual-$languageId-$Version.pdf"
         }
-        "impe-showcase-1.0.0.pdf"
+        "impe-showcase-$Version.pdf"
     )
     foreach ($releaseAsset in $expectedReleaseAssets) {
         if (-not (Test-Path -LiteralPath (Join-Path $releaseRoot $releaseAsset))) {
@@ -514,6 +577,10 @@ if (-not $SkipRelease) {
         "README.md",
         "LICENSE",
         "VERSION",
+        "docs/STABILITY.md",
+        "docs/STABILITY-zh.md",
+        "docs/EXTENDING.md",
+        "docs/EXTENDING-zh.md",
         "manual/showcase/impe-showcase.tex",
         "manual/showcase/impe-showcase.pdf",
         "manual/showcase/references.bib",
@@ -527,6 +594,10 @@ if (-not $SkipRelease) {
         if (-not (Test-Path (Join-Path $ctanPackage $required))) {
             throw "CTAN archive is missing $required."
         }
+    }
+    $ctanVersion = (Get-Content -LiteralPath (Join-Path $ctanPackage "VERSION") -Raw -Encoding UTF8).Trim()
+    if ($ctanVersion -ne $Version) {
+        throw "CTAN VERSION is $ctanVersion; expected $Version."
     }
     if (Test-Path (Join-Path $ctanInspect "impe.sty")) {
         throw "CTAN package files must not be placed directly at zip root."
@@ -546,6 +617,7 @@ if (-not $SkipRelease) {
         "impe-showcase.pdf",
         "doc",
         "_showcase",
+        "examples",
         "archive"
     )
     foreach ($languageId in $manualLanguages) {
@@ -562,9 +634,10 @@ if (-not $SkipRelease) {
     if ($ctanSaveErrors) {
         throw "CTAN archive contains SAVE-ERROR leftovers."
     }
-    $ctanUnreleasedText = Get-Content -LiteralPath (Join-Path $ctanPackage "CHANGELOG.unreleased.md") -Raw
-    if ($ctanUnreleasedText -match '(?i)\bv1\.0\.0\b|\[1\.0\.0\]') {
-        throw "CHANGELOG.unreleased.md still treats v1.0.0 as unreleased."
+    $ctanUnreleasedText = Get-Content -LiteralPath (Join-Path $ctanPackage "CHANGELOG.unreleased.md") -Raw -Encoding UTF8
+    $unreleasedVersionPattern = "(?i)\bv$([regex]::Escape($Version))\b|\[$([regex]::Escape($Version))\]"
+    if ($ctanUnreleasedText -match $unreleasedVersionPattern) {
+        throw "CHANGELOG.unreleased.md still treats v$Version as unreleased."
     }
     $ctanFonts = @(Get-ChildItem -LiteralPath $ctanPackage -Recurse -File |
         Where-Object { $_.Extension -in @(".ttf", ".otf", ".ttc", ".woff", ".woff2") })
@@ -620,6 +693,9 @@ if (-not $SkipRelease) {
 
     $coreInspect = Join-Path $BuildRoot "core-inspect"
     Expand-Archive -LiteralPath $coreZip -DestinationPath $coreInspect -Force
+    if (Test-Path -LiteralPath (Join-Path $coreInspect "examples")) {
+        throw "Core release must not contain examples/."
+    }
     $installTexmf = Join-Path $BuildRoot "install-texmf"
     $legacyRoot = Join-Path $installTexmf "tex/latex/nextsystem"
     $legacyManagedFixture = @(

@@ -502,12 +502,7 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 
 目前 `SyrCOM*.otf` 的授權全文已整理到 `font_licenses/` 目錄中。
 
-## 除錯 / 稽核入口
+## 稽核範圍
 
-目前唯一保留的字體稽核入口是：
-
-```text
-examples/font_catalog_debug/main.tex
-```
-
-這是目前唯一保留的 fonts debug 入口。
+標準公開字體稽核位於 `manual/showcase/impe-showcase.tex`；聚焦的自動檢查則位於
+`tests/`。

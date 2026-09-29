@@ -268,8 +268,7 @@ package use the same underlying system.
 
 The repository includes a small collection of starter projects under
 \texttt{templates/}.  These are intended for actual writing rather than for
-regression testing or internal demonstration.  In contrast, the files under
-\texttt{examples/} are primarily debugging and audit material.
+regression testing or internal demonstration.
 
 The current starter templates are:
 
@@ -288,10 +287,9 @@ figure, or slide material where appropriate.  A new project can therefore begin
 by copying the nearest template directory and editing the document contents
 instead of reconstructing a preamble from scratch.
 
-The templates deliberately use the canonical \texttt{impe*} entry points.  They
-are examples of normal user-facing practice, whereas repository-local
-\texttt{examples/} may use paths or fixtures intended only for development and
-regression testing.
+The templates deliberately use the canonical \texttt{impe*} entry points and
+show normal user-facing practice. Development-only fixtures live under
+\texttt{tests/}.
 
 \section{Document Classes and Public Entry Points}
 
@@ -592,7 +590,7 @@ structured bundle of page geometry, text spacing, header behavior, book
 behavior, or slide behavior.  The individual low-level components are internal;
 normal documents select the public preset as a whole.
 
-The public presets in IMPE 1.0.0 are:
+The public presets in IMPE 1.0.1 are:
 
 \begin{description}
   \item[\texttt{en\_doc}] English article/report layout.
@@ -713,13 +711,13 @@ For the full list of feature-specific commands and environments, consult
 
 \section{Compatibility and Migration}\label{sec:compatibility}
 
-IMPE 1.0.0 establishes the \texttt{impe*} names as the canonical public
+IMPE 1.0.1 establishes the \texttt{impe*} names as the canonical public
 interface.  New documents should therefore use \texttt{impe.sty},
 \texttt{impeart}, \texttt{impebook}, \texttt{impereport},
 \texttt{impebeamer}, and their Chinese variants.
 
 Earlier development releases used the \texttt{next*} naming scheme.  Those
-entry points remain supported compatibility wrappers in 1.0.0; they are not
+entry points remain supported compatibility wrappers in 1.0.1; they are not
 deprecated in this release.  Existing documents that load the
 \texttt{nextart} class or \texttt{nextsystem} package continue to compile
 against the same underlying implementation.
@@ -862,7 +860,7 @@ with this edition.
 \section{Quick Reference}
 \label{app:quick-reference}
 
-This appendix summarizes the documented public interface of IMPE 1.0.0.
+This appendix summarizes the documented public interface of IMPE 1.0.1.
 It is intended for lookup rather than as a replacement for the explanations in
 the main text or the detailed subsystem documentation under \texttt{docs/}.
 Internal implementation commands, in particular commands beginning with
@@ -929,7 +927,7 @@ Loads IMPE under an ordinary \LaTeX{} class when no wrapper class is desired. \\
 \end{longtable}
 
 The legacy \texttt{next*} package and class names remain compatibility aliases
-in version 1.0.0, but new documents should use the canonical \texttt{impe*}
+in version 1.0.1, but new documents should use the canonical \texttt{impe*}
 entry points.
 
 \subsection{Core setup commands}
@@ -1160,7 +1158,7 @@ Indented italic display block for examples, quotations, linguistic data, or teac
 \subsection{Registered font-family identifiers}
 
 The table below lists the font-family IDs accepted by
-\texttt{\string\UseFont} in IMPE 1.0.0.  The \textbf{Auto} column summarizes
+\texttt{\string\UseFont} in IMPE 1.0.1.  The \textbf{Auto} column summarizes
 what a mode-less \texttt{\string\UseFont\{id\}} normally activates:
 
 \begin{description}

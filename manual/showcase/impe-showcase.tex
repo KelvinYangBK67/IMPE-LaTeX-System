@@ -18,7 +18,7 @@
 % range routing is enabled for a small representative set.  This avoids the
 % automatic routing table compact while keeping representative routing
 % regressions visible. Explicit local commands take precedence over these
-% automatic owners in v1.0.0.
+% automatic owners in v1.0.1.
 %
 % The first style matrix is deferred to the following landscape page so that
 % the surrounding portrait text may continue normally.  This relies on the
@@ -130,7 +130,7 @@
 
 \hypersetup{
   pdftitle  = {IMPE LaTeX System — Canonical Showcase},
-  pdfauthor = {IMPE LaTeX System v1.0.0},
+  pdfauthor = {IMPE LaTeX System v1.0.1},
   pdfsubject = {Canonical multilingual and feature showcase}
 }
 
@@ -163,7 +163,7 @@
 \title{IMPE \LaTeX~System}
 \subtitle{Canonical Multilingual and Feature Showcase}
 \author{Kelvin Yang}
-\date{v1.0.0}
+\date{v1.0.1}
 
 \begin{document}
 
@@ -176,9 +176,8 @@ composition with explicit local overrides, right-to-left text, vertical
 writing, generic complex shaping, CJK and Han family selection, and the
 principal document features provided by IMPE. It is intended both as a public
 showcase and as a release-time visual regression specimen.\footnote{The
-showcase is intentionally broader than the small regression examples under
-\texttt{examples/}; those examples remain useful for isolating individual
-failures.}
+showcase is intentionally broader than the focused regression fixtures under
+\texttt{tests/}; those fixtures isolate individual failures.}
 \end{abstract}
 
 \tableofcontents
@@ -357,7 +356,7 @@ script families in the paragraph use explicit local overrides.
 
 \Term[sort=Unicode range routing]{Unicode-range routing}
 [automatic font ownership] is exercised here only on a small representative
-set. This keeps the v1.0.0 showcase focused on routing correctness without
+set. This keeps the v1.0.1 showcase focused on routing correctness without
 turning the entire document into a large interchar transition graph. The
 specimen itself contains raw Unicode only.
 

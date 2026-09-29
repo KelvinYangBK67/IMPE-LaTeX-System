@@ -34,3 +34,4 @@ assets/fonts/
 **/.impe-externalized/
 !manual/showcase/impe-showcase.pdf
 papers/
+/examples/
