@@ -89,7 +89,8 @@ Use `\UseMathFont{...}` before loading the `math` feature to choose explicitly:
 
 - `\UseMathFont{auto}`: keep Computer Modern math unless an explicit legacy
   font route such as `mlmodern` is loaded
-- `\UseMathFont{libertinus}`: `unicode-math` with `Libertinus Math`
+- `\UseMathFont{libertinus}`: `unicode-math` with TeX Live's
+  `LibertinusMath-Regular.otf`
 - `\UseMathFont{newcm}`: `unicode-math` with `NewComputerModernMath`
 - `\UseMathFont{mlmodern}`: legacy `mlmodern` package route
 - any other value is passed to `\setmathfont{...}`

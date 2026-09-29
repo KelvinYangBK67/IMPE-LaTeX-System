@@ -56,7 +56,6 @@
 
 \section{導論}
 
-IMPE 是 \emph{Integrated Multilingual Publishing Environment} 的縮寫。
 IMPE \LaTeX{} System 是一套模組化 \XeLaTeX{} 框架，提供可重用的版面、字體路由、
 多語排版與選用文件功能。
 
@@ -120,8 +119,10 @@ impereport.cls
 impebeamer.cls
 \end{verbatim}
 
-另有對應的 \texttt{\_zh} 包裝類別，提供面向中文文件的預設設定。較早版本使用的
-\texttt{next*} 名稱仍作為相容入口安裝；詳見第~\ref{sec:compatibility} 節。
+另有對應的 \texttt{\_zh} 包裝類別，提供面向中文文件的預設設定。直接從 GitHub
+取得的 full 與 core release 也會安裝較早的 \texttt{next*} 相容入口；CTAN 的
+\texttt{impe-framework} 發佈只包含標準入口，不含任何相容檔案。詳見
+第~\ref{sec:compatibility} 節。
 
 若直接使用 IMPE 發行包，可透過隨附的安裝器把執行環境複製到使用者 TEXMF 樹。
 發行包可提供通常的 Windows 入口

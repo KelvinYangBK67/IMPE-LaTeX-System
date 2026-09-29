@@ -13,7 +13,7 @@ if ($Version -notmatch '^\d+\.\d+\.\d+$') {
     throw "VERSION must contain a semantic release version: $Version"
 }
 $ChangelogText = Get-Content -LiteralPath (Join-Path $RepoRoot "CHANGELOG.md") -Raw -Encoding UTF8
-$releaseHeadingPattern = "(?m)^## \[$([regex]::Escape($Version))\] - (?<date>\d{4}-\d{2}-\d{2})$"
+$releaseHeadingPattern = "(?m)^## \[$([regex]::Escape($Version))\] - (?<date>\d{4}-\d{2}-\d{2})\r?$"
 $releaseHeading = [regex]::Match($ChangelogText, $releaseHeadingPattern)
 if (-not $releaseHeading.Success) {
     throw "CHANGELOG.md has no dated entry for v$Version."
@@ -209,7 +209,11 @@ if (($hyperlinkLog -replace '\s+', ' ') -match 'destination with the same identi
 }
 
 $mathLog = (Get-Content (Join-Path $BuildRoot "libertinus-math.log") -Raw) -replace '\s+', ''
-foreach ($marker in @("IMPE-TEST-MATH-FONT:libertinus", "IMPE-TEST-LIBERTINUS-MATH-PASS")) {
+foreach ($marker in @(
+    "IMPE-TEST-MATH-FONT:libertinus",
+    "IMPE-TEST-MATH-RESOLVED:LibertinusMath-Regular.otf",
+    "IMPE-TEST-LIBERTINUS-MATH-PASS"
+)) {
     if ($mathLog -notmatch [regex]::Escape($marker)) {
         throw "Libertinus math regression is missing marker: $marker"
     }
@@ -575,6 +579,9 @@ if (-not $SkipRelease) {
         "impebeamer.cls",
         "impebeamer_zh.cls",
         "README.md",
+        "README-zh.md",
+        "CHANGELOG.md",
+        "CHANGELOG-zh.md",
         "LICENSE",
         "VERSION",
         "docs/STABILITY.md",
@@ -618,7 +625,8 @@ if (-not $SkipRelease) {
         "doc",
         "_showcase",
         "examples",
-        "archive"
+        "archive",
+        "CHANGELOG.unreleased.md"
     )
     foreach ($languageId in $manualLanguages) {
         $forbiddenCtanPaths += "manual/$languageId/VERSION"
@@ -633,11 +641,6 @@ if (-not $SkipRelease) {
         Where-Object { $_.Name -like "*-SAVE-ERROR" })
     if ($ctanSaveErrors) {
         throw "CTAN archive contains SAVE-ERROR leftovers."
-    }
-    $ctanUnreleasedText = Get-Content -LiteralPath (Join-Path $ctanPackage "CHANGELOG.unreleased.md") -Raw -Encoding UTF8
-    $unreleasedVersionPattern = "(?i)\bv$([regex]::Escape($Version))\b|\[$([regex]::Escape($Version))\]"
-    if ($ctanUnreleasedText -match $unreleasedVersionPattern) {
-        throw "CHANGELOG.unreleased.md still treats v$Version as unreleased."
     }
     $ctanFonts = @(Get-ChildItem -LiteralPath $ctanPackage -Recurse -File |
         Where-Object { $_.Extension -in @(".ttf", ".otf", ".ttc", ".woff", ".woff2") })

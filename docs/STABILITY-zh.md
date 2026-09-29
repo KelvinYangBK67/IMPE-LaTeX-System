@@ -29,7 +29,8 @@ major release。
 - 保留在倉庫以及 full/core release；
 - 由相容性回歸測試覆蓋；
 - 不收錄於 CTAN `impe-framework` 發佈；
-- 不用於新的手冊、模板、測試或其他受維護來源。
+- 不用於新的手冊、模板、示例或一般受維護來源。專用相容性回歸 fixture 是明確的
+  測試例外，例如 `tests/legacy-entry.tex`。
 
 新文件使用標準 `impe*` 入口。若日後改變 `next*` 的支援狀態，必須明確記錄，而不能
 只從 legacy 名稱推斷。

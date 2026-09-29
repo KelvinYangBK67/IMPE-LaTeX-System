@@ -4,17 +4,21 @@
 
 本目錄存放可直接起稿使用的 IMPE LaTeX System 範本。
 
-它與 `examples/` 的定位不同：
+受維護的倉庫介面各有明確用途：
 
-- `examples/` 主要用於除錯與稽核
-- `templates/` 則是給使用者直接拿來改寫的起稿骨架
+- `templates/` 存放面向使用者的起稿文件
+- `tests/` 存放受維護的回歸 fixture
+- `manual/` 存放手冊與標準 showcase
+- `docs/` 存放技術參考文件
+
+開發期間可以在本機保留臨時探針，但不會把它們作為公開 examples 集合追蹤。
 
 這些模板刻意採用「安裝後使用」的寫法：
 
 - 直接使用標準入口 `impeart`、`impebook`、`impebeamer` 及其 `_zh` 對應類
 - 英文與中文各自使用獨立的 wrapper class 入口
 - 目標場景是 IMPE LaTeX System 已安裝到 `texmf` 之後直接起稿
-- 倉庫內的 smoke test 與 repo-local 驗證仍以 `examples/` 為主
+- 倉庫的回歸與 smoke coverage 應放在 `tests/`
 
 目前提供的 starter templates：
 

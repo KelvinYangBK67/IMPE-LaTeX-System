@@ -13,8 +13,9 @@ Add a `\FontRegisterFamily{...}` entry to
 `language`, `features`, `unicodeblocks`, `inlinebehavior`, and `layout`. Font files
 under the optional local library are addressed through `\CatalogFontRoot`.
 
-Update both font reference languages and add a focused example or regression
-that loads the new id in every supported mode.
+Update both font reference languages and add a minimal regression when the new
+behavior needs long-term protection. Local focused probes may be used while
+developing the family.
 
 ## Adding Script-Specific Behavior
 
@@ -52,7 +53,10 @@ mechanisms may require a focused core change and regression coverage.
 
 ## Tests and Documentation
 
-An extension should include a minimal regression or focused example, matching
-English and Traditional Chinese reference updates, and any required manual or
-showcase change. Run `tests/run_regressions.ps1 -PublicFonts` before release;
-do not add private font binaries to tests or CTAN packaging.
+An extension should include a minimal regression when its behavior needs
+long-term protection, matching English and Traditional Chinese reference
+updates, and any required manual or showcase change. Focused probes may be
+used locally during development, but keep them untracked rather than
+recreating `examples/` as a debug dumping ground. Run
+`tests/run_regressions.ps1 -PublicFonts` before release; do not add private
+font binaries to tests or CTAN packaging.

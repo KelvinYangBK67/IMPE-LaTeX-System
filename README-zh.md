@@ -3,11 +3,10 @@
 [English](README.md)
 
 IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
-文件功能。IMPE 的正式全稱是 *Integrated Multilingual Publishing Environment*。
+文件功能。
 
 目前版本：`v1.0.1`（2026-09-29）。版本記錄見
-[CHANGELOG-zh.md](CHANGELOG-zh.md) 與
-[CHANGELOG.unreleased.md](CHANGELOG.unreleased.md)。
+[CHANGELOG-zh.md](CHANGELOG-zh.md)。
 
 ## 快速開始
 
@@ -74,6 +73,13 @@ checkout 內的文件可直接載入 `package/impe-system.tex`：
 \UseTemplateSet{...}
 ```
 
+## 字體資源
+
+CTAN 發佈不包含選用的本機字體庫。部分多語手冊與 showcase 原始碼若要完整重現，
+可能需要本機設定字體；發佈內已附預先建置的文件 PDF。`font_licenses/` 下的第三方
+記錄屬於原始碼倉庫及適用時的 full release，不屬於 CTAN archive；CTAN 不含字體
+二進位檔，也不含該授權目錄。
+
 ## 文件
 
 - [英文手冊](manual/en/impe-manual-en.pdf)——技術參考版
@@ -137,7 +143,14 @@ tests\run_regressions.ps1 -PublicFonts
 ```
 
 測試涵蓋標準與相容入口、字體路由、手冊建置、可重現 CTAN 封裝、archive
-內容與安裝遷移。倉庫不追蹤 `assets/fonts/`；第三方授權資料在
-`font_licenses/`，分發政策見 [assets/README-zh.md](assets/README-zh.md)。
+內容與安裝遷移。倉庫不追蹤 `assets/fonts/`；分發政策見
+[assets/README-zh.md](assets/README-zh.md)。
 
-本專案由作者維護，並使用 Codex 協助實作與文件工作。
+## 維護者
+
+Sikai Yang。公開聯絡與支援請使用
+[GitHub Issues](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues)。
+
+## 授權
+
+MIT License。詳見 [LICENSE](LICENSE)。

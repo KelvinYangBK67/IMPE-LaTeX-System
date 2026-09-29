@@ -86,7 +86,8 @@ Computer Modern 設定。如果已經載入 `fonts={mlmodern}`，`math` feature
 
 - `\UseMathFont{auto}`：保留 Computer Modern 數學字體，除非載入了
   `mlmodern` 等明確的傳統字體路線
-- `\UseMathFont{libertinus}`：使用 `unicode-math` 與 `Libertinus Math`
+- `\UseMathFont{libertinus}`：使用 `unicode-math` 與 TeX Live 的
+  `LibertinusMath-Regular.otf`
 - `\UseMathFont{newcm}`：使用 `unicode-math` 與 `NewComputerModernMath`
 - `\UseMathFont{mlmodern}`：使用傳統 `mlmodern` package 路線
 - 其他值會直接傳給 `\setmathfont{...}`

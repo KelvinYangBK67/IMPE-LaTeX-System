@@ -57,8 +57,7 @@
 
 \section{Introduction}
 
-IMPE stands for \emph{Integrated Multilingual Publishing Environment}.  The
-IMPE \LaTeX{} System is a modular \XeLaTeX{} framework for reusable layouts,
+The IMPE \LaTeX{} System is a modular \XeLaTeX{} framework for reusable layouts,
 font routing, multilingual typesetting, and optional document features.
 
 IMPE addresses this by separating the system into reusable parts.  From the
@@ -140,8 +139,10 @@ impebeamer.cls
 \end{verbatim}
 
 with corresponding \texttt{\_zh} wrapper classes for Chinese-oriented document
-defaults.  Compatibility entries using the earlier \texttt{next*} names are
-also installed; see Section~\ref{sec:compatibility}.
+defaults.  Direct GitHub full and core releases also install the earlier
+\texttt{next*} compatibility entries; the CTAN \texttt{impe-framework}
+distribution contains only the canonical entries and no compatibility files.
+See Section~\ref{sec:compatibility}.
 
 When using a direct IMPE release, the supplied installer can be used to copy the
 runtime into the user TEXMF tree.  A release archive may provide the usual

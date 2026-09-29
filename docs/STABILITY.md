@@ -33,7 +33,9 @@ canonical API and not automatically a deprecated API. These wrappers are:
 - retained in the repository and in full/core releases;
 - exercised by compatibility regressions;
 - excluded from the CTAN `impe-framework` distribution; and
-- excluded from new manuals, templates, tests, and other maintained sources.
+- excluded from new manuals, templates, examples, and ordinary maintained
+  sources. Dedicated compatibility regression fixtures, such as
+  `tests/legacy-entry.tex`, are the explicit test exception.
 
 New documents use the canonical `impe*` entries. Any future change to the
 support status of `next*` must be stated explicitly rather than inferred from

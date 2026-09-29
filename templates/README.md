@@ -4,17 +4,22 @@
 
 This directory contains ready-to-use starter templates for IMPE LaTeX System.
 
-They are different from `examples/`:
+The maintained repository surfaces have distinct roles:
 
-- `examples/` are kept for debugging and auditing
-- `templates/` are meant to be copied and used as actual writing starters
+- `templates/` contains user-facing starter documents
+- `tests/` contains maintained regression fixtures
+- `manual/` contains the manuals and canonical showcase
+- `docs/` contains technical reference material
+
+Temporary development probes may be kept locally, but are not tracked as a
+public examples collection.
 
 These templates are intentionally written in the installed-package style:
 
 - they use canonical `impeart`, `impebook`, `impebeamer`, and their `_zh` counterparts
 - English and Chinese use separate wrapper class entrypoints
 - they are meant to be used after IMPE LaTeX System has been installed into `texmf`
-- repository-local smoke testing should still rely on `examples/`
+- repository regression and smoke coverage belongs under `tests/`
 
 Current starter templates:
 

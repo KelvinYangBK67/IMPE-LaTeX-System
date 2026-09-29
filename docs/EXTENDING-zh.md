@@ -12,8 +12,8 @@
 `script`、`language`、`features`、`unicodeblocks`、`inlinebehavior` 與 `layout`
 欄位。選用本地字體庫中的檔案應透過 `\CatalogFontRoot` 定位。
 
-同步更新兩種語言的字體參考文件，並加入聚焦示例或回歸測試，覆蓋該 id 支援的各種
-mode。
+同步更新兩種語言的字體參考文件；若新行為需要長期保護，加入最小回歸測試。開發該
+family 時可以使用本機的聚焦探針。
 
 ## 新增特定文字行為
 
@@ -47,6 +47,8 @@ target 進行測試。
 
 ## 測試與文件
 
-擴充應包含最小回歸測試或聚焦示例、相互對應的英文與繁體中文參考文件更新，以及必要
-的手冊或 showcase 修改。發佈前執行 `tests/run_regressions.ps1 -PublicFonts`；
-不要把私有字體二進位檔加入測試或 CTAN 封裝。
+若擴充行為需要長期保護，應加入最小回歸測試，並同步更新英文與繁體中文參考文件，
+以及必要的手冊或 showcase。開發期間可以使用本機聚焦探針，但應保持不受追蹤，不要
+重新把 `examples/` 變成 debug dumping ground。發佈前執行
+`tests/run_regressions.ps1 -PublicFonts`；不要把私有字體二進位檔加入測試或 CTAN
+封裝。

@@ -3,11 +3,9 @@
 [繁體中文](README-zh.md)
 
 IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
-multilingual typesetting, and optional document features. The formal expansion
-of IMPE is *Integrated Multilingual Publishing Environment*.
+multilingual typesetting, and optional document features.
 
-Current release: `v1.0.1` (2026-09-29). See [CHANGELOG.md](CHANGELOG.md) and
-[CHANGELOG.unreleased.md](CHANGELOG.unreleased.md).
+Current release: `v1.0.1` (2026-09-29). See [CHANGELOG.md](CHANGELOG.md).
 
 ## Quick Start
 
@@ -74,6 +72,15 @@ Checkout-local documents may load `package/impe-system.tex` directly:
 \subimport{../../package/}{impe-system.tex}
 \UseTemplateSet{...}
 ```
+
+## Font Resources
+
+The CTAN distribution does not include the optional local font library. Some
+multilingual manual and showcase sources require locally configured fonts for
+full source reproduction; the prebuilt documentation PDFs are included. The
+third-party records under `font_licenses/` belong to the source repository and,
+where applicable, the full release—not to the CTAN archive, which contains no
+font binaries or font-license tree.
 
 ## Documentation
 
@@ -142,9 +149,14 @@ tests\run_regressions.ps1 -PublicFonts
 
 The suite covers canonical and legacy entry points, font routing, manual
 builds, deterministic CTAN packaging, archive contents, and installer
-migration. The repository does not track `assets/fonts/`; third-party license
-information is under `font_licenses/` and the distribution policy is in
-[assets/README.md](assets/README.md).
+migration. The repository does not track `assets/fonts/`; the distribution
+policy is in [assets/README.md](assets/README.md).
 
-The project is maintained by the author with Codex-assisted implementation and
-documentation work.
+## Maintainer
+
+Sikai Yang. Use [GitHub Issues](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues)
+for public contact and support.
+
+## License
+
+MIT License. See [LICENSE](LICENSE).

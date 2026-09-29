@@ -302,7 +302,6 @@ function New-CtanPackage {
         "README-zh.md",
         "CHANGELOG.md",
         "CHANGELOG-zh.md",
-        "CHANGELOG.unreleased.md",
         "LICENSE",
         "VERSION"
     )
