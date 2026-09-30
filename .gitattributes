@@ -1,0 +1,29 @@
+* text=auto
+
+*.md text eol=lf
+*.tex text eol=lf
+*.sty text eol=lf
+*.cls text eol=lf
+*.lua text eol=lf
+*.bib text eol=lf
+*.txt text eol=lf
+*.ps1 text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.latexmkrc text eol=lf
+LICENSE text eol=lf
+VERSION text eol=lf
+
+*.bat text eol=crlf
+
+*.pdf binary
+*.ttf binary
+*.otf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.zip binary

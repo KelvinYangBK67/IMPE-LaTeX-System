@@ -123,6 +123,191 @@ function Remove-RuntimeBuildArtifacts {
     }
 }
 
+function Get-ArchiveEntryKind {
+    param([string]$Path)
+
+    $normalizedPath = $Path.Replace([char]92, [char]47)
+    $name = ($normalizedPath -split '/')[-1]
+    $extension = [System.IO.Path]::GetExtension($name).ToLowerInvariant()
+
+    if (@(".md", ".tex", ".sty", ".cls", ".lua", ".bib", ".txt", ".ps1", ".sh", ".yml", ".yaml") -contains $extension) {
+        return "text-lf"
+    }
+    if ($extension -eq ".bat") {
+        return "text-crlf"
+    }
+    if (@(".gitignore", ".gitattributes", ".latexmkrc", "LICENSE", "VERSION") -contains $name) {
+        return "text-lf"
+    }
+    return "binary"
+}
+
+function Convert-ArchiveTextLineEndings {
+    param(
+        [byte[]]$Bytes,
+        [switch]$CrLf
+    )
+
+    $output = New-Object System.IO.MemoryStream
+    try {
+        for ($index = 0; $index -lt $Bytes.Length; $index++) {
+            $value = $Bytes[$index]
+            if ($value -eq 13) {
+                if (($index + 1) -lt $Bytes.Length -and $Bytes[$index + 1] -eq 10) {
+                    $index++
+                }
+                if ($CrLf) {
+                    $output.WriteByte(13)
+                }
+                $output.WriteByte(10)
+            }
+            elseif ($value -eq 10) {
+                if ($CrLf) {
+                    $output.WriteByte(13)
+                }
+                $output.WriteByte(10)
+            }
+            else {
+                $output.WriteByte($value)
+            }
+        }
+        return ,$output.ToArray()
+    }
+    finally {
+        $output.Dispose()
+    }
+}
+
+function Get-ZipCentralDirectoryRecords {
+    param([byte[]]$Bytes)
+
+    $minimumEocdOffset = [Math]::Max(0, $Bytes.Length - 65557)
+    $eocdOffset = -1
+    for ($offset = $Bytes.Length - 22; $offset -ge $minimumEocdOffset; $offset--) {
+        if ([BitConverter]::ToUInt32($Bytes, $offset) -eq 0x06054b50) {
+            $eocdOffset = $offset
+            break
+        }
+    }
+    if ($eocdOffset -lt 0) {
+        throw "ZIP end-of-central-directory record was not found."
+    }
+
+    $entryCount = [BitConverter]::ToUInt16($Bytes, $eocdOffset + 10)
+    $centralOffset = [BitConverter]::ToUInt32($Bytes, $eocdOffset + 16)
+    $records = New-Object System.Collections.Generic.List[object]
+    $cursor = [int64]$centralOffset
+    for ($index = 0; $index -lt $entryCount; $index++) {
+        if (($cursor + 46) -gt $Bytes.Length -or [BitConverter]::ToUInt32($Bytes, [int]$cursor) -ne 0x02014b50) {
+            throw "Invalid ZIP central-directory record at offset $cursor."
+        }
+        $records.Add([PSCustomObject]@{
+            Offset             = [int]$cursor
+            InternalAttributes = [BitConverter]::ToUInt16($Bytes, [int]$cursor + 36)
+        }) | Out-Null
+        $nameLength = [BitConverter]::ToUInt16($Bytes, [int]$cursor + 28)
+        $extraLength = [BitConverter]::ToUInt16($Bytes, [int]$cursor + 30)
+        $commentLength = [BitConverter]::ToUInt16($Bytes, [int]$cursor + 32)
+        $cursor += 46 + $nameLength + $extraLength + $commentLength
+    }
+    return $records.ToArray()
+}
+
+function Set-ZipEntryTextMetadata {
+    param(
+        [string]$ZipPath,
+        [bool[]]$TextFlags
+    )
+
+    [byte[]]$bytes = [System.IO.File]::ReadAllBytes($ZipPath)
+    $records = @(Get-ZipCentralDirectoryRecords -Bytes $bytes)
+    if ($records.Count -ne $TextFlags.Count) {
+        throw "ZIP metadata entry count mismatch for $ZipPath."
+    }
+
+    for ($index = 0; $index -lt $records.Count; $index++) {
+        $attributes = $records[$index].InternalAttributes
+        if ($TextFlags[$index]) {
+            $attributes = $attributes -bor 1
+        }
+        else {
+            $attributes = $attributes -band 0xfffe
+        }
+        [byte[]]$attributeBytes = [BitConverter]::GetBytes([uint16]$attributes)
+        $bytes[$records[$index].Offset + 36] = $attributeBytes[0]
+        $bytes[$records[$index].Offset + 37] = $attributeBytes[1]
+    }
+    [System.IO.File]::WriteAllBytes($ZipPath, $bytes)
+}
+
+function Test-PortableZip {
+    param([string]$ZipPath)
+
+    [byte[]]$zipBytes = [System.IO.File]::ReadAllBytes($ZipPath)
+    $records = @(Get-ZipCentralDirectoryRecords -Bytes $zipBytes)
+    $zipStream = [System.IO.File]::OpenRead($ZipPath)
+    try {
+        $archive = New-Object System.IO.Compression.ZipArchive(
+            $zipStream,
+            [System.IO.Compression.ZipArchiveMode]::Read,
+            $false
+        )
+        try {
+            if ($archive.Entries.Count -ne $records.Count) {
+                throw "ZIP validation entry count mismatch for $ZipPath."
+            }
+            for ($index = 0; $index -lt $archive.Entries.Count; $index++) {
+                $entry = $archive.Entries[$index]
+                if ($entry.FullName.Contains([char]92)) {
+                    throw "ZIP entry path is not portable: $($entry.FullName)"
+                }
+
+                $kind = Get-ArchiveEntryKind -Path $entry.FullName
+                $isMarkedText = ($records[$index].InternalAttributes -band 1) -ne 0
+                if ($kind -eq "binary" -and $isMarkedText) {
+                    throw "Binary ZIP entry is marked as text: $($entry.FullName)"
+                }
+                if ($kind -ne "binary" -and -not $isMarkedText) {
+                    throw "Text ZIP entry is not marked as text: $($entry.FullName)"
+                }
+
+                if ($kind -ne "binary") {
+                    $entryStream = $entry.Open()
+                    $memory = New-Object System.IO.MemoryStream
+                    try {
+                        $entryStream.CopyTo($memory)
+                        [byte[]]$content = $memory.ToArray()
+                    }
+                    finally {
+                        $memory.Dispose()
+                        $entryStream.Dispose()
+                    }
+
+                    for ($byteIndex = 0; $byteIndex -lt $content.Length; $byteIndex++) {
+                        if ($kind -eq "text-lf" -and $content[$byteIndex] -eq 13) {
+                            throw "LF-policy ZIP entry contains a carriage return: $($entry.FullName)"
+                        }
+                        if ($kind -eq "text-crlf") {
+                            if ($content[$byteIndex] -eq 13 -and (($byteIndex + 1) -ge $content.Length -or $content[$byteIndex + 1] -ne 10)) {
+                                throw "CRLF-policy ZIP entry contains a bare carriage return: $($entry.FullName)"
+                            }
+                            if ($content[$byteIndex] -eq 10 -and ($byteIndex -eq 0 -or $content[$byteIndex - 1] -ne 13)) {
+                                throw "CRLF-policy ZIP entry contains a bare line feed: $($entry.FullName)"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        finally {
+            $archive.Dispose()
+        }
+    }
+    finally {
+        $zipStream.Dispose()
+    }
+}
+
 function New-PortableZip {
     param(
         [string]$SourceRoot,
@@ -135,6 +320,7 @@ function New-PortableZip {
 
     $sourceFull = (Get-Item -LiteralPath $SourceRoot).FullName.TrimEnd([char[]](92, 47))
     $baseFull = if ($IncludeRoot) { Split-Path -Parent $sourceFull } else { $sourceFull }
+    $textFlags = New-Object System.Collections.Generic.List[bool]
     $zipStream = [System.IO.File]::Open($ZipPath, [System.IO.FileMode]::Create)
     try {
         $archive = New-Object System.IO.Compression.ZipArchive(
@@ -147,16 +333,27 @@ function New-PortableZip {
                 Sort-Object FullName |
                 ForEach-Object {
                     $entryName = $_.FullName.Substring($baseFull.Length).TrimStart([char[]](92, 47)).Replace([char]92, [char]47)
+                    $entryKind = Get-ArchiveEntryKind -Path $entryName
+                    $textFlags.Add($entryKind -ne "binary") | Out-Null
                     $entry = $archive.CreateEntry($entryName, [System.IO.Compression.CompressionLevel]::Optimal)
                     $entry.LastWriteTime = $ArchiveTimestamp
                     $entryStream = $entry.Open()
                     try {
-                        $sourceStream = [System.IO.File]::OpenRead($_.FullName)
-                        try {
-                            $sourceStream.CopyTo($entryStream)
+                        if ($entryKind -eq "binary") {
+                            $sourceStream = [System.IO.File]::OpenRead($_.FullName)
+                            try {
+                                $sourceStream.CopyTo($entryStream)
+                            }
+                            finally {
+                                $sourceStream.Dispose()
+                            }
                         }
-                        finally {
-                            $sourceStream.Dispose()
+                        else {
+                            [byte[]]$sourceBytes = [System.IO.File]::ReadAllBytes($_.FullName)
+                            [byte[]]$normalizedBytes = Convert-ArchiveTextLineEndings `
+                                -Bytes $sourceBytes `
+                                -CrLf:($entryKind -eq "text-crlf")
+                            $entryStream.Write($normalizedBytes, 0, $normalizedBytes.Length)
                         }
                     }
                     finally {
@@ -171,6 +368,9 @@ function New-PortableZip {
     finally {
         $zipStream.Dispose()
     }
+
+    Set-ZipEntryTextMetadata -ZipPath $ZipPath -TextFlags $textFlags.ToArray()
+    Test-PortableZip -ZipPath $ZipPath
 }
 
 function New-ReleasePackage {
@@ -205,6 +405,7 @@ function New-ReleasePackage {
 
     Copy-Item -Force (Join-Path $ScriptRoot "install.ps1") (Join-Path $StageRoot "install.ps1")
     Copy-Item -Force (Join-Path $ScriptRoot "install.bat") (Join-Path $StageRoot "install.bat")
+    Copy-Item -Force (Join-Path $ScriptRoot "install.sh") (Join-Path $StageRoot "install.sh")
 
     if ($Flavor -eq "full") {
         $LocalFontRoot = Join-Path $RepoRoot "assets/fonts"
@@ -256,7 +457,11 @@ function New-ReleasePackage {
     }
 
     if ($Note) {
-        Set-Content -Path (Join-Path $StageRoot "RELEASE.txt") -Value $Note
+        [System.IO.File]::WriteAllText(
+            (Join-Path $StageRoot "RELEASE.txt"),
+            $Note + "`n",
+            (New-Object System.Text.UTF8Encoding($false))
+        )
     }
 
     New-PortableZip -SourceRoot $StageRoot -ZipPath $ZipPath
@@ -336,7 +541,11 @@ function New-CtanPackage {
         }
     }
 
-    Set-Content -Path (Join-Path $StageRoot "RELEASE.txt") -Value "CTAN-oriented IMPE v$Version source and runtime archive. Font binaries are intentionally excluded."
+    [System.IO.File]::WriteAllText(
+        (Join-Path $StageRoot "RELEASE.txt"),
+        "CTAN-oriented IMPE v$Version source and runtime archive. Font binaries are intentionally excluded.`n",
+        (New-Object System.Text.UTF8Encoding($false))
+    )
     New-PortableZip -SourceRoot $StageRoot -ZipPath $ZipPath -IncludeRoot
 
     Write-Host "CTAN directory: $StageRoot"
