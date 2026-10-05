@@ -22,6 +22,9 @@ $ReleaseDateIso = $releaseHeading.Groups["date"].Value
 $ReleaseDateTeX = $ReleaseDateIso.Replace('-', '/')
 
 if (Test-Path $BuildRoot) {
+    if ([IO.Path]::GetFullPath($BuildRoot) -ne [IO.Path]::GetFullPath((Join-Path $RepoRoot 'tests/build'))) {
+        throw "Unsafe regression build directory: $BuildRoot"
+    }
     Remove-Item -Recurse -Force $BuildRoot
 }
 New-Item -ItemType Directory -Force -Path $BuildRoot | Out-Null
@@ -135,6 +138,11 @@ else {
 
 $env:TEXINPUTS = $testTexInputs
 
+$bundleFixture = Join-Path $BuildRoot 'font-source-bundle'
+New-Item -ItemType Directory -Force -Path $bundleFixture | Out-Null
+Copy-Item -LiteralPath ((& kpsewhich lmsans10-regular.otf).Trim()) `
+    -Destination (Join-Path $bundleFixture 'lmroman10-regular.otf')
+
 try {
     $tests = @(
         "canonical-entry",
@@ -145,11 +153,14 @@ try {
         "routing-scalability",
         "thai-linebreaking",
         "hyperlink-anchors",
+        "font-sources-api",
+        "font-bundled-priority",
+        "drawing",
         "libertinus-math"
     )
 
     foreach ($name in $tests) {
-        $passes = if ($name -eq "hyperlink-anchors") { 2 } else { 1 }
+        $passes = if ($name -eq "hyperlink-anchors") { 3 } else { 1 }
         foreach ($pass in 1..$passes) {
             Write-Host "Running $name (pass $pass of $passes)..."
             $texInput = "tests/$name.tex"
@@ -162,8 +173,35 @@ try {
             if ($LASTEXITCODE -ne 0) {
                 throw "XeLaTeX regression failed: $name (pass $pass)"
             }
+            if ($name -eq 'hyperlink-anchors' -and $pass -eq 1) {
+                Push-Location $BuildRoot
+                try {
+                    & texindy -L english -C utf8 -M hyperlink-anchors-impe hyperlink-anchors.idx
+                    if ($LASTEXITCODE -ne 0) { throw 'texindy occurrence regression failed.' }
+                }
+                finally { Pop-Location }
+            }
         }
     }
+    & python (Join-Path $TestRoot 'check_index_links.py') (Join-Path $BuildRoot 'hyperlink-anchors.pdf')
+    if ($LASTEXITCODE -ne 0) { throw 'PDF index link semantics failed.' }
+    & $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" tests/font-unknown.tex | Out-Null
+    if ($LASTEXITCODE -eq 0 -or
+        (Get-Content (Join-Path $BuildRoot 'font-unknown.log') -Raw) -notmatch 'Unknown font family mode') {
+        throw 'Unknown generic family did not report the registry error.'
+    }
+    foreach ($name in @('font-sources-api', 'font-bundled-priority', 'drawing', 'hyperlink-anchors')) {
+        $log = Get-Content (Join-Path $BuildRoot "$name.log") -Raw
+        if (($log -replace '\s+', ' ') -match 'Falling back to LaTeX|Undefined control sequence|cannot be found|Option clash|duplicate ignored|destination with the same identifier') {
+            throw "Unexpected runtime warning/error in $name."
+        }
+    }
+    $bundledLog = (Get-Content (Join-Path $BuildRoot 'font-bundled-priority.log') -Raw) -replace '\s+', ''
+    if ($bundledLog -notmatch 'IMPE-TEST-BUNDLED-FONT:.*font-source-bundle/lmroman10-regular' -or
+        $bundledLog -notmatch 'IMPE-TEST-MIXED-FONT:.*\[lmroman10-bold.otf\]') {
+        throw 'Bundled precedence / mixed system face regression failed.'
+    }
+    $LASTEXITCODE = 0 # The unknown-family case above intentionally fails.
 }
 finally {
     $env:TEXINPUTS = $oldTexInputs
@@ -193,6 +231,9 @@ $compactLocalLog = $localLog -replace '\s',''
 $expectedLocalFont = if ($PublicFonts) { 'IMPE-TEST-LOCAL-FONT:.*(?:lmroman|LMRoman|NotoSerifDevanagari)' } else { 'IMPE-TEST-LOCAL-FONT:.*NotoSerifDevanagari' }
 if ($compactLocalLog -notmatch $expectedLocalFont) {
     throw "Local Hindi command did not retain its explicit font."
+}
+if ($compactLocalLog -notmatch ($expectedLocalFont.Replace('LOCAL-FONT', 'GENERIC-FONT'))) {
+    throw 'Generic Hindi selection did not retain its explicit font.'
 }
 if ($localLog -notmatch 'IMPE-TEST-GLOBAL-ENTER-BEFORE' -or
     $localLog -notmatch 'IMPE-TEST-GLOBAL-ENTER-RESTORED' -or

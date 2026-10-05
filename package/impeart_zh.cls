@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impeart_zh}[2026/09/29 v1.0.1 IMPE class for Chinese article]
+\ProvidesClass{impeart_zh}[2026/10/05 v1.0.2 IMPE class for Chinese article]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}

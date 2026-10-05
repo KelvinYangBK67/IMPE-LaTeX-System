@@ -62,8 +62,9 @@ install.bat
 
 The installer writes to the user TEXMF tree under `tex/latex/impe/`. The full
 archive includes redistributable local fonts; the core archive contains the
-runtime only. Configure another font library with `impe.local.tex` or
-`\SetCatalogFontRoot{...}`.
+runtime only. Catalog faces use TeX Live/system lookup when their bundled file
+is absent; installed resolvable fonts need no separate library. Configure a
+separate library with `impe.local.tex` or `\SetCatalogFontRoot{...}`.
 
 Checkout-local documents may load `package/impe-system.tex` directly:
 

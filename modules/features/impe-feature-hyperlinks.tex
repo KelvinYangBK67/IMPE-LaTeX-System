@@ -27,10 +27,21 @@
 
 \hypersetup{hypertexnames=false}
 
-\newcounter{NextHyperTocLink}
+% All IMPE destination identities come from this document-wide sequence.
+\newcount\NextHyperDestinationSequence
+\newcommand{\NextHyperlinksAllocateDestination}[1]{%
+  \global\advance\NextHyperDestinationSequence by 1\relax
+  \edef#1{impe.dest.\the\NextHyperDestinationSequence}%
+}
 \newcommand{\NextHyperlinksCurrentTocTarget}{}
 \newif\ifNextHyperlinksHeadingShouldLink
 \makeatletter
+% Include hyperref's automatically allocated structural targets in the same
+% namespace; explicit user-supplied target names remain untouched.
+\AddToHook{__hyp/target/setname}[impe]{%
+  \NextHyperlinksAllocateDestination\NextHyperlinksAutoTarget
+  \Hy@MakeCurrentHref{\NextHyperlinksAutoTarget}%
+}
 \DeclareRobustCommand{\NextHyperlinksTocAnchor}[1]{%
   \Hy@raisedlink{\hypertarget{#1}{}}%
 }
@@ -58,8 +69,7 @@
 }
 
 \newcommand{\NextHyperlinksBeginHeadingLink}{%
-  \stepcounter{NextHyperTocLink}%
-  \xdef\NextHyperlinksCurrentTocTarget{next-toc-title-\arabic{NextHyperTocLink}}%
+  \NextHyperlinksAllocateDestination\NextHyperlinksCurrentTocTarget
   \global\NextHyperlinksHeadingShouldLinktrue
 }
 \newcommand{\NextHyperlinksEndHeadingLink}{%
@@ -180,12 +190,10 @@
 \AtBeginDocument{\NextHyperlinksPatchHeadingCommands}
 \makeatother
 
-\newcounter{NextHyperFootnoteLink}
 \makeatletter
 \RenewDocumentCommand{\footnote}{o +m}{%
-  \stepcounter{NextHyperFootnoteLink}%
-  \edef\NextHyperFootnoteMarkTarget{next-footnote-mark-\arabic{NextHyperFootnoteLink}}%
-  \edef\NextHyperFootnoteTextTarget{next-footnote-text-\arabic{NextHyperFootnoteLink}}%
+  \NextHyperlinksAllocateDestination\NextHyperFootnoteMarkTarget
+  \NextHyperlinksAllocateDestination\NextHyperFootnoteTextTarget
   \begingroup
     \let\NextHyperlinksOriginalMakeFnMark\@makefnmark
     \renewcommand{\@makefnmark}{%

@@ -559,3 +559,22 @@ The bundled `SyrCOM*.otf` files now have their license text stored under `font_l
 The canonical public font audit is
 `manual/showcase/impe-showcase.tex`. Focused automated checks live under
 `tests/`.
+
+## Generic local selection (1.0.2)
+
+`\UseFont{id}[local|global]` keeps its existing activation meaning. Use
+`\Font{id}{content}` to typeset a local span through the registered family's
+public command. For example, `\Font{hindi}{हिन्दी}` is equivalent to `\HI{हिन्दी}`.
+The local declaration is loaded on demand, using the same registry errors as
+`\UseFont{id}[local]` for unknown IDs or families without local mode. Load
+families requiring additional packages with `\UseFont` in the preamble.
+Existing family commands remain supported. Series/shape, local override of
+Unicode routing, direction, CJK spacing and script processing are shared.
+No raw `\FontName` API is introduced in this release.
+
+Each face resolves independently: first the configured bundled file, then the
+registered filename/name through fontspec (TeX Live or system lookup), then the
+existing strict error or soft fallback. Bundled files always win. A core install
+can therefore use installed fonts without `assets/fonts` or a copied catalog
+directory tree. `\SetCatalogFontRoot` remains useful for a separate library;
+it is not necessary when the registered faces already resolve.

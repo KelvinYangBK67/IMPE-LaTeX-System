@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage{impe}
+% No catalog fixture: every face must resolve through TeX Live.
+\FontRegisterFamily{id=system-test,command=SYS,name=system_test,
+  path=impe-nonexistent-font-directory/,
+  regular=lmroman10-regular.otf,bold=lmroman10-bold.otf,
+  italic=lmroman10-italic.otf,bolditalic=lmroman10-bolditalic.otf,
+  sans=lmsans10-regular.otf,sansbold=lmsans10-bold.otf,
+  sansitalic=lmsans10-oblique.otf,sansbolditalic=lmsans10-boldoblique.otf,
+  mono=lmmono10-regular.otf,monobold=lmmonolt10-bold.otf,
+  fallbackmode=strict}
+\UseFont{system-test}[local]
+\FontRegisterFamily{id=lazy-test,command=LAZY,name=lazy_test,
+  path=impe-nonexistent-font-directory/,regular=lmroman10-regular.otf,
+  fallbackmode=strict}
+\FontDeclare{scope=global,name=test_route,regular=lmmono10-regular.otf,
+  unicodeblocks={BasicLatin},fallbackmode=strict}
+\ExplSyntaxOn
+\tl_new:N \g__test_selected_font_tl
+\NewDocumentCommand\CheckFont{m}{
+  \tl_set:Nx \l_tmpa_tl {\fontname\font}
+  \exp_args:NNx \tl_if_in:NnF \l_tmpa_tl {\tl_to_str:n{#1}}
+    {\errmessage{Wrong~font:~\l_tmpa_tl;~expected~#1}}
+  \bool_if:NF \l__font_local_override_bool
+    {\errmessage{Local~override~not~active}}
+}
+\NewDocumentCommand\SaveFont{}{
+  \tl_gset:Nx \g__test_selected_font_tl {\fontname\font}}
+\NewDocumentCommand\SameFont{}{
+  \str_if_eq:eeF {\fontname\font}{\g__test_selected_font_tl}
+    {\errmessage{Generic~and~family~commands~differ}}}
+\ExplSyntaxOff
+\begin{document}
+Global routing active.
+\SYS{A\CheckFont{lmroman10-regular}\SaveFont B}
+\Font{system-test}{A\CheckFont{lmroman10-regular}\SameFont B}
+{\bfseries\Font{system-test}{A\CheckFont{lmroman10-bold}B}}
+{\itshape\Font{system-test}{A\CheckFont{lmroman10-italic}B}}
+{\bfseries\itshape\Font{system-test}{A\CheckFont{lmroman10-bolditalic}B}}
+\Font{system-test}{\sffamily A\CheckFont{lmsans10-regular}B}
+\Font{system-test}{\ttfamily A\CheckFont{lmmono10-regular}B}
+\Font{lazy-test}{A\CheckFont{lmroman10-regular}B}
+\typeout{IMPE-TEST-FONT-SOURCES-API-PASS}
+\end{document}

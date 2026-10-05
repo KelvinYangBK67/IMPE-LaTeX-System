@@ -14,6 +14,7 @@
 *.idx
 *.ilg
 *.ind
+*-impe.xdy
 *.lof
 *.lot
 *.bcf

@@ -29,6 +29,11 @@ jobs:
           version: 2026
           package-file: .github/texlive.packages
 
+      - name: Install PDF regression dependency
+        # PDF link destinations and their clickable number rectangles are tested.
+        shell: pwsh
+        run: python -m pip install PyMuPDF
+
       - name: Run public regression suite
         shell: pwsh
         run: ./tests/run_regressions.ps1 -PublicFonts

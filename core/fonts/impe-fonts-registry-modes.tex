@@ -12,6 +12,7 @@
 \prop_new:N \g__font_family_global_prop
 \prop_new:N \g__font_family_default_prop
 \prop_new:N \g__font_family_loaded_prop
+\prop_new:N \g__font_family_command_prop
 \prop_new:N \g__font_family_range_profile_prop
 \prop_new:N \g__font_family_global_route_prop
 \prop_new:N \g__font_range_profile_keys_prop
@@ -163,6 +164,8 @@
       {
         \tl_set:Nx \l_tmpb_tl { scope = #2, familyid = #1, \exp_not:n {#3} }
         \exp_args:NV \FontDeclare \l_tmpb_tl
+        \str_if_eq:nnT {#2} {local}
+          { \prop_put:NnV \g__font_family_command_prop {#1} \l__font_command_tl }
         \prop_put:Nnn \g__font_family_loaded_prop { #1 / #2 } { loaded }
       }
   }
@@ -429,5 +432,15 @@
 
 \NewDocumentCommand{\UseFonts}{m O{}}
   { \clist_map_inline:nn {#1} { \UseFont{##1}[#2] } }
+
+% Dispatch through the registered public command, including special builders.
+% No fontspec shortcut: this is the same local override/behavior path as HI, SA,
+% CHA, etc. UseFont keeps its activation semantics.
+\NewDocumentCommand{\Font}{m +m}
+  {
+    \__font_family_use_loader:nn {#1} {local}
+    \prop_get:NnNT \g__font_family_command_prop {#1} \l_tmpa_tl
+      { \use:c { \l_tmpa_tl } {#2} }
+  }
 
 \ExplSyntaxOff

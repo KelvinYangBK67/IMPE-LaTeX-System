@@ -506,3 +506,18 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 
 標準公開字體稽核位於 `manual/showcase/impe-showcase.tex`；聚焦的自動檢查則位於
 `tests/`。
+
+## 通用局部選字（1.0.2）
+
+`\UseFont{id}[local|global]` 保持原有載入／啟用意義。
+`\Font{id}{內容}` 經由登錄家族的公開命令排印局部內容，例如
+`\Font{hindi}{हिन्दी}` 與 `\HI{हिन्दी}` 等效。局部宣告按需載入；
+未知 ID 或不支援 local 的家族沿用 `\UseFont{id}[local]` 的錯誤。
+需要額外套件的家族請先在導言區使用 `\UseFont` 載入。
+原有家族命令繼續支援，字重、字形、局部覆寫 Unicode 全域路由、方向、
+CJK 間距與文字系統處理均共用原路徑。本版不新增 `\FontName`。
+
+每個字面獨立解析：先找設定路徑下的隨附檔案，再以登錄檔名／字體名稱
+交由 fontspec 查找 TeX Live 或系統字體，最後才採用既有嚴格錯誤或軟回退。
+隨附檔案始終優先。core 安裝不必建立 `assets/fonts` 或複製目錄結構；
+若字體已可解析，也不必設定 `\SetCatalogFontRoot`。獨立字體庫仍可使用此設定。

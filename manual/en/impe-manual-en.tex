@@ -161,6 +161,10 @@ way.
 
 \subsection{Font resources and local configuration}
 
+Each registered face first uses its bundled file if present, then fontspec's
+TeX Live or system lookup, and finally the configured error or fallback.
+Core installations need no separate font tree for already resolvable fonts.
+
 The source repository does not track the full local font library.  In a local
 or full installation, catalogued font files are normally resolved below an
 \texttt{assets/fonts/} root.  A different location can be selected without
@@ -450,6 +454,12 @@ font and layout subsystems remain responsible for the implementation details.
 
 \section{Fonts, Script Routing, and Multilingual Typesetting}
 
+Use \verb|\Font{family-id}{content}| for generic local selection, for example
+\verb|\Font{hindi}{...}|. It uses the same command path as the family-specific
+command, preserving series, shape, local routing override and script behavior.
+\verb|\UseFont| retains its loading/activation meaning. Local declarations load
+on demand; load families requiring extra packages in the preamble.
+
 \subsection{Font families as registered capabilities}
 
 IMPE does not treat a font name as merely a replacement for \verb|\rmfamily|.
@@ -684,8 +694,15 @@ such as \verb|\addbibresource|, \verb|\textcite|, and
 \verb|\printbibliography|.  Citation presets such as APA, GB/T 7714, numeric,
 or author--year may be selected before the feature is loaded.
 
-The \texttt{index} feature builds on \texttt{imakeidx} and adds the
-\verb|\Term| helper for typesetting and indexing a term together.  The
+The \texttt{drawing} feature loads TikZ/PGF, pgfplots (compatibility 1.18), and
+forest for their ordinary diagram, plot and tree syntax.
+
+The \texttt{index} feature loads hyperlinks, builds on \texttt{imakeidx} and adds the
+\verb|\Term| helper for typesetting and indexing a term together. Its printed
+index page number links to the recorded occurrence even after page-number
+resets. First-occurrence-per-key semantics are unchanged. For manual processing,
+run \texttt{texindy -L english -C utf8 -M <job>-impe <job>.idx} in the output
+directory, then rerun XeLaTeX twice. The
 \texttt{tables} and \texttt{image} features similarly provide convenient
 higher-level environments while leaving native \texttt{booktabs},
 \texttt{graphicx}, and related commands available.

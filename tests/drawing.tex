@@ -1,0 +1,19 @@
+\documentclass{impeart}
+\UseFeature{drawing}
+\UseFeature{drawing}
+\begin{document}
+\begin{tikzpicture}
+\node[draw] (a) at (0,0) {A};
+\node[draw] (b) at (2,0) {B};
+\draw[->] (a) -- (b);
+\end{tikzpicture}
+\begin{tikzpicture}
+\begin{axis}[width=5cm,height=4cm]
+\addplot coordinates {(0,0) (1,1) (2,4)};
+\end{axis}
+\end{tikzpicture}
+\begin{forest}
+[Root [Left] [Right]]
+\end{forest}
+\typeout{IMPE-TEST-DRAWING-PASS}
+\end{document}

@@ -6,13 +6,34 @@
 \def\NextFeatureIndexLoaded{1}
 
 \RequirePackage[xindy]{imakeidx}
+\UseFeature{hyperlinks}
 
 \providecommand{\IndexTitle}{}
 \makeatletter
+% xindy receives an opaque occurrence ordinal, never the visible page label.
+% Keep the small style beside the job so installed/core builds need no extra
+% xindy search path.  A fixed attribute is required (not dynamic encapsulators).
+\newwrite\NextIndexStyleFile
+\immediate\openout\NextIndexStyleFile=\jobname-impe.xdy
+\immediate\write\NextIndexStyleFile{(define-attributes ("NextIndexLocation"))}
+\immediate\write\NextIndexStyleFile{(define-location-class "impe-occurrence" ("arabic-numbers" :sep "." "arabic-numbers") :var)}
+\immediate\write\NextIndexStyleFile{(markup-locref :attr "NextIndexLocation" :open "\@backslashchar NextIndexLocation\@charlb" :close "\@charrb")}
+\immediate\closeout\NextIndexStyleFile
+\DeclareRobustCommand{\NextIndexLocation}[1]{%
+  \hyperref[impe-index-#1]{\pageref*{impe-index-#1}}%
+}
+\newcommand{\NextIndexWriteOccurrence}[1]{%
+  \NextHyperlinksAllocateDestination\NextIndexTarget
+  \edef\NextIndexOrdinal{0.\the\NextHyperDestinationSequence}%
+  \Hy@raisedlink{\hypertarget{\NextIndexTarget}{}}%
+  \edef\@currentHref{\NextIndexTarget}%
+  \label{impe-index-\NextIndexOrdinal}%
+  \imki@wrindexentry{\jobname}{#1|NextIndexLocation}{\NextIndexOrdinal}%
+}
 \ifx\IndexTitle\@empty
-  \makeindex[intoc]
+  \makeindex[intoc,options=-M \jobname-impe]
 \else
-  \makeindex[title={\IndexTitle}, intoc]
+  \makeindex[title={\IndexTitle}, intoc,options=-M \jobname-impe]
 \fi
 \makeatother
 
@@ -35,13 +56,11 @@
 \ExplSyntaxOn
 
 \prop_new:N \g__next_index_seen_prop
-\int_new:N \g__next_index_target_int
 \tl_new:N \l__next_index_parentheses_tl
 \tl_new:N \l__next_index_description_tl
 \tl_new:N \l__next_index_display_tl
 \tl_new:N \l__next_index_sort_tl
 \tl_new:N \l__next_index_key_tl
-\tl_new:N \l__next_index_target_tl
 
 \keys_define:nn { next/index/term }
   {
@@ -105,21 +124,7 @@
     \prop_if_in:NnF \g__next_index_seen_prop {#1}
       {
         \prop_gput:Nnn \g__next_index_seen_prop {#1} { indexed }
-        \int_gincr:N \g__next_index_target_int
-        \tl_set:Nx \l__next_index_target_tl
-          { idx:\int_use:N \g__next_index_target_int }
-        \cs_if_exist:NT \hypertarget
-          { \hypertarget{\l__next_index_target_tl}{} }
-        \cs_if_exist:NTF \hyperlink
-          {
-            \index
-              {
-                #2@\protect\hyperlink
-                  {\l__next_index_target_tl}
-                  {#3#4}
-              }
-          }
-          { \index{#2@#3#4} }
+        \NextIndexWriteOccurrence{#2@#3#4}
       }
   }
 \cs_generate_variant:Nn \__next_index_emit_term:nnnn { VVVV }

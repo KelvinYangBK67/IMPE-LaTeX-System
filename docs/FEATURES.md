@@ -54,6 +54,7 @@ Current public features include:
 - `index`
 - `tables`
 - `image`
+- `drawing`
 - `lists_envs`
 - `headers`
 
@@ -254,8 +255,8 @@ Public pieces:
   settings only when those values need to differ. Parentheses default to the document UI:
   full-width for Chinese and western parentheses for English. Use
   `parentheses=cjk`, `parentheses=western`, or `parentheses=none` to override
-  an individual term. If `hyperlinks` is loaded, the index entry links back to
-  the term. The legacy `\Term{key}{display}{description}` form remains
+  an individual term. The printed index page number links back to
+  the indexed occurrence. The legacy `\Term{key}{display}{description}` form remains
   supported.
 - `\printindex`
   Standard index printing command from `imakeidx`.
@@ -415,3 +416,33 @@ Use:
 - `\UseFeature{id}`
 - `\UseFeatures{a,b,c}`
 - `features = {...}` inside `\UseTemplateSet{...}`
+
+## Drawing (1.0.2)
+
+`\UseFeature{drawing}` loads TikZ/PGF, pgfplots (`compat=1.18`) and forest.
+Use ordinary `tikzpicture`, `axis` and `forest` syntax; IMPE adds no diagram DSL
+or specialist TikZ libraries. See `tests/drawing.tex` for all three examples.
+
+## Destination identities and index passes (1.0.2)
+
+The hyperlinks feature allocates `impe.dest.<sequence>` identities centrally for
+structural targets, TOC return targets, footnote marks/text and indexed terms.
+Visible chapter, section, footnote and page numbers never determine these IDs.
+The index feature loads hyperlinks. `\Term` still indexes the first occurrence
+per key; distinct keys can record multiple occurrences of the same display term.
+Each printed index page number links to that recorded occurrence, including
+when physical pages share the same visible page number. xindy receives an
+internal location with a fixed `NextIndexLocation` attribute; a variable
+location class prevents range compression. Shipout labels supply the displayed
+page numbers. The generated `<job>-impe.xdy` file belongs with the build outputs.
+
+For a manual index pass, run in the output directory:
+
+```sh
+texindy -L english -C utf8 -M <job>-impe <job>.idx
+```
+
+Then rerun XeLaTeX twice. imakeidx's automatic invocation includes the same
+module option when shell execution is enabled. Ordinary custom `\index`
+encapsulations remain under imakeidx/hyperref control; the occurrence mechanism
+above is used by IMPE's `\Term` helper.

@@ -62,7 +62,8 @@ install.bat
 ```
 
 安裝器會寫入使用者 TEXMF 樹的 `tex/latex/impe/`。full 封裝包含允許再分發的
-本地字體；core 封裝只含執行環境。若要使用其他字體庫，請設定
+本地字體；core 封裝只含執行環境。缺少隨附檔案時會查找 TeX Live／系統字體，
+已可解析的字體不需要獨立字體庫。若要使用其他字體庫，請設定
 `impe.local.tex` 或 `\SetCatalogFontRoot{...}`。
 
 checkout 內的文件可直接載入 `package/impe-system.tex`：

@@ -1,0 +1,13 @@
+\documentclass{article}
+\usepackage{impe}
+% The runner copies a font under a name also available from TeX Live.
+% Only upright is bundled; every other face must resolve independently.
+\FontRegisterFamily{id=bundle-test,command=BUNDLE,name=bundle_test,
+ path=tests/build/font-source-bundle/,regular=lmroman10-regular.otf,
+ bold=lmroman10-bold.otf,italic=lmroman10-italic.otf,
+ fallbackmode=strict}
+\UseFont{bundle-test}[local]
+\begin{document}
+\BUNDLE{\typeout{IMPE-TEST-BUNDLED-FONT:\fontname\font}Bundled upright.}
+{\bfseries\Font{bundle-test}{\typeout{IMPE-TEST-MIXED-FONT:\fontname\font}System bold.}}
+\end{document}

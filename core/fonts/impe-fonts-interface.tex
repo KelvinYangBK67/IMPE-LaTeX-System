@@ -63,6 +63,7 @@
 \prop_new:N \g__font_unicode_block_range_prop
 \prop_new:N \g__font_cjk_fallback_applied_prop
 \tl_new:N \g__font_devanagari_akshara_name_tl
+\int_new:N \g__font_nfss_family_int
 \int_new:N \g__font_range_known_class_max_int
 
 \cs_generate_variant:Nn \prop_if_in:NnF { NVF }
@@ -260,6 +261,8 @@
       { }
   }
 
+% Resolve in place before constructing any fontspec options. Bundled paths are
+% folded into file identifiers; installed faces leave a pathless identifier.
 \cs_new_protected:Npn \__font_check_face:nnVV #1#2#3#4
   {
     \tl_if_blank:VTF #4
@@ -271,8 +274,17 @@
       {
         \exp_args:Nx \file_if_exist:nTF
           { \tl_use:N #4 \tl_use:N #3 }
-          { }
-          { \__font_note_missing_face:nn {#1} {#2} }
+          {
+            % A complete file identifier keeps each face independent: fontspec
+            % must not inherit the upright face's Path for a system bold face.
+            \tl_set:Nx #3 { \tl_use:N #4 \tl_use:N #3 }
+            \tl_clear:N #4
+          }
+          {
+            \exp_args:NV \IfFontExistsTF #3
+              { \tl_clear:N #4 }
+              { \__font_note_missing_face:nn {#1} {#2} }
+          }
       }
   }
 
@@ -392,6 +404,11 @@
 \cs_new_protected:Npn \__font_build_main_options:
   {
     \tl_clear:N \l__font_main_options_tl
+    % Full file identifiers can contain slashes, which are not valid NFSS
+    % family-name components. Keep generated NFSS names opaque and unique.
+    \int_gincr:N \g__font_nfss_family_int
+    \tl_put_right:Nx \l__font_main_options_tl
+      { NFSSFamily = impe-face-\int_use:N \g__font_nfss_family_int, }
     \__font_append_backend_options:N \l__font_main_options_tl
     \__font_append_path_option:NV \l__font_main_options_tl \l__font_path_tl
     \tl_put_right:Nx \l__font_main_options_tl
@@ -415,6 +432,9 @@
 \cs_new_protected:Npn \__font_build_sans_options:
   {
     \tl_clear:N \l__font_sans_options_tl
+    \int_gincr:N \g__font_nfss_family_int
+    \tl_put_right:Nx \l__font_sans_options_tl
+      { NFSSFamily = impe-face-\int_use:N \g__font_nfss_family_int, }
     \__font_append_backend_options:N \l__font_sans_options_tl
     \__font_append_path_option:NV \l__font_sans_options_tl \l__font_resolved_sans_path_tl
     \tl_put_right:Nx \l__font_sans_options_tl
@@ -438,6 +458,9 @@
 \cs_new_protected:Npn \__font_build_mono_options:
   {
     \tl_clear:N \l__font_mono_options_tl
+    \int_gincr:N \g__font_nfss_family_int
+    \tl_put_right:Nx \l__font_mono_options_tl
+      { NFSSFamily = impe-face-\int_use:N \g__font_nfss_family_int, }
     \__font_append_backend_options:N \l__font_mono_options_tl
     \__font_append_path_option:NV \l__font_mono_options_tl \l__font_resolved_mono_path_tl
     \tl_put_right:Nx \l__font_mono_options_tl

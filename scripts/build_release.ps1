@@ -622,7 +622,7 @@ if (-not $SkipCore) {
     New-ReleasePackage `
         -Flavor "core" `
         -RuntimeDirs @("core","catalog","modules") `
-        -Note "Core release without font files. Install by running install.bat, then point impe.local.tex or your local setup to a font library."
+        -Note "Core release without font files. Install by running install.bat. Registered faces resolve from TeX Live or system fonts when no bundled file exists; configure impe.local.tex only for a separate font library."
 }
 
 $GeneratedManualAssets = @()

@@ -139,6 +139,9 @@ install.bat
 
 \subsection{字體資源與本機設定}
 
+每個登錄字面先使用隨附檔案，再交由 fontspec 查找 TeX Live 或系統字體，
+最後才使用既有錯誤或回退設定。core 安裝使用已可解析的字體時不需要額外字體樹。
+
 原始碼倉庫不追蹤完整的本機字體庫。在本機安裝或完整發行版中，字體登錄表所指向的
 字體檔通常從 \texttt{assets/fonts/} 根目錄下解析。也可以在不修改套件本身的情況下
 指定另一個位置。
@@ -392,6 +395,11 @@ IMPE 的範本刻意不是一個不可分割的樣式檔。某個版面可以與
 
 \section{字體、文字路由與多語排版}
 
+通用局部命令為 \verb|\Font{family-id}{content}|，例如
+\verb|\Font{hindi}{...}|。它共用家族命令的字重、字形、局部路由覆寫與文字系統處理。
+\verb|\UseFont| 保持載入／啟用的原意。局部宣告按需載入；需要額外套件的家族
+請先在導言區載入。
+
 \subsection{作為已登錄能力的字體族}
 
 IMPE 不把字體名稱僅僅視為 \verb|\rmfamily| 的替代品。字體族會在中央登錄表中登記
@@ -523,6 +531,14 @@ IMPE 1.0.1 提供的公開預設為：
 各組件的具體值與頁面幾何詳見 \texttt{docs/LAYOUTS-zh.md}。
 
 \subsection{功能模組}
+
+\texttt{drawing} 載入 TikZ/PGF、pgfplots（compatibility 1.18）與 forest，
+直接使用原生圖形、函數圖與樹狀圖語法。
+
+\texttt{index} 會載入 hyperlinks；\verb|\Term| 的索引頁碼直接連到所記錄的
+正文位置，即使重設頁碼仍可區分。每個 key 僅索引首次出現的語義保持不變。
+手動處理請在輸出目錄執行
+\texttt{texindy -L english -C utf8 -M <job>-impe <job>.idx}，再執行兩次 XeLaTeX。
 
 功能是扁平、可組合的模組。與版面不同，功能之上沒有第二層預設模型。某個功能識別碼
 只表示第一次請求時載入相應的選用功能；之後重複請求會被忽略。

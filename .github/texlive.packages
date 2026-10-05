@@ -12,6 +12,11 @@ ctex
 fontspec
 geometry
 hyperref
+imakeidx
+xindy
+pgf
+pgfplots
+forest
 import
 libertinus-fonts
 metalogo

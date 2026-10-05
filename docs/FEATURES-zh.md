@@ -2,6 +2,25 @@
 
 [English](FEATURES.md)
 
+## 1.0.2：繪圖與索引目的地
+
+`\UseFeature{drawing}` 載入 TikZ/PGF、pgfplots（`compat=1.18`）與 forest。
+直接使用 `tikzpicture`、`axis`、`forest` 原生語法；不新增繪圖 DSL 或專用函式庫。
+三種最小範例見 `tests/drawing.tex`。
+
+hyperlinks 以共用遞增序列配置 `impe.dest.<sequence>`，涵蓋結構標題、
+目錄返回點、雙向腳註與術語索引；識別不取決於可見章節、腳註或頁碼。
+index 會載入 hyperlinks。`\Term` 仍依 key 只索引首次出現；不同 key 可記錄
+同一顯示術語的多個位置。索引頁碼直接連到所記錄的正文位置，重設頁碼後
+即使兩個實體頁都顯示 1 也不混淆。xindy 使用內部位置及固定的
+`NextIndexLocation` 屬性；可變位置類別避免範圍合併，頁碼來自 shipout 標籤。
+產生的 `<job>-impe.xdy` 是編譯產物，應與輸出檔放在一起。
+
+手動索引步驟請在輸出目錄執行
+`texindy -L english -C utf8 -M <job>-impe <job>.idx`，再執行兩次 XeLaTeX。
+允許 shell 執行時，imakeidx 會自動傳入相同模組選項。
+一般自訂 `\index` 封裝仍由 imakeidx/hyperref 處理；上述位置機制用於 `\Term`。
+
 ## 結構
 
 ```text
@@ -52,6 +71,7 @@ Features 保持扁平、可組合，沒有另外的 feature preset 層。
 - `index`
 - `tables`
 - `image`
+- `drawing`
 - `lists_envs`
 - `headers`
 
@@ -239,8 +259,8 @@ See \textcite{doe2026} for a narrative citation, or use
   預設直接以 `display` 作為字典排序值與去重依據，只有兩者需要不同時才使用
   可選的 `sort=...` 或 `key=...`。括號預設跟隨文件 UI：中文使用全形括號，
   英文使用西文括號。單一術語可用 `parentheses=cjk`、
-  `parentheses=western` 或 `parentheses=none` 覆寫。若已載入
-  `hyperlinks`，索引條目會連回正文術語。舊有
+  `parentheses=western` 或 `parentheses=none` 覆寫。索引頁碼會連回
+  正文中所記錄的術語位置。舊有
   `\Term{key}{display}{description}` 三參數形式仍受支援。
 - `\printindex`
   來自 `imakeidx` 的標準索引輸出命令。
