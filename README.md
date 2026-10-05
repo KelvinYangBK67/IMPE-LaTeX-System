@@ -5,7 +5,7 @@
 IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
 multilingual typesetting, and optional document features.
 
-Current release: `v1.0.1` (2026-09-29). See [CHANGELOG.md](CHANGELOG.md).
+Current versioned repository state: `v1.0.2` (2026-10-05). See [CHANGELOG.md](CHANGELOG.md).
 
 ## Quick Start
 

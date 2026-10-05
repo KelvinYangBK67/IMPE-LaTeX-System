@@ -2,13 +2,13 @@
 
 [繁體中文版本](./CHANGELOG-zh.md)
 
-All notable released changes to IMPE LaTeX System are documented in this file.
+All notable versioned changes to IMPE LaTeX System are documented in this file.
 
-For unreleased development notes, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
+For changes since the latest versioned repository state, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
 ## [1.0.2] - 2026-10-05
 
-Incremental development release; no CTAN release or XSR integration.
+Versioned repository state; no GitHub Release, CTAN release, or XSR integration.
 
 * #5: Centralized monotonic hyperlink destinations for headings, TOC and bidirectional footnotes. Indexed term page numbers now link to recorded occurrences through xindy locations, including repeated visible page numbers.
 * #6: Resolve every registered face from its bundled file first, then TeX Live/system lookup, before existing strict/soft fallback. Core installs no longer need a matching assets tree for installed fonts.

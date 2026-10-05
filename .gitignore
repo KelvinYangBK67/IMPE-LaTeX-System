@@ -29,6 +29,7 @@ Thumbs.db
 nextsystem.local.tex
 *.synctex(busy)
 dist/
+/tmp/
 assets/fonts/
 !assets/.gitkeep
 **/.nextex-externalized/

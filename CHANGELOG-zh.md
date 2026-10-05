@@ -2,13 +2,13 @@
 
 [English Version](./CHANGELOG.md)
 
-IMPE LaTeX System 的已發佈版本變更記錄於此。
+IMPE LaTeX System 的版本化變更記錄於此。
 
-尚未發佈的開發中變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
+最新版本化倉庫狀態之後的變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
 ## [1.0.2] - 2026-10-05
 
-增量開發版本；不進行 CTAN 發佈，也不整合 XSR。
+版本化倉庫狀態；不建立 GitHub Release、不進行 CTAN 發佈，也不整合 XSR。
 
 * #5：標題、目錄返回點與雙向腳註共用遞增目的地配置。術語索引頁碼透過 xindy 位置連回正文，即使可見頁碼重複仍能區分。
 * #6：所有登錄字面依序查找隨附檔案、TeX Live／系統字體，再採用原有嚴格／軟回退。core 安裝使用已安裝字體時不需重建 assets 目錄樹。
