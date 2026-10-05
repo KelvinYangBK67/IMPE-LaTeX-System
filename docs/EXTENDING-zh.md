@@ -18,10 +18,9 @@ family 時可以使用本機的聚焦探針。
 ## 新增特定文字行為
 
 先使用 catalog metadata 以及
-`catalog/fonts/impe-font-range-profiles.tex` 的 range 宣告。只有 metadata
-無法表達所需行為，例如需要專用 builder 或命令時，才透過 `specialmodule` 加入帶
-namespace 的 `modules/fonts/impe-font-<name>.tex`。通用路由規則不應放入特殊
-module。
+`catalog/fonts/impe-font-range-profiles.tex` 的 range 宣告。需要專用 builder
+或命令時，透過 `specialmodule` 加入帶 namespace 的
+`modules/fonts/impe-font-<name>.tex`。通用路由規則歸於 core。
 
 ## 新增版面
 
@@ -40,15 +39,14 @@ target 進行測試。
 
 ## 何時適合修改 Core
 
-只有可重用的新機制無法由現有 catalog 欄位或特殊 module 表達時，才修改 `core/`。
-新的 `script`、`language`、`features`、`unicodeblocks`、`inlinebehavior`/layout metadata
-或 `specialmodule` 值本身，不構成修改 core 的理由。真正的新通用機制可以採用範圍
+跨字體或文字系統共用的新機制應放入 `core/`。
+`script`、`language`、`features`、`unicodeblocks`、`inlinebehavior`/layout metadata
+或 `specialmodule` 的值由 catalog 或特殊模組表達。新通用機制可採用範圍
 明確的 core 改動，並須加入回歸覆蓋。
 
 ## 測試與文件
 
 若擴充行為需要長期保護，應加入最小回歸測試，並同步更新英文與繁體中文參考文件，
-以及必要的手冊或 showcase。開發期間可以使用本機聚焦探針，但應保持不受追蹤，不要
-重新把 `examples/` 變成 debug dumping ground。發佈前執行
-`tests/run_regressions.ps1 -PublicFonts`；不要把私有字體二進位檔加入測試或 CTAN
-封裝。
+以及必要的手冊或 showcase。開發期間可使用本機聚焦探針，並保留為本地暫存檔。
+發佈前執行 `tests/run_regressions.ps1 -PublicFonts`；測試與 CTAN 封裝使用
+公開字體 fixture。

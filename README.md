@@ -32,7 +32,7 @@ Hello, IMPE.
 The canonical entry points are `impe.sty`, `impeart`, `impeart_zh`,
 `impebook`, `impebook_zh`, `impereport`, `impereport_zh`, `impebeamer`, and
 `impebeamer_zh`. The older `next*` names remain compatibility wrappers for
-existing documents and are shipped only in the full and core releases.
+existing documents and ship in the full and core distributions.
 
 ## Support Matrix
 
@@ -40,13 +40,13 @@ existing documents and are shipped only in the full and core releases.
 | --- | --- |
 | Primary document engine | XeLaTeX |
 | XeLaTeX | Supported and used by manuals, showcase, and general regressions |
-| LuaLaTeX | Not a supported or tested general document route; only explicit backend hooks may use it |
-| Unicode-range global routing | XeLaTeX only |
+| LuaLaTeX | Used by explicitly configured backend hooks |
+| Unicode-range global routing | XeLaTeX |
 | Special/externalized backends | Explicit engine resolved from `PATH`; shell escape required; helper regression uses XeLaTeX |
 | TeX Live | 2026 tested |
 | Windows | CI tested |
 | Linux | CI tested |
-| macOS | Best effort; not currently CI tested |
+| macOS | Best effort; validation relies on local builds |
 
 The [API and compatibility policy](docs/STABILITY.md) defines the 1.x public
 contract. The [extension guide](docs/EXTENDING.md) describes the catalog-first
@@ -54,7 +54,7 @@ rule for new fonts, scripts, layouts, and features.
 
 ## Installation
 
-For a GitHub full or core release, extract the archive and run:
+For a packaged full or core distribution, extract the archive and run:
 
 ```bat
 install.bat
@@ -62,8 +62,8 @@ install.bat
 
 The installer writes to the user TEXMF tree under `tex/latex/impe/`. The full
 archive includes redistributable local fonts; the core archive contains the
-runtime only. Catalog faces use TeX Live/system lookup when their bundled file
-is absent; installed resolvable fonts need no separate library. Configure a
+runtime. Catalog faces use TeX Live/system lookup after the bundled-file check.
+Installed resolvable fonts work directly; configure a
 separate library with `impe.local.tex` or `\SetCatalogFontRoot{...}`.
 
 Checkout-local documents may load `package/impe-system.tex` directly:
@@ -76,12 +76,12 @@ Checkout-local documents may load `package/impe-system.tex` directly:
 
 ## Font Resources
 
-The CTAN distribution does not include the optional local font library. Some
+The CTAN distribution contains the canonical runtime and public documentation. Some
 multilingual manual and showcase sources require locally configured fonts for
 full source reproduction; the prebuilt documentation PDFs are included. The
 third-party records under `font_licenses/` belong to the source repository and,
-where applicable, the full release—not to the CTAN archive, which contains no
-font binaries or font-license tree.
+where applicable, the full distribution. The CTAN package contains source and
+documentation resources.
 
 ## Documentation
 
@@ -124,15 +124,14 @@ tests/            regression suite
 
 - `IMPE-LaTeX-System-vX.Y.Z-full.zip`: runtime, compatibility wrappers, and
   the permitted local font library
-- `IMPE-LaTeX-System-vX.Y.Z-core.zip`: runtime and compatibility wrappers,
-  without fonts
+- `IMPE-LaTeX-System-vX.Y.Z-core.zip`: runtime and compatibility wrappers;
+  installed fonts resolve through TeX Live or the system
 - `impe-framework.zip`: CTAN distribution with one `impe-framework/` root,
-  canonical `impe*` entries, manuals, showcase source/PDF, and no `next*`
-  entries or font binaries
+  canonical `impe*` entries, manuals, and showcase source/PDF
 
 Versioned standalone manual and showcase PDFs retain the `impe-` project
-prefix. The CTAN id `impe-framework` does not change the project name, package
-name, class names, or TEXMF namespace.
+prefix. The CTAN id `impe-framework` names the archive; package and class
+names and the TEXMF namespace retain their IMPE identifiers.
 
 ## Development and Tests
 
@@ -150,7 +149,7 @@ tests\run_regressions.ps1 -PublicFonts
 
 The suite covers canonical and legacy entry points, font routing, manual
 builds, deterministic CTAN packaging, archive contents, and installer
-migration. The repository does not track `assets/fonts/`; the distribution
+migration. Local font binaries live under `assets/fonts/`; the distribution
 policy is in [assets/README.md](assets/README.md).
 
 ## Maintainer

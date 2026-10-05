@@ -1,16 +1,16 @@
 # Font-library assets
 
-Font binaries are intentionally not tracked in this Git repository.
+The Git repository tracks source files; local font binaries live under `assets/fonts/`.
 
 `assets/fonts/` is the expected local font-library location used by
-`scripts/build_release.ps1` when it constructs the full distribution. A full
-public GitHub Release contains only font resources whose redistribution terms
-permit inclusion; fonts with unresolved or restricted redistribution status are
-explicitly removed by the release builder.
+`scripts/build_release.ps1` when it constructs the full distribution. Public
+full packages include font resources with confirmed redistribution terms. The
+release builder filters fonts with unresolved or restricted terms.
 
-The core distribution and the CTAN-oriented `impe-framework.zip` do not include or depend
-on the local font library. Their users may provide fonts separately through
-`impe.local.tex` or `\SetCatalogFontRoot{...}`.
+The core distribution and the CTAN-oriented `impe-framework.zip` contain the
+runtime and documentation. Fontspec resolves installed fonts directly; users
+may also provide a local library through `impe.local.tex` or
+`\SetCatalogFontRoot{...}`.
 
-Do not commit local font binaries here. See `font_licenses/` and
+Keep local font binaries in `assets/fonts/` and consult `font_licenses/` and
 `docs/FONTS.md` for licensing and sourcing notes.

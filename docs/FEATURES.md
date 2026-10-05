@@ -44,7 +44,7 @@ This layer holds the concrete feature implementations.
 
 ## Public Feature Model
 
-Features are flat and composable; there is no feature preset layer.
+Features form a flat, composable layer.
 
 Current public features include:
 
@@ -61,7 +61,7 @@ Current public features include:
 Compatibility aliases: `bib` loads `citations`, and `header` loads `headers`.
 
 Chinese UI override is an internal mechanism bound to the `_zh` wrapper
-classes. It is not part of the public feature surface.
+classes. It belongs to the internal UI implementation.
 
 ## Feature Modules
 
@@ -82,14 +82,14 @@ By default, `math` also loads the legacy symbol/script stack:
 - `mathrsfs`
 
 Text fonts are loaded through `fontspec` with its `no-math` option, so loading
-`fonts={libertinus}` does not change any math alphabet: the default remains the
-legacy Computer Modern math setup. If `fonts={mlmodern}` has been loaded, the
+`fonts={libertinus}` keeps the legacy Computer Modern math setup by default.
+If `fonts={mlmodern}` has been loaded, the
 math feature follows the legacy `mlmodern` route.
 
 Use `\UseMathFont{...}` before loading the `math` feature to choose explicitly:
 
-- `\UseMathFont{auto}`: keep Computer Modern math unless an explicit legacy
-  font route such as `mlmodern` is loaded
+- `\UseMathFont{auto}`: follow the default Computer Modern math route or an
+  explicitly loaded legacy route such as `mlmodern`
 - `\UseMathFont{libertinus}`: `unicode-math` with TeX Live's
   `LibertinusMath-Regular.otf`
 - `\UseMathFont{newcm}`: `unicode-math` with `NewComputerModernMath`
@@ -252,7 +252,7 @@ Public pieces:
   Prints a bold term and adds its first occurrence to the index. The
   square-bracketed `description` is optional. By default, `display` is also the dictionary-sort
   value and duplicate-detection key. Use the optional `sort=...` or `key=...`
-  settings only when those values need to differ. Parentheses default to the document UI:
+  settings to customize those values. Parentheses default to the document UI:
   full-width for Chinese and western parentheses for English. Use
   `parentheses=cjk`, `parentheses=western`, or `parentheses=none` to override
   an individual term. The printed index page number links back to
@@ -357,12 +357,11 @@ Public defaults:
 Public environments:
 
 - `OneImage`
-  Standard single-image figure. In beamer, it renders inline without a floating
-  figure.
+  Standard single-image figure. In beamer, it renders inline in the frame.
 - `OneImageInline`
   Inline centered image.
 - `PanelFigure`
-  Multi-panel figure with subcaptions outside beamer and minipages in beamer.
+  Multi-panel figure with subcaptions in documents and minipages in beamer.
 - `PanelFigure*`
   Uncaptioned panel layout.
 
@@ -420,14 +419,14 @@ Use:
 ## Drawing (1.0.2)
 
 `\UseFeature{drawing}` loads TikZ/PGF, pgfplots (`compat=1.18`) and forest.
-Use ordinary `tikzpicture`, `axis` and `forest` syntax; IMPE adds no diagram DSL
-or specialist TikZ libraries. See `tests/drawing.tex` for all three examples.
+Use ordinary `tikzpicture`, `axis` and `forest` syntax with their standard
+package interfaces. See `tests/drawing.tex` for all three examples.
 
 ## Destination identities and index passes (1.0.2)
 
 The hyperlinks feature allocates `impe.dest.<sequence>` identities centrally for
 structural targets, TOC return targets, footnote marks/text and indexed terms.
-Visible chapter, section, footnote and page numbers never determine these IDs.
+The internal sequence determines each ID independently of visible numbering.
 The index feature loads hyperlinks. `\Term` still indexes the first occurrence
 per key; distinct keys can record multiple occurrences of the same display term.
 Each printed index page number links to that recorded occurrence, including

@@ -43,8 +43,8 @@ assets/     本地執行資源
 
 ### `assets/`
 
-`assets/fonts/` 是選用的本地字體根目錄。字體二進位檔不由 Git 追蹤，也不收錄於
-core 或 CTAN 封裝。詳見 `assets/README-zh.md`。
+`assets/fonts/` 是選用的本地字體根目錄。Git 追蹤原始碼；full 封裝可收入
+允許再分發的字體。core 與 CTAN 封裝提供執行環境與文件。詳見 `assets/README-zh.md`。
 
 ## 公開入口
 
@@ -72,7 +72,7 @@ checkout 內的文件可載入 package 層原始碼：
 ```
 
 標準入口是 `impe.sty`，以及 `impeart`、`impebook`、`impereport`、
-`impebeamer` 的中英文 class。`next*` 入口只作相容 wrapper；新程式碼與文件使用
+`impebeamer` 的中英文 class。`next*` 入口供舊文件相容使用；新程式碼與文件使用
 `impe*`。
 
 ## 統一設定
@@ -105,7 +105,7 @@ checkout 內的文件可載入 package 層原始碼：
 \UseGlobalFonts{libertinus}
 ```
 
-無 mode 的 `\UseFont`、`\UseFonts` 與 `fonts` key 是一般介面。
+`\UseFont`、`\UseFonts` 與 `fonts` key 的預設呼叫遵循各字體族的登錄行為。
 `\UseLocalFont(s)`、`\UseGlobalFont(s)`、`globalfonts` 與 `mainfonts` 是
 明確的 mode override。
 
@@ -148,16 +148,17 @@ class 加上明確的 `\UseTemplateSet`。
 內部及舊版相容邊界定義於 [STABILITY-zh.md](STABILITY-zh.md)。
 
 擴充應優先使用 catalog：可由既有 metadata 表達的一般字體與文字差異應放在
-`catalog/`；只有需要自定義行為時才加入帶 namespace 的 module。只有現有
-catalog/module 介面無法表達新的通用機制時，才修改 `core/`。詳見
+`catalog/`；需要自定義行為時加入帶 namespace 的 module。跨家族共用的
+通用機制放在 `core/`。詳見
 [EXTENDING-zh.md](EXTENDING-zh.md)。
 
 ## 發佈封裝
 
 - `IMPE-LaTeX-System-vX.Y.Z-full.zip`：執行環境、相容入口與允許收錄的本地字體
-- `IMPE-LaTeX-System-vX.Y.Z-core.zip`：執行環境與相容入口，不含字體
+- `IMPE-LaTeX-System-vX.Y.Z-core.zip`：執行環境與相容入口；已安裝字體可透過
+  TeX Live 或系統環境解析
 - `impe-framework.zip`：根目錄為 `impe-framework/` 的 CTAN archive，包含標準
-  入口與文件，不含 `next*` 檔案或字體二進位檔
+  `impe*` 入口與文件
 
-CTAN id 不會改變 `\ProvidesPackage{impe}`、class 名稱、執行檔前綴或
-`tex/latex/impe/` 安裝 namespace。版本號取自倉庫根目錄的 `VERSION`。
+CTAN id 用於命名封裝；`\ProvidesPackage{impe}`、class 名稱、執行檔前綴與
+`tex/latex/impe/` 安裝 namespace 沿用 IMPE 標準名稱。版本號取自倉庫根目錄的 `VERSION`。

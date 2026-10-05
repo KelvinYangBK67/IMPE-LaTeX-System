@@ -104,7 +104,7 @@ Current preset fields are:
 - `slides`
   Beamer/slides behavior component list
 
-Blank slots are simply skipped.
+Blank slots leave the corresponding component unchanged.
 
 ## Public Presets
 
@@ -175,15 +175,15 @@ Use:
 - `\UseLayout{...}`
 - `\UseLayouts{...}`
 
-For normal usage, these are the only supported public layout entrypoints.
+These are the supported public layout entrypoints for normal usage.
 
 At a lower level, presets are built with:
 
 - `\LayoutPresetRegister{...}`
 - `\LayoutPresetDeclare{...}`
 
-These exist as system-building interfaces rather than the recommended everyday
+These serve system-building tasks. The recommended everyday
 user API.
 
 Repository-local loading normally happens through the package-layer `impe-system.tex`
-rather than by loading the layout subsystem directly.
+through the package-level entrypoint.

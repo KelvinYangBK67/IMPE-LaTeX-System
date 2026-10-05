@@ -7,21 +7,21 @@
 注意：
 
 - 倉庫根層的 MIT 授權只適用於 IMPE LaTeX System 程式碼本身。
-- 它**不會**自動適用於本地字體庫或 release 套件中使用的第三方字體。
+- 本地字體庫與 release 套件中的第三方字體各依其授權條款使用。
 - 第三方字體仍各自遵循其原始授權。
-- 本目錄只處理第三方字體的授權問題。
+- 本目錄記錄第三方字體的授權資訊。
 - 一般字體來源說明，包括 `cmu` 這類非 bundled 依賴，請見 `docs/FONTS-zh.md`。
-- Git 倉庫本身維持 source-only，因此不必追蹤 `assets/fonts/` 下的字體檔本體。
+- Git 倉庫收錄源碼；`assets/fonts/` 下的字體檔存放在獨立的本機字體庫。
 
 目前授權狀態摘要：
 
-- 除下方特別列出的例外項外，IMPE LaTeX System 本地字體庫目前使用的第三方字體，已由維護者核對為適用 SIL Open Font License：
+- 維護者已核對 IMPE LaTeX System 本地字體庫的一般第三方字體適用 SIL Open Font License；另行授權的字體列於後文：
   https://openfontlicense.org/
-- `I.Ming-8.10.ttf` 使用的是 IPA Font License，不屬於 OFL。
-- `NomNaTong-Regular.ttf` 使用的是 MIT License，不屬於 OFL。
-- 下方列出的兩款 Tangut 字體，其可再分發授權文本目前仍未確認，應單獨看待。
-- 下方列出的四款蒙古文 `mngl*.ttf` 字體，其可再分發狀態目前也仍不夠明確，應單獨看待。
-- `SyrCOM*.otf` 使用 Beth Mardutho 的 Meltho Font License，不屬於 OFL；該授權允許原始未修改字體的再分發，但禁止修改 Font Software。
+- `I.Ming-8.10.ttf` 使用 IPA Font License。
+- `NomNaTong-Regular.ttf` 使用 MIT License。
+- 下方列出的兩款 Tangut 字體，仍待確認其可再分發授權文本，需單獨審查。
+- 下方列出的四款蒙古文 `mngl*.ttf` 字體，仍待確認其公開發佈所需的可再分發狀態。
+- `SyrCOM*.otf` 使用 Beth Mardutho 的 Meltho Font License；該授權允許原始未修改字體的再分發，但禁止修改 Font Software。
 
 目前內容：
 
@@ -44,7 +44,7 @@
 - `assets/fonts/vietnamese_hannom/NomNaTong-Regular.ttf`
   MIT License
 
-已從公開 release 排除、需自行確認授權的字體：
+公開 release 包裝前需核對授權的字體：
 
 - `assets/fonts/tangut/Tangut N4694 V3.10.ttf`
 - `assets/fonts/tangut/new Tangut Std V2.008.ttf`
@@ -55,7 +55,7 @@
 - `assets/fonts/mongolian_baiti/monbaiti.ttf`
 - `assets/fonts/segoe/seguihis.ttf`
 
-這兩款字體目前未隨倉庫附上可明確辨識的授權全文。
+這兩款字體的可明確辨識授權全文仍待確認並收入倉庫。
 若要在本專案之外再分發、公開或另作使用，請使用者自行確認其原始來源與適用授權條款。
 如需使用這兩款西夏文字體，也請使用者自行由原始來源取得：
 http://ccamc.org/fonts_tangut.php
@@ -65,6 +65,6 @@ http://www.mongolfont.com/cn/font/index.html
 https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti
 如需使用 `seguihis.ttf`，也請使用者自行由微軟頁面取得：
 https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
-基於這個原因，它們也已從公開的 `full` release 套件中排除。
+公開 `full` release 套件收錄已確認可再分發的字體。
 
 之後如果還有其他第三方字體需要附上完整授權或額外再分發聲明，也可以繼續放在這個目錄中。

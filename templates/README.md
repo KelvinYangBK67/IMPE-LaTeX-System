@@ -11,8 +11,8 @@ The maintained repository surfaces have distinct roles:
 - `manual/` contains the manuals and canonical showcase
 - `docs/` contains technical reference material
 
-Temporary development probes may be kept locally, but are not tracked as a
-public examples collection.
+Temporary development probes belong in local scratch work; `templates/`
+contains the public starter documents.
 
 These templates are intentionally written in the installed-package style:
 

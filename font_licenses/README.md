@@ -7,21 +7,20 @@ This directory stores license texts and redistribution notices for third-party f
 Important:
 
 - The repository-level MIT license applies to the IMPE LaTeX System codebase itself.
-- It does **not** automatically apply to third-party fonts used by local or release font libraries.
-- Third-party fonts remain under their own respective licenses.
-- This directory is only for third-party font licensing.
+- Third-party fonts in local and release font libraries retain their respective licenses.
+- This directory documents third-party font licensing.
 - General font sourcing notes, including non-bundled dependencies such as `cmu`, belong in `docs/FONTS.md`.
-- The Git repository itself is intended to remain source-only and does not need to track the font files under `assets/fonts/`.
+- The Git repository carries source; the font files under `assets/fonts/` reside in a separate local library.
 
 Current licensing summary:
 
-- Except for the special cases listed below, the third-party fonts currently used in local IMPE LaTeX System font libraries have been checked by the maintainer as using the SIL Open Font License:
+- The maintainer has checked the generally used third-party fonts in local IMPE LaTeX System libraries as using the SIL Open Font License, with the separately licensed cases listed below:
   https://openfontlicense.org/
-- `I.Ming-8.10.ttf` is distributed under the IPA Font License, not OFL.
-- `NomNaTong-Regular.ttf` is distributed under the MIT License, not OFL.
-- The exact redistribution license texts for the two Tangut fonts listed below have not yet been confirmed and should be treated separately.
-- The exact redistribution status of the four bundled-local Mongolian `mngl*.ttf` fonts has also not yet been confirmed clearly enough for public release packaging.
-- `SyrCOM*.otf` is distributed under Beth Mardutho's Meltho Font License rather than the OFL. The license permits redistribution of the original, unmodified fonts but prohibits modification of the Font Software.
+- `I.Ming-8.10.ttf` is distributed under the IPA Font License.
+- `NomNaTong-Regular.ttf` is distributed under the MIT License.
+- The two Tangut fonts listed below await confirmation of their exact redistribution license texts and require separate review.
+- The four bundled-local Mongolian `mngl*.ttf` fonts await confirmation of their exact redistribution status for public release packaging.
+- `SyrCOM*.otf` is distributed under Beth Mardutho's Meltho Font License. The license permits redistribution of the original, unmodified fonts but prohibits modification of the Font Software.
 
 
 Current contents:
@@ -45,7 +44,7 @@ License exception requiring separate handling:
 - `assets/fonts/vietnamese_hannom/NomNaTong-Regular.ttf`
   MIT License
 
-Unresolved fonts excluded from public release packaging:
+Fonts requiring license review before public release packaging:
 
 - `assets/fonts/tangut/Tangut N4694 V3.10.ttf`
 - `assets/fonts/tangut/new Tangut Std V2.008.ttf`
@@ -56,7 +55,7 @@ Unresolved fonts excluded from public release packaging:
 - `assets/fonts/mongolian_baiti/monbaiti.ttf`
 - `assets/fonts/segoe/seguihis.ttf`
 
-Their exact redistribution license texts are not currently bundled in this repository.
+Their exact redistribution license texts await confirmation and inclusion in this repository.
 Users should verify the original source and applicable license terms themselves before redistribution or reuse outside this project context.
 If users need these Tangut fonts, they should obtain them from the original source themselves:
 http://ccamc.org/fonts_tangut.php
@@ -66,6 +65,6 @@ If users need `monbaiti.ttf`, they should obtain it themselves from:
 https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti
 If users need `seguihis.ttf`, they should obtain it themselves from:
 https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
-They are excluded from the public `full` release package for this reason.
+The public `full` release package contains fonts with confirmed redistribution terms.
 
 This directory can be extended later for other third-party fonts whose licenses require inclusion of the full text or additional notices.

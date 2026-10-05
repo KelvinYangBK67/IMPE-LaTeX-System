@@ -103,7 +103,7 @@ Preset 是一組有 slot 結構的設定：
 - `slides`
   beamer / slides 類文件的行為 component list
 
-若某個 slot 留空，系統就直接跳過，不會套用對應 component。
+留空的 slot 會保留對應 component 的現有設定。
 
 ## 目前的公開 Presets
 
@@ -178,6 +178,6 @@ Preset 是一組有 slot 結構的設定：
 - `\LayoutPresetRegister{...}`
 - `\LayoutPresetDeclare{...}`
 
-來建立與套用 preset。不過它們比較屬於系統建構介面，而不是日常使用者 API。
+來建立與套用 preset。它們屬於系統建構介面；日常使用者可採用公開版面 preset。
 
-在倉庫內，一般會透過 `package/impe-system.tex` 的總入口載入，而不是單獨直接載入 layout 子系統。
+在倉庫內，一般透過 `package/impe-system.tex` 的總入口載入 layout 子系統。

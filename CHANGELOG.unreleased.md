@@ -5,8 +5,8 @@ completed entries to both versioned changelogs when the next version is prepared
 
 ## English
 
-No unreleased changes.
+Awaiting changes for the next version.
 
 ## 繁體中文
 
-目前沒有尚未記入版本的變更。
+下一版本的變更將記錄於此。

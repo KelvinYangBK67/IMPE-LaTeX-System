@@ -46,8 +46,9 @@ font modules use namespaced filenames, including:
 
 ### `assets/`
 
-`assets/fonts/` is the optional local font root. Font binaries are not tracked
-by Git and are not included in core or CTAN distributions. See
+`assets/fonts/` is the optional local font root. Git tracks source files; full
+distributions can bundle permitted fonts. Core and CTAN packages carry the
+runtime and documentation. See
 `assets/README.md`.
 
 ## Public Entries
@@ -109,8 +110,8 @@ Equivalent focused commands include:
 \UseGlobalFonts{libertinus}
 ```
 
-Mode-free `\UseFont`, `\UseFonts`, and the `fonts` key are the normal
-interface. `\UseLocalFont(s)`, `\UseGlobalFont(s)`, `globalfonts`, and
+The default calls to `\UseFont`, `\UseFonts`, and the `fonts` key follow each
+family's registered behavior. `\UseLocalFont(s)`, `\UseGlobalFont(s)`, `globalfonts`, and
 `mainfonts` are explicit overrides.
 
 ## Wrapper Defaults
@@ -140,7 +141,7 @@ format and spacing commands (`\NextTitleFont`, `\NextSubtitleFont`,
 
 The first line of `\title{...}` is also the default fixed running title used by
 the `headers` feature and book header layout. `\HeaderTitle{...}` supplies a
-shorter value; `\HeaderStyle{title}` selects fixed-title-only headers in the
+shorter value; `\HeaderStyle{title}` selects headers displaying the fixed title in the
 feature module.
 
 ## Font Root
@@ -154,21 +155,21 @@ The tested engine and platform matrix is in the project [README](../README.md).
 The 1.x public, deprecated, internal, and legacy compatibility boundaries are
 defined in [STABILITY.md](STABILITY.md).
 
-Extensions should be catalog-first: ordinary font and script differences that
-fit existing metadata belong in `catalog/`, with a namespaced module only when
-custom behavior is required. Change `core/` only for a generic mechanism that
-the current catalog/module interfaces cannot express. See
+Extensions should start in the catalog: ordinary font and script differences
+belong in `catalog/`, with namespaced modules for custom behavior. Shared
+generic mechanisms belong in `core/`. See
 [EXTENDING.md](EXTENDING.md).
 
 ## Releases
 
 - `IMPE-LaTeX-System-vX.Y.Z-full.zip`: runtime, compatibility entries, and
   permitted local fonts
-- `IMPE-LaTeX-System-vX.Y.Z-core.zip`: runtime and compatibility entries,
-  without fonts
+- `IMPE-LaTeX-System-vX.Y.Z-core.zip`: runtime and compatibility entries;
+  installed fonts resolve through TeX Live or the system
 - `impe-framework.zip`: CTAN archive rooted at `impe-framework/`, containing
-  canonical entries and documentation but no `next*` files or font binaries
+  canonical `impe*` entries and documentation
 
-The CTAN id does not change `\ProvidesPackage{impe}`, class names, runtime file
-prefixes, or the `tex/latex/impe/` installation namespace. The version comes
+The CTAN id names the archive; `\ProvidesPackage{impe}`, class names, runtime
+file prefixes, and the `tex/latex/impe/` installation namespace retain the
+canonical IMPE names. The version comes
 from the repository `VERSION` file.

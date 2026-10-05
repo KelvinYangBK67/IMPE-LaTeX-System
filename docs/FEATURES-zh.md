@@ -5,15 +5,15 @@
 ## 1.0.2：繪圖與索引目的地
 
 `\UseFeature{drawing}` 載入 TikZ/PGF、pgfplots（`compat=1.18`）與 forest。
-直接使用 `tikzpicture`、`axis`、`forest` 原生語法；不新增繪圖 DSL 或專用函式庫。
+直接使用 `tikzpicture`、`axis`、`forest` 的標準套件介面。
 三種最小範例見 `tests/drawing.tex`。
 
 hyperlinks 以共用遞增序列配置 `impe.dest.<sequence>`，涵蓋結構標題、
-目錄返回點、雙向腳註與術語索引；識別不取決於可見章節、腳註或頁碼。
-index 會載入 hyperlinks。`\Term` 仍依 key 只索引首次出現；不同 key 可記錄
+目錄返回點、雙向腳註與術語索引；識別由內部序列決定，與顯示編號各自獨立。
+index 會載入 hyperlinks。`\Term` 依 key 記錄首次出現；不同 key 可記錄
 同一顯示術語的多個位置。索引頁碼直接連到所記錄的正文位置，重設頁碼後
-即使兩個實體頁都顯示 1 也不混淆。xindy 使用內部位置及固定的
-`NextIndexLocation` 屬性；可變位置類別避免範圍合併，頁碼來自 shipout 標籤。
+即使兩個實體頁都顯示 1，仍能準確抵達各自位置。xindy 使用內部位置及固定的
+`NextIndexLocation` 屬性；可變位置類別保留各筆位置，頁碼來自 shipout 標籤。
 產生的 `<job>-impe.xdy` 是編譯產物，應與輸出檔放在一起。
 
 手動索引步驟請在輸出目錄執行
@@ -61,7 +61,7 @@ core/features/impe-features-system.tex
 
 ## 公開 Feature 模型
 
-Features 保持扁平、可組合，沒有另外的 feature preset 層。
+Features 採用扁平、可組合的結構。
 
 目前公開 feature 包括：
 
@@ -77,7 +77,7 @@ Features 保持扁平、可組合，沒有另外的 feature preset 層。
 
 相容別名：`bib` 載入 `citations`，`header` 載入 `headers`。
 
-中文 UI 覆寫是綁定在 `_zh` wrapper class 上的內部機制，不屬於對外公開的 feature 介面。
+中文 UI 覆寫綁定在 `_zh` wrapper class，屬於內部機制。
 
 ## Feature 模組
 
@@ -98,7 +98,7 @@ Features 保持扁平、可組合，沒有另外的 feature preset 層。
 - `mathrsfs`
 
 文字字體透過 `fontspec` 的 `no-math` 選項載入，因此
-`fonts={libertinus}` 不會改變任何數學字母表；數學字體預設仍使用傳統
+`fonts={libertinus}` 保留傳統數學字體設定；預設使用
 Computer Modern 設定。如果已經載入 `fonts={mlmodern}`，`math` feature
 則會跟隨傳統 `mlmodern` 路線。
 
@@ -256,7 +256,7 @@ See \textcite{doe2026} for a narrative citation, or use
 - `\Term[options]{display}[description]`
   印出粗體術語，並把第一次出現的位置加入索引；方括號中的
   `description` 可完全省略。
-  預設直接以 `display` 作為字典排序值與去重依據，只有兩者需要不同時才使用
+  預設直接以 `display` 作為字典排序值與去重依據；可使用
   可選的 `sort=...` 或 `key=...`。括號預設跟隨文件 UI：中文使用全形括號，
   英文使用西文括號。單一術語可用 `parentheses=cjk`、
   `parentheses=western` 或 `parentheses=none` 覆寫。索引頁碼會連回
@@ -408,7 +408,7 @@ This is an indented example block.
 
 - 第一次使用某個 feature id 時會載入對應模組。
 - 重複使用同一個 id 會被忽略。
-- 未知 id 會報錯。
+- 未登錄 id 會觸發明確的錯誤訊息。
 
 ## 公開介面
 

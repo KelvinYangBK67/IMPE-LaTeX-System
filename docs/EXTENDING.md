@@ -21,9 +21,9 @@ developing the family.
 
 First use catalog metadata and the range declarations in
 `catalog/fonts/impe-font-range-profiles.tex`. Add a namespaced
-`modules/fonts/impe-font-<name>.tex` module through `specialmodule` only when
-the script needs behavior that metadata cannot express, such as a dedicated
-builder or command. Keep generic routing rules out of the specialized module.
+`modules/fonts/impe-font-<name>.tex` module through `specialmodule` for
+behavior requiring a dedicated builder or command. Keep generic routing rules
+in the core routing layer.
 
 ## Adding a Layout
 
@@ -45,18 +45,16 @@ Document the interface in both feature references and test loading through
 
 ## When a Core Change Is Appropriate
 
-Change `core/` only for a reusable mechanism that cannot be represented by the
-existing catalog fields or a specialized module. A new value of `script`,
-`language`, `features`, `unicodeblocks`, `inlinebehavior`/layout metadata, or
-`specialmodule` is not by itself a reason to alter core. Genuine new generic
-mechanisms may require a focused core change and regression coverage.
+Change `core/` for reusable mechanisms shared across families or scripts.
+Express values of `script`, `language`, `features`, `unicodeblocks`,
+`inlinebehavior`/layout metadata, and `specialmodule` through the catalog or a
+specialized module. Add focused regression coverage for new generic mechanisms.
 
 ## Tests and Documentation
 
 An extension should include a minimal regression when its behavior needs
 long-term protection, matching English and Traditional Chinese reference
 updates, and any required manual or showcase change. Focused probes may be
-used locally during development, but keep them untracked rather than
-recreating `examples/` as a debug dumping ground. Run
-`tests/run_regressions.ps1 -PublicFonts` before release; do not add private
-font binaries to tests or CTAN packaging.
+used locally during development and kept as local scratch files. Run
+`tests/run_regressions.ps1 -PublicFonts` before release; use public font
+fixtures for tests and CTAN packaging.

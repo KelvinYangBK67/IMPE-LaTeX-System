@@ -8,7 +8,7 @@
 core/fonts/      stable framework logic
 catalog/impe-fonts-catalog.tex
 modules/fonts/   special font-support modules
-assets/fonts/    local font library (not tracked in Git)
+assets/fonts/    separately managed local font library
 ```
 
 The public subsystem entry is:
@@ -73,7 +73,7 @@ It declares:
 
 ### `modules/fonts/`
 
-This layer now holds only script-specific special implementations that are not part of the stable generic core.
+This layer holds script-specific implementations that extend the stable generic core.
 
 Current modules:
 
@@ -88,7 +88,7 @@ Notes:
 
 - `layout = vertical` is now built into `core/fonts/impe-fonts-interface.tex`
 - ordinary OpenType shaping is handled by normal registration fields: `script`, `language`, and `features`
-- new families that only need standard fontspec shaping should normally be handled by registration, not by adding a new file under `modules/fonts/`
+- register new families with standard fontspec shaping in the catalog; reserve `modules/fonts/` for script-specific behavior
 
 ## Declaration Model
 
@@ -101,7 +101,7 @@ The font layer supports:
 ### Ordinary Local Family
 
 This is the target format for normal user-added families. A normal local family
-uses one directory under `assets/fonts/` and does not reserve future global
+uses one directory under `assets/fonts/` and leaves future global
 behavior:
 
 ```tex
@@ -128,63 +128,60 @@ behavior:
 }
 ```
 
-Only `command`, `name`, `path`, and `regular` are normally required. The other
+`command`, `name`, `path`, and `regular` are normally required. The other
 style slots may be omitted and will follow the core fallback chain. `sans*`
 faces are mapped automatically inside the local command; `mono*` is reserved for
 global/system families and explicit advanced registrations.
 
-Ordinary local families should not contain:
+Ordinary local families use the standard registration fields; specialized fields serve these cases:
 
 - `globalkind` / `globalstatus`
 - style-specific path fields when they equal the main `path`
 - `maptextsf` / `maptexttt`
-- `scriptclass`, except for CJK routing
-- `inlinebehavior`, `blockbehavior`, or `blockalign`, except for core-maintained
+- `scriptclass` for CJK routing
+- `inlinebehavior`, `blockbehavior`, or `blockalign` for core-maintained
   script-specific behavior entries
 - vertical/externalized fields
 - `mono` / `monobold`
 
 ### Global Family
 
-Only families with a real `global = {...}` block can be requested through the
+Families with a `global = {...}` block can be requested through the
 explicit `globalfonts` override. Most global-capable families are Latin/CJK/system families such
 as `cmu`, `noto`, `times`, `gentium`, `charis`, `libertinus`, `japanese`,
 `shanggu`, and `sim`.
-Complex-script globals such as `hindi`, `sanskrit`, and `tibetan` are
-range-limited with `unicodeblocks`, so they only switch fonts for their Unicode
-blocks and do not remap Latin, Han, or other text. The `hindi` range global uses
-the Devanagari ranges without Sanskrit-specific line-breaking rules. The
-`sanskrit` range global adds Devanagari akshara-aware line breaking for the
-base Devanagari block without breaking after virama before the next consonant.
-Tibetan range globals also
-preserve the core tsheg behavior: line breaks are allowed after `U+0F0B` /
-`U+0F0C` only before Tibetan letters/signs, never before Tibetan punctuation. If a family has no `global`
-block and is
-requested in global mode, the registry now reports a direct "no global mode"
-error instead of relying on a reserved status placeholder.
+Complex-script globals such as `hindi`, `sanskrit`, and `tibetan` use
+`unicodeblocks` to route their specified Unicode ranges; Latin, Han, and
+other text retain their existing fonts. The `hindi` range global uses
+Devanagari ranges with Hindi line-breaking behavior. The `sanskrit` range
+global adds Devanagari akshara-aware line breaking for the base Devanagari
+block and keeps a virama with its following consonant. Tibetan range globals
+preserve the core tsheg behavior: line breaks follow `U+0F0B` / `U+0F0C`
+when a Tibetan letter/sign follows, with punctuation kept on the same line.
+Requesting global mode for a family lacking a `global` block produces the
+literal registry error "no global mode".
 
-`cmu` and `times` are system/bundled exceptions: they may name fonts directly and
-do not need `path = \CatalogFontRoot/<id>/`.
+`cmu` and `times` are system/bundled exceptions: they may name fonts
+directly, with `path` set according to their actual source.
 
 ### CJK/Internal Routing
 
 `scriptclass = cjk` is an internal routing hint used to select the xeCJK path.
 CJK global families, including `japanese`, replace the document CJK main/sans/mono
-channels through xeCJK rather than using Unicode-range intercharacter switching.
-Ordinary non-CJK families do not need `scriptclass`; OpenType shaping should be
-expressed with `script`, `language`, and `features`.
+channels through xeCJK. Ordinary families express OpenType shaping through
+`script`, `language`, and `features`.
 
-In automatic range routing, Japanese and Korean claim only their
+In automatic range routing, Japanese and Korean claim their
 language-specific scripts (kana and Hangul, respectively), plus CJK
 punctuation. Shared Han ideographs remain on the document CJK family so a
 Chinese font keeps priority. Use the local `\JP{...}` or `\KR{...}` command to
-request Japanese or Korean Han glyph forms explicitly. Vietnamese Han-Nom is
-likewise local-only and can be selected explicitly with `\HN{...}`.
+request Japanese or Korean Han glyph forms explicitly. Vietnamese Han-Nom
+uses explicit local selection with `\HN{...}`.
 
 ### Shaping, Layout, and Special Modules
 
-`script`, `language`, and `features = { RawFeature = { script=... } }` are
-standard fontspec/OpenType shaping options. They are not special modules.
+`script`, `language`, and `features = { RawFeature = { script=... } }`
+provide standard fontspec/OpenType shaping options.
 
 `layout = vertical` selects the core built-in vertical layout route for existing
 Mongolian, Manchu, and Old Uyghur-style entries. Its parameters are:
@@ -203,8 +200,8 @@ Mongolian, Manchu, and Old Uyghur-style entries. Its parameters are:
 
 For backward compatibility, the core still treats old
 `specialmodule = vertical` declarations as `layout = vertical` and emits a
-deprecation warning. New catalog entries and generated entries should not
-write `specialmodule = vertical`.
+deprecation warning. New catalog entries and generated entries use
+`layout = vertical`.
 
 ## Registration Syntax
 
@@ -235,34 +232,34 @@ An ordinary local entry looks like:
 
 In practice:
 
-- `command` defines the local command name without a leading backslash
+- `command` defines the local command name as a bare identifier
 - `path` points to the font directory
 - `regular` / `bold` / `italic` / `bolditalic` define concrete files
 - `local = {...}` creates a local command family
 - `global = {...}` binds a family into document-wide defaults
-- `unicodeblocks = {...}` makes a global binding range-limited through XeLaTeX
-  Unicode block transitions instead of replacing the whole main/sans/mono stack
+- `unicodeblocks = {...}` routes the specified Unicode blocks through XeLaTeX
+  transitions while retaining the existing main/sans/mono stack for other text
 - `layout = vertical` selects the built-in vertical layout route
 - `verticalstrategy` / `verticalrotation` / `verticalorigin` / `verticaltopcorrection` configure `layout = vertical`
-- `specialmodule` is only needed for external/custom TeX module routes
-- standard OpenType shaping should be expressed with `script`, `language`, and `features`, not a separate generic shaping module
+- `specialmodule` selects an external/custom TeX module route
+- standard OpenType shaping uses `script`, `language`, and `features`
 
 ### Routing precedence and scalability
 
 Explicit local commands have final authority inside their brace scope. IMPE's
-Unicode-range transitions are suspended there, so a command such as `\HI{...}`
-is not recaptured by another global Devanagari owner. Leaving the command scope
+Unicode-range transitions pause there, so a command such as `\HI{...}`
+keeps its local family over a global Devanagari owner. Leaving the command scope
 restores automatic routing.
 
-Range routing creates transitions only for XeTeX intercharacter classes that
-have actually been allocated, plus the paragraph-boundary class. A
+Range routing creates transitions for allocated XeTeX intercharacter classes
+and the paragraph-boundary class. A
 begin-document pass adds transitions for classes allocated later by other
 packages. Cross-block transitions owned by the same family remain empty so a
 shaping run can continue across adjacent Unicode blocks.
 
 When the `thai` family is loaded, IMPE selects XeTeX's ICU `th_TH` line-break
-locale. This enables dictionary-based break opportunities in unspaced Thai prose
-without inserting manual breakpoints.
+locale. This supplies dictionary-based break opportunities in continuous Thai
+prose automatically.
 
 ## Minimal Examples
 
@@ -288,18 +285,18 @@ This means:
 - mode-free `fonts = {...}` follows each family's registered behavior
 - `cmu` and `shanggu` apply their registered global behavior
 - `hebrew` and `arabic` define their registered local commands
-- an explicit `[global]` mode is used only when overriding that behavior on purpose
+- an explicit `[global]` mode deliberately overrides that behavior
 
 ## Registered Families
 
 The current catalog registers the following families. `fonts = {...}` follows
 each family's registered automatic behavior; `globalfonts = {...}` is an
-explicit request for global bindings and fails when a family has no global
-definition.
+explicit request for global bindings; a family lacking a global definition
+reports an error.
 
 | Family id | Local command | Default mode | Global available | Notes |
 |---|---|---|---|---|
-| `cmu` | `-` | `global` | yes | CMU Latin family; no bundled local command |
+| `cmu` | `-` | `global` | yes | CMU Latin family; global binding |
 | `noto` | `NOT` | `local` | yes | Noto Latin family |
 | `times` | `TIM` | `local` | yes | Windows Times/Arial/Consolas bundle |
 | `gentium` | `GEN` | `local` | yes | Gentium Plus Latin family |
@@ -315,7 +312,7 @@ definition.
 | `hungarian` | `OH` | `local` | no | Old Hungarian |
 | `runic` | `RU` | `local` | no | Runic |
 | `armenian` | `HY` | `local` | no | Armenian |
-| `hindi` | `HI` | `local` | yes | Hindi; global applies only to Devanagari Unicode blocks, without Sanskrit line-breaking rules |
+| `hindi` | `HI` | `local` | yes | Hindi; global applies to Devanagari Unicode blocks with Hindi line-breaking behavior |
 | `sanskrit` | `SA` | `local` | yes | Sanskrit; global applies only to Devanagari and Vedic Unicode blocks |
 | `devanagari` | `DEV` | `local` | no | Devanagari generic family |
 | `tamil` | `TA` | `local` | no | Tamil |
@@ -362,25 +359,26 @@ For the current Arabic-script split:
 - `arabic` uses Naskh for regular/bold, Ruqaa for italic/bolditalic, Noto Sans Arabic for `sans` / `sansbold`, and Noto Kufi Arabic for `sansitalic` / `sansbolditalic`.
 - `urdu` keeps Nastaliq as its dedicated local family.
 
-Families without a local command marker (`-`) are global-only in the current catalog.
+Families with a local command marker expose a local command; `-` marks a
+global family in the current catalog.
 
 ## Family Mapping Notes
 
-Only families with non-trivial internal mapping are listed here. Simple families that only provide the usual `regular` / `bold` / `italic` / `bolditalic` files are not repeated.
+This section lists families with specialized internal mapping. Simple families use the usual `regular` / `bold` / `italic` / `bolditalic` files.
 
 - `shanggu`
-  This is a global Han/CJK family rather than a local command family. It is intended to cover the main Han text channels used in Chinese-facing layouts.
+  This global Han/CJK family covers the main Han text channels used in Chinese-facing layouts.
 - `sim`
-  This is the Windows-side global CJK fallback family. It serves the same role as a global Han/CJK binding rather than a local command family.
+  This Windows-side global CJK fallback family serves as a global Han/CJK binding.
 - `times`
-  Uses a mixed Windows bundle rather than a single font family:
+  Uses a mixed Windows font bundle:
   `regular` / `bold` / `italic` / `bolditalic` come from Times New Roman,
   `sans*` comes from Arial,
   and `mono*` comes from Consolas.
 - `arabic`
-  Uses Naskh for `regular` / `bold`, Ruqaa for `italic` / `bolditalic`, Noto Sans Arabic for `sans` / `sansbold`, and Noto Kufi Arabic for `sansitalic` / `sansbolditalic`. It no longer declares local `mono*` faces.
+  Uses Naskh for `regular` / `bold`, Ruqaa for `italic` / `bolditalic`, Noto Sans Arabic for `sans` / `sansbold`, and Noto Kufi Arabic for `sansitalic` / `sansbolditalic`. Local faces cover the text and sans channels.
 - `urdu`
-  Keeps Nastaliq as its dedicated local family and does not share that mapping with `arabic`.
+  Keeps Nastaliq as the dedicated local Urdu family; `arabic` uses its separate Naskh/Ruqaa mapping.
 - `khitan_small`
   `\KHS{...}` is the linear local-font command used by the showcase.
   `\KHSstack{...}` and `\KHSstackblock{...}` invoke the explicit cluster
@@ -391,10 +389,10 @@ Only families with non-trivial internal mapping are listed here. Simple families
 
 IMPE LaTeX System now separates the Git repository from the actual font library:
 
-- the Git repository is intended to remain source-only
+- the Git repository carries source and documentation
 - `assets/fonts/` is treated as a local font library in the working tree
 - local builds and local `full` releases may include that font library
-- public Git pushes do not need to carry the font files themselves
+- public Git pushes carry the source while local font files stay in the separate font library
 
 This lets the project keep:
 
@@ -406,7 +404,7 @@ This lets the project keep:
 
 The working assumption is:
 
-- the public Git repository stays source-only
+- the public Git repository carries source and documentation
 - the local font library lives under `assets/fonts/` in your working tree
 - local development and local `full` release builds read from that location
 
@@ -416,19 +414,19 @@ In other words, the default local path is:
 assets/fonts/
 ```
 
-If that directory is missing:
+If that directory is unavailable:
 
 - normal repository work can still continue
 - `core` release packaging still works
-- `full` release packaging will stop with an explicit error instead of silently producing an incomplete package
+- `full` release packaging reports an explicit error and requires the complete local font library
 
-## Bundled vs Non-Bundled Fonts
+## Bundled and Externally Resolved Fonts
 
-Not every font used by IMPE LaTeX System is supplied in the same way.
+IMPE LaTeX System resolves fonts from several sources.
 
 In particular:
 
-- the `cmu` family is not stored under `assets/fonts/`
+- the `cmu` family resolves through the installed TeX font system
 - it is expected to come from a TeX installation or the local font environment
 - official project page:
   https://cm-unicode.sourceforge.io/
@@ -442,18 +440,18 @@ For third-party font license texts and redistribution notes, see:
 IMPE LaTeX System supports two fallback modes for font declarations:
 
 - `strict`
-  Missing fonts are treated as errors.
+  Unresolved fonts are treated as errors.
 - `soft`
-  Missing fonts emit a warning and fall back to LaTeX default families.
+  Unresolved fonts emit a warning and fall back to LaTeX default families.
 
 The current default is `soft`.
 
 In `soft` mode:
 
 - local font commands fall back to LaTeX defaults such as `\rmfamily`, `\sffamily`, and `\ttfamily`
-- global declarations do not override the current LaTeX defaults if the target font cannot be resolved
+- global declarations preserve the current LaTeX defaults for unresolved target fonts
 
-This preserves compilation while making the missing-font state visible in the log.
+This preserves compilation while recording the unresolved-font state in the log.
 
 ## Current Layout and Special-Module Model
 
@@ -473,14 +471,13 @@ TeX modules:
 
 This means:
 
-- there is no separate dispatch table file anymore
+- dispatch is managed by the font interface
 - ordinary shaping is handled by fontspec options assembled from `script`,
   `language`, and `features`
 - built-in vertical capabilities are handled inside `core/fonts/impe-fonts-interface.tex`
-  and are not written as a `specialmodule`
-- only genuinely script-specific or user-provided TeX logic remains under
+- script-specific or user-provided TeX logic resides under
   `modules/fonts/`
-- Pahlavi special handling is only attached to the families that actually need
+- Pahlavi special handling attaches to the families that need
   it, such as `pahlavi_psalter`; Parthian and Inscriptional Pahlavi remain
   standard fontspec registrations when RawFeature is sufficient
 
@@ -506,25 +503,25 @@ The `uyghur` family also uses the vertical route:
 - `UY` is horizontal RTL
 - `UYv` is the vertical left-to-right variant
 
-Additional local-only Mongolian-family registrations:
+Additional Mongolian-family registrations for local use:
 
 - `mongolian_baiti` provides `\MOb`
   - `regular = monbaiti.ttf`
-  - local-only Microsoft font
+  - Microsoft font for local use
 - `segoe` provides `\SEG`
   - `regular = seguihis.ttf`
-  - local-only Microsoft font
+  - Microsoft font for local use
 
 Important redistribution note:
 
-- the four `mngl*.ttf` files above are kept for local use but are **not** included in the public `full` release package
-- their redistribution status has not yet been confirmed clearly enough for public bundling
+- the four `mngl*.ttf` files above are kept for local use; public `full` packaging uses fonts with confirmed redistribution terms
+- their redistribution status awaits confirmation for public bundling
 - users who need them should obtain them from the original source themselves:
   http://www.mongolfont.com/cn/font/index.html
-- `assets/fonts/mongolian_baiti/monbaiti.ttf` is a Microsoft font and is **not** included in the public `full` release package
+- `assets/fonts/mongolian_baiti/monbaiti.ttf` is a Microsoft font reserved for local use; the public `full` release uses fonts with confirmed redistribution terms
   - reference:
     https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti
-- `assets/fonts/segoe/seguihis.ttf` is a Microsoft font and is **not** included in the public `full` release package
+- `assets/fonts/segoe/seguihis.ttf` is a Microsoft font reserved for local use; the public `full` release uses fonts with confirmed redistribution terms
   - reference:
     https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
 
@@ -566,15 +563,14 @@ The canonical public font audit is
 `\Font{id}{content}` to typeset a local span through the registered family's
 public command. For example, `\Font{hindi}{हिन्दी}` is equivalent to `\HI{हिन्दी}`.
 The local declaration is loaded on demand, using the same registry errors as
-`\UseFont{id}[local]` for unknown IDs or families without local mode. Load
+`\UseFont{id}[local]` for unknown IDs or families lacking local mode. Load
 families requiring additional packages with `\UseFont` in the preamble.
 Existing family commands remain supported. Series/shape, local override of
 Unicode routing, direction, CJK spacing and script processing are shared.
-No raw `\FontName` API is introduced in this release.
+This release uses the registered-family API for font selection.
 
 Each face resolves independently: first the configured bundled file, then the
 registered filename/name through fontspec (TeX Live or system lookup), then the
 existing strict error or soft fallback. Bundled files always win. A core install
-can therefore use installed fonts without `assets/fonts` or a copied catalog
-directory tree. `\SetCatalogFontRoot` remains useful for a separate library;
-it is not necessary when the registered faces already resolve.
+can therefore use installed fonts directly. `\SetCatalogFontRoot` selects a
+separate library when needed.

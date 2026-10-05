@@ -2,7 +2,7 @@
 \documentclass[11pt]{impeart}
 
 % Das Handbuch verwendet bewusst einen globalen Hausstil. Gewöhnliche Dokumente
-% sollten normalerweise \UseFont ohne Modus oder den Template-Schlüssel `fonts` verwenden.
+% sollten normalerweise das registrierte automatische Verhalten von \UseFont oder den Template-Schlüssel `fonts` verwenden.
 \UseFont{libertinus}[global]
 \setmonofont[
   BoldFont=lmmonolt10-bold.otf,
@@ -75,7 +75,7 @@ werden.
 
 Die normale Verwendung von IMPE ist bewusst knapp gehalten. Eine Wrapper-Klasse
 kann ein sinnvolles Dokumentlayout und eine globale Standardschriftkonfiguration
-festlegen; anschließend lädt der Benutzer nur die zusätzlichen Familien oder
+festlegen; anschließend lädt der Benutzer die zusätzlichen Familien oder
 Features, die das Dokument benötigt. Wenn eine explizitere Kontrolle gewünscht
 ist, lassen sich dieselben Komponenten in einem einzigen Aufruf von
 \verb|\UseTemplateSet| deklarieren.
@@ -88,8 +88,8 @@ können andere Engines aufrufen, wenn ein bestimmtes Schriftsystem oder ein
 bestimmter Renderer dies erfordert; gewöhnliche IMPE-Dokumente sind jedoch zur
 Kompilierung mit \XeLaTeX{} vorgesehen.
 
-Dieses Handbuch ist eine benutzerorientierte Einführung und keine erschöpfende
-API-Referenz. Detaillierte Dokumentation der Subsysteme wird separat im
+Dieses Handbuch ist eine benutzerorientierte Einführung. Detaillierte
+Dokumentation der Subsysteme wird im
 Repository unter \texttt{docs/} gepflegt. Insbesondere die Dokumente zu
 Schriften, Layouts, Features und Systemarchitektur beschreiben
 Registrierungsfelder und Implementierungsdetails, deren Wiederholung hier
@@ -113,20 +113,18 @@ anderen Anwendungsfall vorgesehen sind.
 
 Die \emph{CTAN-orientierte Distribution} ist das Archiv
 \texttt{impe-framework.zip} mit dem Wurzelverzeichnis
-\texttt{impe-framework/}. Sie enthält die portable Laufzeitumgebung und die
-öffentliche Dokumentation, jedoch keine private oder lokal gepflegte
-Schriftbibliothek und nur kanonische \texttt{impe*}-Einstiegspunkte. Die
+\texttt{impe-framework/}. Sie enthält die portable Laufzeitumgebung, die
+öffentliche Dokumentation und kanonische \texttt{impe*}-Einstiegspunkte.
+Die lokale Schriftbibliothek wird separat verwaltet. Die
 \emph{Core-Distribution} enthält dieselbe
 Systemlogik für Benutzer, die IMPE lieber direkt aus einem Release installieren
 und ihre Schriften separat verwalten. Die \emph{Full-Distribution} kann eine
 vorbereitete lokale Schriftbibliothek hinzufügen, soweit der
 Weiterverteilungsstatus der einzelnen Schriften dies erlaubt.
 
-Diese Unterscheidung ist beabsichtigt. IMPE selbst ist ein Dokumentsystem; eine
-große Schriftsammlung gehört nicht zum logischen Kern des Pakets. Die Trennung
-macht die Laufzeitumgebung portabel und erlaubt verschiedenen Rechnern oder
-Benutzern, unterschiedliche Schriftbibliotheken bereitzustellen, ohne das
-Framework zu verändern.
+Diese Unterscheidung ist beabsichtigt. Die Dokument-Laufzeitumgebung bleibt
+portabel; verschiedene Rechner und Benutzer können über die separate
+Schriftressourcenschicht ihre eigenen großen Schriftbibliotheken bereitstellen.
 
 \subsection{Installationsort}
 
@@ -150,8 +148,8 @@ impebeamer.cls
 mit entsprechenden \texttt{\_zh}-Wrapper-Klassen für chinesisch orientierte
 Dokumentstandards. Direkte Full- und Core-Releases von GitHub installieren
 zusätzlich die früheren \texttt{next*}-Kompatibilitätseinstiege; die
-CTAN-Distribution \texttt{impe-framework} enthält nur die kanonischen
-Einstiegspunkte und keine Kompatibilitätsdateien. Siehe
+CTAN-Distribution \texttt{impe-framework} enthält die kanonischen
+Einstiegspunkte. Siehe
 Abschnitt~\ref{sec:compatibility}.
 
 Bei Verwendung eines direkten IMPE-Releases kann der mitgelieferte Installer
@@ -166,17 +164,17 @@ bereitstellen. Der Launcher delegiert an \texttt{install.ps1}; fortgeschrittene
 Benutzer können dieses Skript mit dem üblichen Skript-Runner ihres Systems
 direkt aufrufen.
 
-Benutzer, die über eine \TeX{}-Distribution installieren, benötigen den
-Repository-seitigen Installer nicht; die Paketerkennung übernimmt die
-\TeX{}-Distribution auf dem üblichen Weg.
+Bei Installation über eine \TeX{}-Distribution übernimmt diese die
+Paketerkennung auf dem üblichen Weg.
 
 \subsection{Schriftressourcen und lokale Konfiguration}
 
-Das Quell-Repository verfolgt nicht die vollständige lokale Schriftbibliothek.
+Das Quell-Repository enthält die Laufzeitumgebung; die vollständige
+Schriftbibliothek wird lokal verwaltet.
 Bei einer lokalen oder Full-Installation werden katalogisierte Schriftdateien
 normalerweise unterhalb eines Stammverzeichnisses \texttt{assets/fonts/}
-aufgelöst. Ein anderer Ort kann gewählt werden, ohne das Paket selbst zu
-bearbeiten.
+aufgelöst. \texttt{\string\SetCatalogFontRoot} wählt über lokale Konfiguration
+einen anderen Ort.
 
 Der bevorzugte dauerhafte Mechanismus ist \texttt{impe.local.tex}. Eine lokale
 Konfiguration kann beispielsweise Folgendes enthalten:
@@ -187,9 +185,9 @@ Konfiguration kann beispielsweise Folgendes enthalten:
 
 wobei der Pfad an den lokalen Rechner angepasst wird. Derselbe Befehl kann auch
 aus einem Dokument heraus verwendet werden, wenn eine einmalige Überschreibung
-geeigneter ist. Core- und CTAN-Installationen bleiben ohne private
-Schriftsammlung verwendbar; nur Dokumentfunktionen, die nicht verfügbare lokale
-Schriftdateien anfordern, benötigen naturgemäß die entsprechenden Ressourcen.
+geeigneter ist. Core- und CTAN-Installationen verwenden direkt auflösbare
+System- oder TeX-Schriften. Dokumentfunktionen, die lokale Schriftdateien
+anfordern, benötigen die entsprechenden Ressourcen.
 
 \subsection{Schneller Installationstest}
 
@@ -213,7 +211,7 @@ automatische Schnittstelle zum Laden von Schriften für \TeX{} sichtbar.
 Der einfachste IMPE-Arbeitsablauf besteht darin, eine Wrapper-Klasse zu wählen,
 die gewünschten Schriftfamilien oder Features auszuwählen und das Dokument
 anschließend wie gewohnt zu schreiben. IMPE ersetzt die gewöhnliche
-\LaTeX{}-Dokumentstruktur nicht, sondern legt eine wiederverwendbare
+\LaTeX{}-Dokumentstruktur mit einer wiederverwendbaren
 Einrichtungsschicht darum.
 
 Ein kleiner Artikel kann daher beispielsweise so aussehen:
@@ -239,7 +237,7 @@ Ein kleiner Artikel kann daher beispielsweise so aussehen:
 \end{verbatim}
 
 Die Klasse liefert bereits das normale englische Artikellayout und die
-Basisschrift. Der Aufruf \verb|\UseFont{libertinus}| ohne Modus folgt dem
+Basisschrift. Der Aufruf \verb|\UseFont{libertinus}| mit ausgelassenem Modus folgt dem
 registrierten automatischen Verhalten dieser Familie, aktiviert ihren globalen
 Schriftstapel und stellt zugleich den lokalen Befehl \verb|\LIB| bereit,
 während \verb|\UseFeatures| zwei optionale Feature-Module aktiviert. Der Rest
@@ -260,7 +258,7 @@ werden:
 
 Ein Template-Set kann außerdem ein Layout und zusätzliche Schriftfamilien
 auswählen. In der Praxis liefern Wrapper-Klassen bereits ein geeignetes
-Standardlayout, sodass die meisten Dokumente nur jene Einstellungen angeben,
+Standardlayout, sodass die meisten Dokumente jene Einstellungen angeben,
 die davon abweichen.
 
 IMPE kann auch als Paket unterhalb einer standardmäßigen \LaTeX{}-Klasse
@@ -285,8 +283,8 @@ System.
 \section{Einsatzbereite Vorlagen}
 
 Das Repository enthält unter \texttt{templates/} eine kleine Sammlung von
-Starterprojekten. Sie sind für das tatsächliche Schreiben vorgesehen und nicht
-für Regressionstests oder interne Demonstrationen.
+Starterprojekten. Sie sind für das tatsächliche Schreiben vorgesehen. Fixtures
+für Regressionstests und interne Demonstrationen liegen unter \texttt{tests/}.
 
 Die derzeitigen Startervorlagen sind:
 
@@ -333,8 +331,8 @@ Chinesisch orientierte Gegenstücke werden als \texttt{impeart\_zh},
 \texttt{impebeamer\_zh} bereitgestellt. Sie wählen die entsprechenden
 chinesischen Dokumenteinstellungen und nehmen neben \texttt{cmu} auch
 \texttt{shanggu} in die globale Standardschriftkonfiguration auf. Die
-Unterscheidung betrifft die Standardkonfiguration und schränkt nicht ein, welche
-Sprachen im Dokument vorkommen dürfen.
+Unterscheidung betrifft die Standardkonfiguration und lässt die Sprachwahl
+im Dokument offen.
 
 Unbekannte Klassenoptionen werden an die zugrunde liegende Standardklasse
 weitergereicht. Eine normale Option wie
@@ -348,8 +346,8 @@ steuert daher weiterhin wie gewohnt die zugrunde liegende Klasse
 
 \subsection{\texttt{impe.sty} direkt verwenden}
 
-Die Wrapper-Klassen sind Komfortschnittstellen und keine separaten
-Implementierungen. Ein Benutzer kann stattdessen eine Standardklasse
+Die Wrapper-Klassen teilen sich eine Implementierung und bieten komfortable
+Standards. Ein Benutzer kann auch eine Standardklasse
 beibehalten und
 
 \begin{verbatim}
@@ -358,8 +356,8 @@ beibehalten und
 
 laden, gefolgt von einer expliziten Konfiguration für Layout, Schriften und
 Features. Dies ist der empfohlene Weg, wenn die Dokumentklasse von einer
-Zeitschrift, einem Verlag oder einem anderen Paket vorgegeben wird und nicht
-durch einen IMPE-Wrapper ersetzt werden soll.
+Zeitschrift, einem Verlag oder einem anderen Paket vorgegeben wird und als
+Dokumentklasse bestehen bleiben muss.
 
 \subsection{Titel und Untertitel}
 
@@ -408,20 +406,18 @@ Die vier Schlüssel haben unterschiedliche Aufgaben.
 \end{description}
 
 \texttt{mainfonts} wird als Alias von \texttt{globalfonts} akzeptiert; beide
-Schlüssel sind explizite globale Überschreibungen und nicht die normale
+Schlüssel bieten explizite globale Überschreibungen; \texttt{fonts} bietet die
 automatische Schnittstelle.
 
-Die Template-Schnittstelle verlangt nicht, dass jedes Dokument alle vier
-Schlüssel deklariert. Ihr Zweck besteht darin, einen vorhersehbaren Ort
-bereitzustellen, an dem eine vollständige Konfiguration \emph{ausgedrückt
-werden kann}. Wrapper-Klassen wenden bereits ihre eigenen Layout- und globalen
-Schriftstandards an; nur eine zusätzliche Feature-Liste anzugeben ist daher
-vollkommen normal.
+Die Template-Schnittstelle bietet einen vorhersehbaren Ort für die vollständige
+Konfiguration. Wrapper-Klassen wenden bereits ihre eigenen Layout- und globalen
+Schriftstandards an; ein Dokument kann daher allein eine zusätzliche
+Feature-Liste angeben.
 
 \subsection{Spezialisierte Kurzbefehle}
 
-Für Dokumente, die keine vollständige Template-Deklaration benötigen, bietet
-IMPE öffentliche Kurzbefehle für die einzelnen Subsysteme:
+Für gezielte Konfiguration bietet IMPE öffentliche Kurzbefehle für die
+einzelnen Subsysteme:
 
 \begin{verbatim}
 \UseLayout{en_doc}
@@ -438,25 +434,23 @@ IMPE öffentliche Kurzbefehle für die einzelnen Subsysteme:
 \UseFeatures{math,hyperlinks,tables}
 \end{verbatim}
 
-Die Font-Formen ohne Modus sind die empfohlenen Kurzbefehle für den normalen
+Die Font-Formen mit ausgelassenem Modus sind die empfohlenen Kurzbefehle für den normalen
 Gebrauch. Die lokalen und globalen Aliase bleiben nützlich, wenn ein Dokument
 das registrierte Verhalten einer Familie bewusst überschreibt. Die
 vereinheitlichte und die spezialisierte Schnittstelle sind zwei Ansichten
-desselben öffentlichen Modells und keine konkurrierenden
-Konfigurationssysteme.
+desselben öffentlichen Modells.
 
-\subsection{Komposition statt monolithischer Templates}
+\subsection{Komponierbare Templates}
 
-Ein IMPE-Template ist bewusst keine unteilbare Stildatei. Ein Layout kann mit
+Ein IMPE-Template kombiniert wiederverwendbare Komponenten. Ein Layout kann mit
 unterschiedlichen Schriftauswahlen wiederverwendet werden, dieselbe
 Feature-Menge kann in einem Artikel oder Buch zum Einsatz kommen, und eine
-schriftspezifische Schriftfamilie kann ergänzt werden, ohne nicht verwandte
-Dokumentfunktionen zu verändern. Diese Komposition ist das zentrale
+schriftspezifische Schriftfamilie kann ergänzt werden, während andere
+Dokumentfunktionen erhalten bleiben. Diese Komposition ist das zentrale
 Gestaltungsprinzip der öffentlichen Schnittstelle.
 
 Die folgenden Deklarationen beschreiben beispielsweise zwei sehr
-unterschiedliche Dokumente, ohne zwei voneinander unabhängige
-Vorspann-Templates zu erfordern:
+unterschiedliche Dokumente mit derselben Template-Schnittstelle:
 
 \begin{verbatim}
 % English article
@@ -474,7 +468,7 @@ Vorspann-Templates zu erfordern:
 }
 \end{verbatim}
 
-Das zweite Beispiel nennt nur die Familien und Features, die es benötigt; für
+Das zweite Beispiel nennt die Familien und Features, die es benötigt; für
 die Implementierungsdetails bleiben die internen Schrift- und Layout-Subsysteme
 zuständig.
 
@@ -482,8 +476,8 @@ zuständig.
 
 \subsection{Schriftfamilien als registrierte Fähigkeiten}
 
-IMPE behandelt einen Schriftnamen nicht lediglich als Ersatz für
-\verb|\rmfamily|. Schriftfamilien werden in einem zentralen Katalog mit den
+IMPE registriert jede Schriftfamilie mit ihrem Shaping- und Routing-Verhalten.
+Schriftfamilien werden in einem zentralen Katalog mit den
 Informationen registriert, die zu ihrer korrekten Verwendung erforderlich
 sind: verfügbare Schnitte, Pfade oder Systemschriftnamen,
 OpenType-Skript- und Spracheinstellungen, Metadaten für lokale Befehle, globales
@@ -493,12 +487,12 @@ Rendering-Route.
 Dieses Modell erlaubt einer einfachen lateinischen Familie und einer Familie
 für komplexe Schriftsysteme, dieselbe öffentliche Ladeschnittstelle zu
 verwenden, obwohl ihre internen Anforderungen sehr unterschiedlich sein können.
-Die gemeinsame Abstraktion ist die \emph{registrierte Familie}, nicht die
-Behauptung, jedes Schriftsystem werde identisch implementiert.
+Die gemeinsame Abstraktion ist die \emph{registrierte Familie}; jedes
+Schriftsystem behält seine passende Implementierung.
 
 \subsection{Automatisches, globales und lokales Laden}
 
-Für den normalen Gebrauch wird eine Familie ohne Modus geladen. IMPE folgt
+Für den normalen Gebrauch wird der Modus beim Laden einer Familie ausgelassen. IMPE folgt
 dann dem registrierten Verhalten der Familie, das lokal, global oder
 bereichsspezifisch sein kann. Der Template-Schlüssel \texttt{fonts} wendet
 dieselbe automatische Regel auf eine Liste an.
@@ -506,14 +500,14 @@ dieselbe automatische Regel auf eine Liste an.
 Eine \emph{globale} Familie nimmt an der dokumentweiten Schriftauswahl teil. Bei
 einer normalen lateinischen Familie kann dies bedeuten, die Hauptkanäle für
 Serifen-, serifenlose und nichtproportionale Schrift zu ersetzen. Bei einer
-schriftspezifischen Familie kann es stattdessen bedeuten, nur die Verantwortung
+schriftspezifischen Familie kann es bedeuten, die Verantwortung
 für ausgewählte Unicode-Bereiche zu übernehmen, während Lateinisch, Han und
 andere Schriftsysteme unverändert bleiben.
 
 Eine \emph{lokale} Familie wird zur ausdrücklichen Verwendung geladen. Lokale
 Auswahl ist nützlich, wenn ein bestimmter Abschnitt eine bestimmte
 Schriftsystemschrift, eine regionale Glyphenform oder eine redaktionell
-gewählte Schrift benötigt, ohne das dokumentweite Routing zu verändern.
+gewählte Schrift benötigt und das dokumentweite Routing erhalten bleiben soll.
 
 Familien werden beispielsweise so geladen:
 
@@ -527,10 +521,10 @@ Familien werden beispielsweise so geladen:
 
 oder über die entsprechenden Schlüssel in \verb|\UseTemplateSet|. Die Aliase
 \verb|\UseGlobalFont(s)| und \verb|\UseLocalFont(s)| sind explizite
-Überschreibungen, nicht die Standardempfehlung. Öffentliche Befehle, die für
+Überschreibungen; der Aufruf mit ausgelassenem Modus bleibt die
+Standardempfehlung. Öffentliche Befehle, die für
 einzelne lokale Familien erzeugt werden, sind in deren Katalogregistrierungen
-definiert; die vollständige Liste gehört in die Schriftreferenz und nicht in
-dieses einführende Handbuch.
+definiert; die vollständige Liste steht in der Schriftreferenz.
 
 Wenn ein expliziter lokaler Schriftbefehl aktiv ist, hat er innerhalb seines
 Gültigkeitsbereichs Vorrang vor dem automatischen globalen Bereichs-Router.
@@ -542,11 +536,10 @@ vorhersehbar.
 \subsection{Unicode-Bereichs-Routing}
 
 Einige globale Familien sind bewusst auf bestimmte Bereiche beschränkt. Eine
-Devanagari-Familie muss beispielsweise nicht zur lateinischen Hauptschrift
-werden, nur weil sie global geladen wird. IMPE kann eine solche Familie nur den
-Unicode-Blöcken zuweisen, für die sie zuständig ist. Mehrere registrierte
-Familien können daher in einem Dokument nebeneinander bestehen, ohne
-fortwährend die Textschrift der jeweils anderen zu ersetzen.
+Devanagari-Familie kann beispielsweise ihre konfigurierten Unicode-Blöcke
+übernehmen, während die lateinische Hauptschrift ihre bisherige Rolle behält.
+Mehrere registrierte Familien können so mit getrennten Textbereichen in einem
+Dokument nebeneinander bestehen.
 
 Dieses Routing ist besonders für tatsächlich mehrsprachige Prosa nützlich: Der
 Autor schreibt gewöhnlichen Unicode-Text, während IMPE die aktive registrierte
@@ -560,21 +553,19 @@ Familie.
 CJK-Schriften benötigen eine etwas andere Route als gewöhnliches
 Unicode-Bereichs-Umschalten. IMPE verwendet für globale CJK-Familien den
 xeCJK-Pfad, sodass die Haupt-, serifenlosen und nichtproportionalen CJK-Kanäle
-als CJK-Schriften verwaltet werden können und nicht als Sammlung isolierter
-Zeichenumschaltungen.
+gemeinsam als CJK-Schriften verwaltet werden können.
 
-Gemeinsame Han-Ideogramme bringen ein zusätzliches Problem mit sich: Unicode
-allein gibt nicht an, ob ein Han-Zeichen in einem bestimmten Kontext chinesische,
-japanische oder koreanische regionale Glyphenkonventionen verwenden soll.
+Gemeinsame Han-Ideogramme teilen Unicode-Codepunkte über chinesische,
+japanische und koreanische regionale Glyphenkonventionen hinweg.
 Automatisches Routing weist daher sprachspezifischen Schriftsystemen wie Kana
 und Hangul eigene Ansprüche zu, während gemeinsame Han-Zeichen bei der
 CJK-Schrift des Dokuments verbleiben. Wenn ausdrücklich eine japanische oder
 koreanische Han-Form erforderlich ist, kann ein lokaler Familienbefehl diese
 Auswahl direkt treffen.
 
-Diese Unterscheidung ist beabsichtigt. Automatisches Routing soll den Regelfall
-bequem machen, ohne vorzugeben, mehrdeutige Han-Zeichen enthielten
-Sprachinformationen, die Unicode tatsächlich nicht bereitstellt.
+Diese Unterscheidung ist beabsichtigt. Automatisches Routing behandelt
+eindeutige Schriftsystembereiche; explizite lokale Auswahl liefert regionale
+Formen für gemeinsame Han-Zeichen.
 
 \subsection{Shaping und Zeilenumbruch}
 
@@ -584,13 +575,11 @@ ausgedrückt. Indische, arabische und andere shaping-sensitive Schriften bleiben
 daher auf Dokumentebene gewöhnlicher Unicode-Text; IMPE liefert die
 Schriftkonfiguration, die die Text-Engine benötigt, um sie korrekt zu formen.
 
-Einige Schriftsysteme benötigen außerdem ein Zeilenumbruchverhalten, das durch
-gewöhnliche Leerzeichen nicht ausreichend beschrieben wird. IMPE enthält
-schriftsystembewusste Behandlung für Fälle wie Sanskrit in Devanagari,
-Tibetisch und Thai. Ziel ist nicht, die Orthographie der jeweiligen Sprache
-durch manuelle Umbruchmarkierungen zu ersetzen, sondern den Schrift- und
-Verhaltensschichten geeignete Umbruchmöglichkeiten bereitzustellen und dabei
-Cluster oder schriftspezifische Interpunktionsregeln zu bewahren.
+Einige Schriftsysteme benötigen außerdem Zeilenumbruchverhalten über
+gewöhnliche Leerzeichen hinaus. IMPE behandelt Sanskrit in Devanagari,
+Tibetisch und Thai schriftsystembewusst. Schrift- und Verhaltensschichten
+stellen geeignete Umbruchmöglichkeiten bereit und bewahren dabei Cluster
+sowie schriftspezifische Interpunktionsregeln.
 
 Rechts-nach-links-Verhalten ist ebenfalls an die Familien gebunden, die es
 benötigen. Das öffentliche Schriftmodell bleibt gleich, auch wenn sich das
@@ -611,12 +600,11 @@ implementiert. Der Helfer löst die angeforderte \TeX{}-Engine über den
 \texttt{PATH} des Systems auf, rendert in ein IMPE-Cacheverzeichnis und gibt
 das resultierende PDF an das Hauptdokument zurück. Der Mechanismus bleibt hinter
 der Schriftregistrierungsschicht verborgen, sodass ein gewöhnliches Dokument
-temporäre Dateien oder Engine-Pfade nicht manuell verwalten muss.
+temporäre Dateien und Engine-Pfade dem Helfer überlassen kann.
 
-Diese spezialisierten Routen sind Ausnahmen auf Implementierungsebene, nicht auf
-der Ebene der Benutzerschnittstelle. Gerade ihre Existenz ermöglicht es, das
-öffentliche Schriftmodell kohärent zu halten, wenn ein Schriftsystem nicht mit
-einer einfachen \verb|\newfontfamily|-Deklaration behandelt werden kann.
+Diese spezialisierten Routen teilen die öffentliche Schrifteschnittstelle.
+Sie halten das Modell für Schriftsysteme kohärent, deren Verhalten über eine
+einfache \verb|\newfontfamily|-Deklaration hinausgeht.
 
 \subsection{Wo die vollständige Schriftreferenz zu finden ist}
 
@@ -637,7 +625,7 @@ Textabständen, Kopfzeilenverhalten, Buchverhalten oder Folienverhalten. Die
 einzelnen Low-Level-Komponenten sind intern; gewöhnliche Dokumente wählen die
 öffentliche Voreinstellung als Ganzes.
 
-Die öffentlichen Voreinstellungen in IMPE 1.0.1 sind:
+Die öffentlichen Voreinstellungen in IMPE 1.x sind:
 
 \begin{description}
   \item[\texttt{en\_doc}] Englisches Artikel-/Report-Layout.
@@ -649,9 +637,8 @@ Die öffentlichen Voreinstellungen in IMPE 1.0.1 sind:
 \end{description}
 
 Voreinstellungen deklarieren, welche zugrunde liegenden Dokumentklassen sie
-unterstützen. IMPE prüft diese Kompatibilität, bevor die Voreinstellung
-angewendet wird, sodass ein Folienlayout nicht stillschweigend auf einen
-Artikel angewendet wird oder umgekehrt.
+unterstützen. IMPE prüft diese Kompatibilität vor der Anwendung und meldet
+unpassende Dokumentklassen.
 
 Wrapper-Klassen wählen das entsprechende Layout automatisch. Eine explizite
 Auswahl ist bei rohen Standardklassen oder dann nützlich, wenn ein Report eine
@@ -666,8 +653,7 @@ Die genauen Komponentenwerte und die Geometrie sind in
 
 \subsection{Feature-Module}
 
-Features sind flache, kombinierbare Module. Anders als Layouts besitzen sie
-keine zweite Voreinstellungsebene. Eine Feature-ID lädt beim ersten Anfordern
+Features sind flache, kombinierbare Module. Eine Feature-ID lädt beim ersten Anfordern
 einfach die entsprechende optionale Funktionalität; wiederholte Anforderungen
 werden ignoriert.
 
@@ -711,9 +697,8 @@ Das Feature \texttt{math} lädt den standardmäßigen AMS-orientierten
 Mathematik-Stack und definiert theoremartige Umgebungen wie \texttt{theorem},
 \texttt{lemma}, \texttt{proposition}, \texttt{corollary},
 \texttt{definition}, \texttt{example} und \texttt{remark}. Das Laden einer
-Textschrift erzwingt nicht von selbst ein neues mathematisches Alphabet:
-Computer-Modern-Mathematik bleibt Standard, sofern nicht ausdrücklich eine
-andere Mathematikroute gewählt wird.
+Textschrift belässt Computer-Modern-Mathematik als Standard; eine ausdrücklich
+gewählte Mathematikroute aktiviert ein anderes mathematisches Alphabet.
 
 Eine andere Mathematikfamilie kann vor dem Laden des Features ausgewählt
 werden. Zum Beispiel
@@ -729,8 +714,8 @@ aufgeführt.
 
 \subsection{Zitate, Register, Tabellen und Abbildungen}
 
-Die Feature-Module sollen nützliche Standards bereitstellen, ohne das
-zugrunde liegende \LaTeX{}-Ökosystem zu verbergen. Das Feature
+Die Feature-Module stellen nützliche Standards bereit und erhalten den Zugang
+zum zugrunde liegenden \LaTeX{}-Ökosystem. Das Feature
 \texttt{citations} verwendet beispielsweise \texttt{biblatex} und
 \texttt{biber}; Dokumente verwenden weiterhin gewöhnliche Befehle wie
 \verb|\addbibresource|, \verb|\textcite| und \verb|\printbibliography|.
@@ -743,9 +728,8 @@ Die Features \texttt{tables} und \texttt{image} stellen auf ähnliche Weise
 praktische höherstufige Umgebungen bereit, während native Befehle von
 \texttt{booktabs}, \texttt{graphicx} und verwandten Paketen verfügbar bleiben.
 
-Dies ist im gesamten Feature-System die beabsichtigte Balance: IMPE soll
-wiederholte Einrichtung reduzieren und keine private Ersatzsprache für
-gewöhnliches \LaTeX{} schaffen.
+Im gesamten Feature-System reduziert IMPE wiederholte Einrichtung und
+bewahrt die gewöhnlichen \LaTeX{}-Befehle.
 
 \subsection{Kopfzeilen und Hyperlinks}
 
@@ -762,42 +746,38 @@ Linkrahmen, verlinkten Inhaltsverzeichnisstrukturen und stabilen Zielen.
 Dokumente können weiterhin gewöhnliche Befehle wie \verb|\label|, \verb|\ref|,
 \verb|\href| und \verb|\url| verwenden.
 
-Für die vollständige Liste der feature-spezifischen Befehle und Umgebungen
-sollte \texttt{docs/FEATURES.md} konsultiert werden; dieser Abschnitt ist kein
-API-Katalog.
+Die vollständige Liste der feature-spezifischen Befehle und Umgebungen steht
+in \texttt{docs/FEATURES.md}; dieser Abschnitt führt in die wichtigsten
+Funktionen ein.
 
 \section{Kompatibilität und Migration}\label{sec:compatibility}
 
-IMPE 1.0.1 etabliert die \texttt{impe*}-Namen als kanonische öffentliche
+IMPE 1.x etabliert die \texttt{impe*}-Namen als kanonische öffentliche
 Schnittstelle. Neue Dokumente sollten daher \texttt{impe.sty},
 \texttt{impeart}, \texttt{impebook}, \texttt{impereport},
 \texttt{impebeamer} und ihre chinesischen Varianten verwenden.
 
 Frühere Entwicklungsversionen verwendeten das Namensschema \texttt{next*}.
-Diese Einstiegspunkte bleiben in 1.0.1 als Kompatibilitäts-Wrapper unterstützt;
-sie sind in dieser Version nicht als veraltet markiert. Bestehende Dokumente,
+Diese Einstiegspunkte bleiben in 1.x als Kompatibilitäts-Wrapper mit ihrem
+bisherigen Status unterstützt. Bestehende Dokumente,
 die die Klasse \texttt{nextart} oder das Paket \texttt{nextsystem} laden,
 können weiterhin gegen dieselbe zugrunde liegende Implementierung kompiliert
-werden. Die Kompatibilitätsschicht dient der Bewahrung alter
-Dokumente und nicht der Definition eines parallelen API-Satzes für neue
-Arbeiten.
+werden. Die Kompatibilitätsschicht bewahrt alte Dokumente; die kanonischen
+\texttt{impe*}-Einstiegspunkte dienen neuen Arbeiten.
 
 Der direkte Installer erkennt außerdem eine verwaltete Installation der
 0.1.x-Reihe unter \texttt{tex/latex/nextsystem/}. Bei der Migration installiert
 er die kanonische Laufzeitumgebung unter \texttt{tex/latex/impe/}, migriert
 erkannte lokale Override-Dateien, wo dies angemessen ist, entfernt Dateien, die
-bekanntermaßen zur alten verwalteten Laufzeit gehören, und lässt nicht
-verwandte benutzererstellte Dateien oder Unterverzeichnisse unverändert.
+bekanntermaßen zur alten verwalteten Laufzeit gehören, und bewahrt
+benutzererstellte Dateien oder Unterverzeichnisse.
 
-Eine alte \texttt{nextsystem.local.tex} kann die Migration daher überstehen,
-ohne dass die alten generischen Runtime-Dateinamen im TEXMF-Baum sichtbar
-bleiben müssen. Neue lokale Konfiguration sollte \texttt{impe.local.tex}
+Eine alte \texttt{nextsystem.local.tex} kann die Migration daher als lokaler
+Override überstehen. Neue lokale Konfiguration sollte \texttt{impe.local.tex}
 verwenden.
 
-Eine Konvertierung des Quelltexts ist nicht erforderlich, nur weil ein Dokument
-mit den alten Wrapper-Namen geschrieben wurde. Autoren können diese Namen bei
-Gelegenheit aktualisieren; Kompatibilität ist bewusst eine Angelegenheit der
-Laufzeitumgebung und keine erzwungene Migration jedes bestehenden Dokuments.
+Dokumente mit alten Wrapper-Namen werden über die Kompatibilitäts-Laufzeit
+weiterhin kompiliert. Autoren können diese Namen bei Gelegenheit aktualisieren.
 
 \section{Paketstruktur und Erweiterungspunkte}
 
@@ -817,9 +797,9 @@ docs/      detailed subsystem documentation
 
 \subsection{Der stabile Kern}
 
-Die Schicht \texttt{core/} enthält das Framework, das nicht geändert werden
-muss, wenn eine neue Schriftfamilie, Layout-Voreinstellung oder ein neues
-Feature hinzugefügt wird. Sie implementiert die Schriftregistrierung und
+Die Schicht \texttt{core/} enthält stabile gemeinsame Mechanismen für neue
+Schriftfamilien, Layout-Voreinstellungen und Features. Sie implementiert die
+Schriftregistrierung und
 Routing-Mechanik, die Layout-Registrierung und Kompatibilitätsprüfungen, den
 Feature-Loader und damit verbundenes gemeinsames Verhalten.
 
@@ -835,34 +815,32 @@ Die Schicht \texttt{catalog/} vergibt öffentliche IDs und Metadaten. Sie enthä
 die zentralen Registrierungen für Schriften, Layouts und Features. Für viele
 Erweiterungen ist dies der richtige Ausgangspunkt.
 
-Eine gewöhnliche Schriftfamilie, die nur standardmäßiges
+Eine gewöhnliche Schriftfamilie mit standardmäßigem
 \texttt{fontspec}-Shaping benötigt, kann in der Regel vollständig als
 Katalogregistrierung ausgedrückt werden. Ebenso wird eine öffentliche
 Layout-Voreinstellung aus vorhandenen internen Komponenten zusammengesetzt,
 und eine Feature-ID verweist auf ihr Implementierungsmodul. Die zentrale
-Ablage dieser Deklarationen macht die öffentliche Oberfläche überprüfbar, ohne
-den gesamten Quellbaum durchsuchen zu müssen.
+Ablage dieser Deklarationen macht die öffentliche Oberfläche an einem Ort
+überprüfbar.
 
 \subsection{Module}
 
 Die Schicht \texttt{modules/} ist Funktionalität vorbehalten, die tatsächlich
 eine eigene Implementierung benötigt: Feature-Module, spezialisierte
 Schriftsystemunterstützung oder wiederverwendbare interne Layout-Komponenten.
-Ein neues Modul sollte daher eine echte Verhaltenserweiterung darstellen und
-nicht lediglich ein bequemer Ort für einen Schriftnamen sein.
+Ein neues Modul sollte daher eine echte Verhaltenserweiterung darstellen;
+Schriftnamen gehören in Katalogregistrierungen.
 
 Diese Regel ist für mehrsprachige Unterstützung besonders wichtig. Die meisten
 Schriftsysteme sollten gewöhnliches OpenType-Shaping und Katalogmetadaten
-verwenden. Spezialisierte Module sind nur dann angebracht, wenn das
-Schriftsystem oder die Rendering-Strategie ein Verhalten erfordert, das der
-generische Kern nicht sauber ausdrücken kann.
+verwenden. Spezialisierte Module dienen Schriftsystemen oder
+Rendering-Strategien mit Verhalten über den generischen Kern hinaus.
 
 \subsection{IMPE erweitern}
 
-Die detaillierten Registrierungsschnittstellen liegen bewusst außerhalb des
-Rahmens dieses Benutzerhandbuchs. Entwickler, die das System erweitern möchten,
-sollten mit \texttt{docs/SYSTEM.md} beginnen und anschließend das relevante
-Subsystemdokument konsultieren: \texttt{docs/FONTS.md},
+Entwickler, die das System erweitern möchten, beginnen mit den detaillierten
+Registrierungsschnittstellen in \texttt{docs/SYSTEM.md} und konsultieren
+anschließend das relevante Subsystemdokument: \texttt{docs/FONTS.md},
 \texttt{docs/LAYOUTS.md} oder \texttt{docs/FEATURES.md}.
 
 Die allgemeine Regel ist einfach: Eine Registrierung ist einem neuen Mechanismus
@@ -922,24 +900,23 @@ IMPE-Verhaltens sollen mit dieser Ausgabe synchron bleiben.
 \section{Kurzreferenz}
 \label{app:quick-reference}
 
-Dieser Anhang fasst die dokumentierte öffentliche Schnittstelle von IMPE 1.0.1
-zusammen. Er dient zum Nachschlagen und nicht als Ersatz für die Erläuterungen
-im Haupttext oder die detaillierte Subsystemdokumentation unter
-\texttt{docs/}. Interne Implementierungsbefehle, insbesondere Befehle, die mit
-\texttt{\string\Next...} beginnen, sind nicht Teil dieser Referenz.
+Dieser Anhang fasst die dokumentierte öffentliche Schnittstelle von IMPE 1.x
+zusammen. Er ergänzt als Nachschlagewerk die Erläuterungen im Haupttext und
+die detaillierte Subsystemdokumentation unter \texttt{docs/}. Interne
+Implementierungsbefehle, darunter Befehle mit dem Präfix
+\texttt{\string\Next...}, werden bei ihrer Implementierung dokumentiert.
 
 \subsection{Empfohlenes Modell zum Laden von Schriften}
 
 Für den normalen Gebrauch sollte innerhalb von
 \texttt{\string\UseTemplateSet} vorzugsweise
 \texttt{fonts = \{...\}} oder direkt \texttt{\string\UseFont\{...\}} verwendet
-werden. Ohne expliziten Modus folgt IMPE dem registrierten Verhalten der
+werden. Bei ausgelassenem Modus folgt IMPE dem registrierten Verhalten der
 Familie: Je nach Bedarf kann ein lokaler Befehl definiert, eine dokumentweite
 Schrift aktiviert oder ein skript- bzw. bereichsspezifisches automatisches
 Routing eingerichtet werden.
 
-Ein expliziter Modus sollte nur verwendet werden, wenn dieses automatische
-Verhalten nicht den Anforderungen des Dokuments entspricht:
+Ein expliziter Modus überschreibt dieses automatische Verhalten gezielt:
 
 \begin{verbatim}
 \UseFont{sanskrit}          % recommended: registered automatic behavior
@@ -955,8 +932,8 @@ Verhalten nicht den Anforderungen des Dokuments entspricht:
 Die Komfortbefehle \texttt{\string\UseGlobalFont(s)} und
 \texttt{\string\UseLocalFont(s)} drücken dieselbe explizite Unterscheidung aus.
 Die Template-Schlüssel \texttt{globalfonts} und \texttt{mainfonts} sind
-ebenfalls ausdrückliche globale Überschreibungen; sie ersetzen im Normalfall
-nicht \texttt{fonts}.
+ebenfalls ausdrückliche globale Überschreibungen; \texttt{fonts} bleibt
+der automatische Standard.
 
 \subsection{Dokumentklassen und Paket-Einstiegspunkte}
 
@@ -986,11 +963,11 @@ Englischer Beamer-Wrapper; verwendet standardmäßig das Layout \texttt{beamer}.
 \texttt{impebeamer\_zh} &
 Chinesischer Beamer-Wrapper; verwendet standardmäßig das Layout \texttt{beamer} mit CMU und Shanggu. \\
 \texttt{impe.sty} &
-Lädt IMPE unter einer gewöhnlichen \LaTeX{}-Klasse, wenn keine Wrapper-Klasse gewünscht ist. \\
+Lädt IMPE unter einer vom Dokument gewählten gewöhnlichen \LaTeX{}-Klasse. \\
 \bottomrule
 \end{longtable}
 
-Die alten \texttt{next*}-Paket- und Klassennamen bleiben in Version 1.0.1
+Die alten \texttt{next*}-Paket- und Klassennamen bleiben in Version 1.x
 Kompatibilitätsaliase; neue Dokumente sollten jedoch die kanonischen
 \texttt{impe*}-Einstiegspunkte verwenden.
 
@@ -1176,7 +1153,7 @@ Standardbefehle, die unmittelbar von Paketen bereitgestellt werden, welche ein
 Feature lädt --- etwa \texttt{\string\addbibresource},
 \texttt{\string\printbibliography}, \texttt{\string\printindex} oder die
 Regelbefehle von \texttt{booktabs} --- behalten ihre normale Paketsyntax und
-werden von IMPE nicht neu definiert.
+behalten ihre gewöhnliche \LaTeX{}-Syntax.
 
 \subsection{Öffentliche Umgebungen und Tabellenspaltentypen}
 
@@ -1208,7 +1185,7 @@ Linksbündige, zentrierte und rechtsbündige \texttt{tabularx}-Spalten. \\
 \texttt{P\{w\}}, \texttt{M\{w\}}, \texttt{B\{w\}} &
 Absatzspalten fester Breite mit linksbündiger, zentrierter und rechtsbündiger Ausrichtung. \\
 \texttt{OneImage} &
-Einzelbild-Abbildung; unter Beamer inline statt als Float. \\
+Einzelbild-Abbildung; unter Beamer inline. \\
 \texttt{OneImageInline} &
 Zentriertes, nicht schwebendes Bild. \\
 \texttt{PanelFigure} &
@@ -1222,9 +1199,9 @@ Eingerückter kursiver Anzeige-Block für Beispiele, Zitate, linguistische Daten
 
 \subsection{Registrierte Schriftfamilien-IDs}
 
-Die folgende Tabelle listet die von \texttt{\string\UseFont} in IMPE 1.0.1
+Die folgende Tabelle listet die von \texttt{\string\UseFont} in IMPE 1.x
 akzeptierten Schriftfamilien-IDs auf. Die Spalte \textbf{Auto} fasst zusammen,
-was ein Aufruf von \texttt{\string\UseFont\{id\}} ohne Modus normalerweise
+was ein Aufruf von \texttt{\string\UseFont\{id\}} mit ausgelassenem Modus normalerweise
 aktiviert:
 
 \begin{description}
@@ -1236,8 +1213,7 @@ aktiviert:
 
 Die automatische Route ist die empfohlene Schnittstelle. Eine ausdrückliche
 Anforderung \texttt{[local]} oder \texttt{[global]} umgeht bewusst einen Teil
-dieser automatischen Entscheidung und sollte daher nur verwendet werden, wenn
-sie erforderlich ist.
+dieser automatischen Entscheidung und dient gezielten Überschreibungen.
 
 \begin{longtable}{@{}p{0.30\linewidth}p{0.11\linewidth}p{0.18\linewidth}p{0.31\linewidth}@{}}
 \toprule
@@ -1269,7 +1245,7 @@ sie erforderlich ist.
 
 \texttt{hindi} & L+R & \texttt{\string\HI} & Hindi-Devanagari mit registriertem Bereichs-Routing. \\
 \texttt{sanskrit} & L+R & \texttt{\string\SA} & Sanskrit-Devanagari mit Sanskrit-bewusstem Routing. \\
-\texttt{devanagari} & L & \texttt{\string\DEV} & Generisches Devanagari ohne sprachspezifisches Verhalten. \\
+\texttt{devanagari} & L & \texttt{\string\DEV} & Generisches Devanagari-Shaping. \\
 \texttt{tamil} & L & \texttt{\string\TA} & Tamil. \\
 \texttt{brahmi} & L & \texttt{\string\BR} & Brahmi. \\
 \texttt{tibetan} & L+R & \texttt{\string\TI} & Tibetisch mit Tsheg-bewusstem Zeilenumbruch. \\
@@ -1317,8 +1293,7 @@ sie erforderlich ist.
 
 \subsection{Erweiterungsschnittstellen für Fortgeschrittene}
 
-Diese Befehle sind für die Erweiterung von IMPE gedacht und nicht für die
-gewöhnliche Dokumentkonfiguration.
+Diese Befehle dienen der Erweiterung von IMPE.
 
 \begin{longtable}{@{}p{0.39\linewidth}p{0.55\linewidth}@{}}
 \toprule
@@ -1345,7 +1320,7 @@ Die vollständige Registrierungssyntax und die Erweiterungsregeln sind in
 \section{Showcase}\label{app:showcase}
 
 Die folgenden Seiten geben den vollständigen kanonischen IMPE-Showcase wieder.
-Der Showcase ist kein zweites Referenzhandbuch, sondern ein visueller Begleiter,
+Der Showcase ist ein visueller Begleiter des Referenzhandbuchs,
 der mehrsprachiges Font-Routing, komplexes Shaping, rechts-nach-links laufende
 Schriften, vertikales Schreiben, regionale CJK-Formen und Kombinationen von
 Dokumentfeatures demonstriert.

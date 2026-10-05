@@ -8,10 +8,11 @@ For changes since the latest versioned repository state, see [CHANGELOG.unreleas
 
 ## [1.0.2] - 2026-10-05
 
-Versioned repository state; no GitHub Release, CTAN release, or XSR integration.
+Versioned repository state. GitHub Release and CTAN publication remain separate
+optional steps; XSR integration is planned for a later version.
 
 * #5: Centralized monotonic hyperlink destinations for headings, TOC and bidirectional footnotes. Indexed term page numbers now link to recorded occurrences through xindy locations, including repeated visible page numbers.
-* #6: Resolve every registered face from its bundled file first, then TeX Live/system lookup, before existing strict/soft fallback. Core installs no longer need a matching assets tree for installed fonts.
+* #6: Resolve every registered face from its bundled file first, then TeX Live/system lookup, followed by existing strict/soft fallback. Core installs use installed fonts directly.
 * #7: Added `\Font{id}{content}` through the existing registered local command path, preserving routing overrides and script behavior. `\UseFont` and family-specific commands retain their meanings.
 * #4: Added `drawing`, exposing TikZ/PGF, pgfplots and forest through their native syntax.
 * Added runtime font, drawing and PDF index-link regressions, plus bilingual documentation.
@@ -27,9 +28,9 @@ Versioned repository state; no GitHub Release, CTAN release, or XSR integration.
 ### Changed
 
 * Adopted `impe-framework` as the CTAN archive and root-directory id while retaining the IMPE project name, canonical `impe*` runtime namespace, and existing TEXMF namespace.
-* Excluded legacy `next*` compatibility entries from CTAN while retaining and testing them in the repository and full/core releases.
+* CTAN now carries canonical `impe*` entries; the repository and full/core distributions retain and test the legacy `next*` compatibility entries.
 * Renamed the manual tree from `doc/` to `manual/`, moved the canonical showcase to `manual/showcase/`, and included its source, PDF, and bibliography in CTAN.
-* Converted current manuals, templates, and maintained tests to canonical `impe*` entries, with an automated guard against new legacy entry use outside the compatibility fixture and the separately maintained `papers/` tree.
+* Converted current manuals, templates, and maintained tests to canonical `impe*` entries, with an automated guard allowing legacy entries in the compatibility fixture and the separately maintained `papers/` tree.
 * Retired the tracked `examples/` scratch tree, moved its distinct hyperlink-anchor and Libertinus-math cases into the regression suite, and kept examples out of release packages.
 * Synchronized and tightened the English and Traditional Chinese README and subsystem references, corrected implementation details, and updated all current package/class metadata to v1.0.1 dated 2026-09-29.
 * Made release regressions derive archive and standalone-document filenames from `VERSION`, and retained deterministic CTAN and manual construction.
@@ -47,19 +48,19 @@ Versioned repository state; no GitHub Release, CTAN release, or XSR integration.
 ### Changed
 
 * Converted all `next*` package and class entry points into supported compatibility wrappers around the canonical `impe*` implementation.
-* Namespaced distributable runtime TeX filenames with an `impe-` prefix to avoid shared TeX-tree collisions.
+* Namespaced distributable runtime TeX filenames with an `impe-` prefix for distinct names in shared TeX trees.
 * Defined IMPE as Integrated Multilingual Publishing Environment while retaining `IMPE LaTeX System` as the formal project name.
 * Clarified the separation between the Git checkout, the local `assets/fonts/` library, and the full, core, and CTAN-oriented distributions.
 * Changed `impe.zip` to contain one top-level `impe/` directory and moved the canonical installer destination to `tex/latex/impe/`, with managed legacy-install cleanup.
-* Replaced the PowerShell-only externalized renderer with a portable TeXLua helper that resolves engines from `PATH`.
+* Replaced the Windows PowerShell externalized renderer with a portable TeXLua helper that resolves engines from `PATH`.
 * Changed the canonical manual engine from pdfLaTeX to XeLaTeX while preserving byte-for-byte reproducible PDF and CTAN builds.
-* Made Git tags and GitHub Releases the historical archive for source snapshots and versioned manual/showcase assets; no duplicate repository-local archive is maintained.
+* Made Git tags and GitHub Releases the historical archive for source snapshots and versioned manual/showcase assets.
 
 ### Fixed
 
 * Made `\UseLocalFont` and `\UseLocalFonts` request local mode explicitly while keeping mode-free `\UseFont`, `\UseFonts`, and the `fonts` template key automatic.
-* Added a no-op fallback for the optional LaTeX tagged-math positioning hook, keeping title/tabular paths compatible with the TeX Live 2026 tools bundle.
-* Made the repository manual build use a deterministic repository-shaped staging tree, the checkout's own runtime, the root `VERSION`, and the single canonical `_showcase/main.pdf` without duplicated documentation resources.
+* Added a neutral fallback for the optional LaTeX tagged-math positioning hook, keeping title/tabular paths compatible with the TeX Live 2026 tools bundle.
+* Made the repository manual build use a deterministic repository-shaped staging tree, the checkout's own runtime, the root `VERSION`, and one canonical `_showcase/main.pdf` resource.
 * Made the manual builder discover canonical language sources automatically and build them in a deterministic repository-shaped staging tree; the English and Traditional Chinese editions also retain direct source-directory XeLaTeX/latexmk builds.
 * Made explicit local font commands take precedence over automatic Unicode-range routing for the duration of their scope, with normal routing restored afterward.
 * Replaced fixed 4096-class transition generation with sparse generation over allocated XeTeX intercharacter classes, including a begin-document backfill for classes allocated later, and corrected same-owner comparison so adjacent blocks keep one shaping run.
@@ -72,7 +73,7 @@ Versioned repository state; no GitHub Release, CTAN release, or XSR integration.
 
 * Added Unicode-range global font routing and reusable range profiles for script-specific font ownership, including range-limited routes for complex and multilingual text.
 * Added the `headers` feature with running-head support and `\HeaderTitle{...}` for an explicit short header title.
-* Added Tibetan inline/global break behavior that permits breaks after tsheg separators before Tibetan letters or signs while avoiding breaks before Tibetan punctuation.
+* Added Tibetan inline/global break behavior that permits breaks after tsheg separators before Tibetan letters or signs and keeps Tibetan punctuation with the preceding text.
 * Added explicit math font selection with `\UseMathFont{...}` and added `mlmodern` as a registry-backed legacy font route.
 * Added hyperlink improvements for repeated heading numbers, reverse heading-to-TOC navigation, and bidirectional footnote-marker links.
 
@@ -81,7 +82,7 @@ Versioned repository state; no GitHub Release, CTAN release, or XSR integration.
 * Consolidated WenJin Mincho into the `wenjin` family and `\WJ{...}` local command, with Plane 0 / 2 / 3 handled through the CJK fallback chain.
 * Refined CJK routing so shared Han ideographs remain on the document's Chinese/CJK font when Japanese, Korean, or Vietnamese Han-Nom families are loaded; language-specific Han forms remain available through `\JP`, `\KR`, and `\HN`.
 * Refined CJK and Unicode-range fallback behavior, including Japanese global CJK routing and improved fallback handling for extended Han coverage.
-* Updated the Libertinus catalog route to use TeX Live OTF family names and include mono; text-family loading now uses fontspec's `no-math`, preserving Computer Modern math unless Libertinus Math is explicitly selected with `\UseMathFont{libertinus}`.
+* Updated the Libertinus catalog route to use TeX Live OTF family names and include mono; text-family loading now uses fontspec's `no-math`, preserving Computer Modern math by default and selecting Libertinus Math through `\UseMathFont{libertinus}`.
 * Refined paper-layout defaults, two-sided page handling, Chinese UI section numbering, table-of-contents spacing, caption labels, and starred-heading TOC behavior.
 * Made numbered paper-layout TOC entries, including chapters and nested sections, expand their number boxes to the natural label width while preserving a stable gap.
 * Made index sort keys and descriptions optional, localized the default parentheses, and changed the default index title to the localized standard `\indexname`.
@@ -90,7 +91,7 @@ Versioned repository state; no GitHub Release, CTAN release, or XSR integration.
 
 ### Fixed
 
-* Fixed range transitions so adjacent Unicode blocks owned by the same font family no longer split a shaping run, preserving Old Hangul clusters across Hangul Jamo and Jamo Extended blocks.
+* Fixed range transitions so adjacent Unicode blocks owned by the same font family preserve a shaping run, including Old Hangul clusters across Hangul Jamo and Jamo Extended blocks.
 * Fixed WenJin fallback behavior so it follows the active Shanggu/CJK main-font route correctly.
 
 ## [0.1.2] - 2026-04-28
@@ -100,7 +101,7 @@ Versioned repository state; no GitHub Release, CTAN release, or XSR integration.
 - Generated `IMPE-LaTeX-System-v0.1.2-full.zip` and `IMPE-LaTeX-System-v0.1.2-core.zip`.
 
 ### Fixed
-- Preserved explicit user `\date{...}` values in Chinese UI wrappers instead of overwriting them with the default localized date.
+- Preserved explicit user `\date{...}` values in Chinese UI wrappers; the localized date remains the default.
 
 ## [0.1.1] - 2026-03-20
 

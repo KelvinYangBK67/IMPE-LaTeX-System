@@ -8,11 +8,11 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 ## [1.0.2] - 2026-10-05
 
-版本化倉庫狀態；不建立 GitHub Release、不進行 CTAN 發佈，也不整合 XSR。
+版本化倉庫狀態。GitHub Release 與 CTAN 發佈屬於獨立的後續步驟；XSR 整合留待未來版本。
 
 * #5：標題、目錄返回點與雙向腳註共用遞增目的地配置。術語索引頁碼透過 xindy 位置連回正文，即使可見頁碼重複仍能區分。
-* #6：所有登錄字面依序查找隨附檔案、TeX Live／系統字體，再採用原有嚴格／軟回退。core 安裝使用已安裝字體時不需重建 assets 目錄樹。
-* #7：新增 `\Font{id}{內容}`，共用家族局部命令、路由覆寫與文字系統行為；`\UseFont` 及原有家族命令語義不變。
+* #6：所有登錄字面依序查找隨附檔案、TeX Live／系統字體，再採用原有嚴格／軟回退。core 安裝可直接使用已安裝字體。
+* #7：新增 `\Font{id}{內容}`，共用家族局部命令、路由覆寫與文字系統行為；`\UseFont` 及原有家族命令維持既有語義。
 * #4：新增 `drawing`，提供 TikZ/PGF、pgfplots 與 forest 原生語法。
 * 新增字體、繪圖與 PDF 索引連結執行期回歸，並更新雙語文件。
 
@@ -27,10 +27,10 @@ IMPE LaTeX System 的版本化變更記錄於此。
 ### 調整
 
 * 採用 `impe-framework` 作為 CTAN archive 與根目錄 id，同時保留 IMPE 專案名稱、標準 `impe*` runtime namespace 與既有 TEXMF namespace。
-* CTAN 不再收錄舊 `next*` 相容入口；倉庫與 full/core release 仍保留並測試這些 wrapper。
+* CTAN 收錄標準 `impe*` 入口；倉庫與 full/core release 保留並測試舊 `next*` 相容 wrapper。
 * 將手冊樹由 `doc/` 改名為 `manual/`，把標準 showcase 移至 `manual/showcase/`，並在 CTAN 收錄其原始碼、PDF 與參考書目。
-* 目前的手冊、模板與受維護測試都改用標準 `impe*` 入口，並加入自動檢查，防止相容性 fixture 與獨立維護的 `papers/` 樹以外重新使用舊入口。
-* 停止追蹤作為 scratch 的 `examples/` 樹，把其中獨立的 hyperlink-anchor 與 Libertinus-math 案例移入回歸測試，並確保發佈包不含 examples。
+* 目前的手冊、模板與受維護測試都改用標準 `impe*` 入口；自動檢查將舊入口的使用範圍維持在相容性 fixture 與獨立維護的 `papers/` 樹。
+* 移除受追蹤的 scratch `examples/` 樹，把其中獨立的 hyperlink-anchor 與 Libertinus-math 案例移入回歸測試；發佈包採用明確的內容清單。
 * 同步並精簡英文與繁體中文 README 及子系統參考文件，修正實作細節，並把目前所有 package/class metadata 更新為日期 2026-09-29 的 v1.0.1。
 * 發佈回歸測試改由 `VERSION` 推導 archive 與獨立文件檔名，同時維持 CTAN 與手冊的確定性建置。
 
@@ -38,35 +38,35 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 ### 工程收尾
 
-* 新增 Windows 與 Linux GitHub Actions CI；使用 TeX Live 公開字體 fixture，覆蓋既有 regression、CTAN、安裝、v0.1.3 遷移、手冊與可重現性檢查，不納入私有字體檔。
+* 新增 Windows 與 Linux GitHub Actions CI；使用 TeX Live 公開字體 fixture，覆蓋既有 regression、CTAN、安裝、v0.1.3 遷移、手冊與可重現性檢查。私有字體由本機字體庫提供。
 * 手冊標準建置引擎由 pdfLaTeX 改為 XeLaTeX，並維持 PDF 與 CTAN 封裝逐位元組可重現。
 * v0.1.3 遷移改用真實歷史 runtime 路徑的明確保守清單；只移除受管理的舊 generic 檔名，保留未知的頂層與巢狀使用者內容，並安全遷移已識別的本地 override。
 
 ### 新增
 
 * 新增標準公開入口 `impe`、`impeart`、`impebook`、`impereport`、`impebeamer` 及各 `_zh` class。
-* 在既有 full 與 core 封裝之外新增 CTAN 導向的 `impe.zip` release target。
+* 在既有 full 與 core 封裝系列中新增 CTAN 導向的 `impe.zip` release target。
 * 在 `doc/de/`、`doc/en/` 與 `doc/zh-tw/` 新增權威德文、英文與繁體中文手冊；三者都包含公開 API 快速參考、完整標準 showcase 與可重現且受追蹤的 PDF。
 * 新增標準／舊名入口、字體 mode alias、內部檔名命名空間、release 組裝、手冊資源、局部字體優先級、路由擴展性與泰文斷行的回歸測試。
 
 ### 調整
 
 * 將所有 `next*` 套件與 class 入口改為轉送至 `impe*` 標準實作的受支持相容 wrapper。
-* 所有可分發的內部 TeX runtime 檔改用 `impe-` 前綴，避免共享 TeX tree 中的檔名碰撞。
+* 所有可分發的內部 TeX runtime 檔改用 `impe-` 前綴，在共享 TeX tree 中維持專屬檔名。
 * 將 IMPE 定義為 Integrated Multilingual Publishing Environment（整合式多語出版環境），正式專案名稱仍為 `IMPE LaTeX System`。
 * 釐清 Git checkout、本地 `assets/fonts/` 字體庫，以及 full、core、CTAN 導向發佈包之間的關係。
-* 將 `impe.zip` 改為只含一個頂層 `impe/` 目錄，並把標準安裝位置改為 `tex/latex/impe/`，同時安全清理受管理的舊安裝。
-* 以從 `PATH` 解析引擎的可攜 TeXLua helper 取代只支援 PowerShell 的 externalized renderer。
-* 以 Git tag 與 GitHub Release 保存歷史源碼快照及帶版本號的手冊／showcase 成品；倉庫內不維護重複的歷史封存目錄。
+* 將 `impe.zip` 改為以單一頂層 `impe/` 目錄封裝，並把標準安裝位置改為 `tex/latex/impe/`，同時安全清理受管理的舊安裝。
+* externalized renderer 改用可攜 TeXLua helper，從 `PATH` 解析引擎。
+* 以 Git tag 與 GitHub Release 保存歷史源碼快照及帶版本號的手冊／showcase 成品，作為歷史封存位置。
 
 ### 修正
 
-* `\UseLocalFont` 與 `\UseLocalFonts` 現在會明確要求 local mode；無 mode 的 `\UseFont`、`\UseFonts` 與 `fonts` template key 仍採自動模式。
+* `\UseLocalFont` 與 `\UseLocalFonts` 現在會明確要求 local mode；省略 mode 的 `\UseFont`、`\UseFonts` 與 `fonts` template key 仍採自動模式。
 * 為可選的 LaTeX tagged-math 定位 hook 增加空操作 fallback，確保標題與 tabular 路徑相容於 TeX Live 2026 的 tools bundle。
-* 倉庫手冊建置現在使用可重現且與倉庫同形的暫存目錄、checkout 自有 runtime、根目錄 `VERSION` 與唯一的 `_showcase/main.pdf`，不再複製文件資源。
+* 倉庫手冊建置現在使用可重現且與倉庫同形的暫存目錄、checkout 自有 runtime、根目錄 `VERSION` 與唯一的 `_showcase/main.pdf` 作為文件資源。
 * 手冊建置器現在會自動發現標準命名的語言源碼，並在可重現且與倉庫同形的暫存目錄中建置；英文與繁體中文版本仍可直接從源碼目錄以 XeLaTeX/latexmk 建置。
 * 明確的局部字體命令現在會在其作用域內優先於自動 Unicode-range 路由，離開作用域後恢復正常全域路由。
-* 將固定生成 4096 個 class transition 的方法改為只針對已配置 XeTeX interchar class 的稀疏建表，並在文檔開始時補登較晚配置的 class；同時修正同 owner 比較，讓相鄰 block 維持同一 shaping run。
+* class transition 改為針對已配置 XeTeX interchar class 稀疏建表，並在文檔開始時補登較晚配置的 class；同時修正同 owner 比較，讓相鄰 block 維持同一 shaping run。
 * 載入泰文字體 family 時，透過 XeTeX 的 ICU `th_TH` locale 提供泰文字典斷行。
 
 ## [0.1.3] - 2026-08-29
@@ -75,7 +75,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 * 新增 Unicode range 全域字體路由與可重用的 range profiles，用於按文字範圍管理字體歸屬，並支援複雜文字與多語文件的 range-limited 路由。
 * 新增 `headers` feature，支援 running heads，並可透過 `\HeaderTitle{...}` 明確指定簡短頁眉標題。
-* 新增藏文 inline / global 斷行行為：在 tsheg 分隔符後接藏文字母或符號時允許斷行，同時避免在藏文標點前斷行。
+* 新增藏文 inline / global 斷行行為：在 tsheg 分隔符後接藏文字母或符號時允許斷行，斷點維持在藏文標點之後。
 * 新增 `\UseMathFont{...}`，可明確選擇數學字體；並新增 `mlmodern`，作為 registry 可選的傳統 LaTeX 字體路線。
 * 新增超連結處理，包括重複章節編號的穩定錨點、標題反向連結至目錄，以及腳註標記的雙向連結。
 
@@ -84,7 +84,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 * 將 WenJin Mincho 整合為 `wenjin` family 與 `\WJ{...}` 局部命令，Plane 0 / 2 / 3 改由 CJK fallback chain 統一處理。
 * 調整 CJK 路由：載入日文、朝鮮文或越南漢喃 family 時，共用漢字繼續使用文件的中文／CJK 字體；需要特定語言漢字字形時仍可使用 `\JP`、`\KR`、`\HN`。
 * 改善 CJK 與 Unicode-range fallback 行為，包括日文字體的全域 CJK 路由，以及擴展漢字範圍的 fallback 支援。
-* 更新 Libertinus catalog 路線，改用 TeX Live OTF 字族名稱並加入 mono；文字 family 改以 fontspec 的 `no-math` 載入，預設保留完整 Computer Modern 數學設定，只有明確使用 `\UseMathFont{libertinus}` 時才切換到 Libertinus Math。
+* 更新 Libertinus catalog 路線，改用 TeX Live OTF 字族名稱並加入 mono；文字 family 改以 fontspec 的 `no-math` 載入，預設保留完整 Computer Modern 數學設定；明確使用 `\UseMathFont{libertinus}` 時則切換到 Libertinus Math。
 * 改善紙本 layout 預設值、雙面文件頁面處理、中文 UI 章節編號、目錄間距、圖表題名與星號標題入目錄行為。
 * 紙本 layout 的所有帶編號目錄項，包括 chapter 與各層 section，現在會依編號自然寬度擴張並保留固定間距。
 * 術語索引的排序 key 與說明改為可選，預設括號依 UI 本地化，索引標題改用本地化標準 `\indexname`。
@@ -93,7 +93,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 ### 修正
 
-* 修正 range transition：相鄰 Unicode block 若屬於同一字體 family，不再切斷 shaping run，從而保留跨 Hangul Jamo 與 Jamo Extended block 的古諺文 cluster。
+* 修正 range transition：相鄰 Unicode block 若屬於同一字體 family，即維持同一 shaping run，從而保留跨 Hangul Jamo 與 Jamo Extended block 的古諺文 cluster。
 * 修正 WenJin fallback，使其能正確跟隨目前啟用的 Shanggu／CJK 主字體路線。
 
 
@@ -104,7 +104,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 - 生成 `IMPE-LaTeX-System-v0.1.2-full.zip` 與 `IMPE-LaTeX-System-v0.1.2-core.zip`。
 
 ### 修正
-- 中文 UI wrapper 現在會保留使用者明確設定的 `\date{...}`，不再被預設中文日期覆蓋。
+- 中文 UI wrapper 現在會優先保留使用者明確設定的 `\date{...}`，預設中文日期僅用於省略日期的情況。
 
 ## [0.1.1] - 2026-03-20
 

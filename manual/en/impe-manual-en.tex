@@ -2,7 +2,7 @@
 \documentclass[11pt]{impeart}
 
 % The manual deliberately applies a global house style.  Ordinary documents
-% should normally use \UseFont without a mode or the template `fonts` key.
+% should normally use the registered automatic behavior of \UseFont or the template `fonts` key.
 \UseFont{libertinus}[global]
 \setmonofont[
   BoldFont=lmmonolt10-bold.otf,
@@ -71,7 +71,7 @@ unified template interface.
 
 The normal use of IMPE is intentionally short.  A wrapper class can establish a
 sensible document layout and a default global font setup, after which a user
-loads only the additional families or features required by the document.  When
+loads the additional families or features required by the document. When
 more explicit control is wanted, the same components can be declared in a
 single \verb|\UseTemplateSet| call.
 
@@ -82,8 +82,7 @@ Some specialized internal routes may invoke other engines where a particular
 script or renderer requires them, but ordinary IMPE documents are intended to
 be compiled with \XeLaTeX{}.
 
-This manual is a user-oriented introduction rather than an exhaustive API
-reference.  Detailed subsystem documentation is maintained separately in the
+This manual is a user-oriented introduction. Detailed subsystem documentation is maintained in the
 repository under \texttt{docs/}.  In particular, the font, layout, feature, and
 system documents describe registration fields and implementation details that
 would be unnecessarily repetitive here.  This English manual is the reference
@@ -105,19 +104,18 @@ IMPE is prepared in three distribution forms, each intended for a different
 use case.
 
 The \emph{CTAN-oriented distribution} contains the portable runtime and public
-documentation without the private or locally maintained font library.  This is
+documentation. The local font library is managed separately. This is
 the \texttt{impe-framework.zip} archive, rooted at
 \texttt{impe-framework/}, and is intended for standard \TeX{} distribution.
-It contains only canonical \texttt{impe*} entries.  The \emph{core distribution}
+It contains canonical \texttt{impe*} entries.  The \emph{core distribution}
 contains the same system logic for users who prefer to install IMPE directly
 from a release and manage fonts separately.  The \emph{full distribution} may
 add a prepared local font library, subject to the redistribution status of the
 individual fonts.
 
-The distinction is deliberate.  IMPE itself is a document system; a large font
-collection is not part of the logical core of the package.  Keeping the two
-separate makes the runtime portable and allows different machines or users to
-supply different font libraries without modifying the framework.
+The distinction is deliberate. IMPE's document runtime remains portable,
+while machines and users can supply their own large font libraries through
+the independent font-resource layer.
 
 \subsection{Installed location}
 
@@ -141,7 +139,7 @@ impebeamer.cls
 with corresponding \texttt{\_zh} wrapper classes for Chinese-oriented document
 defaults.  Direct GitHub full and core releases also install the earlier
 \texttt{next*} compatibility entries; the CTAN \texttt{impe-framework}
-distribution contains only the canonical entries and no compatibility files.
+distribution contains the canonical entries.
 See Section~\ref{sec:compatibility}.
 
 When using a direct IMPE release, the supplied installer can be used to copy the
@@ -155,20 +153,20 @@ install.bat
 The launcher delegates to \texttt{install.ps1}; advanced callers may invoke
 that script with their host's normal script runner.
 
-Users installing through a \TeX{} distribution do not need the repository-side
-installer; package discovery is handled by the \TeX{} distribution in the usual
-way.
+For \TeX{} distribution installations, the \TeX{} distribution handles package
+discovery through its usual mechanism.
 
 \subsection{Font resources and local configuration}
 
 Each registered face first uses its bundled file if present, then fontspec's
 TeX Live or system lookup, and finally the configured error or fallback.
-Core installations need no separate font tree for already resolvable fonts.
+Core installations use already resolvable fonts directly.
 
-The source repository does not track the full local font library.  In a local
+The source repository carries the runtime; the full font library is managed
+locally. In a local
 or full installation, catalogued font files are normally resolved below an
-\texttt{assets/fonts/} root.  A different location can be selected without
-editing the package itself.
+\texttt{assets/fonts/} root.  \texttt{\string\SetCatalogFontRoot} selects another
+location through local configuration.
 
 The preferred persistent mechanism is \texttt{impe.local.tex}.  A local setup
 may, for example, contain
@@ -178,10 +176,9 @@ may, for example, contain
 \end{verbatim}
 
 with the path adjusted to the local machine.  The same command can also be used
-from a document when a one-off override is more appropriate.  Core and CTAN
-installations remain usable without a private font collection; only document
-features that request unavailable local font files will, naturally, require
-those resources to be supplied.
+from a document when a one-off override is more appropriate. Core and CTAN
+installations use resolvable system or TeX fonts directly. Document features
+that request local font files require those resources to be supplied.
 
 \subsection{A quick installation check}
 
@@ -203,9 +200,8 @@ font-loading interface are visible to \TeX{}.
 \section{Quick Start}
 
 The simplest IMPE workflow is to choose a wrapper class, select any desired
-font family or feature, and write the document normally.  IMPE does not replace
-ordinary \LaTeX{} document structure; it provides a reusable setup layer around
-it.
+font family or feature, and write the document normally. IMPE provides a
+reusable setup layer around ordinary \LaTeX{} document structure.
 
 A small article can therefore look like this:
 
@@ -249,7 +245,7 @@ same idea can be written through \verb|\UseTemplateSet|:
 
 A template set may also choose a layout and additional font families.  In
 practice, wrapper classes already supply a suitable default layout, so most
-documents only state the settings that differ from those defaults.
+documents state the settings that differ from those defaults.
 
 IMPE can also be loaded as a package underneath a standard \LaTeX{} class:
 
@@ -272,8 +268,8 @@ package use the same underlying system.
 \section{Ready-to-use Templates}
 
 The repository includes a small collection of starter projects under
-\texttt{templates/}.  These are intended for actual writing rather than for
-regression testing or internal demonstration.
+\texttt{templates/}. These are intended for actual writing. Regression
+fixtures and internal demonstrations live under \texttt{tests/}.
 
 The current starter templates are:
 
@@ -290,10 +286,10 @@ Each template follows the installed-package style and contains realistic
 metadata, sectioning, and body structure, together with representative table,
 figure, or slide material where appropriate.  A new project can therefore begin
 by copying the nearest template directory and editing the document contents
-instead of reconstructing a preamble from scratch.
+using the supplied preamble as a starting point.
 
 The templates deliberately use the canonical \texttt{impe*} entry points and
-show normal user-facing practice. Development-only fixtures live under
+show normal user-facing practice. Development fixtures live under
 \texttt{tests/}.
 
 \section{Document Classes and Public Entry Points}
@@ -318,8 +314,8 @@ Chinese-oriented counterparts are provided as \texttt{impeart\_zh},
 \texttt{impebook\_zh}, \texttt{impereport\_zh}, and
 \texttt{impebeamer\_zh}.  These select the corresponding Chinese document
 settings and include \texttt{shanggu} in the default global font configuration
-alongside \texttt{cmu}.  The distinction is a default configuration, not a
-restriction on what languages may appear in the document.
+alongside \texttt{cmu}. This default configuration supports multilingual
+content in either wrapper family.
 
 Unknown class options are passed through to the underlying standard class.  A
 normal option such as
@@ -333,8 +329,8 @@ usual way.
 
 \subsection{Using \texttt{impe.sty} directly}
 
-The wrapper classes are conveniences rather than separate implementations.  A
-user may instead keep a standard class and load
+The wrapper classes share one implementation and provide convenient defaults.
+A user may also keep a standard class and load
 
 \begin{verbatim}
 \usepackage{impe}
@@ -342,7 +338,7 @@ user may instead keep a standard class and load
 
 followed by an explicit layout, font, and feature configuration.  This is the
 recommended route when the document class is supplied by a journal, publisher,
-or another package and should not be replaced by an IMPE wrapper.
+or another package and must remain the document's class.
 
 \subsection{Titles and subtitles}
 
@@ -389,17 +385,15 @@ The four keys have different roles.
 \end{description}
 
 \texttt{mainfonts} is accepted as an alias of \texttt{globalfonts}; both keys
-are explicit global overrides rather than the normal automatic interface.
+provide explicit global overrides; \texttt{fonts} provides the automatic interface.
 
-The template interface is not a requirement that every document declare all
-four keys.  Its purpose is to provide one predictable place where a complete
-configuration \emph{can} be expressed.  Wrapper classes already apply their
-own layout and global-font defaults; specifying only an additional feature list
-is therefore perfectly normal.
+The template interface provides one predictable place to express a complete
+configuration. Wrapper classes already apply their own layout and global-font
+defaults, so a document may specify an additional feature list alone.
 
 \subsection{Single-purpose shortcuts}
 
-For documents that do not need a full template declaration, IMPE provides
+For focused configuration, IMPE provides
 public shortcuts corresponding to the individual subsystems:
 
 \begin{verbatim}
@@ -420,18 +414,18 @@ public shortcuts corresponding to the individual subsystems:
 The mode-free font forms are the recommended shortcuts for ordinary use.  The
 local and global aliases remain useful when a document intentionally overrides
 a family's registered behavior.  The unified and single-purpose interfaces are
-two views of the same public model rather than competing configuration systems.
+two views of the same public model.
 
-\subsection{Composition instead of monolithic templates}
+\subsection{Compositional templates}
 
-An IMPE template is deliberately not one indivisible style file.  A layout can
+An IMPE template combines reusable components. A layout can
 be reused with different font choices, the same feature set can be used in an
-article or book, and a script-specific font family can be added without
-changing unrelated document functionality.  This composition is the central
+article or book, and a script-specific font family can be added while
+preserving unrelated document functionality. This composition is the central
 design principle behind the public interface.
 
-For example, the following declarations describe two quite different documents
-without requiring two unrelated preamble templates:
+For example, the following declarations compose two different documents
+from the same template interface:
 
 \begin{verbatim}
 % English article
@@ -449,7 +443,7 @@ without requiring two unrelated preamble templates:
 }
 \end{verbatim}
 
-The second example only states the families and features it needs; the internal
+The second example states the families and features it needs; the internal
 font and layout subsystems remain responsible for the implementation details.
 
 \section{Fonts, Script Routing, and Multilingual Typesetting}
@@ -462,7 +456,7 @@ on demand; load families requiring extra packages in the preamble.
 
 \subsection{Font families as registered capabilities}
 
-IMPE does not treat a font name as merely a replacement for \verb|\rmfamily|.
+IMPE registers each font family with its shaping and routing behavior.
 Font families are registered in a central catalog with the information needed
 to use them correctly: available faces, paths or system font names, OpenType
 script and language settings, local command metadata, global routing behavior,
@@ -470,25 +464,24 @@ and, where necessary, a specialized layout or rendering route.
 
 This model allows a simple Latin family and a complex-script family to share
 the same public loading interface even when their internal requirements are
-very different.  The common abstraction is the \emph{registered family}, not a
-claim that every writing system is implemented identically.
+very different. The common abstraction is the \emph{registered family}; each
+writing system retains its appropriate implementation.
 
 \subsection{Automatic, global, and local loading}
 
-For ordinary use, load a family without a mode.  IMPE then follows the
+For ordinary use, omit the mode when loading a family. IMPE then follows the
 family's registered behavior, which may be local, global, or range-specific.
 The \texttt{fonts} template key applies the same automatic rule to a list.
 
 A \emph{global} family participates in document-wide font selection.  For a
 normal Latin family this can mean replacing the main roman, sans-serif, and
-monospaced channels.  For a script-specific family it can instead mean taking
-responsibility only for selected Unicode ranges while leaving Latin, Han, and
-other scripts untouched.
+monospaced channels. For a script-specific family it can mean taking
+responsibility for selected Unicode ranges while Latin, Han, and other
+scripts retain their existing font routing.
 
 A \emph{local} family is loaded for explicit use.  Local selection is useful
 when a particular passage requires a specific script font, a regional glyph
-form, or an editorially chosen typeface without changing the document-wide
-routing.
+form, or an editorially chosen typeface while preserving document-wide routing.
 
 Families are loaded through, for example,
 
@@ -502,10 +495,9 @@ Families are loaded through, for example,
 
 or through the corresponding keys in \verb|\UseTemplateSet|.  The
 \verb|\UseGlobalFont(s)| and \verb|\UseLocalFont(s)| aliases are explicit
-overrides, not the default recommendation.  Public commands created for
+overrides; the mode-free call remains the default recommendation. Public commands created for
 individual local families are defined by their catalog registrations; the
-complete list belongs in the font reference rather than in this introductory
-manual.
+complete list appears in the font reference.
 
 When an explicit local font command is active, it takes precedence over the
 automatic global range router within that scope.  Leaving the local scope
@@ -515,10 +507,9 @@ predictable even in a document with extensive automatic script selection.
 \subsection{Unicode-range routing}
 
 Some global families are intentionally range-limited.  A Devanagari family,
-for example, need not become the Latin main font simply because it is loaded
-globally.  IMPE can assign such a family only to the Unicode blocks for which
-it is responsible.  Multiple registered families can therefore coexist in one
-document without continually replacing one another's text.
+for example, can own its configured Unicode blocks while the Latin main font
+retains its existing role. Multiple registered families can therefore coexist
+in one document with distinct text ranges.
 
 This routing is most useful for genuinely multilingual prose: the author writes
 Unicode text normally, while IMPE selects the active registered family when the
@@ -530,20 +521,17 @@ the OpenType data associated with the selected family.
 
 CJK fonts require a somewhat different route from ordinary Unicode-range
 switching.  IMPE uses the xeCJK path for CJK global families, allowing the main,
-sans-serif, and monospaced CJK channels to be managed as CJK fonts rather than
-as a collection of isolated character switches.
+sans-serif, and monospaced CJK channels to be managed together as CJK fonts.
 
-Shared Han ideographs create an additional problem: Unicode alone does not say
-whether a Han character in a particular context should use Chinese, Japanese,
-or Korean regional glyph conventions.  Automatic routing therefore gives
+Shared Han ideographs use the same Unicode codepoints across Chinese, Japanese,
+and Korean regional glyph conventions. Automatic routing therefore gives
 language-specific scripts such as kana and Hangul their own claims while
 leaving shared Han characters on the document CJK family.  When an explicitly
 Japanese or Korean Han form is required, a local family command can be used to
 make that choice directly.
 
-This distinction is intentional.  Automatic routing should make the common
-case convenient without pretending that ambiguous Han characters contain
-language information which Unicode does not provide.
+This distinction is intentional. Automatic routing handles unambiguous script
+ranges; explicit local selection supplies regional forms for shared Han characters.
 
 \subsection{Shaping and line breaking}
 
@@ -553,12 +541,10 @@ and other shaping-sensitive scripts therefore remain ordinary Unicode text at
 the document level; IMPE supplies the font configuration needed for the text
 engine to shape them correctly.
 
-Some scripts also need line-breaking behavior that is not adequately described
-by ordinary spaces.  IMPE includes script-aware handling for cases such as
-Sanskrit in Devanagari, Tibetan, and Thai.  The purpose is not to replace the
-language's orthography with manual break markers, but to let the font and
-behavior layers provide appropriate opportunities while preserving clusters or
-script-specific punctuation rules.
+Some scripts need line-breaking behavior beyond ordinary spaces. IMPE includes
+script-aware handling for Sanskrit in Devanagari, Tibetan, and Thai. The font
+and behavior layers provide appropriate break opportunities while preserving
+clusters and script-specific punctuation rules.
 
 Right-to-left behavior is likewise attached to families that require it.  The
 public font model remains the same even though the underlying paragraph or
@@ -576,12 +562,10 @@ Externalized rendering is implemented through a portable \texttt{texlua} helper.
 helper resolves the requested \TeX{} engine from the system \texttt{PATH}, renders
 into an IMPE cache directory, and returns the resulting PDF to the main
 document.  The mechanism is kept behind the font registration layer so that a
-normal document does not need to manage temporary files or engine paths
-manually.
+normal document delegates temporary files and engine paths to the helper.
 
-These specialized routes are exceptions at the implementation level, not at
-the user-interface level.  They exist precisely so that the public font model
-can remain coherent when a script cannot be handled by a simple
+These specialized routes share the public font interface. They keep the model
+coherent for scripts requiring behavior beyond a simple
 \verb|\newfontfamily| declaration.
 
 \subsection{Where to find the complete font reference}
@@ -601,7 +585,7 @@ structured bundle of page geometry, text spacing, header behavior, book
 behavior, or slide behavior.  The individual low-level components are internal;
 normal documents select the public preset as a whole.
 
-The public presets in IMPE 1.0.1 are:
+The public presets in IMPE 1.x are:
 
 \begin{description}
   \item[\texttt{en\_doc}] English article/report layout.
@@ -613,8 +597,8 @@ The public presets in IMPE 1.0.1 are:
 \end{description}
 
 Presets declare which underlying document classes they support.  IMPE checks
-that compatibility before applying the preset, so a slide layout is not
-silently applied to an article or vice versa.
+that compatibility before applying the preset and reports mismatched document
+classes.
 
 Wrapper classes select the corresponding layout automatically.  Explicit
 selection is useful with raw standard classes or when a report should use a
@@ -629,7 +613,7 @@ The exact component values and geometry are documented in
 
 \subsection{Feature modules}
 
-Features are flat, composable modules.  Unlike layouts, they do not have a
+Features are flat, composable modules. Each feature has its own
 second preset layer.  A feature id simply loads the corresponding optional
 functionality the first time it is requested; repeated requests are ignored.
 
@@ -670,9 +654,9 @@ or
 The \texttt{math} feature loads the standard AMS-oriented mathematics stack and
 defines theorem-like environments including \texttt{theorem}, \texttt{lemma},
 \texttt{proposition}, \texttt{corollary}, \texttt{definition},
-\texttt{example}, and \texttt{remark}.  Loading a text family does not by itself
-force a new math alphabet: Computer Modern mathematics remains the default
-unless an explicit math route is selected.
+\texttt{example}, and \texttt{remark}. Computer Modern mathematics remains the
+default when a text family is loaded; an explicit math route selects another
+math alphabet.
 
 A different math family can be selected before the feature is loaded.  For
 example,
@@ -687,8 +671,8 @@ the exact package stack are listed in \texttt{docs/FEATURES.md}.
 
 \subsection{Citations, indexes, tables, and figures}
 
-The feature modules are designed to provide useful defaults without hiding the
-underlying \LaTeX{} ecosystem.  The \texttt{citations} feature, for example, uses
+The feature modules provide useful defaults while retaining access to the
+underlying \LaTeX{} ecosystem. The \texttt{citations} feature, for example, uses
 \texttt{biblatex} and \texttt{biber}; documents still use ordinary commands
 such as \verb|\addbibresource|, \verb|\textcite|, and
 \verb|\printbibliography|.  Citation presets such as APA, GB/T 7714, numeric,
@@ -707,9 +691,8 @@ directory, then rerun XeLaTeX twice. The
 higher-level environments while leaving native \texttt{booktabs},
 \texttt{graphicx}, and related commands available.
 
-This is the intended balance throughout the feature system: IMPE should reduce
-repetitive setup, not create a private replacement language for ordinary
-\LaTeX{}.
+Throughout the feature system, IMPE reduces repetitive setup while preserving
+ordinary \LaTeX{} commands.
 
 \subsection{Headers and hyperlinks}
 
@@ -725,22 +708,22 @@ table-of-contents structures, and stable destinations.  Documents may still use
 ordinary \verb|\label|, \verb|\ref|, \verb|\href|, and \verb|\url| commands.
 
 For the full list of feature-specific commands and environments, consult
-\texttt{docs/FEATURES.md} rather than treating this section as an API catalog.
+\texttt{docs/FEATURES.md}; this section introduces their main uses.
 
 \section{Compatibility and Migration}\label{sec:compatibility}
 
-IMPE 1.0.1 establishes the \texttt{impe*} names as the canonical public
+IMPE 1.x establishes the \texttt{impe*} names as the canonical public
 interface.  New documents should therefore use \texttt{impe.sty},
 \texttt{impeart}, \texttt{impebook}, \texttt{impereport},
 \texttt{impebeamer}, and their Chinese variants.
 
 Earlier development releases used the \texttt{next*} naming scheme.  Those
-entry points remain supported compatibility wrappers in 1.0.1; they are not
-deprecated in this release.  Existing documents that load the
+entry points remain supported compatibility wrappers in 1.x, with their
+existing status maintained. Existing documents that load the
 \texttt{nextart} class or \texttt{nextsystem} package continue to compile
 against the same underlying implementation.
-The compatibility layer exists to preserve old documents, not to define a
-parallel set of APIs for new work.
+The compatibility layer preserves old documents; canonical \texttt{impe*}
+entries serve new work.
 
 The direct installer also recognizes a managed installation from the 0.1.x
 series under \texttt{tex/latex/nextsystem/}.  During migration it installs the
@@ -749,14 +732,11 @@ override files when appropriate, removes files known to belong to the old
 managed runtime, and leaves unrelated user-created files or subdirectories in
 place.
 
-A legacy \texttt{nextsystem.local.tex} can therefore survive migration without
-requiring the old generic runtime filenames to remain visible in the TEXMF
-tree.  New local configuration should use \texttt{impe.local.tex}.
+A legacy \texttt{nextsystem.local.tex} can therefore survive migration as a
+local override. New local configuration should use \texttt{impe.local.tex}.
 
-No source-level conversion is required merely because a document was written
-with the old wrapper names.  Authors may update those names when convenient,
-but compatibility is intentionally a runtime concern rather than a forced
-migration of every existing document.
+Documents written with old wrapper names continue to compile through the
+compatibility runtime. Authors may update those names when convenient.
 
 \section{Package Structure and Extension Points}
 
@@ -776,8 +756,8 @@ docs/      detailed subsystem documentation
 
 \subsection{The stable core}
 
-The \texttt{core/} layer contains the framework that should not have to change
-whenever a new font family, layout preset, or feature is added.  It implements
+The \texttt{core/} layer contains stable shared mechanisms for new font
+families, layout presets, and features. It implements
 the font registry and routing machinery, the layout registry and compatibility
 checks, the feature loader, and related shared behavior.
 
@@ -793,30 +773,28 @@ The \texttt{catalog/} layer assigns public ids and metadata.  It contains the
 central registrations for fonts, layouts, and features.  For many extensions,
 this is the correct place to begin.
 
-An ordinary font family that needs only standard \texttt{fontspec} shaping can
+An ordinary font family using standard \texttt{fontspec} shaping can
 usually be expressed entirely as a catalog registration.  Likewise, a public
 layout preset is assembled from existing internal components, and a feature id
 maps to its implementation module.  Keeping those declarations centralized
-makes the public surface auditable without searching through the entire source
-tree.
+makes the public surface auditable in one place.
 
 \subsection{Modules}
 
 The \texttt{modules/} layer is reserved for functionality that genuinely needs
 its own implementation: feature modules, specialized script support, or
 reusable internal layout components.  A new module should therefore represent a
-real behavioral extension rather than merely a convenient place to put a font
-name.
+real behavioral extension; font names belong in catalog registrations.
 
 This rule is particularly important for multilingual support.  Most scripts
 should use ordinary OpenType shaping and catalog metadata.  Specialized modules
-are appropriate only when the writing system or rendering strategy requires
-behavior that the generic core cannot express cleanly.
+serve writing systems or rendering strategies requiring behavior beyond the
+generic core.
 
 \subsection{Extending IMPE}
 
-The detailed registration interfaces are intentionally outside the scope of
-this user manual.  Developers extending the system should begin with
+Developers extending the system should begin with the detailed registration
+interfaces in
 \texttt{docs/SYSTEM.md} and then consult the relevant subsystem document:
 \texttt{docs/FONTS.md}, \texttt{docs/LAYOUTS.md}, or
 \texttt{docs/FEATURES.md}.
@@ -878,22 +856,21 @@ with this edition.
 \section{Quick Reference}
 \label{app:quick-reference}
 
-This appendix summarizes the documented public interface of IMPE 1.0.1.
-It is intended for lookup rather than as a replacement for the explanations in
-the main text or the detailed subsystem documentation under \texttt{docs/}.
-Internal implementation commands, in particular commands beginning with
-\texttt{\string\Next...}, are not part of this reference.
+This appendix summarizes the documented public interface of IMPE 1.x.
+It serves as a lookup companion to the explanations in the main text and
+detailed subsystem documentation under \texttt{docs/}. Internal implementation
+commands, including those beginning with \texttt{\string\Next...}, are
+documented with their implementation.
 
 \subsection{Recommended font-loading model}
 
 For ordinary use, prefer \texttt{fonts = \{...\}} inside
 \texttt{\string\UseTemplateSet} or use \texttt{\string\UseFont\{...\}}
-directly.  With no explicit mode, IMPE follows the registered behavior of the
+directly. Omitting the mode makes IMPE follow the registered behavior of the
 family: it may define a local command, activate a document-wide font, or install
 script- or range-specific automatic routing as appropriate.
 
-Use an explicit mode only when that automatic behavior is not what the document
-needs:
+Use an explicit mode to override that automatic behavior deliberately:
 
 \begin{verbatim}
 \UseFont{sanskrit}          % recommended: registered automatic behavior
@@ -909,8 +886,7 @@ needs:
 The convenience commands \texttt{\string\UseGlobalFont(s)} and
 \texttt{\string\UseLocalFont(s)} express the same explicit distinction.
 The \texttt{globalfonts} and \texttt{mainfonts} template keys are likewise
-explicit global overrides; they are not the normal replacement for
-\texttt{fonts}.
+explicit global overrides; \texttt{fonts} provides automatic selection.
 
 \subsection{Document classes and package entry points}
 
@@ -940,12 +916,12 @@ English Beamer wrapper; defaults to the \texttt{beamer} layout. \\
 \texttt{impebeamer\_zh} &
 Chinese Beamer wrapper; defaults to the \texttt{beamer} layout with CMU and Shanggu. \\
 \texttt{impe.sty} &
-Loads IMPE under an ordinary \LaTeX{} class when no wrapper class is desired. \\
+Loads IMPE under an ordinary \LaTeX{} class chosen by the document. \\
 \bottomrule
 \end{longtable}
 
 The legacy \texttt{next*} package and class names remain compatibility aliases
-in version 1.0.1, but new documents should use the canonical \texttt{impe*}
+in version 1.x, but new documents should use the canonical \texttt{impe*}
 entry points.
 
 \subsection{Core setup commands}
@@ -1129,7 +1105,7 @@ Set the default float placement for panel figures. \\
 Standard commands provided directly by packages loaded by a feature---for
 example \texttt{\string\addbibresource}, \texttt{\string\printbibliography},
 \texttt{\string\printindex}, or the \texttt{booktabs} rule commands---retain
-their normal package syntax and are not redefined by IMPE.
+their normal package syntax as provided by \LaTeX{}.
 
 \subsection{Public environments and table column types}
 
@@ -1161,7 +1137,7 @@ Ragged-right, centered, and ragged-left \texttt{tabularx} columns. \\
 \texttt{P\{w\}}, \texttt{M\{w\}}, \texttt{B\{w\}} &
 Fixed-width paragraph columns with ragged-right, centered, and ragged-left alignment. \\
 \texttt{OneImage} &
-Single-image figure; becomes inline rather than floating under Beamer. \\
+Single-image figure; appears inline under Beamer. \\
 \texttt{OneImageInline} &
 Centered non-floating image. \\
 \texttt{PanelFigure} &
@@ -1176,7 +1152,7 @@ Indented italic display block for examples, quotations, linguistic data, or teac
 \subsection{Registered font-family identifiers}
 
 The table below lists the font-family IDs accepted by
-\texttt{\string\UseFont} in IMPE 1.0.1.  The \textbf{Auto} column summarizes
+\texttt{\string\UseFont} in IMPE 1.x.  The \textbf{Auto} column summarizes
 what a mode-less \texttt{\string\UseFont\{id\}} normally activates:
 
 \begin{description}
@@ -1220,7 +1196,7 @@ that automatic decision and should therefore be used only when required.
 
 \texttt{hindi} & L+R & \texttt{\string\HI} & Hindi Devanagari with registered range routing. \\
 \texttt{sanskrit} & L+R & \texttt{\string\SA} & Sanskrit Devanagari with Sanskrit-aware routing. \\
-\texttt{devanagari} & L & \texttt{\string\DEV} & Generic Devanagari without language-specific behavior. \\
+\texttt{devanagari} & L & \texttt{\string\DEV} & Generic Devanagari shaping. \\
 \texttt{tamil} & L & \texttt{\string\TA} & Tamil. \\
 \texttt{brahmi} & L & \texttt{\string\BR} & Brahmi. \\
 \texttt{tibetan} & L+R & \texttt{\string\TI} & Tibetan with tsheg-aware line-breaking behavior. \\
@@ -1268,8 +1244,7 @@ that automatic decision and should therefore be used only when required.
 
 \subsection{Advanced extension interfaces}
 
-These commands are intended for extending IMPE rather than for ordinary
-document setup.
+These commands support extension of IMPE.
 
 \begin{longtable}{@{}p{0.39\linewidth}p{0.55\linewidth}@{}}
 \toprule
@@ -1296,7 +1271,7 @@ For the full registration syntax and extension rules, see
 \section{Showcase}\label{app:showcase}
 
 The following pages reproduce the complete canonical IMPE showcase.  The
-showcase is not a second reference manual; it is a visual companion
+showcase is a visual companion to the reference manual,
 demonstrating multilingual font routing, complex shaping, right-to-left
 scripts, vertical writing, CJK regional forms, and combinations of document
 features.

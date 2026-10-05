@@ -14,22 +14,22 @@
 %   xelatex -shell-escape impe-showcase.tex
 %
 % Font declarations are intentionally completed in the preamble.  Most script
-% families are loaded as explicit local interfaces only; automatic Unicode-
-% range routing is enabled for a small representative set.  This avoids the
+% families are loaded through explicit local interfaces; automatic Unicode-
+% range routing is enabled for a small representative set. This keeps the
 % automatic routing table compact while keeping representative routing
 % regressions visible. Explicit local commands take precedence over these
-% automatic owners in v1.0.1.
+% automatic owners in v1.x.
 %
 % The first style matrix is deferred to the following landscape page so that
 % the surrounding portrait text may continue normally.  This relies on the
 % tables feature loading afterpage.
 %
-% Mathematical font selection is left at the IMPE default.  The showcase does
-% not force Libertinus Math, and typewriter text is reset to Latin Modern Mono.
+% Mathematical font selection uses the IMPE default, and typewriter text is
+% reset to Latin Modern Mono.
 %
-% Egyptian Hieroglyphs remain intentionally omitted from the showcase.
-% Khitan Small Script is included only as the current linear fallback;
-% canonical stacked Khitan rendering is not yet claimed here.
+% The showcase covers the implemented script routes, including Khitan Small
+% Script through its current linear fallback. Egyptian Hieroglyphs are reserved
+% for future coverage.
 
 \begin{filecontents*}[overwrite]{references.bib}
 @book{knuth1984texbook,
@@ -48,7 +48,7 @@
 \HeaderStyle{running}
 
 % IMPORTANT:
-% Do not insert blank lines inside the registration argument blocks.
+% Keep registration argument blocks contiguous.
 
 \UseTemplateSet{
   fonts = {
@@ -69,7 +69,7 @@
 
 \setmonofont{Latin Modern Mono}
 
-% Explicit local interfaces.  These do not claim automatic Unicode ranges.
+% Explicit local interfaces; automatic Unicode ownership is declared separately.
 \UseFont{noto}[local]
 \UseFont{times}[local]
 \UseFont{gentium}[local]
@@ -191,8 +191,7 @@ showcase is intentionally broader than the focused regression fixtures under
 This section presents IMPE's explicit local font commands and compares their
 available serif, bold, italic, and sans-serif styles. The complete font-family
 matrix appears on the following landscape page. Where a requested face is
-unavailable, IMPE falls back according to the family configuration rather than
-requiring special-case markup.
+unavailable, IMPE follows the family's configured fallback automatically.
 
 \afterpage{%
 \begin{landscape}
@@ -320,12 +319,12 @@ Sans bold italic
 different ways. The main specimen is a dense paragraph in which explicit local
 families, right-to-left runs, complex shaping, shared Han choices, and inline
 vertical writing are allowed to interact. A later compact regression enables
-automatic Unicode-range ownership for only a small set of ordinary scripts.
+automatic Unicode-range ownership for a small representative set of scripts.
 
 \subsection{Mixed-Script Paragraph}
 
-The following specimen is intentionally one \TeX~paragraph. It contains no
-English transition sentences: every script that appears contributes a complete
+The following specimen is intentionally one \TeX~paragraph. Each script
+contributes a complete
 sentence or clause. Armenian, Georgian, Coptic, Glagolitic, and Tamil are
 left as raw Unicode to exercise the small automatic-routing set; all other
 script families in the paragraph use explicit local overrides.
@@ -355,10 +354,9 @@ script families in the paragraph use explicit local overrides.
 \subsection{Minimal Automatic Unicode-Range Regression}
 
 \Term[sort=Unicode range routing]{Unicode-range routing}
-[automatic font ownership] is exercised here only on a small representative
-set. This keeps the v1.0.1 showcase focused on routing correctness without
-turning the entire document into a large interchar transition graph. The
-specimen itself contains raw Unicode only.
+[automatic font ownership] is exercised here on a small representative
+set. The showcase tests routing correctness with a compact interchar
+transition graph. The specimen itself uses raw Unicode.
 
 
 Հայերեն այս ամբողջական նախադասությունը գրված է առանց տեղական տառատեսակի հրամանի։
@@ -377,8 +375,7 @@ specimen itself contains raw Unicode only.
 section therefore uses explicit local families throughout. Each specimen is
 long enough to form a genuine paragraph, allowing line breaking, inter-word
 spacing, punctuation, digits, bidirectional interaction, and OpenType shaping
-to be inspected without enabling overlapping automatic Arabic, Hebrew, or
-Syriac range owners.
+to be inspected through explicit local Arabic, Hebrew, and Syriac families.
 
 \subsection{Arabic}
 
@@ -424,17 +421,16 @@ Eastern Syriac stylistic family:
 % ==========================================================================
 
 \Term[sort=vertical writing]{Vertical writing}
-[horizontal-layout-compatible vertical embedding] is currently implemented
-as a compatibility mode inside an otherwise horizontal document layout.
-IMPE does not yet provide a fully vertical page or paragraph flow. Instead,
-the text is divided at word boundaries, and each word is typeset vertically
+[horizontal-layout-compatible vertical embedding] provides local vertical
+runs inside a horizontal document model. The text is divided at word
+boundaries, and each word is typeset vertically
 while the resulting word-sized units continue to participate in ordinary
 horizontal paragraph layout. Spaces therefore become natural break
 opportunities between vertical words.
 
 This design keeps genuinely vertical glyph orientation while allowing the
 text to wrap within normal horizontal pages, with relatively compact line
-spacing and without requiring a separate vertical document model. The
+spacing. The
 specimens below are deliberately long enough to test this compatibility
 strategy under realistic paragraph conditions: word segmentation, inter-word
 spacing, line breaking, line spacing, punctuation, ordering, and recovery of
@@ -520,15 +516,13 @@ than as a continuous philological quotation.
 [generic complex shaping] is tested here through explicit local families.
 This deliberately separates shaping from Unicode-range ownership: if a local
 specimen is wrong, the failure belongs to the selected family or shaping path
-rather than to an automatic range transition. Egyptian Hieroglyphs remain
-outside this showcase, and Khitan Small Script is recorded only in its current
-linear fallback form.
+through the selected local family and shaping path. Khitan Small Script is
+recorded through its current linear fallback form.
 
 \subsection{Devanagari}
 
 The Sanskrit local family exercises conjuncts, virama behavior, pre-base and
-post-base vowel signs, and longer clusters without enabling a document-wide
-Devanagari owner.
+post-base vowel signs, and longer clusters through explicit local selection.
 
 \begin{TableBookX}
   {L L}
@@ -581,12 +575,12 @@ ordinary document width:
 
 Brahmi is provided through two local families. The redistributable Noto
 family provides broad Brahmi coverage, but in the current IMPE/\XeTeX~setup
-it does not produce the expected stacked forms for all conjunct sequences.
+its current shaping produces linear forms for some conjunct sequences.
 Segoe UI Historic is therefore exposed through \texttt{\textbackslash SEG}
 as an alternative reference family and produces the intended stacking in
 these cases. Because Segoe UI Historic is a Microsoft Windows font, its font
-binary is not distributed with IMPE; the local command is available only
-when the user supplies or already has access to the font.
+binary remains a user-supplied local resource; the local command works when
+the font is supplied or already installed.
 
 \begin{TableBookX}
   {L L}
@@ -606,8 +600,8 @@ Thai &
 
 \subsection{Khitan Small Script: current linear fallback}
 
-Khitan Small Script is already exposed through IMPE's public font interface,
-while its canonical stacked layout is not yet used in this showcase. The
+Khitan Small Script is exposed through IMPE's public font interface and shown
+through its current linear rendering path. The
 following specimen is taken from the Khitan Small Script epitaph of Xiao
 Hudujin and is deliberately long enough to exercise the present linear
 fallback across continuous text, cluster boundaries, spacing, and paragraph
@@ -623,12 +617,11 @@ line breaking.
 \Term[sort=CJK family selection]{CJK family selection}
 [continuous text, shared Han ownership, and explicit regional overrides]
 distinguishes the document CJK family from language-specific local families.
-Unicode codepoints alone cannot reliably determine the intended regional form
+Explicit local family selection determines the intended regional form
 of shared Han characters, while several East Asian writing systems also
 require shaping behavior that extends beyond ordinary Han glyph selection.
 
-The specimens in this section therefore use normal-width continuous text
-rather than isolated character strings. They exercise paragraph composition,
+The specimens in this section use normal-width continuous text. They exercise paragraph composition,
 line breaking, punctuation, regional glyph forms, Hangul composition,
 historical jamo, supplementary-plane ideographs, and mixed-script runs.
 A compact table at the end isolates shared Han codepoints for direct visual
@@ -650,8 +643,8 @@ This paragraph uses the explicit Simplified Chinese family throughout.
 
 Traditional characters can also be deliberately typeset through the Mainland
 Chinese family. This separates character repertoire from regional glyph
-selection: traditional codepoints do not by themselves imply a Taiwan or
-Hong Kong font.
+selection: the explicit family choice supplies the regional form for
+traditional codepoints.
 
 \SC{現代中文排版並不只是把一個個漢字依次放進頁面。一個真正的正文環境還需要同時處理標點、數字、書名號、引號、括號以及連續句子之間的換行關係，並且在較長的段落中保持穩定的字面和行距。對於共享的漢字碼位，不同地區使用的字體還可能給出不同的字形，因此同一個「骨、直、令、具、角」在不同字體家族中會表現出細微而穩定的區域差異。這裡特意使用傳統漢字而仍然選擇大陸字體家族，以檢查字符繁簡與地域字形選擇能否保持彼此獨立，並觀察長段落中共享漢字、繁體字和全角標點的連續排版。}
 
@@ -689,8 +682,8 @@ Hangul composition, punctuation, word spacing, and paragraph wrapping.
 \paragraph{Modern Korean --- mixed Hanja and Hangul}
 
 The next paragraph keeps Hangul and Hanja inside a single explicit Korean
-family. Shared Han characters must therefore retain Korean regional forms
-without interrupting the surrounding Hangul text.
+family. Shared Han characters retain Korean regional forms throughout the
+surrounding Hangul text.
 
 \KR{韓國語의 現代 文體는 오늘날 대체로 한글만으로 적지만, 歷史ㆍ言語ㆍ哲學ㆍ法律과 같은 분야에서는 漢字를 함께 적은 문헌을 어렵지 않게 만날 수 있다. 이런 漢字混用文을 조판할 때에는 한글 音節과 句讀點 사이에 들어가는 漢字가 갑자기 다른 地域 字形으로 바뀌지 않아야 하며, 韓國ㆍ朝鮮ㆍ漢字ㆍ文化ㆍ文字와 같은 어휘도 앞뒤의 한글 문맥과 한 family 안에서 자연스럽게 이어져야 한다. 이 문단은 國語의 읽기 흐름을 유지하면서 여러 漢字語와 고유어를 섞어, 실제 문헌에서 볼 수 있는 긴 혼용문이 줄바꿈을 거쳐도 안정적으로 조판되는지를 시험한다.}
 
@@ -700,16 +693,15 @@ without interrupting the surrounding Hangul text.
 Jeju is useful here because practical orthographies make active use of the
 arae-a and decomposed Hangul sequences that are rare in ordinary modern
 Korean. The following is a composite regression specimen assembled from
-short attested Jeju-language passages rather than a newly invented
-``standard'' Jeju paragraph.
+short attested Jeju-language passages for a paragraph-level regression.
 
 \KR{제주말(濟州말)은 제주섬서 ᄀᆞᆯ아지는 말이다. 제주말모음은 시간 지나멍 여러 가지 변화가 이섯다. 제주섬은 한라산광 ᄌᆞᄁᆞᆺ듸 오름덜록 일뤄진 섬이라. 엿적 화산활동으록 굼부리가 꿰쉉 곤데곤데 ᄋᆢ라 오름이 하영 삿다. 낭(木)은 나무질로 뒌 줄기를 가지고 잇인 여러헤살이 식물이다. 제주말 위키벡과 또시는 제주어 위키백과는 제주말로 운영헴신 위키벡과 언어판이라.}
 
 \paragraph{Middle Korean and Old Hangul --- historical corpus specimen}
 
 The historical specimen deliberately retains decomposed jamo and tone marks.
-Rather than normalizing several sources into modern spelling, short genuine
-historical fragments are placed consecutively to form a paragraph-level
+Short genuine historical fragments retain their source spellings and are
+placed consecutively to form a paragraph-level
 shaping regression.
 
 \KR{나랏〮말〯ᄊᆞ미〮中듀ᇰ國귁〮에〮 달아〮문ᄍᆞᆼ와〮로서르ᄉᆞᄆᆞᆺ디〮아니〮ᄒᆞᆯᄊᆡ〮　아〮기 ᄇᆡ여〮셔 과ᄀᆞᆯ이〮 가ᄉᆞᆷ〮 알파〮주글〮 ᄃᆞᆺ〮ᄒᆞ〮거든〮　두들겐 開闢ᄒᆞᆯ 젯 므리 疏通ᄒᆞ고 남ᄀᆞᆫ 古今엣 남기 섯것도다　머리〮 알ᄑᆞ고〮 고〮히 막고〮 머리〮와눈〮괘〮 환티〮 아니〮커든〮　긔〮운이〮 우흐〮로 올아〮 머리〮 알포〮미 ᄣᆞ리ᄂᆞᆫ ᄃᆞᆺ〮거든〮　넙고 큰 天造 ᄉᆞ이예 다ᄉᆞᆯ며 어즈러우민ᄃᆞᆯ 엇디 덛덛ᄒᆞᆫ 數ㅣ리오}
@@ -750,8 +742,8 @@ the explicit Japanese family.
 The opening sentence below is historical text; the continuation is a
 showcase-written regression passage that deliberately retains historical kana
 spellings such as \JP{ゐる}, \JP{やう}, and \JP{言ふ}. This keeps the
-specimen long enough for paragraph testing without presenting newly written
-material as an archival transcription.
+specimen long enough for paragraph testing while identifying the continuation
+as showcase-written text.
 
 \JP{真夏の宿屋は空虚であつた。窓の外には白い雲がゆつくり流れ、庭の木立では蟬が絶えず鳴いてゐる。旅人は古い椅子に腰をおろし、まだ來ない馬車の音を待ちながら、時計の針ばかりを眺めてゐた。誰も何も言はないので、午後の光だけが廊下を少しづつ移つて行くやうに見えた。かうして長い時間が過ぎても、玄關の戸は一度も開かず、遠くの道から聞えて來る物音だけが、時々靜かな宿の空氣を動かしてゐるのであつた。}
 
@@ -760,7 +752,7 @@ material as an archival transcription.
 The first sentence is taken from Rai San'yō's \emph{Nihon Gaishi}; the
 remainder is a showcase-written Kanbun-style regression continuation. The
 purpose here is typographic: Japanese Han glyphs must remain selected even
-when no kana occur in the run.
+throughout the all-Han run.
 
 \JP{外史氏曰、吾讀舊志、見鳥羽帝時數下制符。蓋日本文章之傳、漢籍之學與國史之記相因而久矣。昔之學者讀經史、作序記、論人物、述治亂、多用漢文而各成其體。今取其字列於一段、所以驗日本字形之連續、句讀之位置、長行之折返、以及共享漢字在無假名介入時亦不離其本地字體也。文字雖同出一碼、而骨直令具角門國學龍諸字之形、隨地域字體而微異，故尤宜以連續文章觀之。}
 
@@ -769,8 +761,8 @@ when no kana occur in the run.
 
 Okinawan is represented by a composite specimen from the Wikimedia Okinawan
 test project. Its mixed use of kana and Han characters makes it a useful
-additional Japanese-family regression, while the orthography should not be
-read as a claim that one universal Okinawan spelling standard exists.
+additional Japanese-family regression. The orthography reflects this composite
+corpus specimen.
 
 \JP{沖縄口ぇー琉球諸語ぬてぃ壱ちやいびーん。うちなーぐちぬ首里那覇方言ぉー琉球国ぬじょーま言葉やびたん。琉球王國や、昔ジジ中心んかい存在さる王国やたん。王や首里天加那志とぅ言ん。首里城や、沖縄県ぬ城やん。琉球王朝ぬ王城っし、沖縄県ぬいっちん大さるぐしくやん。漢字ぇー、大昔唐ぬ国んかいそーじー現りーる文字ぬてぃーちやん。やまとぅ、高麗、るーちゅー、ベトナムぉー、大昔唐ぬ国から漢字伝わてぃちゃん。}
 
@@ -797,8 +789,8 @@ corresponding Hán-Nôm text uses the VinaWiki repertoire.
 \paragraph{Quốc Ngữ --- document Latin family}
 
 The first specimen is deliberately unwrapped and therefore remains in the
-document Latin family, Libertinus. It tests Vietnamese diacritics without a
-language-specific font override.
+document Latin family, Libertinus. It tests Vietnamese diacritics through
+that document-wide font choice.
 
 Trải qua mấy nghìn năm lịch sử, Nhân dân Việt Nam lao động cần cù, sáng tạo, đấu tranh anh dũng để dựng nước và giữ nước, đã hun đúc nên truyền thống yêu nước, đoàn kết, nhân nghĩa, kiên cường, bất khuất và xây dựng nên nền văn hiến Việt Nam. Từ năm 1930, dưới sự lãnh đạo của Đảng Cộng sản Việt Nam do Chủ tịch Hồ Chí Minh sáng lập và rèn luyện, Nhân dân ta tiến hành cuộc đấu tranh lâu dài, đầy gian khổ, hy sinh vì độc lập, tự do của dân tộc, vì hạnh phúc của Nhân dân. Cách mạng tháng Tám thành công, ngày 2 tháng 9 năm 1945, Chủ tịch Hồ Chí Minh đọc Tuyên ngôn độc lập, khai sinh ra nước Việt Nam dân chủ cộng hòa, nay là Cộng hòa xã hội chủ nghĩa Việt Nam.
 
@@ -814,8 +806,7 @@ Libertinus under identical paragraph conditions.
 
 \paragraph{Hán-Nôm --- VinaWiki repertoire}
 
-The Hán-Nôm specimen corresponds to the Quốc Ngữ passage above rather than
-serving as an unrelated coverage string. Because the local family uses the
+The Hán-Nôm specimen corresponds to the Quốc Ngữ passage above. Because the local family uses the
 VinaWiki font, the specimen is taken from the VinaWiki transcription itself
 and therefore tests the repertoire for which that font is intended.
 
@@ -830,8 +821,7 @@ Wikisource provides a sizeable Unicode Tangut corpus, including poetry,
 Buddhist literature, maxims, and the Tangut text of the Liángzhōu bilingual
 stele. The following paragraph is therefore a composite corpus specimen:
 several short attested sequences from independent Tangut texts are joined
-only for visual regression. It is not presented as one continuous historical
-work.
+for visual regression. They form a composite of separate historical works.
 
 \TG{𘘞𗳝𘛮𗫉𗥦𗤄，𗼑𗼑𗫉𗰜𗰓𗨛，𘚜𗨤𗤮𘁾𗣃𗅋𘃪，𗼇𗗙𘋥𘝿𘎪，𗵒𗹶𗲈𗃵𘓺𘋨𗶠，𗦵𘇇𗱢𗆐𗲌𗽓𘏋，𗌜𗎫𗠒𗂥𗅋𗚛𘓁𘟂𗫶，𘚶𗢵𘄩𗘴𘜑𗃱𗀸𗀸𗏹𗅋𗁿，𗒘𘓷𗰜𘕿𗅋𗯗𘓁𘟂𗫶，𗌮𗈦𗪙𘝇𗤁𗵘𘆗𘚢，𘈒𗤄𗢳𘒣𗎫𘟀𗢳𗵆，𘘚𘒣𗰜𗎫𗮔𗩱𗫂𘟀𘟂，𗮔𗰜𗋕𗡶𘉐𗭍𗅋𗋃𗫂𗎫𘟂。}
 
@@ -843,7 +833,7 @@ work.
 WenJin is different from the language-specific families above. It is exposed
 as one public local family whose internal fallback configuration spans
 multiple CJK planes. The paragraph below is therefore intentionally a
-coverage stress test rather than a linguistic specimen: ordinary Han text is
+coverage stress test: ordinary Han text is
 interleaved with supplementary-plane characters while the public command
 remains unchanged.
 
@@ -851,7 +841,7 @@ remains unchanged.
 
 The following table complements the paragraph test with deterministic block
 coverage samples. For each CJK Unified Ideographs block, the first twenty
-encoded ideographs are shown. This makes missing coverage or an incorrect
+encoded ideographs are shown. This makes gaps in coverage or an incorrect
 Plane 0, Plane 2, or Plane 3 fallback immediately visible and keeps the
 regression sample stable across releases.
 
@@ -914,10 +904,10 @@ Extension J
 \subsection{Regional Forms of Shared Han Characters}
 % --------------------------------------------------------------------------
 
-The preceding specimens test normal paragraphs. Only here are shared
+The preceding specimens test normal paragraphs. Here shared
 codepoints deliberately isolated. Every cell below contains the same Unicode
 character; the visible difference should therefore come from the selected
-regional family rather than from different encoded variants.
+regional family selected for the common codepoint.
 
 \begin{TableBookX}
   {L C C C C C}
@@ -954,8 +944,8 @@ Character & Shanggu & Noto SC & Noto TC & Japanese & Korean \\
 \Term[sort=feature system]{feature system}
 [composable document modules] is demonstrated throughout this PDF, but this
 section gives each major public feature an explicit specimen as well. The
-showcase therefore tests not only isolated modules but also whether they
-coexist in a realistic document.
+showcase therefore tests individual modules and their coexistence in a
+realistic document.
 
 % --------------------------------------------------------------------------
 \subsection{Mathematics}
@@ -1136,7 +1126,7 @@ documents are expected to use.
 
 The image feature is exercised with the standard \TeX~distribution's example
 image when it is available. This keeps the canonical source self-contained
-without committing an otherwise meaningless binary illustration.
+using a generated illustration in the build.
 
 \IfFileExists{example-image-a.pdf}{%
   \begin{OneImage}
