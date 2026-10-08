@@ -178,7 +178,8 @@ jobs:
             if ($probeLog -match '\(\./(?:core|catalog|modules)/') {
               throw 'Installed-only smoke test accidentally used source-tree IMPE modules.'
             }
-            if ($probeLog -notmatch 'impe-xsr-runtime\.tex') {
+            # XeTeX can wrap long Windows file paths across log lines.
+            if (($probeLog -replace '\s+', '') -notmatch 'impe-xsr-runtime\.tex') {
               throw 'Generated IMPE XSR hook was not read from installed TEXMF.'
             }
             & xelatex -shell-escape "-output-directory=$output" -interaction=nonstopmode -halt-on-error xsr-integration.tex
