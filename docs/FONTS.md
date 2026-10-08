@@ -573,19 +573,19 @@ existing strict error or soft fallback. Bundled files always win. A core install
 can therefore use installed fonts directly. `\SetCatalogFontRoot` selects a
 separate library when needed.
 
-## XSR bridge for Khitan (1.0.3 internal)
+## Egyptian and Khitan Small Script (1.0.3 internal)
 
-`\KHS{...}` retains its linear font-selection behavior. `\KHSstack{...}` and
-`\KHSstackblock{...}` dispatch the same encoded input to XSR 0.10, which owns
-the composition algorithm. Explicitly load `\UseFonts{egyptian,khitan_small}` in the preamble,
-and select a real, readable font file with `\xsrKhitanDefaultFont{path}`.
-XSR is optional and is installed separately; IMPE's ordinary font routing
-does not depend on it.
+These are font families, not features. Load with \UseFont{egyptian},
+\UseFont{khitan_small}, or \UseFonts{egyptian,khitan_small}. Both default
+to their Noto font. Direct Unicode text, including Egyptian format controls
+and the Khitan filler, is composed by XSR through script-specific range
+detection. Legacy linear \KHS{...}, explicit \KHSstack{...} and
+\KHSstackblock{...}, and explicit \IMPEEgyptianText{...} and
+\IMPEKhitanText{...} are also available.
 
-## Egyptian / Khitan Small Script (1.0.3 internal)
-
-`\UseFonts{egyptian,khitan_small}` loads the Noto-backed font families and activates
-Unicode-run composition automatically, including Egyptian format controls and
-Khitan filler. `\EG{...}`, `\KHS{...}` (linear), and `\KHSstack{...}` remain.
-XSR requires a readable font **file** matching the font selected by IMPE;
-non-full installations must provide it via `\SetCatalogFontRoot{...}`.
+The XSR renderer needs a readable real TTF/OTF file, resolved by the IMPE
+font registry. On non-full installations, supply the matching file under
+the font mirror configured by \SetCatalogFontRoot{...}. Font family name
+lookup alone is not sufficient for the XSR Python renderer. XSR 0.10
+supports shell escape or preprocessing; shell mode does not currently
+support arbitrary -output-directory values.

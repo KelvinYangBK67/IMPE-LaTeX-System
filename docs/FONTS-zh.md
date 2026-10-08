@@ -520,15 +520,14 @@ CJK 間距與文字系統處理均共用原路徑。本版透過已登錄 family
 隨附檔案始終優先。core 安裝可直接使用已可解析的字體；
 獨立字體庫可使用 `\SetCatalogFontRoot` 指定資源根目錄。
 
-## 1.0.3（內部）：契丹小字 XSR 接口
+## 1.0.3（內部）：埃及聖書字及契丹小字
 
-`\KHS{...}` 保留 IMPE 線性字體路由；`\KHSstack{...}`
-及 `\KHSstackblock{...}` 委託 XSR 0.10 排版，不再維護另一套
-契丹小字堆疊演算法。請在導言區載入 `\UseFonts{egyptian,khitan_small}`，
-並以 `\xsrKhitanDefaultFont{檔案路徑}` 指定 XSR 可讀的字型檔。
+兩者屬正常字體，而非 feature。以 \UseFont{egyptian}、
+\UseFont{khitan_small} 或 \UseFonts{egyptian,khitan_small} 載入，預設 Noto。
+直接輸入 Unicode 字符及組字控制符即可由 XSR 自動二維排版；保留
+\EG{...}、\KHS{...}（傳統線性模式）、\KHSstack{...}、
+\KHSstackblock{...} 及顯式 XSR 入口。
 
-## 埃及聖書字及契丹小字（1.0.3 內部版）
-
-`\UseFonts{egyptian,khitan_small}` 載入預設 Noto 字體，直接輸入 Unicode 序列可自動組字。
-保留 `\EG{...}`、`\KHS{...}`（線性）、`\KHSstack{...}`。
-XSR 需要實際字體檔案；非 full 安裝可透過 `\SetCatalogFontRoot{...}` 指向字體鏡像。
+XSR 須讀取實際字體檔案。非 full 安裝應以 \SetCatalogFontRoot{...}
+設定字體鏡像，不能只依賴作業系統中的字體名稱。XSR 0.10 shell
+模式尚不支援任意 -output-directory；也可選擇預處理。

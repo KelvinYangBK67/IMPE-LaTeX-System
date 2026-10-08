@@ -418,32 +418,17 @@ This is an indented example block.
 - `\UseFeatures{a,b,c}`
 - 在 `\UseTemplateSet{...}` 中使用 `features = {...}`
 
-## 1.0.3（內部）：XSR 與行內圖片字形
+## 1.0.3（內部）：獨立行內圖片字形
 
-`fonts={egyptian,khitan_small}`、`\UseFonts{egyptian,khitan_small}` 載入 XSR 0.10；
-`glyphs` 為別名。IMPE 不啟動 XSR 的全局字元偵測器，
-避免干擾自身 Unicode 字體路由。XSR 和 Python 依賴須另外安裝，
-以 shell-escape 或預處理配合 XeLaTeX 使用。
+glyphs 是獨立可選 feature，與埃及及契丹字體分開。
+以 \UseFeature{glyphs} 或 features={glyphs} 載入；
+只使用 XSR 的行內／向量圖片功能，不啟動字體組字偵測。
 
-`\KHS{...}` 照舊線性排版；`\KHSstack{...}`、
-`\KHSstackblock{...}` 委託 XSR，須先使用
-`\xsrKhitanDefaultFont{檔案路徑}` 指定字型。
-`\IMPEKhitanText{...}`、`\IMPEEgyptianText{...}`
-亦可顯式呼叫（埃及文須設定對應 XSR 字型）。
+例子：
 
-```tex
-\IMPEGlyphRegister[logical={未識字},description={拓片甲}]
-  {bs-042}{images/042.png}
-\IMPEGlyph{bs-042}
-\IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
-```
+    \UseFeature{glyphs}
+    \IMPEGlyphRegister[logical={未編碼字},description={拓片甲}]
+      {bs-042}{images/bs-042.svg}
+    \IMPEGlyph{bs-042}
 
-圖片繼續使用 XSR 的尺寸、基線與字形快取策略。
-`trim` 僅裁切排版盒；`logical`／`description`
-元資料不會自動進入 PDF 隱形文字層。圖片二值化／灰度處理
-由外部準備原圖，不在此排版接口中實作。
-
-### `glyphs`（1.0.3 內部版）
-
-`\UseFeature{glyphs}` 提供獨立圖片字形登記與行內引用，不啟用埃及或契丹的字體渲染。
-使用 `\IMPEGlyphRegister{label}{asset.svg}` 及 `\IMPEGlyph{label}`。
+元資料不增加 PDF 隱形文字層，裁切只影響 TeX 排版盒。
