@@ -731,11 +731,6 @@ if (-not $SkipRelease) {
         "nextsystem.sty",
         "nextsystem-externalized-render.ps1"
     )
-    foreach ($retired in @("impe-externalized-render.lua", "core/fonts/impe-fonts-externalized.tex")) {
-        if (Test-Path (Join-Path $canonicalInstall $retired)) {
-            throw "Retired external renderer survived installer upgrade: $retired"
-        }
-    }
     foreach ($relativePath in $legacyManagedFixture) {
         $fixturePath = Join-Path $legacyRoot $relativePath
         New-Item -ItemType Directory -Force -Path (Split-Path -Parent $fixturePath) | Out-Null
@@ -775,6 +770,11 @@ if (-not $SkipRelease) {
     )) {
         if (-not (Test-Path (Join-Path $canonicalInstall $required))) {
             throw "Canonical install is missing $required."
+        }
+    }
+    foreach ($retired in @("impe-externalized-render.lua", "core/fonts/impe-fonts-externalized.tex")) {
+        if (Test-Path (Join-Path $canonicalInstall $retired)) {
+            throw "Retired external renderer survived installer upgrade: $retired"
         }
     }
     foreach ($relativePath in $legacyManagedFixture) {
