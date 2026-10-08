@@ -284,6 +284,12 @@ foreach ($file in $RuntimeFiles) {
     Copy-ManagedFile -Source $source -Target $target
 }
 
+# Remove files owned by older IMPE installs but retired in 1.0.3.
+# Do not touch similarly named files outside the managed IMPE root.
+foreach ($retired in @("impe-externalized-render.lua", "core/fonts/impe-fonts-externalized.tex")) {
+    Remove-StaleItem -Path (Join-Path $PackageRoot $retired)
+}
+
 foreach ($dir in $RuntimeDirs) {
     $source = Join-Path $RepoRoot $dir
     $target = Join-Path $PackageRoot $dir
