@@ -18,7 +18,7 @@ assets/     本地執行資源
 ### `core/`
 
 - `core/fonts/`：宣告、fallback 解析、writing model、路由、shaping 選項、
-  registry 行為與 externalized rendering
+  registry 行為；可選 XSR 經功能目錄載入
 - `core/layout/`：class 偵測、preset 解析、component 套用與 layout registry
 - `core/features/impe-features-system.tex`：feature catalog 載入、
   `\UseFeature` 與 `\UseFeatures`
