@@ -243,6 +243,10 @@ do
     copy_managed_file "$package_source_root/$file" "$package_root/$file"
 done
 
+# Remove retired, previously managed IMPE files in upgrades.
+remove_stale_item "$package_root/impe-externalized-render.lua"
+remove_stale_item "$package_root/core/fonts/impe-fonts-externalized.tex"
+
 for directory in core catalog modules assets; do
     if [ -d "$repo_root/$directory" ]; then
         sync_managed_directory "$repo_root/$directory" "$package_root/$directory"
