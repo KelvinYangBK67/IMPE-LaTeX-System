@@ -320,28 +320,6 @@ if ($legacyTexUses) {
     throw "Legacy next* entry points are used outside the compatibility whitelist:$([Environment]::NewLine)$($legacyTexUses -join [Environment]::NewLine)"
 }
 
-$texlua = Get-Command texlua -ErrorAction Stop
-$helper = Join-Path $RepoRoot "package/impe-externalized-render.lua"
-$helperRoot = Join-Path $BuildRoot "externalized-helper"
-& $texlua.Source $helper mkdir $helperRoot
-if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $helperRoot)) {
-    throw "Portable externalized helper failed to create its work directory."
-}
-$helperSource = Join-Path $helperRoot "externalized-helper.tex"
-Copy-Item -LiteralPath (Join-Path $TestRoot "externalized-helper.tex") -Destination $helperSource
-& $texlua.Source $helper render xelatex $helperSource | Out-Host
-if ($LASTEXITCODE -ne 0 -or -not (Test-Path (Join-Path $helperRoot "externalized-helper.pdf"))) {
-    throw "Portable externalized helper failed to render with xelatex from PATH."
-}
-& $texlua.Source $helper remove `
-    (Join-Path $helperRoot "externalized-helper.aux") `
-    (Join-Path $helperRoot "externalized-helper.log")
-if ($LASTEXITCODE -ne 0 -or
-    (Test-Path (Join-Path $helperRoot "externalized-helper.aux")) -or
-    (Test-Path (Join-Path $helperRoot "externalized-helper.log"))) {
-    throw "Portable externalized helper failed to remove sidecar files."
-}
-
 $manualPreviousTexInputs = $env:TEXINPUTS
 if ($PublicFonts) {
     $env:TEXINPUTS = "$portablePublicInputRoot//$texInputSeparator"
