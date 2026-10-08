@@ -445,3 +445,34 @@ Then rerun XeLaTeX twice. imakeidx's automatic invocation includes the same
 module option when shell execution is enabled. Ordinary custom `\index`
 encapsulations remain under imakeidx/hyperref control; the occurrence mechanism
 above is used by IMPE's `\Term` helper.
+
+## XSR and inline image glyphs (1.0.3 internal)
+
+`\UseFeature{xsr}` (also `features={xsr}`; `glyphs` is an alias)
+loads XSR 0.10's core, vector, Egyptian and Khitan backends without the active
+character detector. IMPE remains responsible for Unicode font routing.
+Install XSR and its Python dependencies separately, then compile with
+XeLaTeX shell escape or the XSR preprocessing workflow.
+
+Use `\xsrKhitanDefaultFont{path}` and `\KHSstack{...}` to compose Khitan
+clusters. `\KHS{...}` stays linear. Explicit backends also expose
+`\IMPEKhitanText{...}` and `\IMPEEgyptianText{...}` (the latter requires
+`\xsrEgyptianDefaultFont{path}`).
+
+For inline images, XSR's native `\GlyphRegister{label}{source}` and
+`\Glyph[scale=...,raise=...]{label}` remain available. IMPE adds:
+
+```tex
+\IMPEGlyphRegister[logical={unencoded sign},description={rubbing}]
+  {bs-042}{images/042.png}
+Before \IMPEGlyph{bs-042} after.
+\IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
+\IMPEGlyphLogical{bs-042}
+\IMPEGlyphDescription{bs-042}
+```
+
+Metadata stays separate from the visible glyph and is emitted only when
+explicitly requested: there is no automatically injected hidden PDF text.
+Trim is a TeX-level clip of the rendered box; XSR's original asset, cache,
+geometric sizing policy and baseline behavior remain unchanged. Image
+preprocessing (including grayscale/thresholding) is intentionally external.
