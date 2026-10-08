@@ -6,10 +6,16 @@
 \IMPEGlyphRegister[logical={unencoded sign},description={test rubbing}]
   {test-sign}{tests/fixtures/xsr-square.svg}
 \begin{document}
+\typeout{IMPE-AUTO-EGYPTIAN-BEGIN}
 Egyptian direct Unicode: 𓀀𓐰𓁐. Plain: 𓀀.
+\par
+\typeout{IMPE-AUTO-EGYPTIAN-END}
 Explicit: \IMPEEgyptianText{𓀀𓐰𓁐}.
 \par
+\typeout{IMPE-AUTO-KHITAN-BEGIN}
 Khitan direct Unicode: 𘬁𘬂𘬃 and 𘬁𖿤𘬂𘬃.
+\par
+\typeout{IMPE-AUTO-KHITAN-END}
 Linear command: \KHS{𘬁𘬂}.
 Stacked command: \KHSstack{𘬁𘬂𘬃}.
 \par

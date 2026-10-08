@@ -74,6 +74,8 @@ core/fonts/impe-fonts-system.tex
 
 - `impe-font-pahlavi.tex`
   Pahlavi 專用的 shaping routing
+- `impe-font-egyptian.tex`
+  埃及聖書字字體與 Unicode 自動組字
 - `impe-font-khitan_small.tex`
   契丹小字的線性字體路由及 XSR 堆疊接口
 - `impe-font-mlmodern.tex`

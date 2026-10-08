@@ -91,6 +91,8 @@ jobs:
           if ($log -notmatch 'IMPE-TEST-XSR-INTEGRATION-PASS' -or
               $log -notmatch 'XSR-LAYOUT.*script=khitan' -or
               $log -notmatch 'XSR-LAYOUT.*script=egyptian' -or
+              $log -notmatch '(?s)IMPE-AUTO-EGYPTIAN-BEGIN.*XSR-LAYOUT script=egyptian.*IMPE-AUTO-EGYPTIAN-END' -or
+              $log -notmatch '(?s)IMPE-AUTO-KHITAN-BEGIN.*XSR-LAYOUT script=khitan.*IMPE-AUTO-KHITAN-END' -or
               $log -notmatch 'XSR-INLINE') {
             throw 'XSR integration markers missing.'
           }
@@ -107,3 +109,12 @@ jobs:
           if ($log -notmatch 'IMPE-TEST-GLYPHS-ONLY-PASS' -or $log -notmatch 'XSR-INLINE') {
             throw 'Glyphs-only test markers missing.'
           }
+
+      - name: Save rendering samples for human review
+        uses: actions/upload-artifact@v4
+        with:
+          name: impe-1.0.3-xsr-pdfs-${{ matrix.os }}
+          path: |
+            xsr-integration.pdf
+            xsr-glyphs-only.pdf
+          if-no-files-found: error

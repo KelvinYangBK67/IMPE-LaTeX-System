@@ -77,6 +77,8 @@ Current modules:
 
 - `impe-font-pahlavi.tex`
   Pahlavi-specific shaping routing
+- `impe-font-egyptian.tex`
+  Egyptian Hieroglyphs font and automatic Unicode composition
 - `impe-font-khitan_small.tex`
   Khitan Small Script linear and explicit stacked rendering commands
 - `impe-font-mlmodern.tex`
