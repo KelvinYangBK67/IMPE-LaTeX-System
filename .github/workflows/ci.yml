@@ -153,6 +153,17 @@ jobs:
           if (-not (Test-Path (Join-Path $install "xsr/xsr-core.sty"))) {
             throw 'Installed XSR TeX is missing.'
           }
+          # Prove the generated TeX hook selects the private venv, not the
+          # globally installed XSR which also exists earlier in this CI job.
+          $sep = [IO.Path]::PathSeparator
+          $env:TEXINPUTS = "$($install.Replace([char]92,[char]47))//$sep"
+          New-Item -ItemType Directory -Force tmp/ci-installed-xsr | Out-Null
+          & xelatex -shell-escape -output-directory=tmp/ci-installed-xsr -interaction=nonstopmode -halt-on-error tests/xsr-installed-only.tex
+          if ($LASTEXITCODE -ne 0) { throw 'Private XSR launcher selection test failed.' }
+          $probeLog = Get-Content tmp/ci-installed-xsr/xsr-installed-only.log -Raw
+          if ($probeLog -notmatch 'IMPE-PRIVATE-XSR-RUNNER-SELECTED') {
+            throw 'Generated XSR private Python runner not selected.'
+          }
           # Search only installed IMPE/XSR, not the source repository.
           $sep = [IO.Path]::PathSeparator
           $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$($install.Replace([char]92,[char]47))//$sep"
