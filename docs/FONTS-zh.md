@@ -335,9 +335,9 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
   Nastaliq 作為烏爾都文 family 的專用字體；`arabic` 使用獨立的 Naskh/Ruqaa 映射。
 - `khitan_small`
   `\KHS{...}` 是 showcase 使用的線性 local-font 命令；
-  `\KHSstack{...}` 與 `\KHSstackblock{...}` 會呼叫明確的 cluster composer。
-  輸入時以空格分隔 cluster；Type B 會在首字後插入
-  `U+16FE4 KHITAN SMALL SCRIPT FILLER`。
+  `\KHSstack{...}` 與 `\KHSstackblock{...}` 交由可選的 XSR 後端處理。
+  請先載入 `\UseFeature{xsr}` 並設定實際契丹字型檔案；
+  XSR 處理 cluster 與 Type B 的 U+16FE4 標記。
 
 ## 字體庫模型
 
