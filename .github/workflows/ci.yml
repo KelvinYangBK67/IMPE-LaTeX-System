@@ -153,29 +153,55 @@ jobs:
           if (-not (Test-Path (Join-Path $install "xsr/xsr-core.sty"))) {
             throw 'Installed XSR TeX is missing.'
           }
-          # Prove the generated TeX hook selects the private venv, not the
-          # globally installed XSR which also exists earlier in this CI job.
+          # Validate from a separate document directory so XeTeX cannot
+          # silently pull ./core, ./catalog or ./modules from the checkout.
+          # Only test inputs/assets are copied; TEXINPUTS includes installed
+          # IMPE (and standard TeX paths), never the source checkout.
+          $workspace = Join-Path $root "tmp/ci-installed-xsr/workspace"
+          $output = Join-Path $root "tmp/ci-installed-xsr/build"
+          New-Item -ItemType Directory -Force $workspace | Out-Null
+          New-Item -ItemType Directory -Force $output | Out-Null
+          New-Item -ItemType Directory -Force (Join-Path $workspace "tests/fixtures") | Out-Null
+          Copy-Item -LiteralPath (Join-Path $root "tests/xsr-installed-only.tex") -Destination $workspace
+          Copy-Item -LiteralPath (Join-Path $root "tests/xsr-integration.tex") -Destination $workspace
+          Copy-Item -LiteralPath (Join-Path $root "tests/fixtures/xsr-square.svg") -Destination (Join-Path $workspace "tests/fixtures")
           $sep = [IO.Path]::PathSeparator
           $env:TEXINPUTS = "$($install.Replace([char]92,[char]47))//$sep"
-          New-Item -ItemType Directory -Force tmp/ci-installed-xsr | Out-Null
-          & xelatex -shell-escape -output-directory=tmp/ci-installed-xsr -interaction=nonstopmode -halt-on-error tests/xsr-installed-only.tex
-          if ($LASTEXITCODE -ne 0) { throw 'Private XSR launcher selection test failed.' }
-          $probeLog = Get-Content tmp/ci-installed-xsr/xsr-installed-only.log -Raw
-          if ($probeLog -notmatch 'IMPE-PRIVATE-XSR-RUNNER-SELECTED') {
-            throw 'Generated XSR private Python runner not selected.'
+          Push-Location $workspace
+          try {
+            & xelatex -shell-escape "-output-directory=$output" -interaction=nonstopmode -halt-on-error xsr-installed-only.tex
+            if ($LASTEXITCODE -ne 0) { throw 'Private XSR launcher selection test failed.' }
+            $probeLog = Get-Content (Join-Path $output "xsr-installed-only.log") -Raw
+            if ($probeLog -notmatch 'IMPE-PRIVATE-XSR-RUNNER-SELECTED') {
+              throw 'Generated private Python runner was not selected.'
+            }
+            if ($probeLog -match '\(\./(?:core|catalog|modules)/') {
+              throw 'Installed-only smoke test accidentally used source-tree IMPE modules.'
+            }
+            if ($probeLog -notmatch 'impe-xsr-runtime\.tex') {
+              throw 'Generated IMPE XSR hook was not read from installed TEXMF.'
+            }
+            & xelatex -shell-escape "-output-directory=$output" -interaction=nonstopmode -halt-on-error xsr-integration.tex
+            if ($LASTEXITCODE -ne 0) { throw 'Installed bundled XSR XeLaTeX compile failed.' }
+            $log = Get-Content (Join-Path $output "xsr-integration.log") -Raw
+            if ($log -notmatch 'IMPE-TEST-XSR-INTEGRATION-PASS' -or
+                $log -notmatch 'XSR-LAYOUT.*script=egyptian' -or
+                $log -notmatch 'XSR-LAYOUT.*script=khitan' -or
+                $log -notmatch 'XSR-INLINE') {
+              throw 'Installed bundled XSR output was not rendered.'
+            }
+            if ($log -match '\(\./(?:core|catalog|modules)/') {
+              throw 'Bundled XSR integration accidentally used source-tree IMPE modules.'
+            }
+            if ($log -match 'Font declaration .egyptian_local. could not be resolved') {
+              throw 'Installed Egyptian font was not resolved.'
+            }
+            if (-not (Test-Path (Join-Path $output "xsr-integration.pdf"))) {
+              throw 'Installed runtime failed to generate the sample PDF.'
+            }
           }
-          # Search only installed IMPE/XSR, not the source repository.
-          $sep = [IO.Path]::PathSeparator
-          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$($install.Replace([char]92,[char]47))//$sep"
-          New-Item -ItemType Directory -Force tmp/ci-installed-xsr | Out-Null
-          & xelatex -shell-escape -output-directory=tmp/ci-installed-xsr -interaction=nonstopmode -halt-on-error tests/xsr-integration.tex
-          if ($LASTEXITCODE -ne 0) { throw 'Installed bundled XSR XeLaTeX compile failed.' }
-          $log = Get-Content tmp/ci-installed-xsr/xsr-integration.log -Raw
-          if ($log -notmatch 'IMPE-TEST-XSR-INTEGRATION-PASS' -or
-              $log -notmatch 'XSR-LAYOUT.*script=egyptian' -or
-              $log -notmatch 'XSR-LAYOUT.*script=khitan' -or
-              $log -notmatch 'XSR-INLINE') {
-            throw 'Installed bundled XSR output was not rendered.'
+          finally {
+            Pop-Location
           }
 
       - name: Save rendering samples for human review

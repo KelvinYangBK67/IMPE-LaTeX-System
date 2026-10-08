@@ -81,3 +81,29 @@ IMPE_SKIP_XSR_PYTHON=1 sh scripts/install.sh。
 
 CTAN 源碼封裝包含 XSR TeX/Python 原始碼，但 TeX Live 的安裝流程不會
 替使用者執行 pip。完整一站式安裝請使用 IMPE core／full 安裝器。
+
+
+## G. 完全隔離的本地安裝驗證（更嚴格）
+
+上面的直接編譯在 IMPE 工作目錄內，TeX 仍可能優先讀取
+./core、./catalog 與 ./modules 中的倉庫原始檔。因此要對安裝
+結果作最終確認，另開一個不含 IMPE 原始碼的目錄，複製測試文件
+後再從該目錄編譯：
+
+    cd D:\Repositories\IMPE
+    New-Item -ItemType Directory -Force "$env:TEMP\impe-isolated-check" | Out-Null
+    Copy-Item tests\xsr-installed-only.tex "$env:TEMP\impe-isolated-check\"
+    Push-Location "$env:TEMP\impe-isolated-check"
+    New-Item -ItemType Directory -Force build | Out-Null
+    xelatex -shell-escape -output-directory=build -interaction=nonstopmode -halt-on-error xsr-installed-only.tex
+    Pop-Location
+
+預期日誌出現 IMPE-PRIVATE-XSR-RUNNER-SELECTED，並且 core、
+catalog 與 modules 均從 C:/Users/.../texmf/tex/latex/impe/ 載入，
+而不是 (./core/...)。此配置測試不需要埃及／契丹字體。
+
+若要實際檢查二維字形，需把 xsr-integration.tex 和
+tests/fixtures/xsr-square.svg 按原來相對路徑複製到隔離目錄；
+還要先確認 \SetCatalogFontRoot 所指定的 Egyptian/Khitan
+字體檔確實存在。舊日誌的字體警告表示「沒有完成該字體的驗證」，
+不應當視為自動渲染測試通過。

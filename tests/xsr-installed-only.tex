@@ -1,7 +1,7 @@
 % !TeX program = xelatex
 % Must be compiled against an IMPE installation (not the source tree).
 \documentclass{impeart}
-\UseFonts{egyptian,khitan_small}
+\UseFeature{glyphs} % load XSR core without requiring any external fonts
 \ExplSyntaxOn
 \tl_if_in:NnTF \g_xsr_renderer_command_tl {xsr-venv}
   { \iow_term:n { IMPE-PRIVATE-XSR-RUNNER-SELECTED } }
