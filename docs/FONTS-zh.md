@@ -50,8 +50,6 @@ core/fonts/impe-fonts-system.tex
   保存底層 declaration entry，之後再把它們轉成可使用的 local / global family。
 - `impe-fonts-registry-modes.tex`
   追蹤 family 的載入模式（`local` / `global`），並負責 on-demand family activation。
-- `impe-fonts-externalized.tex`
-  提供穩定的 externalized render 管線，包括快取命名、外部子文件生成、shell-out 與 PDF 嵌回。它透過 `texlua` 呼叫可攜的 `impe-externalized-render.lua` helper，並從 `PATH` 解析指定的 TeX 引擎。
 - `impe-fonts-helpers.tex`
   提供字體框架共用的小型 helper primitive。
 
@@ -77,7 +75,7 @@ core/fonts/impe-fonts-system.tex
 - `impe-font-pahlavi.tex`
   Pahlavi 專用的 shaping routing
 - `impe-font-khitan_small.tex`
-  契丹小字的線性輸出與明確堆疊命令
+  契丹小字的線性字體路由及 XSR 堆疊接口
 - `impe-font-mlmodern.tex`
   `mlmodern` family 的 NFSS/package 整合
 
@@ -132,7 +130,7 @@ core/fonts/impe-fonts-system.tex
 - `maptextsf` / `maptexttt`
 - `scriptclass`：用於 CJK 路由
 - `inlinebehavior`、`blockbehavior` 或 `blockalign`：用於 core 維護的 script-specific behavior
-- vertical / externalized 欄位
+- 直排相關欄位
 - `mono` / `monobold`
 
 ### 全域 Family
@@ -521,3 +519,10 @@ CJK 間距與文字系統處理均共用原路徑。本版透過已登錄 family
 交由 fontspec 查找 TeX Live 或系統字體，最後才採用既有嚴格錯誤或軟回退。
 隨附檔案始終優先。core 安裝可直接使用已可解析的字體；
 獨立字體庫可使用 `\SetCatalogFontRoot` 指定資源根目錄。
+
+## 1.0.3（內部）：契丹小字 XSR 接口
+
+`\KHS{...}` 保留 IMPE 線性字體路由；`\KHSstack{...}`
+及 `\KHSstackblock{...}` 委託 XSR 0.10 排版，不再維護另一套
+契丹小字堆疊演算法。請在導言區載入 `\UseFeature{xsr}`，
+並以 `\xsrKhitanDefaultFont{檔案路徑}` 指定 XSR 可讀的字型檔。
