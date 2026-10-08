@@ -62,6 +62,10 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Verify pinned bundled XSR source against upstream
+        shell: pwsh
+        run: python scripts/check_xsr_vendor.py
+
       - name: Install XSR and fetch checksum-verified public reference font
         shell: pwsh
         run: |

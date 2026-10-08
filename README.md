@@ -163,3 +163,28 @@ MIT License. See [LICENSE](LICENSE).
 
 Unreleased 1.0.3: `fonts={egyptian,khitan_small}` activates Unicode-aware
 Noto-backed composition; `features={glyphs}` independently enables image glyphs.
+
+### Bundled XSR 0.10 (internal development)
+
+The ordinary IMPE source checkout, core archive and full archive all include
+a pinned XSR TeX/Python runtime under vendor/xsr. No additional checkout,
+submodule, or independent user-managed XSR installation is needed.
+The IMPE installer copies XSR TeX packages to user TEXMF, creates an isolated
+Python environment under ~/texmf/scripts/impe/xsr-venv (or the configured
+TexmfRoot), and installs the bundled Python project and its dependencies.
+It generates impe-xsr-runtime.tex to select the private interpreter when XSR
+is actually loaded. Global Python packages are never overwritten.
+
+Python 3.11+, venv and pip are required; first-time dependency installation
+may need network access. On Windows use .\scripts\install.ps1 or install.bat
+from a release archive; on Unix use sh scripts/install.sh or sh install.sh.
+An intentional TeX-only install can pass -SkipXsrPython on PowerShell or
+set IMPE_SKIP_XSR_PYTHON=1 on Unix, in which case script rendering needs a
+separately configured Python renderer. Ordinary IMPE documents need no Python.
+Dynamic XSR rendering still needs shell-escape, or preprocessing. Core does
+not include Noto fonts.
+
+CTAN is a source archive. TeX Live does not execute pip on package installation,
+so a CTAN-only TeX installation is not automatically a complete Python runtime.
+Use the IMPE core/full installer for the fully managed setup. XSR remains 0.10
+and is independently developed upstream.

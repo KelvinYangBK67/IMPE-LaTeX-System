@@ -157,3 +157,23 @@ MIT License。詳見 [LICENSE](LICENSE)。
 
 未發行的 1.0.3：`fonts={egyptian,khitan_small}` 啟用 Noto Unicode 自動組字；
 `features={glyphs}` 獨立啟用行內圖片字形。
+
+### 內附 XSR 0.10（內部開發）
+
+IMPE 普通 Git checkout、core 與 full 發行包均內附 vendor/xsr 固定快照，
+**不需要另行 clone XSR 或處理 submodule**。IMPE 安裝器會把 XSR 的 TeX
+套件放進使用者 TEXMF，在 ~/texmf/scripts/impe/xsr-venv（或指定目錄）
+建立獨立 Python 環境、安裝 XSR 及依賴，並生成
+impe-xsr-runtime.tex，讓文件使用 XSR 時自動調用專用 Python。
+不會覆寫使用者的全域 Python 套件。
+
+首次安裝依賴需 Python 3.11+、venv、pip 及必要的下載網路。
+Windows 執行 .\scripts\install.ps1；Unix 執行 sh scripts/install.sh。
+如刻意只安裝 TeX，可在 PowerShell 加 -SkipXsrPython，或於 Unix
+設定 IMPE_SKIP_XSR_PYTHON=1；這時自動組字仍需另行配置 Python。
+普通 IMPE 文件不會啟動 Python；XSR 動態渲染須 shell-escape 或預處理。
+core 仍不附帶 Noto 字體二進位檔。
+
+CTAN／TeX Live 不會在安裝時自動執行 pip。CTAN 封裝包含 XSR 來源，
+但完整的一站式安裝應使用 IMPE core／full 安裝器。
+XSR 上游繼續獨立開發，IMPE 封裝固定其 0.10 來源。
