@@ -417,3 +417,28 @@ This is an indented example block.
 - `\UseFeature{id}`
 - `\UseFeatures{a,b,c}`
 - 在 `\UseTemplateSet{...}` 中使用 `features = {...}`
+
+## 1.0.3（內部）：XSR 與行內圖片字形
+
+`features={xsr}`、`\UseFeature{xsr}` 載入 XSR 0.10；
+`glyphs` 為別名。IMPE 不啟動 XSR 的全局字元偵測器，
+避免干擾自身 Unicode 字體路由。XSR 和 Python 依賴須另外安裝，
+以 shell-escape 或預處理配合 XeLaTeX 使用。
+
+`\KHS{...}` 照舊線性排版；`\KHSstack{...}`、
+`\KHSstackblock{...}` 委託 XSR，須先使用
+`\xsrKhitanDefaultFont{檔案路徑}` 指定字型。
+`\IMPEKhitanText{...}`、`\IMPEEgyptianText{...}`
+亦可顯式呼叫（埃及文須設定對應 XSR 字型）。
+
+```tex
+\IMPEGlyphRegister[logical={未識字},description={拓片甲}]
+  {bs-042}{images/042.png}
+\IMPEGlyph{bs-042}
+\IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
+```
+
+圖片繼續使用 XSR 的尺寸、基線與字形快取策略。
+`trim` 僅裁切排版盒；`logical`／`description`
+元資料不會自動進入 PDF 隱形文字層。圖片二值化／灰度處理
+由外部準備原圖，不在此排版接口中實作。
