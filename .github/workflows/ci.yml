@@ -74,6 +74,7 @@ jobs:
         run: |
           python -m pip install -e .ci/xsr
           python .ci/xsr/scripts/fetch_khitan.py --output assets/fonts/khitan_small/NotoSerifKhitanSmallScript-Regular.ttf
+          python .ci/xsr/scripts/fetch_noto.py --output assets/fonts/egyptian/NotoSansEgyptianHieroglyphs-Regular.ttf
 
       - name: Compile explicit XSR and glyph integration
         shell: pwsh
@@ -89,6 +90,20 @@ jobs:
           $log = Get-Content xsr-integration.log -Raw
           if ($log -notmatch 'IMPE-TEST-XSR-INTEGRATION-PASS' -or
               $log -notmatch 'XSR-LAYOUT.*script=khitan' -or
+              $log -notmatch 'XSR-LAYOUT.*script=egyptian' -or
               $log -notmatch 'XSR-INLINE') {
             throw 'XSR integration markers missing.'
+          }
+
+      - name: Verify isolated glyphs feature
+        shell: pwsh
+        run: |
+          $root = (Get-Location).Path.Replace([char]92, [char]47)
+          $sep = [IO.Path]::PathSeparator
+          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
+          & xelatex -shell-escape -interaction=nonstopmode -halt-on-error tests/xsr-glyphs-only.tex
+          if ($LASTEXITCODE -ne 0) { throw 'Glyphs-only compile failed.' }
+          $log = Get-Content xsr-glyphs-only.log -Raw
+          if ($log -notmatch 'IMPE-TEST-GLYPHS-ONLY-PASS' -or $log -notmatch 'XSR-INLINE') {
+            throw 'Glyphs-only test markers missing.'
           }

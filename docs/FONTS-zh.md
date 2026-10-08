@@ -336,7 +336,7 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 - `khitan_small`
   `\KHS{...}` 是 showcase 使用的線性 local-font 命令；
   `\KHSstack{...}` 與 `\KHSstackblock{...}` 交由可選的 XSR 後端處理。
-  請先載入 `\UseFeature{xsr}` 並設定實際契丹字型檔案；
+  請先載入 `\UseFonts{egyptian,khitan_small}` 並設定實際契丹字型檔案；
   XSR 處理 cluster 與 Type B 的 U+16FE4 標記。
 
 ## 字體庫模型
@@ -524,5 +524,11 @@ CJK 間距與文字系統處理均共用原路徑。本版透過已登錄 family
 
 `\KHS{...}` 保留 IMPE 線性字體路由；`\KHSstack{...}`
 及 `\KHSstackblock{...}` 委託 XSR 0.10 排版，不再維護另一套
-契丹小字堆疊演算法。請在導言區載入 `\UseFeature{xsr}`，
+契丹小字堆疊演算法。請在導言區載入 `\UseFonts{egyptian,khitan_small}`，
 並以 `\xsrKhitanDefaultFont{檔案路徑}` 指定 XSR 可讀的字型檔。
+
+## 埃及聖書字及契丹小字（1.0.3 內部版）
+
+`\UseFonts{egyptian,khitan_small}` 載入預設 Noto 字體，直接輸入 Unicode 序列可自動組字。
+保留 `\EG{...}`、`\KHS{...}`（線性）、`\KHSstack{...}`。
+XSR 需要實際字體檔案；非 full 安裝可透過 `\SetCatalogFontRoot{...}` 指向字體鏡像。

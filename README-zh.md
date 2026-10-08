@@ -154,3 +154,6 @@ Sikai Yang。公開聯絡與支援請使用
 ## 授權
 
 MIT License。詳見 [LICENSE](LICENSE)。
+
+未發行的 1.0.3：`fonts={egyptian,khitan_small}` 啟用 Noto Unicode 自動組字；
+`features={glyphs}` 獨立啟用行內圖片字形。

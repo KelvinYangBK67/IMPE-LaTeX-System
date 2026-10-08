@@ -448,7 +448,7 @@ above is used by IMPE's `\Term` helper.
 
 ## XSR and inline image glyphs (1.0.3 internal)
 
-`\UseFeature{xsr}` (also `features={xsr}`; `glyphs` is an alias)
+`\UseFonts{egyptian,khitan_small}` (also `fonts={egyptian,khitan_small}`; `glyphs` is an alias)
 loads XSR 0.10's core, vector, Egyptian and Khitan backends without the active
 character detector. IMPE remains responsible for Unicode font routing.
 Install XSR and its Python dependencies separately, then compile with
@@ -476,3 +476,9 @@ explicitly requested: there is no automatically injected hidden PDF text.
 Trim is a TeX-level clip of the rendered box; XSR's original asset, cache,
 geometric sizing policy and baseline behavior remain unchanged. Image
 preprocessing (including grayscale/thresholding) is intentionally external.
+
+### `glyphs` (1.0.3 internal)
+
+`\UseFeature{glyphs}` exposes inline image-glyph registration and reuse,
+without activating Egyptian or Khitan font backends. Use
+`\IMPEGlyphRegister{label}{asset.svg}` and `\IMPEGlyph{label}`.

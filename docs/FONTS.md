@@ -380,7 +380,7 @@ This section lists families with specialized internal mapping. Simple families u
 - `khitan_small`
   `\KHS{...}` is the linear local-font command used by the showcase.
   `\KHSstack{...}` and `\KHSstackblock{...}` dispatch to the optional XSR
-  backend. Load `\UseFeature{xsr}` and select a real Khitan font file first.
+  backend. Load `\UseFonts{egyptian,khitan_small}` and select a real Khitan font file first.
   XSR handles the clusters and Type B's U+16FE4 filler.
 
 ## Font Library Model
@@ -577,7 +577,15 @@ separate library when needed.
 
 `\KHS{...}` retains its linear font-selection behavior. `\KHSstack{...}` and
 `\KHSstackblock{...}` dispatch the same encoded input to XSR 0.10, which owns
-the composition algorithm. Explicitly load `\UseFeature{xsr}` in the preamble,
+the composition algorithm. Explicitly load `\UseFonts{egyptian,khitan_small}` in the preamble,
 and select a real, readable font file with `\xsrKhitanDefaultFont{path}`.
 XSR is optional and is installed separately; IMPE's ordinary font routing
 does not depend on it.
+
+## Egyptian / Khitan Small Script (1.0.3 internal)
+
+`\UseFonts{egyptian,khitan_small}` loads the Noto-backed font families and activates
+Unicode-run composition automatically, including Egyptian format controls and
+Khitan filler. `\EG{...}`, `\KHS{...}` (linear), and `\KHSstack{...}` remain.
+XSR requires a readable font **file** matching the font selected by IMPE;
+non-full installations must provide it via `\SetCatalogFontRoot{...}`.

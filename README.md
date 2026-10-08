@@ -160,3 +160,6 @@ for public contact and support.
 ## License
 
 MIT License. See [LICENSE](LICENSE).
+
+Unreleased 1.0.3: `fonts={egyptian,khitan_small}` activates Unicode-aware
+Noto-backed composition; `features={glyphs}` independently enables image glyphs.

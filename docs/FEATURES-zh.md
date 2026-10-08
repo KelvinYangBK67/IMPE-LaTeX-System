@@ -420,7 +420,7 @@ This is an indented example block.
 
 ## 1.0.3（內部）：XSR 與行內圖片字形
 
-`features={xsr}`、`\UseFeature{xsr}` 載入 XSR 0.10；
+`fonts={egyptian,khitan_small}`、`\UseFonts{egyptian,khitan_small}` 載入 XSR 0.10；
 `glyphs` 為別名。IMPE 不啟動 XSR 的全局字元偵測器，
 避免干擾自身 Unicode 字體路由。XSR 和 Python 依賴須另外安裝，
 以 shell-escape 或預處理配合 XeLaTeX 使用。
@@ -442,3 +442,8 @@ This is an indented example block.
 `trim` 僅裁切排版盒；`logical`／`description`
 元資料不會自動進入 PDF 隱形文字層。圖片二值化／灰度處理
 由外部準備原圖，不在此排版接口中實作。
+
+### `glyphs`（1.0.3 內部版）
+
+`\UseFeature{glyphs}` 提供獨立圖片字形登記與行內引用，不啟用埃及或契丹的字體渲染。
+使用 `\IMPEGlyphRegister{label}{asset.svg}` 及 `\IMPEGlyph{label}`。

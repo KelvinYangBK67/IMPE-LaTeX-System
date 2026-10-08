@@ -1,22 +1,12 @@
-% IMPE opt-in integration for XSR 0.10.  No active character detector:
-% IMPE retains responsibility for font/Unicode routing.
-\ifdefined\NextFeatureXSRLoaded
+% Inline image glyphs only; script renderers belong to the font subsystem.
+\ifdefined\NextFeatureGlyphsLoaded
   \endinput
 \fi
-\def\NextFeatureXSRLoaded{1}
-\RequirePackage{xsr-core}
+\def\NextFeatureGlyphsLoaded{1}
 \RequirePackage{xsr-vector}
-\RequirePackage{xsr-egyptian}
-\RequirePackage{xsr-khitan}
 \RequirePackage{adjustbox}
 \RequirePackage{xparse}
 \ExplSyntaxOn
-
-% Hosts dispatch complete Unicode runs explicitly.
-\NewDocumentCommand \IMPEEgyptianText { m }
-  { \exp_args:Nnx \xsr_dispatch_run:nn { egyptian } { \tl_to_str:n {#1} } }
-\NewDocumentCommand \IMPEKhitanText { m }
-  { \xsrKhitanText {#1} }
 
 % Separate source identity from optional human-readable metadata.  Metadata is
 % never superimposed on the visible glyph or silently added to PDF text.

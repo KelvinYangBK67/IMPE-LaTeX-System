@@ -12,6 +12,8 @@
 % - Type B lays out a first centred character, then applies the Type A rule to
 %   the remaining characters
 
+\RequirePackage{xsr-detector-active}
+\RequirePackage{xsr-khitan}
 \ExplSyntaxOn
 
 \tl_const:Nn \c__font_khs_filler_tl { 𖿤 }
@@ -142,8 +144,10 @@
 \cs_new_protected:Npn \__font_khs_render_linear:n #1
   {
     \__font_khs_prepare_content:n {#1}
-    \tl_set_eq:NN \l_tmpa_tl \l__font_khs_content_tl
-    \tl_replace_all:NVn \l_tmpa_tl \c__font_khs_filler_tl { }
+    % Active Unicode glyph tokens must become ordinary characters in linear mode.
+    \tl_set:Nx \l_tmpa_tl { \tl_to_str:V \l__font_khs_content_tl }
+    \tl_set:Nx \l_tmpb_tl { \tl_to_str:V \c__font_khs_filler_tl }
+    \tl_replace_all:NVn \l_tmpa_tl \l_tmpb_tl { }
     \cs_if_exist:NT \XeTeXinterchartokenstate
       { \XeTeXinterchartokenstate = 0 }
     \tl_use:N \l__font_khs_style_setup_tl
@@ -151,14 +155,7 @@
   }
 \cs_new_protected:Npn \__font_khs_stack:n #1
   {
-    \cs_if_exist:NTF \xsrKhitanText
-      { \xsrKhitanText{#1} }
-      {
-        \PackageError{impe-khitan}
-          {XSR integration is required for stacked Khitan Small Script}
-          {Load \string\UseFeature{xsr} in the preamble, and select an XSR
-           Khitan font file with \string\xsrKhitanDefaultFont{path}.}
-      }
+    \xsrKhitanText{#1}
   }
 \cs_new_protected:Npn \__font_define_public_command_khitan:nn #1#2
   {
@@ -188,6 +185,7 @@
     \tl_clear:N \l__font_language_tl
     \tl_set:Nn \l__font_backend_tl { generic }
     \__font_special_use_generic:
+    \exp_args:NV \xsrKhitanDefaultFont \l__font_regular_tl
     % Preserve the original linear-mode filler stripping and style wrappers.
     \exp_args:NVV \__font_define_public_command_khitan_linear:nn
       \l__font_command_tl
