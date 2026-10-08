@@ -51,13 +51,6 @@ jobs:
       - name: Check out IMPE
         uses: actions/checkout@v7
 
-      - name: Check out pinned XSR 0.10
-        uses: actions/checkout@v7
-        with:
-          repository: KelvinYangBK67/xetex-stack-renderer
-          ref: f62677aeb2b5cc082efb1bec6f4c13b8bed965d6
-          path: .ci/xsr
-
       - name: Set up TeX Live 2026
         uses: TeX-Live/setup-texlive-action@v4
         with:
@@ -72,16 +65,16 @@ jobs:
       - name: Install XSR and fetch checksum-verified public reference font
         shell: pwsh
         run: |
-          python -m pip install -e .ci/xsr
-          python .ci/xsr/scripts/fetch_khitan.py --output assets/fonts/khitan_small/NotoSerifKhitanSmallScript-Regular.ttf
-          python .ci/xsr/scripts/fetch_noto.py --output assets/fonts/egyptian/NotoSansEgyptianHieroglyphs-Regular.ttf
+          python -m pip install -e vendor/xsr
+          python vendor/xsr/scripts/fetch_khitan.py --output assets/fonts/khitan_small/NotoSerifKhitanSmallScript-Regular.ttf
+          python vendor/xsr/scripts/fetch_noto.py --output assets/fonts/egyptian/NotoSansEgyptianHieroglyphs-Regular.ttf
 
       - name: Compile explicit XSR and glyph integration
         shell: pwsh
         run: |
           $root = (Get-Location).Path.Replace([char]92, [char]47)
           $sep = [IO.Path]::PathSeparator
-          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
+          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/vendor/xsr/tex//$sep$root/package//$sep$root//$sep"
           & xelatex -shell-escape -interaction=nonstopmode -halt-on-error tests/xsr-integration.tex
           if ($LASTEXITCODE -ne 0) { throw 'XSR integration compile failed.' }
           $log = Get-Content xsr-integration.log -Raw
@@ -99,7 +92,7 @@ jobs:
         run: |
           $root = (Get-Location).Path.Replace([char]92, [char]47)
           $sep = [IO.Path]::PathSeparator
-          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
+          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/vendor/xsr/tex//$sep$root/package//$sep$root//$sep"
           & xelatex -shell-escape -interaction=nonstopmode -halt-on-error tests/xsr-glyphs-only.tex
           if ($LASTEXITCODE -ne 0) { throw 'Glyphs-only compile failed.' }
           $log = Get-Content xsr-glyphs-only.log -Raw
@@ -115,7 +108,7 @@ jobs:
           # confirm the bridge writes, reads and cleans in the build directory.
           $root = (Get-Location).Path.Replace([char]92, [char]47)
           $sep = [IO.Path]::PathSeparator
-          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
+          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/vendor/xsr/tex//$sep$root/package//$sep$root//$sep"
           New-Item -ItemType Directory -Force build-xsr | Out-Null
           & xelatex -shell-escape -output-directory=build-xsr -interaction=nonstopmode -halt-on-error tests/xsr-integration.tex
           if ($LASTEXITCODE -ne 0) { throw 'XSR output-directory integration compile failed.' }
@@ -132,6 +125,42 @@ jobs:
           if ((Test-Path build-xsr/xsr-integration.xsr-request.req) -or
               (Test-Path build-xsr/xsr-integration.xsr-response.tex)) {
             throw 'XSR output-directory shell scratch pair was not cleaned.'
+          }
+
+      - name: Smoke-test full bundled IMPE and isolated XSR installation
+        shell: pwsh
+        run: |
+          $root = (Get-Location).Path.Replace([char]92, [char]47)
+          $texmf = Join-Path (Get-Location).Path "tmp/ci-impe-texmf"
+          & ./scripts/install.ps1 -TexmfRoot $texmf -NoRefresh
+          if ($LASTEXITCODE -ne 0) { throw 'Bundled XSR installer failed.' }
+          $venvPython = if ($IsWindows) {
+            Join-Path $texmf "scripts/impe/xsr-venv/Scripts/python.exe"
+          } else {
+            Join-Path $texmf "scripts/impe/xsr-venv/bin/python"
+          }
+          if (-not (Test-Path $venvPython)) { throw 'Private XSR Python is missing.' }
+          & $venvPython -c "import xsr; assert xsr.__version__ == '0.10'"
+          if ($LASTEXITCODE -ne 0) { throw 'Private XSR module verification failed.' }
+          $install = Join-Path $texmf "tex/latex/impe"
+          if (-not (Test-Path (Join-Path $install "impe-xsr-runtime.tex"))) {
+            throw 'Generated renderer hook is missing.'
+          }
+          if (-not (Test-Path (Join-Path $install "xsr/xsr-core.sty"))) {
+            throw 'Installed XSR TeX is missing.'
+          }
+          # Search only installed IMPE/XSR, not the source repository.
+          $sep = [IO.Path]::PathSeparator
+          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$($install.Replace([char]92,[char]47))//$sep"
+          New-Item -ItemType Directory -Force tmp/ci-installed-xsr | Out-Null
+          & xelatex -shell-escape -output-directory=tmp/ci-installed-xsr -interaction=nonstopmode -halt-on-error tests/xsr-integration.tex
+          if ($LASTEXITCODE -ne 0) { throw 'Installed bundled XSR XeLaTeX compile failed.' }
+          $log = Get-Content tmp/ci-installed-xsr/xsr-integration.log -Raw
+          if ($log -notmatch 'IMPE-TEST-XSR-INTEGRATION-PASS' -or
+              $log -notmatch 'XSR-LAYOUT.*script=egyptian' -or
+              $log -notmatch 'XSR-LAYOUT.*script=khitan' -or
+              $log -notmatch 'XSR-INLINE') {
+            throw 'Installed bundled XSR output was not rendered.'
           }
 
       - name: Save rendering samples for human review
