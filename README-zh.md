@@ -43,7 +43,7 @@ full 與 core release。
 | XeLaTeX | 受支援；手冊、showcase 與一般回歸測試皆使用此引擎 |
 | LuaLaTeX | 用於明確設定的 backend hook |
 | Unicode-range 全域路由 | XeLaTeX |
-| 特殊／externalized backend | 從 `PATH` 解析明確指定的引擎；需要 shell escape；helper 回歸使用 XeLaTeX |
+| 可選 XSR 整合 | XSR 0.10、Python 與 XeLaTeX shell-escape／預處理 |
 | TeX Live | 已測試 2026 |
 | Windows | 經 CI 測試 |
 | Linux | 經 CI 測試 |
