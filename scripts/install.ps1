@@ -314,7 +314,11 @@ if (-not $SkipXsrPython) {
         throw "Python 3.11+ required for XSR. Install Python or use -SkipXsrPython for TeX-only installation."
     }
     $VenvRoot = Join-Path $TexmfRoot "scripts/impe/xsr-venv"
-    $VenvPython = Join-Path $VenvRoot "Scripts/python.exe"
+    $VenvPython = if ($env:OS -eq "Windows_NT") {
+        Join-Path $VenvRoot "Scripts/python.exe"
+    } else {
+        Join-Path $VenvRoot "bin/python"
+    }
     if (-not (Test-Path -LiteralPath $VenvPython)) {
         & $PythonCommand.Source -m venv $VenvRoot
         if ($LASTEXITCODE -ne 0) { throw "Cannot create XSR venv at $VenvRoot." }
