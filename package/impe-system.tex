@@ -71,6 +71,11 @@
 \fi
 \makeatother
 
+% Installer-managed XSR runtime hook. Local source builds work without it.
+\ifNextSystemInstalled
+  \InputIfFileExists{impe-xsr-runtime.tex}{}{}
+\fi
+
 \ifNextSystemInstalled
   \input{core/system/impe-system-core.tex}
 \else
