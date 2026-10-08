@@ -379,9 +379,9 @@ This section lists families with specialized internal mapping. Simple families u
   Keeps Nastaliq as the dedicated local Urdu family; `arabic` uses its separate Naskh/Ruqaa mapping.
 - `khitan_small`
   `\KHS{...}` is the linear local-font command used by the showcase.
-  `\KHSstack{...}` and `\KHSstackblock{...}` invoke the explicit cluster
-  composer. Input clusters are separated by spaces; Type B inserts
-  `U+16FE4 KHITAN SMALL SCRIPT FILLER` after the first character.
+  `\KHSstack{...}` and `\KHSstackblock{...}` dispatch to the optional XSR
+  backend. Load `\UseFeature{xsr}` and select a real Khitan font file first.
+  XSR handles the clusters and Type B's U+16FE4 filler.
 
 ## Font Library Model
 
