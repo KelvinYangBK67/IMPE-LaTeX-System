@@ -550,28 +550,22 @@ Right-to-left behavior is likewise attached to families that require it.  The
 public font model remains the same even though the underlying paragraph or
 inline behavior differs from a left-to-right Latin family.
 
-\subsection{Vertical and externalized rendering}
+\subsection{Vertical layout and XSR-backed stacked scripts}
 
-A small number of writing systems need more than standard horizontal OpenType
-shaping.  IMPE therefore includes a built-in vertical layout route used by
-registered vertical families, and it provides an externalized rendering path
-for cases where a fragment is more reliably produced as a small auxiliary \TeX{}
-document and reinserted as PDF.
-
-Externalized rendering is implemented through a portable \texttt{texlua} helper.  The
-helper resolves the requested \TeX{} engine from the system \texttt{PATH}, renders
-into an IMPE cache directory, and returns the resulting PDF to the main
-document.  The mechanism is kept behind the font registration layer so that a
-normal document delegates temporary files and engine paths to the helper.
-
-These specialized routes share the public font interface. They keep the model
-coherent for scripts requiring behavior beyond a simple
-\verb|\newfontfamily| declaration.
+The built-in vertical writing model remains part of the font subsystem.
+For two-dimensional stacked scripts and inline glyph images, IMPE 1.0.3 adds
+an optional XSR 0.10 feature.  XSR renders script runs and registered
+image glyphs without IMPE generating separate auxiliary \TeX{} documents
+or reinserting externally produced PDFs.  Load \verb|\UseFeature{xsr}| in
+the preamble and install XSR with its Python dependencies separately.
+XSR's active Unicode detector is not loaded: IMPE retains font routing.
+The linear Khitan route stays available through \verb|\KHS|, while
+\verb|\KHSstack| delegates composition to XSR.
 
 \subsection{Where to find the complete font reference}
 
 The detailed family catalog, registration syntax, style fallback rules, global
-routing model, vertical parameters, externalized backend, and script-specific
+routing model, vertical parameters, optional XSR integration, and script-specific
 notes are maintained in \texttt{docs/FONTS.md}.  Users adding a new family or
 investigating font-routing behavior should treat that document as the technical
 reference.
@@ -814,7 +808,7 @@ reference or who want to extend the system.
     setup, release model, and extension boundaries.
   \item[\texttt{docs/FONTS.md}] family registration, local and global modes,
     routing, fallback, shaping, writing behavior, vertical support, and
-    externalized rendering.
+    XSR integration.
   \item[\texttt{docs/LAYOUTS.md}] public layout presets, compatibility targets,
     and the component model from which presets are built.
   \item[\texttt{docs/FEATURES.md}] public feature ids and the commands,

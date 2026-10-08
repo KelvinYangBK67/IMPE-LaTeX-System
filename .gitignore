@@ -32,8 +32,6 @@ dist/
 /tmp/
 assets/fonts/
 !assets/.gitkeep
-**/.nextex-externalized/
-**/.impe-externalized/
 !manual/showcase/impe-showcase.pdf
 papers/
 /examples/

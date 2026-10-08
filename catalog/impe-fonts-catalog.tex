@@ -577,6 +577,21 @@
   },
 }
 
+% Unicode Egyptian font; the font module loads the XSR backend as needed.
+\FontRegisterFamily{
+  id = egyptian,
+  defaultmode = local,
+  rangeprofile = egyptian,
+  globalroute = none,
+  local = {
+    command = EG,
+    name = egyptian_local,
+    path = \CatalogFontRoot/egyptian/,
+    regular = NotoSansEgyptianHieroglyphs-Regular.ttf,
+    specialmodule = egyptian,
+  },
+}
+
 \FontRegisterFamily{
   id = khitan_small,
   defaultmode = local,

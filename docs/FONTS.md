@@ -53,8 +53,6 @@ Current core files:
   Stores low-level declaration entries before they are turned into usable local/global families.
 - `impe-fonts-registry-modes.tex`
   Tracks family loading mode (`local` / `global`) and performs on-demand family activation.
-- `impe-fonts-externalized.tex`
-  Provides the stable externalized-render pipeline: cache naming, external subdocument generation, shell-out, and PDF reinsertion. It invokes the portable `impe-externalized-render.lua` helper with `texlua`; the requested TeX engine is resolved from `PATH`.
 - `impe-fonts-helpers.tex`
   Small shared helper primitives used by the font framework.
 
@@ -79,6 +77,8 @@ Current modules:
 
 - `impe-font-pahlavi.tex`
   Pahlavi-specific shaping routing
+- `impe-font-egyptian.tex`
+  Egyptian Hieroglyphs font and automatic Unicode composition
 - `impe-font-khitan_small.tex`
   Khitan Small Script linear and explicit stacked rendering commands
 - `impe-font-mlmodern.tex`
@@ -141,7 +141,7 @@ Ordinary local families use the standard registration fields; specialized fields
 - `scriptclass` for CJK routing
 - `inlinebehavior`, `blockbehavior`, or `blockalign` for core-maintained
   script-specific behavior entries
-- vertical/externalized fields
+- vertical-writing fields
 - `mono` / `monobold`
 
 ### Global Family
@@ -381,9 +381,9 @@ This section lists families with specialized internal mapping. Simple families u
   Keeps Nastaliq as the dedicated local Urdu family; `arabic` uses its separate Naskh/Ruqaa mapping.
 - `khitan_small`
   `\KHS{...}` is the linear local-font command used by the showcase.
-  `\KHSstack{...}` and `\KHSstackblock{...}` invoke the explicit cluster
-  composer. Input clusters are separated by spaces; Type B inserts
-  `U+16FE4 KHITAN SMALL SCRIPT FILLER` after the first character.
+  `\KHSstack{...}` and `\KHSstackblock{...}` dispatch to the optional XSR
+  backend. Load `\UseFonts{egyptian,khitan_small}` and select a real Khitan font file first.
+  XSR handles the clusters and Type B's U+16FE4 filler.
 
 ## Font Library Model
 
@@ -574,3 +574,21 @@ registered filename/name through fontspec (TeX Live or system lookup), then the
 existing strict error or soft fallback. Bundled files always win. A core install
 can therefore use installed fonts directly. `\SetCatalogFontRoot` selects a
 separate library when needed.
+
+## Egyptian and Khitan Small Script (1.0.3 internal)
+
+These are font families, not features. Load with \UseFont{egyptian},
+\UseFont{khitan_small}, or \UseFonts{egyptian,khitan_small}. Both default
+to their Noto font. Direct Unicode text, including Egyptian format controls
+and the Khitan filler, is composed by XSR through script-specific range
+detection. Legacy linear \KHS{...}, explicit \KHSstack{...} and
+\KHSstackblock{...}, and explicit \IMPEEgyptianText{...} and
+\IMPEKhitanText{...} are also available.
+
+The XSR renderer needs a readable real TTF/OTF file, resolved by the IMPE
+font registry. On non-full installations, supply the matching file under
+the font mirror configured by \SetCatalogFontRoot{...}. Font family name
+lookup alone is not sufficient for the XSR Python renderer. XSR 0.10
+supports shell escape or preprocessing; shell mode on TeX Live 2024+ supports `-output-directory` through
+`TEXMF_OUTPUT_DIRECTORY` (XSR 0.10 maintenance fix); earlier engines need
+that environment variable set explicitly or the preprocess workflow.

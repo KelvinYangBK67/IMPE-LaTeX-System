@@ -229,7 +229,6 @@ for file in \
     impebeamer.cls \
     impebeamer_zh.cls \
     nextsystem.sty \
-    impe-externalized-render.lua \
     nextart.cls \
     nextart_zh.cls \
     nextbook.cls \
@@ -243,6 +242,10 @@ for file in \
 do
     copy_managed_file "$package_source_root/$file" "$package_root/$file"
 done
+
+# Remove retired, previously managed IMPE files in upgrades.
+remove_stale_item "$package_root/impe-externalized-render.lua"
+remove_stale_item "$package_root/core/fonts/impe-fonts-externalized.tex"
 
 for directory in core catalog modules assets; do
     if [ -d "$repo_root/$directory" ]; then

@@ -24,7 +24,6 @@ $RuntimeFiles = @(
     "impebeamer.cls",
     "impebeamer_zh.cls",
     "nextsystem.sty",
-    "impe-externalized-render.lua",
     "nextart.cls",
     "nextart_zh.cls",
     "nextbook.cls",
@@ -283,6 +282,12 @@ foreach ($file in $RuntimeFiles) {
     $source = Join-Path $PackageSourceRoot $file
     $target = Join-Path $PackageRoot $file
     Copy-ManagedFile -Source $source -Target $target
+}
+
+# Remove files owned by older IMPE installs but retired in 1.0.3.
+# Do not touch similarly named files outside the managed IMPE root.
+foreach ($retired in @("impe-externalized-render.lua", "core/fonts/impe-fonts-externalized.tex")) {
+    Remove-StaleItem -Path (Join-Path $PackageRoot $retired)
 }
 
 foreach ($dir in $RuntimeDirs) {

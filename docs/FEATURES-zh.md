@@ -417,3 +417,18 @@ This is an indented example block.
 - `\UseFeature{id}`
 - `\UseFeatures{a,b,c}`
 - 在 `\UseTemplateSet{...}` 中使用 `features = {...}`
+
+## 1.0.3（內部）：獨立行內圖片字形
+
+glyphs 是獨立可選 feature，與埃及及契丹字體分開。
+以 \UseFeature{glyphs} 或 features={glyphs} 載入；
+只使用 XSR 的行內／向量圖片功能，不啟動字體組字偵測。
+
+例子：
+
+    \UseFeature{glyphs}
+    \IMPEGlyphRegister[logical={未編碼字},description={拓片甲}]
+      {bs-042}{images/bs-042.svg}
+    \IMPEGlyph{bs-042}
+
+元資料不增加 PDF 隱形文字層，裁切只影響 TeX 排版盒。

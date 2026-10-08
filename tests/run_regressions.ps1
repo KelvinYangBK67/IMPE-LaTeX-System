@@ -320,28 +320,6 @@ if ($legacyTexUses) {
     throw "Legacy next* entry points are used outside the compatibility whitelist:$([Environment]::NewLine)$($legacyTexUses -join [Environment]::NewLine)"
 }
 
-$texlua = Get-Command texlua -ErrorAction Stop
-$helper = Join-Path $RepoRoot "package/impe-externalized-render.lua"
-$helperRoot = Join-Path $BuildRoot "externalized-helper"
-& $texlua.Source $helper mkdir $helperRoot
-if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $helperRoot)) {
-    throw "Portable externalized helper failed to create its work directory."
-}
-$helperSource = Join-Path $helperRoot "externalized-helper.tex"
-Copy-Item -LiteralPath (Join-Path $TestRoot "externalized-helper.tex") -Destination $helperSource
-& $texlua.Source $helper render xelatex $helperSource | Out-Host
-if ($LASTEXITCODE -ne 0 -or -not (Test-Path (Join-Path $helperRoot "externalized-helper.pdf"))) {
-    throw "Portable externalized helper failed to render with xelatex from PATH."
-}
-& $texlua.Source $helper remove `
-    (Join-Path $helperRoot "externalized-helper.aux") `
-    (Join-Path $helperRoot "externalized-helper.log")
-if ($LASTEXITCODE -ne 0 -or
-    (Test-Path (Join-Path $helperRoot "externalized-helper.aux")) -or
-    (Test-Path (Join-Path $helperRoot "externalized-helper.log"))) {
-    throw "Portable externalized helper failed to remove sidecar files."
-}
-
 $manualPreviousTexInputs = $env:TEXINPUTS
 if ($PublicFonts) {
     $env:TEXINPUTS = "$portablePublicInputRoot//$texInputSeparator"
@@ -631,8 +609,7 @@ if (-not $SkipRelease) {
         "docs/EXTENDING-zh.md",
         "manual/showcase/impe-showcase.tex",
         "manual/showcase/impe-showcase.pdf",
-        "manual/showcase/references.bib",
-        "impe-externalized-render.lua"
+        "manual/showcase/references.bib"
     )
     foreach ($languageId in $manualLanguages) {
         $requiredCtanPaths += "manual/$languageId/impe-manual-$languageId.tex"
@@ -772,6 +749,11 @@ if (-not $SkipRelease) {
     Set-Content -LiteralPath (Join-Path $legacyRoot "core/fonts/user/custom-extension.tex") `
         -Value "% Nested user content must be preserved."
 
+    # Emulate canonical 1.0.2 files that must disappear on update.
+    New-Item -ItemType Directory -Force -Path (Join-Path $installTexmf "tex/latex/impe/core/fonts") | Out-Null
+    Set-Content -LiteralPath (Join-Path $installTexmf "tex/latex/impe/impe-externalized-render.lua") -Value "-- retired IMPE helper"
+    Set-Content -LiteralPath (Join-Path $installTexmf "tex/latex/impe/core/fonts/impe-fonts-externalized.tex") -Value "% retired IMPE renderer"
+
     & (Join-Path $coreInspect "install.ps1") -TexmfRoot $installTexmf -NoRefresh
     if ($LASTEXITCODE -ne 0) {
         throw "Core installer regression failed."
@@ -783,11 +765,16 @@ if (-not $SkipRelease) {
         "impebeamer.cls", "impebeamer_zh.cls", "nextsystem.sty", "nextart.cls",
         "nextart_zh.cls", "nextbook.cls", "nextbook_zh.cls", "nextreport.cls",
         "nextreport_zh.cls", "nextbeamer.cls", "nextbeamer_zh.cls",
-        "impe-externalized-render.lua", "core/system/impe-system-core.tex",
+        "core/system/impe-system-core.tex",
         "catalog/impe-fonts-catalog.tex", "modules/features/impe-feature-math.tex"
     )) {
         if (-not (Test-Path (Join-Path $canonicalInstall $required))) {
             throw "Canonical install is missing $required."
+        }
+    }
+    foreach ($retired in @("impe-externalized-render.lua", "core/fonts/impe-fonts-externalized.tex")) {
+        if (Test-Path (Join-Path $canonicalInstall $retired)) {
+            throw "Retired external renderer survived installer upgrade: $retired"
         }
     }
     foreach ($relativePath in $legacyManagedFixture) {

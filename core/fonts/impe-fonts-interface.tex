@@ -47,10 +47,6 @@
 \tl_new:N \l__font_feature_options_tl
 \tl_new:N \l__font_special_entry_tl
 \tl_new:N \l__font_decl_family_id_tl
-\tl_new:N \l__font_external_command_tl
-\tl_new:N \l__font_external_engine_tl
-\tl_new:N \l__font_external_render_command_tl
-\tl_new:N \l__font_external_clusterwise_tl
 \clist_new:N \l__font_unicode_blocks_clist
 \bool_new:N \l__font_use_latex_fallback_bool
 \bool_new:N \l__font_nextsystem_installed_bool
@@ -131,10 +127,6 @@
     \tl_clear:N \l__font_special_module_tl
     \tl_clear:N \l__font_missing_face_tl
     \tl_clear:N \l__font_decl_family_id_tl
-    \tl_clear:N \l__font_external_command_tl
-    \tl_clear:N \l__font_external_engine_tl
-    \tl_clear:N \l__font_external_render_command_tl
-    \tl_clear:N \l__font_external_clusterwise_tl
     \clist_clear:N \l__font_unicode_blocks_clist
     \tl_clear:N \l__font_backend_tl
     \tl_clear:N \l__font_script_class_tl
@@ -194,10 +186,6 @@
     fallbackmode .tl_set:N = \l__font_fallback_mode_tl,
     specialmodule .tl_set:N = \l__font_special_module_tl,
     specialbuilder .tl_set:N = \l__font_special_module_tl,
-    externalcommand .tl_set:N = \l__font_external_command_tl,
-    externalengine .tl_set:N = \l__font_external_engine_tl,
-    externalrendercommand .tl_set:N = \l__font_external_render_command_tl,
-    externalclusterwise .tl_set:N = \l__font_external_clusterwise_tl,
     unicodeblocks .clist_set:N = \l__font_unicode_blocks_clist,
     unicodeblock .clist_set:N = \l__font_unicode_blocks_clist,
   }
@@ -328,18 +316,6 @@
     \exp_args:NVV \__font_define_public_command:nn
       \l__font_command_tl
       \l__font_name_tl
-    \tl_if_blank:VF \l__font_external_command_tl
-      {
-        \use:x
-          {
-            \exp_not:N \__font_define_externalized_command:nnnnn
-              { \tl_use:N \l__font_external_command_tl }
-              { \tl_use:N \l__font_external_engine_tl }
-              { \tl_use:N \l__font_decl_family_id_tl }
-              { \tl_use:N \l__font_external_render_command_tl }
-              { \tl_use:N \l__font_external_clusterwise_tl }
-          }
-      }
   }
 
 \cs_new_protected:Npn \__font_define_special_local:
@@ -922,18 +898,6 @@
     \exp_args:NVV \__font_define_public_command:nn
       \l__font_command_tl
       \l__font_name_tl
-    \tl_if_blank:VF \l__font_external_command_tl
-      {
-        \use:x
-          {
-            \exp_not:N \__font_define_externalized_command:nnnnn
-              { \tl_use:N \l__font_external_command_tl }
-              { \tl_use:N \l__font_external_engine_tl }
-              { \tl_use:N \l__font_decl_family_id_tl }
-              { \tl_use:N \l__font_external_render_command_tl }
-              { \tl_use:N \l__font_external_clusterwise_tl }
-          }
-      }
   }
 
 \cs_new_protected:Npn \__font_define_global_binding:

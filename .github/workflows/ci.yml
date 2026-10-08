@@ -37,3 +37,108 @@ jobs:
       - name: Run public regression suite
         shell: pwsh
         run: ./tests/run_regressions.ps1 -PublicFonts
+
+  xsr-integration:
+    name: XSR 0.10 integration (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Check out IMPE
+        uses: actions/checkout@v7
+
+      - name: Check out pinned XSR 0.10
+        uses: actions/checkout@v7
+        with:
+          repository: KelvinYangBK67/xetex-stack-renderer
+          ref: f62677aeb2b5cc082efb1bec6f4c13b8bed965d6
+          path: .ci/xsr
+
+      - name: Set up TeX Live 2026
+        uses: TeX-Live/setup-texlive-action@v4
+        with:
+          version: 2026
+          package-file: .github/texlive.packages
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install XSR and fetch checksum-verified public reference font
+        shell: pwsh
+        run: |
+          python -m pip install -e .ci/xsr
+          python .ci/xsr/scripts/fetch_khitan.py --output assets/fonts/khitan_small/NotoSerifKhitanSmallScript-Regular.ttf
+          python .ci/xsr/scripts/fetch_noto.py --output assets/fonts/egyptian/NotoSansEgyptianHieroglyphs-Regular.ttf
+
+      - name: Compile explicit XSR and glyph integration
+        shell: pwsh
+        run: |
+          $root = (Get-Location).Path.Replace([char]92, [char]47)
+          $sep = [IO.Path]::PathSeparator
+          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
+          & xelatex -shell-escape -interaction=nonstopmode -halt-on-error tests/xsr-integration.tex
+          if ($LASTEXITCODE -ne 0) { throw 'XSR integration compile failed.' }
+          $log = Get-Content xsr-integration.log -Raw
+          if ($log -notmatch 'IMPE-TEST-XSR-INTEGRATION-PASS' -or
+              $log -notmatch 'XSR-LAYOUT.*script=khitan' -or
+              $log -notmatch 'XSR-LAYOUT.*script=egyptian' -or
+              $log -notmatch '(?s)IMPE-AUTO-EGYPTIAN-BEGIN.*XSR-LAYOUT script=egyptian.*IMPE-AUTO-EGYPTIAN-END' -or
+              $log -notmatch '(?s)IMPE-AUTO-KHITAN-BEGIN.*XSR-LAYOUT script=khitan.*IMPE-AUTO-KHITAN-END' -or
+              $log -notmatch 'XSR-INLINE') {
+            throw 'XSR integration markers missing.'
+          }
+
+      - name: Verify isolated glyphs feature
+        shell: pwsh
+        run: |
+          $root = (Get-Location).Path.Replace([char]92, [char]47)
+          $sep = [IO.Path]::PathSeparator
+          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
+          & xelatex -shell-escape -interaction=nonstopmode -halt-on-error tests/xsr-glyphs-only.tex
+          if ($LASTEXITCODE -ne 0) { throw 'Glyphs-only compile failed.' }
+          $log = Get-Content xsr-glyphs-only.log -Raw
+          if ($log -notmatch 'IMPE-TEST-GLYPHS-ONLY-PASS' -or $log -notmatch 'XSR-INLINE') {
+            throw 'Glyphs-only test markers missing.'
+          }
+
+      - name: Verify IMPE with XSR 0.10 shell output-directory
+        shell: pwsh
+        run: |
+          # TeX Live 2026 exports TEXMF_OUTPUT_DIRECTORY to XSR's subprocess.
+          # Compile a genuine mixed Egyptian/Khitan/glyph document and
+          # confirm the bridge writes, reads and cleans in the build directory.
+          $root = (Get-Location).Path.Replace([char]92, [char]47)
+          $sep = [IO.Path]::PathSeparator
+          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
+          New-Item -ItemType Directory -Force build-xsr | Out-Null
+          & xelatex -shell-escape -output-directory=build-xsr -interaction=nonstopmode -halt-on-error tests/xsr-integration.tex
+          if ($LASTEXITCODE -ne 0) { throw 'XSR output-directory integration compile failed.' }
+          $log = Get-Content build-xsr/xsr-integration.log -Raw
+          if ($log -notmatch 'IMPE-TEST-XSR-INTEGRATION-PASS' -or
+              $log -notmatch '(?s)IMPE-AUTO-EGYPTIAN-BEGIN.*XSR-LAYOUT script=egyptian.*IMPE-AUTO-EGYPTIAN-END' -or
+              $log -notmatch '(?s)IMPE-AUTO-KHITAN-BEGIN.*XSR-LAYOUT script=khitan.*IMPE-AUTO-KHITAN-END' -or
+              $log -notmatch 'XSR-INLINE') {
+            throw 'XSR output-directory integration markers missing.'
+          }
+          if (-not (Test-Path build-xsr/xsr-integration.pdf)) {
+            throw 'XSR output-directory PDF missing.'
+          }
+          if ((Test-Path build-xsr/xsr-integration.xsr-request.req) -or
+              (Test-Path build-xsr/xsr-integration.xsr-response.tex)) {
+            throw 'XSR output-directory shell scratch pair was not cleaned.'
+          }
+
+      - name: Save rendering samples for human review
+        uses: actions/upload-artifact@v4
+        with:
+          name: impe-1.0.3-xsr-pdfs-${{ matrix.os }}
+          path: |
+            xsr-integration.pdf
+            xsr-glyphs-only.pdf
+          if-no-files-found: error

@@ -3,6 +3,7 @@ scheme-small
 xetex
 
 # IMPE runtime and manual dependencies exercised by the regression suite.
+adjustbox
 bidi
 booktabs
 catchfile

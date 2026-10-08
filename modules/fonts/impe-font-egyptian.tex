@@ -1,0 +1,14 @@
+% Egyptian Unicode composition belongs to the font subsystem.
+\RequirePackage{xsr-detector-active}
+\RequirePackage{xsr-egyptian}
+\ExplSyntaxOn
+\cs_new_protected:Npn \__font_define_special_egyptian:
+  {
+    \__font_special_use_generic:
+    % Use IMPE's resolved Noto font file, including user font overrides.
+    \exp_args:NV \xsrEgyptianDefaultFont \l__font_regular_tl
+  }
+\NewDocumentCommand \IMPEEgyptianText { m }
+  { \xsrEgyptianText {#1} }
+\ExplSyntaxOff
+\endinput

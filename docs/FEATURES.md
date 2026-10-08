@@ -445,3 +445,20 @@ Then rerun XeLaTeX twice. imakeidx's automatic invocation includes the same
 module option when shell execution is enabled. Ordinary custom `\index`
 encapsulations remain under imakeidx/hyperref control; the occurrence mechanism
 above is used by IMPE's `\Term` helper.
+
+## Inline image glyphs (1.0.3 internal)
+
+The glyphs feature is separate from Egyptian and Khitan font families.
+Enable \UseFeature{glyphs} or features={glyphs}; it loads only XSR's
+inline/vector image components, not the script detector or font backends.
+
+Example:
+
+    \UseFeature{glyphs}
+    \IMPEGlyphRegister[logical={unencoded sign},description={rubbing}]
+      {bs-042}{images/bs-042.svg}
+    Before \IMPEGlyph{bs-042} after.
+    \IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
+
+The optional metadata does not create a hidden PDF text layer, and
+trim only clips the rendered TeX box, not the original source image.

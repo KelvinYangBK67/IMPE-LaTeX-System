@@ -40,9 +40,9 @@ existing documents and ship in the full and core distributions.
 | --- | --- |
 | Primary document engine | XeLaTeX |
 | XeLaTeX | Supported and used by manuals, showcase, and general regressions |
-| LuaLaTeX | Used by explicitly configured backend hooks |
+| LuaLaTeX | Legacy externalized backend removed |
 | Unicode-range global routing | XeLaTeX |
-| Special/externalized backends | Explicit engine resolved from `PATH`; shell escape required; helper regression uses XeLaTeX |
+| Optional XSR integration | XSR 0.10, Python and XeLaTeX shell-escape/preprocess |
 | TeX Live | 2026 tested |
 | Windows | CI tested |
 | Linux | CI tested |
@@ -160,3 +160,6 @@ for public contact and support.
 ## License
 
 MIT License. See [LICENSE](LICENSE).
+
+Unreleased 1.0.3: `fonts={egyptian,khitan_small}` activates Unicode-aware
+Noto-backed composition; `features={glyphs}` independently enables image glyphs.
