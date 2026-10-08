@@ -731,6 +731,11 @@ if (-not $SkipRelease) {
         "nextsystem.sty",
         "nextsystem-externalized-render.ps1"
     )
+    foreach ($retired in @("impe-externalized-render.lua", "core/fonts/impe-fonts-externalized.tex")) {
+        if (Test-Path (Join-Path $canonicalInstall $retired)) {
+            throw "Retired external renderer survived installer upgrade: $retired"
+        }
+    }
     foreach ($relativePath in $legacyManagedFixture) {
         $fixturePath = Join-Path $legacyRoot $relativePath
         New-Item -ItemType Directory -Force -Path (Split-Path -Parent $fixturePath) | Out-Null
@@ -748,6 +753,11 @@ if (-not $SkipRelease) {
         -Value "This unmanaged file must be preserved."
     Set-Content -LiteralPath (Join-Path $legacyRoot "core/fonts/user/custom-extension.tex") `
         -Value "% Nested user content must be preserved."
+
+    # Emulate canonical 1.0.2 files that must disappear on update.
+    New-Item -ItemType Directory -Force -Path (Join-Path $installTexmf "tex/latex/impe/core/fonts") | Out-Null
+    Set-Content -LiteralPath (Join-Path $installTexmf "tex/latex/impe/impe-externalized-render.lua") -Value "-- retired IMPE helper"
+    Set-Content -LiteralPath (Join-Path $installTexmf "tex/latex/impe/core/fonts/impe-fonts-externalized.tex") -Value "% retired IMPE renderer"
 
     & (Join-Path $coreInspect "install.ps1") -TexmfRoot $installTexmf -NoRefresh
     if ($LASTEXITCODE -ne 0) {
