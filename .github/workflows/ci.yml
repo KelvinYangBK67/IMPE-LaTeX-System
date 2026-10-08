@@ -81,7 +81,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path tests/build | Out-Null
           $root = (Get-Location).Path.Replace([char]92, [char]47)
           $sep = [IO.Path]::PathSeparator
-          $env:TEXINPUTS = "$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
+          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
           & xelatex -shell-escape -interaction=nonstopmode -halt-on-error -output-directory=tests/build tests/xsr-integration.tex
           if ($LASTEXITCODE -ne 0) { throw 'XSR integration compile failed.' }
           $log = Get-Content tests/build/xsr-integration.log -Raw
