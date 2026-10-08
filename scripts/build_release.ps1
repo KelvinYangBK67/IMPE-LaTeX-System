@@ -78,7 +78,6 @@ $CanonicalTopLevelFiles = @(
     "impereport_zh.cls",
     "impebeamer.cls",
     "impebeamer_zh.cls",
-    "impe-externalized-render.lua",
     "impe.local.example.tex"
 )
 
