@@ -1,0 +1,6 @@
+xetex-stack-renderer 0.10
+Origin: https://github.com/KelvinYangBK67/xetex-stack-renderer
+Source commit: f62677aeb2b5cc082efb1bec6f4c13b8bed965d6
+License: MIT; retained in vendor/xsr/LICENSE
+Vendored runtime: src/, tex/, pyproject.toml and README.md
+Do not edit this snapshot in IMPE. Update by re-vendoring a reviewed upstream commit.

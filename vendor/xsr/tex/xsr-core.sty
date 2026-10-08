@@ -1,0 +1,261 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesExplPackage
+  {xsr-core}
+  {2026-10-06}
+  {0.10}
+  {Core run dispatcher for xetex-stack-renderer}
+
+\RequirePackage{expl3}
+
+\ExplSyntaxOn
+
+\msg_new:nnn { xsr } { xetex-required }
+  { xetex-stack-renderer~requires~XeTeX/XeLaTeX. }
+\msg_new:nnn { xsr } { duplicate-backend }
+  { Backend~'#1'~has~already~been~registered. }
+\msg_new:nnn { xsr } { missing-backend }
+  { No~backend~is~registered~for~script~'#1'. }
+\msg_new:nnn { xsr } { external-failed }
+  {
+    External~renderer~failed~for~request~'#1'.
+    Check~the~Python~error~above;~the~run~was~not~rendered.
+  }
+\msg_new:nnn { xsr } { preprocess-missing }
+  { Content-addressed~response~'#1'~is~missing;~using~the~unavailable~stub. }
+\msg_new:nnn { xsr } { shell-disabled }
+  { Unrestricted~shell~escape~is~disabled;~using~the~unavailable~stub. }
+
+\sys_if_engine_xetex:F { \msg_fatal:nn { xsr } { xetex-required } }
+
+% Frontend configuration. Renderer options are canonical JSON and are part
+% of every request identity, even though v0.2 currently exposes no options.
+\tl_new:N \g_xsr_mode_tl
+\tl_new:N \g_xsr_renderer_command_tl
+\tl_new:N \g_xsr_cache_dir_tl
+\tl_new:N \g_xsr_renderer_options_tl
+\bool_new:N \g_xsr_trace_bool
+\tl_gset:Nn \g_xsr_mode_tl { auto }
+\tl_gset:Nn \g_xsr_renderer_command_tl { python~-m~xsr.renderer }
+\tl_gclear:N \g_xsr_cache_dir_tl
+\tl_gset:Nx \g_xsr_renderer_options_tl
+  { \c_left_brace_str \c_right_brace_str }
+\bool_gset_true:N \g_xsr_trace_bool
+
+% Generic backend registry. Detection is deliberately not part of core.
+\prop_new:N \g_xsr_backend_handler_prop
+\prop_new:N \g_xsr_backend_version_prop
+
+% #1 script name; #2 backend version; #3 handler name without a backslash.
+\cs_new_protected:Npn \xsr_register_backend:nnn #1#2#3
+  {
+    \prop_if_in:NnTF \g_xsr_backend_handler_prop {#1}
+      { \msg_error:nnn { xsr } { duplicate-backend } {#1} }
+      {
+        \prop_gput:Nnn \g_xsr_backend_handler_prop {#1} {#3}
+        \prop_gput:Nnn \g_xsr_backend_version_prop {#1} {#2}
+      }
+  }
+
+% Stable host/detector API: dispatch exactly one complete Unicode run.
+\cs_new_protected:Npn \xsr_dispatch_run:nn #1#2
+  {
+    \prop_get:NnNTF \g_xsr_backend_handler_prop {#1} \l_tmpa_tl
+      {
+        \bool_if:NT \g_xsr_trace_bool
+          {
+            \iow_term:x
+              { XSR-DISPATCH~script=#1~codepoints=\int_eval:n { \tl_count:n {#2} } }
+          }
+        \use:c { \l_tmpa_tl } {#1} {#2}
+      }
+      { \msg_error:nnn { xsr } { missing-backend } {#1} }
+  }
+
+% Content-addressed external-renderer bridge.
+\iow_new:N \g_xsr_request_iow
+\seq_new:N \l_xsr_codepoints_seq
+\tl_new:N \l_xsr_backend_version_tl
+\tl_new:N \l_xsr_codepoints_tl
+\tl_new:N \l_xsr_signature_tl
+\tl_new:N \l_xsr_request_digest_tl
+\tl_new:N \l_xsr_request_file_tl
+\tl_new:N \l_xsr_response_file_tl
+\bool_new:N \l_xsr_response_valid_bool
+\tl_new:N \l_xsr_error_detail_tl
+\msg_new:nnn {xsr}{renderer-error}{Renderer~error~[#1]:~#2}
+\msg_new:nnn {xsr}{malformed-response}{[XSR-RESPONSE]~Malformed~renderer~response:~#1}
+\NewDocumentCommand \xsrRendererError {m m}
+  {
+    \tl_clear:N \l_xsr_error_detail_tl
+    \clist_map_inline:nn {#2}
+      {\tl_put_right:Nx \l_xsr_error_detail_tl {\char_generate:nn{\int_from_hex:n{##1}}{12}}}
+    \msg_fatal:nnxx{xsr}{renderer-error}{#1}{\l_xsr_error_detail_tl}
+  }
+
+\cs_new_protected:Npn \xsr_prepare_request:nn #1#2
+  {
+    \prop_get:NnN
+      \g_xsr_backend_version_prop {#1} \l_xsr_backend_version_tl
+    \seq_clear:N \l_xsr_codepoints_seq
+    \str_map_inline:nn {#2}
+      {
+        \seq_put_right:Nx \l_xsr_codepoints_seq
+          { \int_to_Hex:n { `##1 } }
+      }
+    \tl_set:Nx \l_xsr_codepoints_tl
+      { \seq_use:Nn \l_xsr_codepoints_seq { , } }
+    \tl_set:Nx \l_xsr_signature_tl
+      {
+        XSR2|script=#1|backend_version=\l_xsr_backend_version_tl
+        |options=\g_xsr_renderer_options_tl
+        |codepoints=\l_xsr_codepoints_tl
+      }
+    \tl_set:Nx \l_xsr_request_digest_tl
+      { \str_mdfive_hash:e { \l_xsr_signature_tl } }
+    \tl_set:Nx \l_xsr_request_file_tl
+      { \c_sys_jobname_str .xsr-request.req }
+    \tl_set:Nx \l_xsr_response_file_tl
+      { \c_sys_jobname_str .xsr-response.tex }
+  }
+
+\cs_new_protected:Npn \xsr_write_request:n #1
+  {
+    \iow_open:NV \g_xsr_request_iow \l_xsr_request_file_tl
+    \iow_now:Nn \g_xsr_request_iow { XSR2 }
+    \iow_now:Nx \g_xsr_request_iow
+      { digest=\l_xsr_request_digest_tl }
+    \iow_now:Nx \g_xsr_request_iow { script=#1 }
+    \iow_now:Nx \g_xsr_request_iow
+      { backend_version=\l_xsr_backend_version_tl }
+    \iow_now:Nx \g_xsr_request_iow
+      { options=\g_xsr_renderer_options_tl }
+    \iow_now:Nx \g_xsr_request_iow
+      { codepoints=\l_xsr_codepoints_tl }
+    \iow_close:N \g_xsr_request_iow
+  }
+
+% Bundle declarations and shell results store unexpanded bodies. Runtime font,
+% scale and raise are evaluated only when the requested response is executed.
+\prop_new:N \g_xsr_responses_prop
+\bool_new:N \g_xsr_bundle_loaded_bool
+\bool_new:N \g_xsr_shell_used_bool
+\tl_new:N \l_xsr_response_body_tl
+\tl_new:N \l_xsr_bundle_file_tl
+\msg_new:nnn{xsr}{bundle-missing}{[XSR-BUNDLE-MISSING]~Preprocess~bundle~not~found:~#1.}
+\msg_new:nnn{xsr}{digest-missing}{[XSR-RESPONSE-MISSING]~Request~#1~is~absent~from~the~bundle;~run~preprocess~again.}
+\NewDocumentCommand\xsrDeclareResponse{m +m}
+  {\prop_gput:Nnn\g_xsr_responses_prop{#1}{#2}}
+\cs_new_protected:Npn\xsr_load_bundle:
+  {\bool_if:NF\g_xsr_bundle_loaded_bool
+    {\tl_set:Nx\l_xsr_bundle_file_tl{.xsr/\c_sys_jobname_str.responses.tex}
+     \file_if_exist:VT\l_xsr_bundle_file_tl
+       {\exp_args:NV\file_input:n\l_xsr_bundle_file_tl}
+     \bool_gset_true:N\g_xsr_bundle_loaded_bool}}
+\cs_new_protected:Npn\xsr_execute_response:
+  {\bool_set_false:N\l_xsr_response_valid_bool
+   \prop_get:NVN\g_xsr_responses_prop\l_xsr_request_digest_tl\l_xsr_response_body_tl
+   \tl_use:N\l_xsr_response_body_tl
+   \bool_if:NF\l_xsr_response_valid_bool
+     {\msg_fatal:nnx{xsr}{malformed-response}{\l_xsr_request_digest_tl}}}
+\cs_new_protected:Npn \xsr_input_response:
+  {\exp_args:NV\file_get:nnN\l_xsr_response_file_tl{}\l_xsr_response_body_tl
+   \prop_gput:NVV\g_xsr_responses_prop\l_xsr_request_digest_tl\l_xsr_response_body_tl
+   \xsr_execute_response:}
+\AddToHook{enddocument/afterlastpage}
+  {\bool_if:NT\g_xsr_shell_used_bool
+    {\sys_shell_now:x{\g_xsr_renderer_command_tl\c_space_tl cleanup\c_space_tl --jobname\c_space_tl\c_sys_jobname_str}}}
+
+\cs_new_protected:Npn \xsr_unavailable_stub:nn #1#2
+  {
+    \iow_term:x
+      { XSR-UNAVAILABLE~script=#1~codepoints=\int_eval:n { \tl_count:n {#2} } }
+    \mbox{\fbox{\ttfamily XSR~#1~renderer~unavailable}}
+  }
+
+\cs_new_protected:Npn \xsr_shell_render:nn #1#2
+  {
+    \sys_if_shell_unrestricted:TF
+      {
+        \bool_gset_true:N\g_xsr_shell_used_bool
+        \xsr_write_request:n {#1}
+        % A failed invocation must never reuse a stale successful response.
+        \iow_open:NV \g_xsr_request_iow \l_xsr_response_file_tl
+        \iow_now:Nn \g_xsr_request_iow {\xsrRendererError{XSR-INVOCATION}{52,65,6E,64,65,72,65,72,20,64,69,64,20,6E,6F,74,20,70,72,6F,64,75,63,65,20,61,20,72,65,73,70,6F,6E,73,65}}
+        \iow_close:N \g_xsr_request_iow
+        \sys_shell_now:x
+          {
+            \g_xsr_renderer_command_tl \c_space_tl render
+            \c_space_tl --backend \c_space_tl #1
+            \c_space_tl --input \c_space_tl \l_xsr_request_file_tl
+            \c_space_tl --output \c_space_tl \l_xsr_response_file_tl
+            \c_space_tl --consume-request
+            \tl_if_empty:NF\g_xsr_cache_dir_tl
+              {\c_space_tl --cache-dir \c_space_tl \g_xsr_cache_dir_tl}
+          }
+        \file_if_exist:VTF \l_xsr_response_file_tl
+          { \xsr_input_response: }
+          {
+            \msg_error:nnx { xsr } { external-failed }
+              { \l_xsr_request_digest_tl }
+            \xsr_unavailable_stub:nn {#1} {#2}
+          }
+      }
+      {
+        \msg_warning:nn { xsr } { shell-disabled }
+        \xsr_unavailable_stub:nn {#1} {#2}
+      }
+  }
+
+\cs_new_protected:Npn \xsr_preprocessed_or_stub:nn #1#2
+  {\tl_set:Nx\l_xsr_bundle_file_tl{.xsr/\c_sys_jobname_str.responses.tex}
+   \file_if_exist:VF\l_xsr_bundle_file_tl
+     {\msg_fatal:nnx{xsr}{bundle-missing}{\l_xsr_bundle_file_tl}}
+   \xsr_load_bundle:
+   \prop_if_in:NVTF\g_xsr_responses_prop\l_xsr_request_digest_tl
+     {\xsr_execute_response:}
+     {\msg_fatal:nnx{xsr}{digest-missing}{\l_xsr_request_digest_tl}}}
+
+% Backend-facing interface: identity is unchanged; transport is mode-specific.
+\cs_new_protected:Npn \xsr_external_render:nn #1#2
+  {\xsr_prepare_request:nn{#1}{#2}
+   \str_if_eq:VnT\g_xsr_mode_tl{auto}{\xsr_load_bundle:}
+   \str_if_eq:VnTF\g_xsr_mode_tl{stub}
+     {\xsr_unavailable_stub:nn{#1}{#2}}
+     {\prop_if_in:NVTF\g_xsr_responses_prop\l_xsr_request_digest_tl
+       {\xsr_execute_response:}
+       {\str_if_eq:VnTF\g_xsr_mode_tl{preprocess}
+         {\xsr_preprocessed_or_stub:nn{#1}{#2}}
+         {\xsr_shell_render:nn{#1}{#2}}}}}
+
+% Stable response command emitted by successful Python backends.
+\cs_new_protected:Npn \xsr_backend_result:nnnnn #1#2#3#4#5
+  {
+    \bool_set_true:N \l_xsr_response_valid_bool
+    \iow_term:x
+      {
+        XSR-BACKEND~script=#1~codepoints=#2~digest=#3
+        ~backend-version=#4~parser=#5
+      }
+    \mbox{\fbox{\ttfamily XSR~#1~parsed~stub:~#2~codepoints}}
+  }
+\NewDocumentCommand \xsrBackendResult { m m m m m }
+  { \xsr_backend_result:nnnnn {#1} {#2} {#3} {#4} {#5} }
+
+% Generic successful-layout response: log protocol metadata, then execute the
+% backend-owned TeX body. Core deliberately knows nothing about its geometry.
+\cs_new_protected:Npn \xsr_backend_layout_result:nnnnnn #1#2#3#4#5#6
+  {
+    \bool_set_true:N \l_xsr_response_valid_bool
+    \iow_term:x
+      {
+        XSR-BACKEND~script=#1~codepoints=#2~digest=#3
+        ~backend-version=#4~parser=#5~path=real-layout
+      }
+    #6
+  }
+\NewDocumentCommand \xsrBackendLayoutResult { m m m m m m }
+  { \xsr_backend_layout_result:nnnnnn {#1} {#2} {#3} {#4} {#5} {#6} }
+
+\ExplSyntaxOff
+
+\endinput
