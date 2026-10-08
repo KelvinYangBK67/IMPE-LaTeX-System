@@ -1,0 +1,23 @@
+% !TeX program = xelatex
+% Requires XSR 0.10, Python dependencies and shell-escape.
+\documentclass{impeart}
+\UseFeature{xsr}
+\UseFont{khitan_small}
+\xsrKhitanDefaultFont{assets/fonts/khitan_small/NotoSerifKhitanSmallScript-Regular.ttf}
+\IMPEGlyphRegister[logical={unencoded sign},description={test rubbing}]
+  {test-sign}{tests/fixtures/xsr-square.svg}
+\begin{document}
+Linear: \KHS{𘬁𘬂}.
+Stacked: \KHSstack{𘬁𘬂𘬃} and \KHSstack{𘬁𖿤𘬂𘬃}.
+\par
+Breakable stacked blocks:
+\KHSstackblock{𘬁𘬂 𘬁𘬂 𘬁𘬂}
+\par
+Glyph: \IMPEGlyph{test-sign}
+scaled: \IMPEGlyph[scale=1.2,raise=1pt]{test-sign}
+trimmed: \IMPEGlyph[trim={1pt 1pt 1pt 1pt}]{test-sign}.
+\par
+Stored logical form: \IMPEGlyphLogical{test-sign}.
+Description: \IMPEGlyphDescription{test-sign}.
+\typeout{IMPE-TEST-XSR-INTEGRATION-PASS}
+\end{document}
