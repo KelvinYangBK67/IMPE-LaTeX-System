@@ -589,5 +589,6 @@ The XSR renderer needs a readable real TTF/OTF file, resolved by the IMPE
 font registry. On non-full installations, supply the matching file under
 the font mirror configured by \SetCatalogFontRoot{...}. Font family name
 lookup alone is not sufficient for the XSR Python renderer. XSR 0.10
-supports shell escape or preprocessing; shell mode does not currently
-support arbitrary -output-directory values.
+supports shell escape or preprocessing; shell mode on TeX Live 2024+ supports `-output-directory` through
+`TEXMF_OUTPUT_DIRECTORY` (XSR 0.10 maintenance fix); earlier engines need
+that environment variable set explicitly or the preprocess workflow.

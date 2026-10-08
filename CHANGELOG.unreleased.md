@@ -23,3 +23,7 @@
   協調，並保留可選的元資料與排版盒裁切。
 - 加入 Linux／Windows 直接 Unicode 及獨立圖片功能的測試。
 - 目前公開版本仍為 1.0.2，1.0.3 僅屬內部開發。
+
+- Integration pins the merged XSR 0.10 shell output-directory repair
+  (`f62677aeb2b5cc082efb1bec6f4c13b8bed965d6`) and checks direct mixed-script compilation using
+  `-output-directory` on Linux and Windows.

@@ -531,5 +531,5 @@ CJK 間距與文字系統處理均共用原路徑。本版透過已登錄 family
 \KHSstackblock{...} 及顯式 XSR 入口。
 
 XSR 須讀取實際字體檔案。非 full 安裝應以 \SetCatalogFontRoot{...}
-設定字體鏡像，不能只依賴作業系統中的字體名稱。XSR 0.10 shell
-模式尚不支援任意 -output-directory；也可選擇預處理。
+設定字體鏡像，不能只依賴作業系統中的字體名稱。XSR 0.10 維護修正後，TeX Live 2024+ 的 shell 模式支援
+`-output-directory`；舊版須明確設定 `TEXMF_OUTPUT_DIRECTORY`，或使用預處理。

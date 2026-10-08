@@ -55,7 +55,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: KelvinYangBK67/xetex-stack-renderer
-          ref: f11927553fba14e0c3054344f59e76e8689a4874
+          ref: f62677aeb2b5cc082efb1bec6f4c13b8bed965d6
           path: .ci/xsr
 
       - name: Set up TeX Live 2026
@@ -79,9 +79,6 @@ jobs:
       - name: Compile explicit XSR and glyph integration
         shell: pwsh
         run: |
-          # XSR 0.10's shell bridge writes and reads <job>.xsr-request.req
-          # relative to the current directory. Avoid XeLaTeX -output-directory
-          # until XSR adds an explicit separate workdir contract.
           $root = (Get-Location).Path.Replace([char]92, [char]47)
           $sep = [IO.Path]::PathSeparator
           $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
@@ -108,6 +105,33 @@ jobs:
           $log = Get-Content xsr-glyphs-only.log -Raw
           if ($log -notmatch 'IMPE-TEST-GLYPHS-ONLY-PASS' -or $log -notmatch 'XSR-INLINE') {
             throw 'Glyphs-only test markers missing.'
+          }
+
+      - name: Verify IMPE with XSR 0.10 shell output-directory
+        shell: pwsh
+        run: |
+          # TeX Live 2026 exports TEXMF_OUTPUT_DIRECTORY to XSR's subprocess.
+          # Compile a genuine mixed Egyptian/Khitan/glyph document and
+          # confirm the bridge writes, reads and cleans in the build directory.
+          $root = (Get-Location).Path.Replace([char]92, [char]47)
+          $sep = [IO.Path]::PathSeparator
+          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
+          New-Item -ItemType Directory -Force build-xsr | Out-Null
+          & xelatex -shell-escape -output-directory=build-xsr -interaction=nonstopmode -halt-on-error tests/xsr-integration.tex
+          if ($LASTEXITCODE -ne 0) { throw 'XSR output-directory integration compile failed.' }
+          $log = Get-Content build-xsr/xsr-integration.log -Raw
+          if ($log -notmatch 'IMPE-TEST-XSR-INTEGRATION-PASS' -or
+              $log -notmatch '(?s)IMPE-AUTO-EGYPTIAN-BEGIN.*XSR-LAYOUT script=egyptian.*IMPE-AUTO-EGYPTIAN-END' -or
+              $log -notmatch '(?s)IMPE-AUTO-KHITAN-BEGIN.*XSR-LAYOUT script=khitan.*IMPE-AUTO-KHITAN-END' -or
+              $log -notmatch 'XSR-INLINE') {
+            throw 'XSR output-directory integration markers missing.'
+          }
+          if (-not (Test-Path build-xsr/xsr-integration.pdf)) {
+            throw 'XSR output-directory PDF missing.'
+          }
+          if ((Test-Path build-xsr/xsr-integration.xsr-request.req) -or
+              (Test-Path build-xsr/xsr-integration.xsr-response.tex)) {
+            throw 'XSR output-directory shell scratch pair was not cleaned.'
           }
 
       - name: Save rendering samples for human review
