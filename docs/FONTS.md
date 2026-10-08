@@ -53,8 +53,6 @@ Current core files:
   Stores low-level declaration entries before they are turned into usable local/global families.
 - `impe-fonts-registry-modes.tex`
   Tracks family loading mode (`local` / `global`) and performs on-demand family activation.
-- `impe-fonts-externalized.tex`
-  Provides the stable externalized-render pipeline: cache naming, external subdocument generation, shell-out, and PDF reinsertion. It invokes the portable `impe-externalized-render.lua` helper with `texlua`; the requested TeX engine is resolved from `PATH`.
 - `impe-fonts-helpers.tex`
   Small shared helper primitives used by the font framework.
 
@@ -141,7 +139,7 @@ Ordinary local families use the standard registration fields; specialized fields
 - `scriptclass` for CJK routing
 - `inlinebehavior`, `blockbehavior`, or `blockalign` for core-maintained
   script-specific behavior entries
-- vertical/externalized fields
+- vertical-writing fields
 - `mono` / `monobold`
 
 ### Global Family
@@ -574,3 +572,12 @@ registered filename/name through fontspec (TeX Live or system lookup), then the
 existing strict error or soft fallback. Bundled files always win. A core install
 can therefore use installed fonts directly. `\SetCatalogFontRoot` selects a
 separate library when needed.
+
+## XSR bridge for Khitan (1.0.3 internal)
+
+`\KHS{...}` retains its linear font-selection behavior. `\KHSstack{...}` and
+`\KHSstackblock{...}` dispatch the same encoded input to XSR 0.10, which owns
+the composition algorithm. Explicitly load `\UseFeature{xsr}` in the preamble,
+and select a real, readable font file with `\xsrKhitanDefaultFont{path}`.
+XSR is optional and is installed separately; IMPE's ordinary font routing
+does not depend on it.
