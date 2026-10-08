@@ -37,3 +37,56 @@ jobs:
       - name: Run public regression suite
         shell: pwsh
         run: ./tests/run_regressions.ps1 -PublicFonts
+
+  xsr-integration:
+    name: XSR 0.10 integration (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Check out IMPE
+        uses: actions/checkout@v7
+
+      - name: Check out pinned XSR 0.10
+        uses: actions/checkout@v7
+        with:
+          repository: KelvinYangBK67/xetex-stack-renderer
+          ref: f11927553fba14e0c3054344f59e76e8689a4874
+          path: .ci/xsr
+
+      - name: Set up TeX Live 2026
+        uses: TeX-Live/setup-texlive-action@v4
+        with:
+          version: 2026
+          package-file: .github/texlive.packages
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install XSR and fetch checksum-verified public reference font
+        shell: pwsh
+        run: |
+          python -m pip install -e .ci/xsr
+          python .ci/xsr/scripts/fetch_khitan.py --output assets/fonts/khitan_small/NotoSerifKhitanSmallScript-Regular.ttf
+
+      - name: Compile explicit XSR and glyph integration
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path tests/build | Out-Null
+          $root = (Get-Location).Path.Replace([char]92, [char]47)
+          $sep = [IO.Path]::PathSeparator
+          $env:TEXINPUTS = "$root/.ci/xsr/tex//$sep$root/package//$sep$root//$sep"
+          & xelatex -shell-escape -interaction=nonstopmode -halt-on-error -output-directory=tests/build tests/xsr-integration.tex
+          if ($LASTEXITCODE -ne 0) { throw 'XSR integration compile failed.' }
+          $log = Get-Content tests/build/xsr-integration.log -Raw
+          if ($log -notmatch 'IMPE-TEST-XSR-INTEGRATION-PASS' -or
+              $log -notmatch 'XSR-LAYOUT.*script=khitan' -or
+              $log -notmatch 'XSR-INLINE') {
+            throw 'XSR integration markers missing.'
+          }
