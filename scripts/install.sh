@@ -229,7 +229,6 @@ for file in \
     impebeamer.cls \
     impebeamer_zh.cls \
     nextsystem.sty \
-    impe-externalized-render.lua \
     nextart.cls \
     nextart_zh.cls \
     nextbook.cls \
