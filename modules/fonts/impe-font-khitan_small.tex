@@ -1,6 +1,154 @@
-% Khitan Small Script font route: linear text belongs to IMPE, stacked
-% clusters belong to XSR.  No second stacking algorithm is maintained here.
+% Khitan Small Script special builder.
+%
+% The current TeX/fontspec shaping path does not reliably expose the font's
+% native cluster substitution behaviour, so IMPE LaTeX System composes Khitan Small Script
+% clusters explicitly from the encoded character stream.
+%
+% Model used here:
+% - clusters are separated by spaces
+% - Type A starts with two adjacent characters
+% - Type B inserts U+16FE4 KHITAN SMALL SCRIPT FILLER after the first character
+% - Type A lays out rows of pairs, with a final centred character if odd
+% - Type B lays out a first centred character, then applies the Type A rule to
+%   the remaining characters
+
 \ExplSyntaxOn
+
+\tl_const:Nn \c__font_khs_filler_tl { 𖿤 }
+
+\seq_new:N \l__font_khs_cluster_seq
+\seq_new:N \l__font_khs_char_seq
+\seq_new:N \l__font_khs_line_seq
+\tl_new:N \l__font_khs_current_line_tl
+\tl_new:N \l__font_khs_content_tl
+\tl_new:N \l__font_khs_style_family_tl
+\tl_new:N \l__font_khs_style_series_tl
+\tl_new:N \l__font_khs_style_shape_tl
+\tl_new:N \l__font_khs_style_setup_tl
+\dim_new:N \l__font_khs_target_width_dim
+\dim_new:N \l__font_khs_line_width_dim
+\dim_new:N \l__font_khs_cluster_measure_dim
+\dim_new:N \l__font_khs_cell_wd_dim
+\dim_new:N \l__font_khs_cell_ht_dim
+\dim_new:N \l__font_khs_cluster_wd_dim
+\dim_new:N \l__font_khs_row_gap_dim
+\dim_new:N \l__font_khs_col_gap_dim
+\dim_new:N \l__font_khs_space_gap_dim
+\dim_new:N \l__font_khs_target_ht_dim
+\dim_new:N \l__font_khs_actual_ht_dim
+\dim_new:N \l__font_khs_raise_dim
+\bool_new:N \l__font_khs_type_b_bool
+\bool_new:N \l__font_khs_first_row_bool
+\bool_new:N \l__font_khs_first_cluster_bool
+\int_new:N \l__font_khs_run_max_rows_int
+\int_new:N \l__font_khs_cluster_rows_int
+\box_new:N \l__font_khs_measure_box
+\box_new:N \l__font_khs_cluster_box
+
+\cs_new_protected:Npn \__font_khs_reset_style_parse:
+  {
+    \tl_clear:N \l__font_khs_style_family_tl
+    \tl_clear:N \l__font_khs_style_series_tl
+    \tl_clear:N \l__font_khs_style_shape_tl
+    \tl_clear:N \l__font_khs_style_setup_tl
+  }
+
+\cs_new_protected:Npn \__font_khs_apply_style_setup:
+  {
+    \tl_clear:N \l__font_khs_style_setup_tl
+    \tl_if_blank:VF \l__font_khs_style_family_tl
+      { \tl_put_right:NV \l__font_khs_style_setup_tl \l__font_khs_style_family_tl }
+    \tl_if_blank:VF \l__font_khs_style_series_tl
+      { \tl_put_right:NV \l__font_khs_style_setup_tl \l__font_khs_style_series_tl }
+    \tl_if_blank:VF \l__font_khs_style_shape_tl
+      { \tl_put_right:NV \l__font_khs_style_setup_tl \l__font_khs_style_shape_tl }
+  }
+
+\cs_new_protected:Npn \__font_khs_prepare_content:n #1
+  {
+    \tl_set:Nn \l__font_khs_content_tl {#1}
+    \__font_khs_reset_style_parse:
+    \__font_khs_strip_wrappers:
+    \__font_khs_apply_style_setup:
+  }
+
+\cs_new_protected:Npn \__font_khs_strip_wrappers:
+  {
+    \tl_if_head_eq_meaning:VNTF \l__font_khs_content_tl \textsf
+      { \__font_khs_unwrap_textsf: }
+      {
+        \tl_if_head_eq_meaning:VNTF \l__font_khs_content_tl \texttt
+          { \__font_khs_unwrap_texttt: }
+          {
+            \tl_if_head_eq_meaning:VNTF \l__font_khs_content_tl \textbf
+              { \__font_khs_unwrap_textbf: }
+              {
+                \tl_if_head_eq_meaning:VNTF \l__font_khs_content_tl \textit
+                  { \__font_khs_unwrap_textit: }
+                  { }
+              }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_khs_unwrap_textsf:
+  { \exp_after:wN \__font_khs_unwrap_textsf_aux:w \l__font_khs_content_tl \q_stop }
+\cs_new_protected:Npn \__font_khs_unwrap_textsf_aux:w \textsf #1#2 \q_stop
+  {
+    \tl_set:Nn \l__font_khs_style_family_tl { \sffamily }
+    \tl_set:Nn \l__font_khs_content_tl {#1}
+    \__font_khs_strip_wrappers:
+  }
+
+\cs_new_protected:Npn \__font_khs_unwrap_texttt:
+  { \exp_after:wN \__font_khs_unwrap_texttt_aux:w \l__font_khs_content_tl \q_stop }
+\cs_new_protected:Npn \__font_khs_unwrap_texttt_aux:w \texttt #1#2 \q_stop
+  {
+    \tl_set:Nn \l__font_khs_style_family_tl { \ttfamily }
+    \tl_set:Nn \l__font_khs_content_tl {#1}
+    \__font_khs_strip_wrappers:
+  }
+
+\cs_new_protected:Npn \__font_khs_unwrap_textbf:
+  { \exp_after:wN \__font_khs_unwrap_textbf_aux:w \l__font_khs_content_tl \q_stop }
+\cs_new_protected:Npn \__font_khs_unwrap_textbf_aux:w \textbf #1#2 \q_stop
+  {
+    \tl_set:Nn \l__font_khs_style_series_tl { \bfseries }
+    \tl_set:Nn \l__font_khs_content_tl {#1}
+    \__font_khs_strip_wrappers:
+  }
+
+\cs_new_protected:Npn \__font_khs_unwrap_textit:
+  { \exp_after:wN \__font_khs_unwrap_textit_aux:w \l__font_khs_content_tl \q_stop }
+\cs_new_protected:Npn \__font_khs_unwrap_textit_aux:w \textit #1#2 \q_stop
+  {
+    \tl_set:Nn \l__font_khs_style_shape_tl { \itshape }
+    \tl_set:Nn \l__font_khs_content_tl {#1}
+    \__font_khs_strip_wrappers:
+  }
+\cs_new:Npn \__font_khs_strip_fillers:n #1
+  {
+    \tl_clear:N \l_tmpa_tl
+    \tl_map_inline:nn {#1}
+      {
+        \str_if_eq:eeF
+          { \tl_to_str:n {##1} }
+          { \tl_to_str:V \c__font_khs_filler_tl }
+          { \tl_put_right:Nn \l_tmpa_tl {##1} }
+      }
+    \tl_use:N \l_tmpa_tl
+  }
+
+\cs_new_protected:Npn \__font_khs_render_linear:n #1
+  {
+    \__font_khs_prepare_content:n {#1}
+    \tl_set_eq:NN \l_tmpa_tl \l__font_khs_content_tl
+    \tl_replace_all:NVn \l_tmpa_tl \c__font_khs_filler_tl { }
+    \cs_if_exist:NT \XeTeXinterchartokenstate
+      { \XeTeXinterchartokenstate = 0 }
+    \tl_use:N \l__font_khs_style_setup_tl
+    \tl_use:N \l_tmpa_tl
+  }
 \cs_new_protected:Npn \__font_khs_stack:n #1
   {
     \cs_if_exist:NTF \xsrKhitanText
@@ -23,13 +171,29 @@
         \par
       }
   }
+\cs_new_protected:Npn \__font_define_public_command_khitan_linear:nn #1#2
+  {
+    \cs_set_protected:cpn { #1 } ##1
+      {
+        {
+          \use:c { __font_prepare_local_#2: }
+          \__font_khs_render_linear:n {##1}
+        }
+      }
+  }
+
 \cs_new_protected:Npn \__font_define_special_khitan_small:
   {
     \tl_clear:N \l__font_script_tl
     \tl_clear:N \l__font_language_tl
     \tl_set:Nn \l__font_backend_tl { generic }
     \__font_special_use_generic:
-    % The ordinary \KHS remains the local linear font route.
+    % Preserve the original linear-mode filler stripping and style wrappers.
+    \exp_args:NVV \__font_define_public_command_khitan_linear:nn
+      \l__font_command_tl
+      \l__font_name_tl
+    % Stacked layout is delegated to XSR; no IMPE stack geometry remains.
+
     \exp_args:NVV \__font_define_public_command_khitan:nn
       \l__font_command_tl
       \l__font_name_tl
