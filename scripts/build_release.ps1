@@ -129,7 +129,7 @@ function Get-ArchiveEntryKind {
     $name = ($normalizedPath -split '/')[-1]
     $extension = [System.IO.Path]::GetExtension($name).ToLowerInvariant()
 
-    if (@(".md", ".tex", ".sty", ".cls", ".lua", ".bib", ".txt", ".ps1", ".sh", ".yml", ".yaml") -contains $extension) {
+    if (@(".md", ".tex", ".sty", ".cls", ".lua", ".bib", ".txt", ".ps1", ".sh", ".yml", ".yaml", ".py", ".toml") -contains $extension) {
         return "text-lf"
     }
     if ($extension -eq ".bat") {
@@ -406,6 +406,12 @@ function New-ReleasePackage {
     Copy-Item -Force (Join-Path $ScriptRoot "install.bat") (Join-Path $StageRoot "install.bat")
     Copy-Item -Force (Join-Path $ScriptRoot "install.sh") (Join-Path $StageRoot "install.sh")
 
+    # The XSR runtime is bundled with every core/full release, including Python.
+    $XsrVendor = Join-Path $RepoRoot "vendor/xsr"
+    if (-not (Test-Path (Join-Path $XsrVendor "UPSTREAM.txt"))) { throw "Bundled XSR source is missing." }
+    New-Item -ItemType Directory -Force -Path (Join-Path $StageRoot "vendor") | Out-Null
+    Copy-Item -LiteralPath $XsrVendor -Destination (Join-Path $StageRoot "vendor/xsr") -Recurse -Force
+
     if ($Flavor -eq "full") {
         $LocalFontRoot = Join-Path $RepoRoot "assets/fonts"
         Write-Host "  Local font library: $LocalFontRoot"
@@ -498,6 +504,10 @@ function New-CtanPackage {
     foreach ($dir in @("core", "catalog", "modules", "docs")) {
         Copy-Item -Recurse -Force (Join-Path $RepoRoot $dir) (Join-Path $StageRoot $dir)
     }
+
+    # CTAN receives the vendored source; CTAN itself cannot execute pip.
+    New-Item -ItemType Directory -Force -Path (Join-Path $StageRoot "vendor") | Out-Null
+    Copy-Item -LiteralPath (Join-Path $RepoRoot "vendor/xsr") -Destination (Join-Path $StageRoot "vendor/xsr") -Recurse -Force
 
     Remove-RuntimeBuildArtifacts -StageRoot $StageRoot
 

@@ -27,3 +27,8 @@
 - Integration pins the merged XSR 0.10 shell output-directory repair
   (`f62677aeb2b5cc082efb1bec6f4c13b8bed965d6`) and checks direct mixed-script compilation using
   `-output-directory` on Linux and Windows.
+
+- Bundle pinned XSR 0.10 TeX/Python source in the IMPE checkout and all
+  core/full/CTAN archives, and configure private Python venv on installation.
+- CI checks the vendored upstream file hashes and installed IMPE/XSR runtime.
+- IMPE 現在內附 XSR 0.10 並由安裝器管理獨立 Python 虛擬環境。

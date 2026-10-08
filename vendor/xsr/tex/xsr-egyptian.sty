@@ -1,0 +1,202 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesExplPackage
+  {xsr-egyptian}
+  {2026-10-06}
+  {0.10}
+  {Egyptian backend registration for xetex-stack-renderer}
+
+\RequirePackage{xsr-core}
+\RequirePackage{xsr-vector}
+\RequirePackage{graphicx}
+\RequirePackage{pgf}
+
+\ExplSyntaxOn
+
+
+
+\tl_new:N \l_xsr_egyptian_direction_tl
+\tl_set:Nn \l_xsr_egyptian_direction_tl {ltr}
+\msg_new:nnn {xsr}{direction}{[XSR-DIRECTION]~Use~ltr~or~rtl.}
+\msg_new:nnn {xsr}{writing-mode}{[XSR-WRITING-MODE-UNSUPPORTED]~Only~horizontal~text~flow~is~implemented.}
+\NewDocumentCommand \xsrEgyptianDirection {m}
+  {\str_case:nnF{#1}{{ltr}{\tl_set:Nn\l_xsr_egyptian_direction_tl{ltr}}{rtl}{\tl_set:Nn\l_xsr_egyptian_direction_tl{rtl}}}{\msg_fatal:nn{xsr}{direction}}}
+\NewDocumentCommand \xsrEgyptianWritingMode {m}
+  {\str_if_eq:nnF{#1}{horizontal}{\msg_fatal:nn{xsr}{writing-mode}}}
+% Explicit Egyptian context preserves ordinary punctuation catcodes everywhere.
+% Nested literal braces in this argument represent editorial braces.
+\NewDocumentCommand \xsrEgyptianText {m}
+  {\exp_args:Nnx \xsr_dispatch_run:nn{egyptian}{\tl_to_str:n{#1}}}
+\TeXXeTstate=1\relax
+\NewDocumentCommand \xsrEgyptianFlow {m m}
+  {\mode_leave_vertical:\str_if_eq:nnTF{#1}{rtl}{\beginR #2\endR}{#2}}
+\NewDocumentCommand \xsrEgyptianBreak {m}{\penalty0\relax}
+
+\tl_new:N \l_xsr_egyptian_font_path_tl
+\tl_new:N \l_xsr_egyptian_font_digest_tl
+\msg_new:nnn { xsr } { font-required }
+  { [XSR-FONT-NOT-SELECTED]~Select~an~Egyptian~font~file~with~\string\xsrEgyptianFont. }
+\msg_new:nnn { xsr } { font-missing }
+  {[XSR-FONT-MISSING]~Egyptian~font~file~is~missing~or~unreadable.}
+\msg_new:nnn { xsr } { font-changed }
+  { [XSR-STALE]~Egyptian~font~file~changed~or~is~missing;~regenerate~the~response. }
+\msg_new:nnn { xsr } { font-path }
+  { Font~path~contains~a~reserved~TeX/XeTeX~character. }
+
+% Scoped selection; the actual file digest joins the existing generic options.
+\cs_generate_variant:Nn \str_map_inline:nn { Vn }
+\tl_new:N \l_xsr_egyptian_font_codepoints_tl
+\cs_new_protected:Npn \xsr_egyptian_select:n #1
+  {
+    \tl_set:Nn \l_xsr_egyptian_font_path_tl {#1}
+    \regex_match:nnT { [\x{0000}\x{000A}\x{000D}"\{\}\%\#\[\]] } {#1}
+      { \msg_fatal:nn { xsr } { font-path } }
+  }
+\NewDocumentCommand \xsrEgyptianFont { m }
+  { \xsr_egyptian_select:n {#1} }
+\NewDocumentCommand \xsrEgyptianDefaultFont { m }
+  {
+    \xsr_egyptian_select:n {#1}
+    \tl_gset_eq:NN \l_xsr_egyptian_font_path_tl \l_xsr_egyptian_font_path_tl
+  }
+% Verbatim convenience accepts native Windows backslashes at the call site.
+\NewDocumentCommand \xsrEgyptianFontPath { v }
+  {
+    \tl_set:Nn \l_tmpa_tl {#1}
+    \exp_args:NNx \tl_replace_all:Nnn \l_tmpa_tl { \c_backslash_str } {/}
+    \exp_args:NV \xsr_egyptian_select:n \l_tmpa_tl
+  }
+\cs_new_protected:Npn \xsr_egyptian_decode:n #1
+  {
+    \tl_clear:N \l_xsr_egyptian_font_path_tl
+    \clist_map_inline:nn {#1}
+      { \tl_put_right:Nx \l_xsr_egyptian_font_path_tl
+          { \char_generate:nn { \int_from_hex:n {##1} } {12} } }
+  }
+\cs_new_protected:Npn \xsr_egyptian_render:nn #1#2
+  {
+    \group_begin:
+      \tl_if_empty:NT \l_xsr_egyptian_font_path_tl
+        { \msg_fatal:nn { xsr } { font-required } }
+      \tl_set:Nx \l_xsr_egyptian_font_digest_tl
+        { \file_mdfive_hash:V \l_xsr_egyptian_font_path_tl }
+      \tl_if_empty:NT \l_xsr_egyptian_font_digest_tl
+        { \msg_fatal:nn { xsr } { font-missing } }
+      \tl_clear:N \l_xsr_egyptian_font_codepoints_tl
+      \str_map_inline:Vn \l_xsr_egyptian_font_path_tl
+        { \tl_put_right:Nx \l_xsr_egyptian_font_codepoints_tl { \int_to_Hex:n {`##1}, } }
+      \tl_set:Nx \l_xsr_egyptian_font_codepoints_tl
+        { \tl_range:Nnn \l_xsr_egyptian_font_codepoints_tl {1}{-2} }
+      \tl_set:Nx \g_xsr_renderer_options_tl
+        {
+          \c_left_brace_str
+          \str_if_eq:VnT \l_xsr_egyptian_direction_tl {rtl} {"direction":"rtl",}
+          "font_codepoints":"\l_xsr_egyptian_font_codepoints_tl",
+          "font_digest":"\l_xsr_egyptian_font_digest_tl"
+          \str_if_eq:VnT \l_xsr_missing_policy_tl {error} {,"missing_glyph_policy":"error"}
+          \c_right_brace_str
+        }
+      \xsr_external_render:nn {#1} {#2}
+    \group_end:
+  }
+\cs_generate_variant:Nn \file_mdfive_hash:n { V }
+
+% Responses select the measured file explicitly, even in an unrelated ambient
+% font. Hash validation also protects offline/preprocessed responses.
+\NewDocumentCommand \xsrEgyptianUseFont { m m m }
+  {
+    \group_begin:
+      \xsr_egyptian_decode:n {#1}
+      \str_if_eq:eeF { \file_mdfive_hash:V \l_xsr_egyptian_font_path_tl } {#2}
+        { \msg_fatal:nn { xsr } { font-changed } }
+      \tex_font:D \l_xsr_egyptian_font = "[\l_xsr_egyptian_font_path_tl]"~at~\f@size pt\scan_stop:
+      \l_xsr_egyptian_font
+      #3
+    \group_end:
+  }
+
+\xsr_register_backend:nnn
+  { egyptian }
+  { font-aware-ehfc-0.9 }
+  { xsr_egyptian_render:nn }
+
+% Top-origin ink positions. Subtract the actual left bearing and place the
+% baseline using yMax, rather than centering the advance/TeX line box.
+\dim_new:N \l_xsr_egyptian_em_dim
+\NewDocumentCommand \xsrEgyptianPoint {m m}
+  {\pgfpoint{\dim_eval:n{#1\l_xsr_egyptian_em_dim}}{\dim_eval:n{#2\l_xsr_egyptian_em_dim}}}
+\dim_new:N \l_xsr_egyptian_layout_width_dim
+\dim_new:N \l_xsr_egyptian_layout_height_dim
+\dim_new:N \l_xsr_egyptian_layout_depth_dim
+\cs_new_protected:Npn \xsr_egyptian_glyph:nnnnnnnn #1#2#3#4#5#6#7#8
+  {
+    \pgfscope
+      \pgftransformshift{\pgfpoint
+        {\dim_eval:n{\fp_eval:n{#2-#6*#7}\l_xsr_egyptian_em_dim}}
+        {\dim_eval:n{\l_xsr_egyptian_layout_height_dim-\fp_eval:n{#3+#6*#8}\l_xsr_egyptian_em_dim}}}
+      \pgftransformscale{#6}
+      \pgftext[left,base]{\l_xsr_egyptian_font\XeTeXglyph\XeTeXcharglyph\int_from_hex:n{#1}\scan_stop:}
+    \endpgfscope
+  }
+\cs_new_protected:Npn \xsr_egyptian_matrix:w #1,#2,#3,#4\q_stop
+  { \pgftransformcm{#1}{#2}{#3}{#4}{\pgfpointorigin} }
+\NewDocumentCommand \xsrEgyptianTransformedGlyph { m m m m }
+  {
+    \pgfscope
+      \pgftransformshift{\pgfpoint{\dim_eval:n{#2\l_xsr_egyptian_em_dim}}{\dim_eval:n{\l_xsr_egyptian_layout_height_dim-#3\l_xsr_egyptian_em_dim}}}
+      \xsr_egyptian_matrix:w #4\q_stop
+      \pgftext[left,base]{\l_xsr_egyptian_font\XeTeXglyph\XeTeXcharglyph\int_from_hex:n{#1}\scan_stop:}
+    \endpgfscope
+  }
+\NewDocumentCommand \xsrEgyptianDecoration { m m m m m }
+  {
+    \pgfscope
+      \pgftransformshift{\pgfpoint{\dim_eval:n{#1\l_xsr_egyptian_em_dim}}{\dim_eval:n{\l_xsr_egyptian_layout_height_dim-#2\l_xsr_egyptian_em_dim-#3\l_xsr_egyptian_em_dim}}}
+      \pgfsetlinewidth{\dim_eval:n{#4\l_xsr_egyptian_em_dim}}
+      #5
+    \endpgfscope
+  }
+\cs_new_protected:Npn \xsr_egyptian_layout:nnnnn #1#2#3#4#5
+  {
+    \group_begin:
+      \dim_set:Nn \l_xsr_egyptian_em_dim {\f@size pt}
+      \dim_set:Nn \l_xsr_egyptian_layout_width_dim {#1\l_xsr_egyptian_em_dim}
+      \dim_set:Nn \l_xsr_egyptian_layout_height_dim {#2\l_xsr_egyptian_em_dim}
+      \iow_term:x{XSR-LAYOUT~script=egyptian~glyphs=#4~width=#1~height=#2~depth=#3}
+      \mode_leave_vertical:
+      \hbox{\beginL\pgfpicture
+        \pgfpathrectangle{\pgfpointorigin}{\xsrEgyptianPoint{#1}{#2}}
+        \pgfusepath{use~as~bounding~box}
+        \pgfinterruptboundingbox
+          #5
+        \endpgfinterruptboundingbox
+      \endpgfpicture\endL}
+    \group_end:
+  }
+\NewDocumentCommand \xsrEgyptianGlyph { m m m m m m m m }
+  { \xsr_egyptian_glyph:nnnnnnnn {#1}{#2}{#3}{#4}{#5}{#6}{#7}{#8} }
+\NewDocumentCommand \xsrEgyptianLayout { m m m m m }
+  { \xsr_egyptian_layout:nnnnn {#1}{#2}{#3}{#4}{#5} }
+
+% The standalone frontend loads the active detector first. A host that omits
+% that detector gets no character redefinitions and can dispatch complete runs.
+\cs_if_exist:NT \xsr_active_detector_register:nn
+  {
+    \xsr_active_detector_register:nn
+      { egyptian }
+      { 13000-1342F, 13430-1345F, 13460-143FF }
+    \xsr_active_detector_register_suffix:nnn {egyptian}{"FE00}{"FE0F}
+  }
+
+\NewDocumentCommand \xsrEgyptianSynthetic {m m m m}
+  {\xsrVectorWarning{XSR-GLYPH-MISSING}
+   \pgfscope
+    \dim_set_eq:NN\l_xsr_vector_em_dim\l_xsr_egyptian_em_dim
+    \pgftransformshift{\pgfpoint{#2\l_xsr_egyptian_em_dim}
+      {\dim_eval:n{\l_xsr_egyptian_layout_height_dim-#3\l_xsr_egyptian_em_dim}}}
+    \xsr_egyptian_matrix:w #4\q_stop
+    #1
+   \endpgfscope}
+
+\ExplSyntaxOff
+
+\endinput

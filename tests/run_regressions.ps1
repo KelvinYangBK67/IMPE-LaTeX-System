@@ -620,6 +620,9 @@ if (-not $SkipRelease) {
             throw "CTAN archive is missing $required."
         }
     }
+    foreach ($xsrFile in @("vendor/xsr/UPSTREAM.txt", "vendor/xsr/LICENSE", "vendor/xsr/pyproject.toml", "vendor/xsr/tex/xsr-core.sty", "vendor/xsr/src/xsr/renderer.py")) {
+        if (-not (Test-Path (Join-Path $ctanPackage $xsrFile))) { throw "CTAN source missing XSR: $xsrFile" }
+    }
     $ctanVersion = (Get-Content -LiteralPath (Join-Path $ctanPackage "VERSION") -Raw -Encoding UTF8).Trim()
     if ($ctanVersion -ne $Version) {
         throw "CTAN VERSION is $ctanVersion; expected $Version."
@@ -714,6 +717,9 @@ if (-not $SkipRelease) {
 
     $coreInspect = Join-Path $BuildRoot "core-inspect"
     Expand-Archive -LiteralPath $coreZip -DestinationPath $coreInspect -Force
+    foreach ($xsrFile in @("vendor/xsr/UPSTREAM.txt", "vendor/xsr/tex/xsr-core.sty", "vendor/xsr/src/xsr/renderer.py")) {
+        if (-not (Test-Path (Join-Path $coreInspect $xsrFile))) { throw "Core archive missing XSR: $xsrFile" }
+    }
     if (Test-Path -LiteralPath (Join-Path $coreInspect "examples")) {
         throw "Core release must not contain examples/."
     }
@@ -754,7 +760,7 @@ if (-not $SkipRelease) {
     Set-Content -LiteralPath (Join-Path $installTexmf "tex/latex/impe/impe-externalized-render.lua") -Value "-- retired IMPE helper"
     Set-Content -LiteralPath (Join-Path $installTexmf "tex/latex/impe/core/fonts/impe-fonts-externalized.tex") -Value "% retired IMPE renderer"
 
-    & (Join-Path $coreInspect "install.ps1") -TexmfRoot $installTexmf -NoRefresh
+    & (Join-Path $coreInspect "install.ps1") -TexmfRoot $installTexmf -NoRefresh -SkipXsrPython
     if ($LASTEXITCODE -ne 0) {
         throw "Core installer regression failed."
     }
@@ -766,7 +772,8 @@ if (-not $SkipRelease) {
         "nextart_zh.cls", "nextbook.cls", "nextbook_zh.cls", "nextreport.cls",
         "nextreport_zh.cls", "nextbeamer.cls", "nextbeamer_zh.cls",
         "core/system/impe-system-core.tex",
-        "catalog/impe-fonts-catalog.tex", "modules/features/impe-feature-math.tex"
+        "catalog/impe-fonts-catalog.tex", "modules/features/impe-feature-math.tex",
+        "xsr/xsr-core.sty", "xsr/xsr-egyptian.sty", "xsr/xsr-khitan.sty", "xsr/xsr-inline.sty"
     )) {
         if (-not (Test-Path (Join-Path $canonicalInstall $required))) {
             throw "Canonical install is missing $required."
