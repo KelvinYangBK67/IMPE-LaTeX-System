@@ -323,8 +323,23 @@ if (-not $SkipXsrPython) {
         & $PythonCommand.Source -m venv $VenvRoot
         if ($LASTEXITCODE -ne 0) { throw "Cannot create XSR venv at $VenvRoot." }
     }
-    & $VenvPython -m pip install --disable-pip-version-check --no-input --upgrade $XsrSource
-    if ($LASTEXITCODE -ne 0) { throw "Bundled XSR Python installation failed in $VenvRoot." }
+    # Stage only the Python package in a temporary directory. Installing directly
+    # from vendor/xsr would leave build/ and *.egg-info in the Git worktree.
+    $XsrBuildRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("impe-xsr-build-" + [guid]::NewGuid().ToString("N"))
+    try {
+        New-Item -ItemType Directory -Force -Path (Join-Path $XsrBuildRoot "src") | Out-Null
+        foreach ($file in @("pyproject.toml", "README.md", "LICENSE")) {
+            Copy-Item -LiteralPath (Join-Path $XsrSource $file) -Destination (Join-Path $XsrBuildRoot $file) -Force
+        }
+        Copy-Item -LiteralPath (Join-Path $XsrSource "src/xsr") -Destination (Join-Path $XsrBuildRoot "src") -Recurse -Force
+        & $VenvPython -m pip install --disable-pip-version-check --no-input --upgrade $XsrBuildRoot
+        if ($LASTEXITCODE -ne 0) { throw "Bundled XSR Python installation failed in $VenvRoot." }
+    }
+    finally {
+        if (Test-Path -LiteralPath $XsrBuildRoot) {
+            Remove-Item -LiteralPath $XsrBuildRoot -Recurse -Force
+        }
+    }
     & $VenvPython -c "import xsr; assert xsr.__version__ == '0.10'"
     if ($LASTEXITCODE -ne 0) { throw "Bundled XSR Python validation failed." }
     $XsrExecutable = $VenvPython.Replace([char]92, [char]47)
