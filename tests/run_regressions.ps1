@@ -609,8 +609,7 @@ if (-not $SkipRelease) {
         "docs/EXTENDING-zh.md",
         "manual/showcase/impe-showcase.tex",
         "manual/showcase/impe-showcase.pdf",
-        "manual/showcase/references.bib",
-        "impe-externalized-render.lua"
+        "manual/showcase/references.bib"
     )
     foreach ($languageId in $manualLanguages) {
         $requiredCtanPaths += "manual/$languageId/impe-manual-$languageId.tex"
@@ -761,7 +760,7 @@ if (-not $SkipRelease) {
         "impebeamer.cls", "impebeamer_zh.cls", "nextsystem.sty", "nextart.cls",
         "nextart_zh.cls", "nextbook.cls", "nextbook_zh.cls", "nextreport.cls",
         "nextreport_zh.cls", "nextbeamer.cls", "nextbeamer_zh.cls",
-        "impe-externalized-render.lua", "core/system/impe-system-core.tex",
+        "core/system/impe-system-core.tex",
         "catalog/impe-fonts-catalog.tex", "modules/features/impe-feature-math.tex"
     )) {
         if (-not (Test-Path (Join-Path $canonicalInstall $required))) {
