@@ -11,6 +11,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容；本次不建立 Tag 或 GitHub Release。
 
 ### 調整
+* #17：內附 XSR 由 0.10 更新至 1.0，安裝器改從隨附的 XSR 讀取版本，不再將 0.10 寫死。
 * #9：`tables`、`image` 比照 `drawing`，推薦直接使用套件的原生介面。既有表格、單圖及多圖便利環境完整保留供舊文件使用；`lists_envs` 與 `ExampleBlock` 改列僅相容介面。
 * 表格預設改在 Feature 載入時套用，不再於 begin-document 強行覆寫使用者導言區設定；圖片搜尋路徑改為追加而非覆蓋。
 * 新增 `\SetInlineMathStyle{text|display}`，允許恢復原行內數學樣式或採用 IMPE 既有的 `\displaystyle` 預設。

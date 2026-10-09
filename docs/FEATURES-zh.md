@@ -8,8 +8,10 @@
 直接使用 `tikzpicture`、`axis`、`forest` 的標準套件介面。
 三種最小範例見 `tests/drawing.tex`。
 
-hyperlinks 以共用遞增序列配置 `impe.dest.<sequence>`，涵蓋結構標題、
-目錄返回點、雙向腳註與術語索引；識別由內部序列決定，與顯示編號各自獨立。
+hyperlinks 使用共用遞增序列配置唯一目的地。結構性引用保留
+`\autoref` 所需的語義前綴（例如 `section.impe.<sequence>`），目錄返回點、
+雙向腳註及術語索引則仍使用 `impe.dest.<sequence>`，均不依賴可見編號。
+明確建立的 `\MakeLinkTarget*{...}` 名稱不會被覆寫。
 index 會載入 hyperlinks。`\Term` 依 key 記錄首次出現；不同 key 可記錄
 同一顯示術語的多個位置。索引頁碼直接連到所記錄的正文位置，重設頁碼後
 即使兩個實體頁都顯示 1，仍能準確抵達各自位置。xindy 使用內部位置及固定的

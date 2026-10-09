@@ -11,6 +11,7 @@ For changes since the latest versioned repository state, see [CHANGELOG.unreleas
 Versioned feature API maintenance; source remains compatible with documented IMPE 1.x interfaces. No tag or GitHub Release is created by this change.
 
 ### Changed
+* #17: Updated the bundled XSR runtime from 0.10 to 1.0 and made the installer derive version information from the bundled XSR instead of hard-coded 0.10.
 * #9: Promoted native LaTeX package interfaces for `tables` and `image` (as already practiced by `drawing`), retaining all previous convenience table, image, and multi-panel commands/environments for compatibility; `lists_envs` and `ExampleBlock` are now documented as compatibility-only.
 * Table defaults now apply when the feature is selected rather than resetting users' preamble values at begin-document. The image search paths extend existing user paths rather than overwriting them.
 * Added `\SetInlineMathStyle{text|display}` to opt out of or restore the established inline `\displaystyle` preference.

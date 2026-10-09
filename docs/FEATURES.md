@@ -457,9 +457,12 @@ package interfaces. See `tests/drawing.tex` for all three examples.
 
 ## Destination identities and index passes (1.0.2)
 
-The hyperlinks feature allocates `impe.dest.<sequence>` identities centrally for
-structural targets, TOC return targets, footnote marks/text and indexed terms.
-The internal sequence determines each ID independently of visible numbering.
+The hyperlinks feature uses one monotonic sequence across its targets.
+Native structural references retain the type prefix expected by `\autoref`,
+for example `section.impe.<sequence>` or `figure.impe.<sequence>`.
+TOC returns, footnotes and index helpers retain `impe.dest.<sequence>`.
+Explicit `\MakeLinkTarget*{...}` names are not replaced.
+
 The index feature loads hyperlinks. `\Term` still indexes the first occurrence
 per key; distinct keys can record multiple occurrences of the same display term.
 Each printed index page number links to that recorded occurrence, including
