@@ -70,6 +70,17 @@ In addition, the following semantic aliases exist:
 `japanese`, `korean`, `arabic`, and `mongolian` also explicitly
 retain their matching family defaults.
 
+Complete legacy-derived profile/pack IDs (59):
+
+| Group | IDs |
+|---|---|
+| Western | `cmu`, `noto`, `times`, `gentium`, `charis`, `libertinus`, `mlmodern` |
+| Simple script fonts | `anatolian`, `coptic`, `bopomofo`, `cuneiform`, `glagolitic`, `italic`, `hungarian`, `runic` |
+| Indian and related | `armenian`, `hindi`, `sanskrit`, `devanagari`, `tamil`, `brahmi`, `georgian`, `tibetan` |
+| RTL and ancient scripts | `arabic`, `urdu`, `aramaic`, `nabataean`, `hebrew`, `syriac`, `syriac_eastern`, `kharosthi`, `egyptian`, `khitan_small`, `pahlavi_parthian`, `pahlavi_inscriptional`, `pahlavi_psalter`, `avestan`, `manichaean`, `phoenician`, `samaritan`, `sogdian`, `sogdian_old` |
+| CJK | `chinese_simplified`, `chinese_traditional`, `japanese`, `wenjin`, `shanggu`, `sim`, `korean`, `tangut` |
+| Central / East Asian | `mongolian`, `mongolian_baiti`, `manchu`, `segoe`, `thai`, `turkic`, `uyghur`, `vietnamese_quocngu`, `vietnamese_hannom` |
+
 This first phase uses the existing `FontDeclare` implementation as its
 rendering adapter. Profile-specific shaping, Tibetan/Thai breaks, CJK family
 handling, Mongolian vertical builders, and XSR module loading stay in the
