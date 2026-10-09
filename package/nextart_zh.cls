@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextart_zh}[2026/10/05 v1.0.2 Compatibility alias for impeart_zh]
+\ProvidesClass{nextart_zh}[2026/10/09 v1.0.3 Compatibility alias for impeart_zh]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{impeart_zh}}

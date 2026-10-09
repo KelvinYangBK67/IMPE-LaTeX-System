@@ -5,7 +5,7 @@
 IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
 multilingual typesetting, and optional document features.
 
-Current versioned repository state: `v1.0.2` (2026-10-05). See [CHANGELOG.md](CHANGELOG.md).
+Current versioned repository state: `v1.0.3` (2026-10-09; Git tag only, without a GitHub Release). See [CHANGELOG.md](CHANGELOG.md).
 
 ## Quick Start
 
@@ -161,10 +161,10 @@ for public contact and support.
 
 MIT License. See [LICENSE](LICENSE).
 
-Unreleased 1.0.3: `fonts={egyptian,khitan_small}` activates Unicode-aware
+In v1.0.3: `fonts={egyptian,khitan_small}` activates Unicode-aware
 Noto-backed composition; `features={glyphs}` independently enables image glyphs.
 
-### Bundled XSR 0.10 (internal development)
+### Bundled XSR 0.10
 
 The ordinary IMPE source checkout, core archive and full archive all include
 a pinned XSR TeX/Python runtime under vendor/xsr. No additional checkout,

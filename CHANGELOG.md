@@ -6,6 +6,22 @@ All notable versioned changes to IMPE LaTeX System are documented in this file.
 
 For changes since the latest versioned repository state, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
+## [1.0.3] - 2026-10-09
+
+Stable source snapshot marked by a Git tag; GitHub Release and CTAN publication are independent optional steps.
+
+### Added
+* #8: Added the independent `glyphs` feature for inline registered image glyphs through XSR, with scaling, baseline alignment, optional trimming, and descriptive/linear metadata kept separate from PDF rendering.
+* Registered Egyptian Hieroglyphs and Khitan Small Script as normal font families with Noto defaults. XSR 0.10 supports direct Unicode runs and two-dimensional composition while preserving explicit linear/stack commands.
+
+### Changed
+* #10: Removed the obsolete externalized TeX subdocument/PDF-reinsertion pipeline and its unused commands, registry, packaging and tests.
+* Bundled pinned XSR 0.10 TeX/Python sources in the checkout and core/full/CTAN source archives. The IMPE installer installs XSR into a private Python environment instead of altering global Python packages.
+* Integrated upstream XSR 0.10 shell output-directory repair (`f62677aeb2b5cc082efb1bec6f4c13b8bed965d6`).
+
+### Testing
+* Extended Linux and Windows CI for direct mixed-script Unicode, isolated glyphs, vendored source integrity, `-output-directory` rendering and isolated installed IMPE/XSR execution.
+
 ## [1.0.2] - 2026-10-05
 
 Versioned repository state. GitHub Release and CTAN publication remain separate

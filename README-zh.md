@@ -5,7 +5,7 @@
 IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
 文件功能。
 
-目前版本化倉庫狀態：`v1.0.2`（2026-10-05）。版本記錄見
+目前版本化倉庫狀態：`v1.0.3`（2026-10-09；僅 Git Tag，沒有 GitHub Release）。版本記錄見
 [CHANGELOG-zh.md](CHANGELOG-zh.md)。
 
 ## 快速開始
@@ -155,10 +155,10 @@ Sikai Yang。公開聯絡與支援請使用
 
 MIT License。詳見 [LICENSE](LICENSE)。
 
-未發行的 1.0.3：`fonts={egyptian,khitan_small}` 啟用 Noto Unicode 自動組字；
+1.0.3：`fonts={egyptian,khitan_small}` 啟用 Noto Unicode 自動組字；
 `features={glyphs}` 獨立啟用行內圖片字形。
 
-### 內附 XSR 0.10（內部開發）
+### 內附 XSR 0.10
 
 IMPE 普通 Git checkout、core 與 full 發行包均內附 vendor/xsr 固定快照，
 **不需要另行 clone XSR 或處理 submodule**。IMPE 安裝器會把 XSR 的 TeX

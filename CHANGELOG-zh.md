@@ -6,6 +6,22 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 最新版本化倉庫狀態之後的變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
+## [1.0.3] - 2026-10-09
+
+本版本以 Git Tag 保存穩定原始碼快照；GitHub Release 與 CTAN 發佈仍是獨立的可選步驟。
+
+### 新增
+* #8：新增獨立的 `glyphs` Feature，透過 XSR 登記與引用行內圖片字形，支援縮放、基線調整、裁切，以及與 PDF 視覺層分離的線性文字／描述元資料。
+* 將埃及聖書字與契丹小字登記為一般字體家族，預設使用 Noto；XSR 0.10 支援直接 Unicode 輸入與二維組字，並保留既有線性／顯式堆疊命令。
+
+### 調整
+* #10：移除過時的外部 TeX 子文件／PDF 再插入管線，以及相關的舊命令、登記、封裝和測試。
+* 將固定版本的 XSR 0.10 TeX／Python 原始碼內附於倉庫和 core／full／CTAN 原始碼封裝。IMPE 安裝器使用獨立的 XSR Python 環境，不修改全域 Python 套件。
+* 納入 XSR 0.10 上游的 shell 輸出目錄修復（`f62677aeb2b5cc082efb1bec6f4c13b8bed965d6`）。
+
+### 測試
+* 擴充 Linux／Windows CI，驗證多文種直接 Unicode、獨立圖片字形、內附來源完整性、`-output-directory` 渲染及隔離安裝的 IMPE/XSR 執行環境。
+
 ## [1.0.2] - 2026-10-05
 
 版本化倉庫狀態。GitHub Release 與 CTAN 發佈屬於獨立的後續步驟；XSR 整合留待未來版本。

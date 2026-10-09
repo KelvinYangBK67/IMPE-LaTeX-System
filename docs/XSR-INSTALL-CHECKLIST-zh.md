@@ -1,8 +1,8 @@
 # IMPE 內附 XSR 0.10：本地驗收清單
 
-狀態：IMPE 1.0.3 內部 Draft PR；XSR 上游版本仍為 0.10。
+狀態：IMPE 1.0.3 已整合 XSR 0.10，以版本標籤保存原始碼快照。
 這份清單專門驗證 GitHub CI 無法替使用者確認的本地安裝環境。
-開發分支測試並不代表已合併或已正式發行。
+CI 綠燈不代表已在使用者自己的電腦上完成本地安裝驗證。
 
 ## A. 準備（Windows PowerShell）
 
@@ -11,10 +11,10 @@
     cd D:\Repositories\IMPE
     git status -sb
     git fetch origin
-    git switch -c review/vendor-xsr origin/dev/vendor-xsr-0.10-runtime
+    git switch main
+    git pull --ff-only origin main
 
-如果已有同名本地分支，請改用 git switch review/vendor-xsr，再用
-git pull --ff-only origin dev/vendor-xsr-0.10-runtime。不要 reset --hard。
+使用已同步的 main 或 v1.0.3 標籤進行驗證；不需切回過時的整合分支。不要 reset --hard。
 
 需要 XeLaTeX（建議 TeX Live 2026）、Python 3.11+ 及可用 pip。
 首次建立虛擬環境時，pip 可能需要網路以獲取 XSR 的依賴。
