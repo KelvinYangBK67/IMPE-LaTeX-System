@@ -39,7 +39,7 @@ jobs:
         run: ./tests/run_regressions.ps1 -PublicFonts
 
   xsr-integration:
-    name: XSR 0.10 integration (${{ matrix.os }})
+    name: Bundled XSR integration (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 35
     strategy:
@@ -62,6 +62,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Validate POSIX installer syntax
+        if: runner.os == 'Linux'
+        run: sh -n scripts/install.sh
       - name: Verify pinned bundled XSR source against upstream
         shell: pwsh
         run: python scripts/check_xsr_vendor.py
@@ -104,7 +107,7 @@ jobs:
             throw 'Glyphs-only test markers missing.'
           }
 
-      - name: Verify IMPE with XSR 0.10 shell output-directory
+      - name: Verify IMPE bundled XSR shell output-directory
         shell: pwsh
         run: |
           # TeX Live 2026 exports TEXMF_OUTPUT_DIRECTORY to XSR's subprocess.
@@ -144,7 +147,8 @@ jobs:
             Join-Path $texmf "scripts/impe/xsr-venv/bin/python"
           }
           if (-not (Test-Path $venvPython)) { throw 'Private XSR Python is missing.' }
-          & $venvPython -c "import xsr; assert xsr.__version__ == '0.10'"
+          $expectedVersion = (Get-Content -LiteralPath (Join-Path $root "vendor/xsr/VERSION") -Raw).Trim()
+          & $venvPython -c "import xsr; assert xsr.__version__ == '$expectedVersion'"
           if ($LASTEXITCODE -ne 0) { throw 'Private XSR module verification failed.' }
           $install = Join-Path $texmf "tex/latex/impe"
           if (-not (Test-Path (Join-Path $install "impe-xsr-runtime.tex"))) {
