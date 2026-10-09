@@ -5,11 +5,12 @@
 % One required argument; commas inside [...] are not profile separators.
 \UseWriting{[font=lmroman10-regular.otf]latin}
 \UseWriting{[file=lmroman10-regular.otf]latin}
-\UseWriting{[shanggu, stylemap=full, italic=zhuque]chinese, mongolian}
+\UseWriting{[shanggu, stylemap=full, italic=zhuque]chinese}
 \ExplSyntaxOn
 \str_if_eq:eeF {\tl_use:N \l__font_resolved_italic_tl} {ZhuqueFangsong-Regular.ttf}
   {\PackageError{impe-test}{Full~style~override~was~not~applied}{}}
 \ExplSyntaxOff
+\UseWriting{[shanggu, stylemap=full, italic=zhuque]chinese, mongolian}
 % Without full, the unrelated Zhuque italic is deliberately absent.
 \UseWriting{[shanggu]chinese}
 \ExplSyntaxOn
