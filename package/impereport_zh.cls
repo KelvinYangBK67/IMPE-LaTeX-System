@@ -1,13 +1,7 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impereport_zh}[2026/10/09 v1.0.4 IMPE class for Chinese report]
-
+\ProvidesClass{impereport_zh}[2026/10/09 v1.0.4 Compatibility alias for impereport with lang=zh]
 \makeatletter
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{impereport}}
 \ProcessOptions\relax
-\def\NextSystemUiTag{zh}
-\def\NextDefaultLayout{zh_doc}
-\def\NextDefaultGlobalFonts{cmu,shanggu}
-\providecommand{\NextTitleAuthorFont}{\normalfont\large\itshape}
-\LoadClass{report}
-\RequirePackage{impe}
+\LoadClass[lang=zh]{impereport}
 \makeatother

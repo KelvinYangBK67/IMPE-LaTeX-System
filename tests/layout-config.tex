@@ -1,0 +1,42 @@
+% Regression: unique document overrides and nested paragraph-local scopes.
+\documentclass[lang=en,direction=horizontal-ltr]{impeart}
+\LayoutSetup{
+  page.top = 30mm,
+  text.line-stretch = 1.5,
+  text.par-indent = 12pt,
+  text.par-skip = 0.6em,
+  text.list-line-stretch = 1.2
+}
+\LayoutSet{text.left-skip}{5pt}
+\begin{document}
+\ifdim\parindent=12pt\else
+  \PackageError{layout-test}{Document paragraph indent was not applied}{}
+\fi
+\ifdim\leftskip=5pt\else
+  \PackageError{layout-test}{Document left skip was not applied}{}
+\fi
+Document paragraph.
+\begin{LayoutScope}{text.line-stretch=1.2,text.par-indent=0pt}
+\ifdim\parindent=0pt\else
+  \PackageError{layout-test}{Scoped indent was not applied}{}
+\fi
+Scoped paragraph.
+\begin{LayoutScope}{text.par-indent=4pt}
+\ifdim\parindent=4pt\else
+  \PackageError{layout-test}{Nested indent was not applied}{}
+\fi
+Nested paragraph.
+\end{LayoutScope}
+\ifdim\parindent=0pt\else
+  \PackageError{layout-test}{Nested scope did not restore parent}{}
+\fi
+Another scoped paragraph.
+\end{LayoutScope}
+\ifdim\parindent=12pt\else
+  \PackageError{layout-test}{Scope did not restore document indent}{}
+\fi
+\ifdim\leftskip=5pt\else
+  \PackageError{layout-test}{Scope did not preserve document left skip}{}
+\fi
+\typeout{IMPE-TEST-LAYOUT-CONFIG-PASS}
+\end{document}

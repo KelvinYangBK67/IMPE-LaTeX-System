@@ -54,12 +54,15 @@
 \cs_new_protected:Npn \__layout_apply_preset:
   {
     \__layout_preset_apply_defaults:
-    \__layout_preset_validate_compatibility:
-    \exp_args:NV \__layout_apply_component_list:n \l__layout_page_tl
-    \exp_args:NV \__layout_apply_component_list:n \l__layout_text_tl
-    \exp_args:NV \__layout_apply_component_list:n \l__layout_head_tl
-    \exp_args:NV \__layout_apply_component_list:n \l__layout_book_tl
-    \exp_args:NV \__layout_apply_component_list:n \l__layout_slides_tl
+    \exp_args:NV \__layout_targets_allow_current:nTF \l__layout_targets_tl
+      {
+        \exp_args:NV \__layout_apply_component_list:n \l__layout_page_tl
+        \exp_args:NV \__layout_apply_component_list:n \l__layout_text_tl
+        \exp_args:NV \__layout_apply_component_list:n \l__layout_head_tl
+        \exp_args:NV \__layout_apply_component_list:n \l__layout_book_tl
+        \exp_args:NV \__layout_apply_component_list:n \l__layout_slides_tl
+      }
+      {\__layout_preset_validate_compatibility:}
   }
 
 \NewDocumentCommand{\LayoutPresetDeclare}{m}

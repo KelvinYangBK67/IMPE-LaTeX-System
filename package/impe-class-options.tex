@@ -1,0 +1,51 @@
+% Shared class options: structure belongs to the base class; language selects defaults.
+% This file is read by canonical impe* classes before \LoadClass and \RequirePackage{impe}.
+\makeatletter
+\def\IMPEClassLang{en}
+\def\IMPEClassDirection{horizontal-ltr}
+\def\IMPEZhTag{zh}
+\newif\ifIMPEClassLangSeen
+\newif\ifIMPEClassDirectionSeen
+\newcommand{\IMPEClassChooseLanguage}[1]{%
+  \ifIMPEClassLangSeen
+    \ClassError{\@currname}{Duplicate lang class option}{Specify lang only once.}%
+  \else
+    \IMPEClassLangSeentrue
+    \def\IMPEClassLang{#1}%
+  \fi
+}
+\newcommand{\IMPEClassChooseDirection}[1]{%
+  \ifIMPEClassDirectionSeen
+    \ClassError{\@currname}{Duplicate direction class option}{Specify direction only once.}%
+  \else
+    \IMPEClassDirectionSeentrue
+    \def\IMPEClassDirection{#1}%
+    \def\IMPESupportedDirection{horizontal-ltr}%
+    \ifx\IMPEClassDirection\IMPESupportedDirection\else
+      \ClassError{\@currname}{Direction #1 is reserved but not implemented}%
+        {Only direction=horizontal-ltr is supported in IMPE 1.0.4.}%
+    \fi
+  \fi
+}
+\DeclareOption{lang=en}{\IMPEClassChooseLanguage{en}}
+\DeclareOption{lang=zh}{\IMPEClassChooseLanguage{zh}}
+\DeclareOption{direction=horizontal-ltr}{\IMPEClassChooseDirection{horizontal-ltr}}
+\DeclareOption{direction=horizontal-rtl}{\IMPEClassChooseDirection{horizontal-rtl}}
+\DeclareOption{direction=vertical-ltr}{\IMPEClassChooseDirection{vertical-ltr}}
+\DeclareOption{direction=vertical-rtl}{\IMPEClassChooseDirection{vertical-rtl}}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{\IMPEClassBase}}
+\ProcessOptions*\relax
+\edef\NextSystemUiTag{\IMPEClassLang}
+\ifx\IMPEClassLang\IMPEZhTag
+  \edef\NextDefaultLayout{\IMPEClassLayoutZh}
+  \def\NextDefaultGlobalFonts{cmu,shanggu}
+  \ifx\IMPEClassBase\IMPEClassBeamerTag
+    \providecommand{\NextBeamerAuthorShape}{\itshape}
+  \else
+    \providecommand{\NextTitleAuthorFont}{\normalfont\large\itshape}
+  \fi
+\else
+  \edef\NextDefaultLayout{\IMPEClassLayoutEn}
+  \def\NextDefaultGlobalFonts{cmu}
+\fi
+\makeatother

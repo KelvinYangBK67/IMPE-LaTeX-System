@@ -1,13 +1,7 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impebook_zh}[2026/10/09 v1.0.4 IMPE class for Chinese book]
-
+\ProvidesClass{impebook_zh}[2026/10/09 v1.0.4 Compatibility alias for impebook with lang=zh]
 \makeatletter
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{impebook}}
 \ProcessOptions\relax
-\def\NextSystemUiTag{zh}
-\def\NextDefaultLayout{zh_book}
-\def\NextDefaultGlobalFonts{cmu,shanggu}
-\providecommand{\NextTitleAuthorFont}{\normalfont\large\itshape}
-\LoadClass{book}
-\RequirePackage{impe}
+\LoadClass[lang=zh]{impebook}
 \makeatother

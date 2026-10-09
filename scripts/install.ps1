@@ -23,6 +23,7 @@ if ($XsrVersion -notmatch '^\d+\.\d+(?:\.\d+)?$') { throw "Invalid bundled XSR V
 
 $RuntimeFiles = @(
     "impe-system.tex",
+    "impe-class-options.tex",
     "impe.sty",
     "impeart.cls",
     "impeart_zh.cls",

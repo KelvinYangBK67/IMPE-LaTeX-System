@@ -1,0 +1,23 @@
+% Regression: canonical class language option, class options and layout defaults.
+\documentclass[lang=zh,oneside,openany]{impebook}
+\makeatletter
+\def\IMPEExpectedZh{zh}
+\def\IMPEExpectedBook{zh_book}
+\ifx\NextSystemUiTag\IMPEExpectedZh\else
+  \PackageError{layout-test}{lang=zh did not select Chinese UI}{}
+\fi
+\ifx\NextDefaultLayout\IMPEExpectedBook\else
+  \PackageError{layout-test}{lang=zh did not select zh_book}{}
+\fi
+\if@twoside
+  \PackageError{layout-test}{oneside class option was overwritten}{}
+\fi
+\if@openright
+  \PackageError{layout-test}{openany class option was overwritten}{}
+\fi
+\makeatother
+\begin{document}
+\chapter{章節}
+正文。
+\typeout{IMPE-TEST-LANG-OPTION-ZH-PASS}
+\end{document}

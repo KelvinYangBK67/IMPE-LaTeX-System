@@ -158,6 +158,10 @@ try {
         "drawing",
         "libertinus-math",
         "feature-api-compat",
+        "layout-config",
+        "lang-option-zh",
+        "lang-legacy-zh",
+        "layout-geometry-switch",
         "citations-preloaded",
         "beamer-hyperlinks"
     )
@@ -186,6 +190,21 @@ try {
             }
         }
     }
+    $layoutNegativeTests = @{
+        'layout-negative-duplicate' = 'Duplicate document parameter'
+        'layout-negative-duplicate-scope' = 'Duplicate local parameter'
+        'layout-negative-local-page' = 'is not local'
+        'layout-negative-direction' = 'reserved but not implemented'
+        'layout-negative-incompatible' = 'not compatible'
+    }
+    foreach ($name in @($layoutNegativeTests.Keys | Sort-Object)) {
+        & $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" "tests/$name.tex" | Out-Null
+        $negativeLog = Get-Content -LiteralPath (Join-Path $BuildRoot "$name.log") -Raw
+        if ($LASTEXITCODE -eq 0 -or $negativeLog -notmatch [regex]::Escape($layoutNegativeTests[$name])) {
+            Write-Host (($negativeLog -split "`n" | Select-Object -Last 40) -join "`n")
+            throw "Layout negative regression did not reject $name correctly (exit $LASTEXITCODE)."
+        }
+    }
     & python (Join-Path $TestRoot 'check_index_links.py') (Join-Path $BuildRoot 'hyperlink-anchors.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'PDF index link semantics failed.' }
     & $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" tests/font-unknown.tex | Out-Null
@@ -210,7 +229,7 @@ finally {
     $env:TEXINPUTS = $oldTexInputs
 }
 
-foreach ($name in @("feature-api-compat", "citations-preloaded", "beamer-hyperlinks")) {
+foreach ($name in @("feature-api-compat", "citations-preloaded", "beamer-hyperlinks", "layout-config", "lang-option-zh", "lang-legacy-zh", "layout-geometry-switch")) {
     $log = Get-Content -LiteralPath (Join-Path $BuildRoot "$name.log") -Raw
     $marker = "IMPE-TEST-$($name.ToUpperInvariant())-PASS"
     if ($log -notmatch [regex]::Escape($marker)) {

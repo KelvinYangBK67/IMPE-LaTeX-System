@@ -1,13 +1,7 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impeart_zh}[2026/10/09 v1.0.4 IMPE class for Chinese article]
-
+\ProvidesClass{impeart_zh}[2026/10/09 v1.0.4 Compatibility alias for impeart with lang=zh]
 \makeatletter
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{impeart}}
 \ProcessOptions\relax
-\def\NextSystemUiTag{zh}
-\def\NextDefaultLayout{zh_doc}
-\def\NextDefaultGlobalFonts{cmu,shanggu}
-\providecommand{\NextTitleAuthorFont}{\normalfont\large\itshape}
-\LoadClass{article}
-\RequirePackage{impe}
+\LoadClass[lang=zh]{impeart}
 \makeatother

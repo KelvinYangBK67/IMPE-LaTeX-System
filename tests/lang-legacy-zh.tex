@@ -1,0 +1,23 @@
+% Regression: legacy _zh class retains language defaults through canonical class.
+\documentclass[oneside,openany]{impebook_zh}
+\makeatletter
+\def\IMPEExpectedZh{zh}
+\def\IMPEExpectedBook{zh_book}
+\ifx\NextSystemUiTag\IMPEExpectedZh\else
+  \PackageError{layout-test}{legacy Chinese UI differs}{}
+\fi
+\ifx\NextDefaultLayout\IMPEExpectedBook\else
+  \PackageError{layout-test}{legacy Chinese layout differs}{}
+\fi
+\if@twoside
+  \PackageError{layout-test}{legacy class ignored oneside}{}
+\fi
+\if@openright
+  \PackageError{layout-test}{legacy class ignored openany}{}
+\fi
+\makeatother
+\begin{document}
+\chapter{章節}
+正文。
+\typeout{IMPE-TEST-LANG-LEGACY-ZH-PASS}
+\end{document}

@@ -2,6 +2,61 @@
 
 [繁體中文](LAYOUTS-zh.md)
 
+## Document-level layout parameters (1.0.4)
+
+A canonical class accepts `lang=en` (default) or `lang=zh`. The selected
+language supplies the existing default fonts, UI and layout; the language
+does not impose a writing direction. Class option
+`direction=horizontal-ltr` is supported. `horizontal-rtl`, `vertical-ltr`
+and `vertical-rtl` are reserved, explicitly rejected until their real
+document-wide backends are implemented (Issue #11).
+
+```tex
+\documentclass[lang=zh,oneside,openany]{impebook}
+\LayoutSetup{
+  page.inner = 3cm,
+  page.top = 2.5cm,
+  text.line-stretch = 1.5
+}
+% Or: \LayoutSet{text.par-indent}{2em}
+\begin{document}
+\begin{LayoutScope}{text.line-stretch=1.2,text.par-indent=0pt}
+Local paragraphs.
+\end{LayoutScope}
+\end{document}
+```
+
+Unspecified and blank keys leave their inherited preset value unchanged.
+An explicitly nonempty key may be assigned **once per scope**, including
+across separate `\LayoutSetup` / `\LayoutSet` calls. Repetition
+is an error. Nested `LayoutScope` environments have independent assignment
+records and inherit their parent's settings; exiting restores the parent.
+Page and feature settings are preamble-only, not paragraph-local.
+
+| Keys | Accepted values | Local? |
+| --- | --- | --- |
+| `page.top`, `page.bottom`, `page.inner`, `page.outer`, `page.left`, `page.right`, `page.binding-offset` | TeX dimensions | No |
+| `text.line-stretch`, `text.list-line-stretch` | Positive stretch factors | Yes |
+| `text.par-indent`, `text.par-skip`, `text.left-skip`, `text.right-skip` | TeX dimensions/glue | Yes |
+| `book.chapter-opening` | `right`, `any` | No |
+| `headers.style` | `running`, `title`, `classic` | No |
+
+Choose any nondefault preset with `\UseLayout{...}` **before** applying
+explicit document-level parameter overrides. Layout components and public
+`\LayoutPresetRegister` remain supported; this overlay does not replace the
+component-based preset architecture. A second page preset may reconfigure
+`geometry` without option clashes. Global/paragraph parameter overlays do
+not attempt to intercept or prohibit native LaTeX settings.
+
+The `head_fancy_chapter` compatibility component now delegates to the
+`headers` feature (single running-head owner). Book presets honor the
+underlying class's `oneside` and `openany` choices. The redundant
+`report` preset remains a compatibility name for the current Chinese
+report layout and is not recommended for new documents.
+
+Legacy `impe*_zh` and `next*_zh` classes remain usable. Prefer
+`\documentclass[lang=zh]{impebook}` (etc.) for new sources.
+
 ## Structure
 
 ```text
@@ -29,6 +84,9 @@ This layer owns the stable mechanics:
 - load-once registry behavior
 
 Current core files:
+
+- `impe-layout-config.tex`
+  Document parameter registry, duplicate detection and scoped paragraph overlays.
 
 - `impe-layout-system.tex`
   Public entry for the layout subsystem. It loads the defaults layer and the centralized preset catalog.

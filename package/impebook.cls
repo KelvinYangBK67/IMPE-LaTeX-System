@@ -1,12 +1,9 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{impebook}[2026/10/09 v1.0.4 IMPE class for book]
-
-\makeatletter
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
-\ProcessOptions\relax
-\def\NextSystemUiTag{en}
-\def\NextDefaultLayout{en_book}
-\def\NextDefaultGlobalFonts{cmu}
+\def\IMPEClassBase{book}
+\def\IMPEClassBeamerTag{beamer}
+\def\IMPEClassLayoutEn{en_book}
+\def\IMPEClassLayoutZh{zh_book}
+\input{impe-class-options.tex}
 \LoadClass{book}
 \RequirePackage{impe}
-\makeatother
