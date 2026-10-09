@@ -5,7 +5,7 @@
 IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
 文件功能。
 
-目前版本化倉庫狀態：`v1.0.3`（2026-10-09；僅 Git Tag，沒有 GitHub Release）。版本記錄見
+目前倉庫版本：`1.0.4`（2026-10-09；不建立 Git Tag 或 GitHub Release）。版本記錄見
 [CHANGELOG-zh.md](CHANGELOG-zh.md)。
 
 ## 快速開始
@@ -43,7 +43,7 @@ full 與 core release。
 | XeLaTeX | 受支援；手冊、showcase 與一般回歸測試皆使用此引擎 |
 | LuaLaTeX | 用於明確設定的 backend hook |
 | Unicode-range 全域路由 | XeLaTeX |
-| 可選 XSR 整合 | XSR 0.10、Python 與 XeLaTeX shell-escape／預處理 |
+| 可選 XSR 整合 | 內附 XSR 1.0、Python 與 XeLaTeX shell-escape／預處理 |
 | TeX Live | 已測試 2026 |
 | Windows | 經 CI 測試 |
 | Linux | 經 CI 測試 |
@@ -155,10 +155,10 @@ Sikai Yang。公開聯絡與支援請使用
 
 MIT License。詳見 [LICENSE](LICENSE)。
 
-1.0.3：`fonts={egyptian,khitan_small}` 啟用 Noto Unicode 自動組字；
+自 1.0.3 起：`fonts={egyptian,khitan_small}` 啟用 Noto Unicode 自動組字；
 `features={glyphs}` 獨立啟用行內圖片字形。
 
-### 內附 XSR 0.10
+### 內附 XSR 1.0
 
 IMPE 普通 Git checkout、core 與 full 發行包均內附 vendor/xsr 固定快照，
 **不需要另行 clone XSR 或處理 submodule**。IMPE 安裝器會把 XSR 的 TeX
@@ -176,4 +176,4 @@ core 仍不附帶 Noto 字體二進位檔。
 
 CTAN／TeX Live 不會在安裝時自動執行 pip。CTAN 封裝包含 XSR 來源，
 但完整的一站式安裝應使用 IMPE core／full 安裝器。
-XSR 上游繼續獨立開發，IMPE 封裝固定其 0.10 來源。
+XSR 上游繼續獨立開發，IMPE 封裝目前固定其 1.0 來源。

@@ -124,4 +124,19 @@
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{\NextMathRemarkName}
 
-\everymath{\displaystyle}
+% Capture the pre-feature inline math state for a reversible preference.
+\newtoks\NextMathPreviousInlineTokens
+\NextMathPreviousInlineTokens=\expandafter{\the\everymath}
+\newcommand{\SetInlineMathStyle}[1]{%
+  \def\NextMathRequestedStyle{#1}%
+  \def\NextMathDisplayStyle{display}%
+  \def\NextMathTextStyle{text}%
+  \ifx\NextMathRequestedStyle\NextMathDisplayStyle
+    \everymath{\displaystyle}%
+  \else\ifx\NextMathRequestedStyle\NextMathTextStyle
+    \everymath=\NextMathPreviousInlineTokens
+  \else
+    \PackageError{feature-math}{Unknown inline math style `#1'}{Use display or text.}%
+  \fi\fi
+}
+\SetInlineMathStyle{display}

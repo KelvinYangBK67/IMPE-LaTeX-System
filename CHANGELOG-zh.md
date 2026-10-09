@@ -6,9 +6,24 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 最新版本化倉庫狀態之後的變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
+## [1.0.4] - 2026-10-09
+
+Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容；本次不建立 Tag 或 GitHub Release。
+
+### 調整
+* #9：`tables`、`image` 比照 `drawing`，推薦直接使用套件的原生介面。既有表格、單圖及多圖便利環境完整保留供舊文件使用；`lists_envs` 與 `ExampleBlock` 改列僅相容介面。
+* 表格預設改在 Feature 載入時套用，不再於 begin-document 強行覆寫使用者導言區設定；圖片搜尋路徑改為追加而非覆蓋。
+* 新增 `\SetInlineMathStyle{text|display}`，允許恢復原行內數學樣式或採用 IMPE 既有的 `\displaystyle` 預設。
+* `biblatex` 若已提前載入，保留既有樣式及姓名分隔設定並發出警告；由 IMPE 首次載入時仍維持舊文件的引用輸出。
+* Hyperlinks 保留原生引用類型前綴及全域唯一目的地，支援 `\autoref`，不覆寫明確命名的 `\MakeLinkTarget*`，保留 Beamer overlay 腳註語法，不再清空使用者 PDF metadata。
+* 多圖環境的單一 panel 尺寸設定不再外溢影響後續 panel；所有舊介面仍可使用。
+
+### 測試
+* 新增功能與舊封裝、提前載入 biblatex、原生交叉引用及 Beamer 腳註相容性回歸。
+
 ## [1.0.3] - 2026-10-09
 
-本版本以 Git Tag 保存穩定原始碼快照；GitHub Release 與 CTAN 發佈仍是獨立的可選步驟。
+本版本已整理為穩定原始碼快照；Git Tag、GitHub Release 與 CTAN 發佈仍是獨立的可選步驟。
 
 ### 新增
 * #8：新增獨立的 `glyphs` Feature，透過 XSR 登記與引用行內圖片字形，支援縮放、基線調整、裁切，以及與 PDF 視覺層分離的線性文字／描述元資料。

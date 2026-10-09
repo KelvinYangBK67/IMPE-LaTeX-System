@@ -6,9 +6,24 @@ All notable versioned changes to IMPE LaTeX System are documented in this file.
 
 For changes since the latest versioned repository state, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
+## [1.0.4] - 2026-10-09
+
+Versioned feature API maintenance; source remains compatible with documented IMPE 1.x interfaces. No tag or GitHub Release is created by this change.
+
+### Changed
+* #9: Promoted native LaTeX package interfaces for `tables` and `image` (as already practiced by `drawing`), retaining all previous convenience table, image, and multi-panel commands/environments for compatibility; `lists_envs` and `ExampleBlock` are now documented as compatibility-only.
+* Table defaults now apply when the feature is selected rather than resetting users' preamble values at begin-document. The image search paths extend existing user paths rather than overwriting them.
+* Added `\SetInlineMathStyle{text|display}` to opt out of or restore the established inline `\displaystyle` preference.
+* Preloaded `biblatex` styles and name delimiters are preserved with a warning rather than silently changed; legacy IMPE-managed citation rendering remains available.
+* Hyperlinks retain native reference type prefixes with monotonic unique destinations (including `\autoref`), preserve explicitly named `\MakeLinkTarget*` destinations, keep Beamer's native overlay footnote syntax, and no longer clear user-supplied PDF metadata.
+* Confined per-panel image sizing to each panel so it does not affect subsequent panels. All legacy panel syntax remains available.
+
+### Testing
+* Added dedicated feature/legacy wrapper, preloaded biblatex, native reference and Beamer overlay compatibility regressions.
+
 ## [1.0.3] - 2026-10-09
 
-Stable source snapshot marked by a Git tag; GitHub Release and CTAN publication are independent optional steps.
+Versioned source snapshot prepared; Git tags, GitHub Releases and CTAN publication are independent optional steps.
 
 ### Added
 * #8: Added the independent `glyphs` feature for inline registered image glyphs through XSR, with scaling, baseline alignment, optional trimming, and descriptive/linear metadata kept separate from PDF rendering.

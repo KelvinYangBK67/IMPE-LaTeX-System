@@ -1,0 +1,13 @@
+% Regression: a preloaded biblatex style must not be overwritten by IMPE.
+\documentclass{impeart}
+\usepackage[backend=biber,style=numeric]{biblatex}
+\UseFeature{citations}
+\makeatletter
+\ifNextCitationBiblatexPreloaded\else
+  \PackageError{citations-regression}{Preloaded biblatex was not detected}{}
+\fi
+\makeatother
+\begin{document}
+Numeric biblatex remains in charge of its style and delimiters.
+\typeout{IMPE-TEST-CITATIONS-PRELOADED-PASS}
+\end{document}

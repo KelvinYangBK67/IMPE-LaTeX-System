@@ -1,0 +1,12 @@
+% Regression: native Beamer overlay/footnote signatures survive IMPE hyperlinks.
+\documentclass{impebeamer}
+\UseFeature{hyperlinks}
+\title{Beamer Hyperlink Compatibility}
+\begin{document}
+\begin{frame}{Footnote overlays}
+Text\footnote<2->[frame]{Footnote with overlay and frame options.}
+\pause
+Overlay two.
+\end{frame}
+\typeout{IMPE-TEST-BEAMER-HYPERLINKS-PASS}
+\end{document}
