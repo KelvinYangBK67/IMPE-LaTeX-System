@@ -153,15 +153,16 @@
 % restored when mapping; commas inside braced file names stay protected.
 \cs_new_protected:Npn \__writing_entry_char:n #1
   {
-    \str_case:enF { \tl_to_str:n {#1} }
+    \str_if_eq:eeTF {\tl_to_str:n {#1}} {[}
+      { \bool_set_true:N \l__writing_in_options_bool }
       {
-        {[} { \bool_set_true:N \l__writing_in_options_bool }
-        {]} { \bool_set_false:N \l__writing_in_options_bool }
-      }
-      {
-        \bool_if:NTF \l__writing_in_options_bool
-          { \tl_put_right:Nn \l__writing_options_tl {#1} }
-          { \tl_put_right:Nn \l__writing_profile_tl {#1} }
+        \str_if_eq:eeTF {\tl_to_str:n {#1}} {]}
+          { \bool_set_false:N \l__writing_in_options_bool }
+          {
+            \bool_if:NTF \l__writing_in_options_bool
+              { \tl_put_right:Nn \l__writing_options_tl {#1} }
+              { \tl_put_right:Nn \l__writing_profile_tl {#1} }
+          }
       }
   }
 \cs_new_protected:Npn \__writing_parse_entry:n #1
@@ -187,29 +188,22 @@
 
 \cs_new_protected:Npn \__writing_item_char:n #1
   {
-    \str_case:enF { \tl_to_str:n {#1} }
+    \str_if_eq:eeTF {\tl_to_str:n {#1}} {,}
       {
-        {[}
+        \int_compare:nNnTF {\l__writing_brackets_int} = {0}
           {
-            \int_incr:N \l__writing_brackets_int
-            \tl_put_right:Nn \l__writing_entry_tl {#1}
+            \exp_args:NV \__writing_parse_entry:n \l__writing_entry_tl
+            \tl_clear:N \l__writing_entry_tl
           }
-        {]}
-          {
-            \int_decr:N \l__writing_brackets_int
-            \tl_put_right:Nn \l__writing_entry_tl {#1}
-          }
-        {,}
-          {
-            \int_compare:nNnTF {\l__writing_brackets_int} = {0}
-              {
-                \exp_args:NV \__writing_parse_entry:n \l__writing_entry_tl
-                \tl_clear:N \l__writing_entry_tl
-              }
-              { \tl_put_right:Nn \l__writing_entry_tl {#1} }
-          }
+          { \tl_put_right:Nn \l__writing_entry_tl {#1} }
       }
-      { \tl_put_right:Nn \l__writing_entry_tl {#1} }
+      {
+        \str_if_eq:eeT {\tl_to_str:n {#1}} {[}
+          { \int_incr:N \l__writing_brackets_int }
+        \str_if_eq:eeT {\tl_to_str:n {#1}} {]}
+          { \int_decr:N \l__writing_brackets_int }
+        \tl_put_right:Nn \l__writing_entry_tl {#1}
+      }
   }
 \cs_new_protected:Npn \__writing_parse:n #1
   {
