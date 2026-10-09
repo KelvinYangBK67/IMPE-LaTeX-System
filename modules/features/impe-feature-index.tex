@@ -72,9 +72,9 @@
 \AtBeginDocument{%
   \let\NextIndexNativeIndex\index
   \RenewDocumentCommand{\index}{o m}{%
-    \IfNoValueTF{##1}
-      {\NextIndexNativeDispatch{##2}}
-      {\NextIndexNativeIndex[##1]{##2}}%
+    \IfNoValueTF{#1}
+      {\NextIndexNativeDispatch{#2}}
+      {\NextIndexNativeIndex[#1]{#2}}%
   }%
 }
 
