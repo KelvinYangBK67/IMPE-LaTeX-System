@@ -180,7 +180,9 @@
   \ifFeatureBeamer
     \par\noindent\centering\leavevmode
   \else
-    \begin{figure}[\PanelEnvPlacement]
+    % Float placement must be expanded before LaTeX scans option letters.
+    \edef\PanelFigureBeginFloat{\noexpand\begin{figure}[\PanelEnvPlacement]}%
+    \PanelFigureBeginFloat
       \centering
   \fi
 }{%
