@@ -4,6 +4,7 @@
 \ExplSyntaxOn
 % Variants used for runtime property lookup and top-level bracket scanning.
 \cs_generate_variant:Nn \prop_get:NnNTF { NVNTF }
+\cs_generate_variant:Nn \prop_gput:Nnn { NVV }
 \cs_generate_variant:Nn \prop_get:NnNT { NVNT }
 \cs_generate_variant:Nn \clist_if_in:nnF { VnF }
 \cs_generate_variant:Nn \str_case:nnF { enF }
@@ -440,6 +441,27 @@
                 \__font_apply_declaration:
                 \tl_set:NV \l__font_fallback_mode_tl \l__writing_saved_fallback_tl
               }
+          }
+      }
+  }
+
+% Keep third-party old-family declarations available to the new selector.
+% Legacy semantics and execution still belong to the original registry.
+\cs_new_eq:NN \__writing_legacy_register_family:n \FontRegisterFamily
+\RenewDocumentCommand \FontRegisterFamily { m }
+  {
+    \__writing_legacy_register_family:n {#1}
+    \tl_if_blank:VF \l__font_family_id_tl
+      {
+        \prop_if_in:NVF \g__writing_profile_pack_prop \l__font_family_id_tl
+          {
+            \prop_gput:NVV \g__writing_profile_pack_prop
+              \l__font_family_id_tl \l__font_family_id_tl
+          }
+        \prop_if_in:NVF \g__writing_pack_source_prop \l__font_family_id_tl
+          {
+            \prop_gput:NVV \g__writing_pack_source_prop
+              \l__font_family_id_tl \l__font_family_id_tl
           }
       }
   }
