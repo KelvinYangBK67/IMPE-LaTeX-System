@@ -52,8 +52,11 @@ gamma_page_words = [w for w in gamma_index.get_text("words")
 gamma_links = [link for link in gamma_index.get_links()
                if link.get("page") == gamma_page.number
                and any(fitz.Rect(w[:4]).intersects(link["from"]) for w in gamma_page_words)]
-gamma_y = sorted({round(link["to"].y) for link in gamma_links})
+# Destination Y in this xdvipdfmx PDF is expressed from the bottom,
+# whereas extracted text word rectangles use a top-origin Y coordinate.
+gamma_y = sorted({round(gamma_page.rect.height - link["to"].y)
+                  for link in gamma_links})
 assert len(gamma_y) >= 2, (gamma_y, gamma_links)
-assert any(abs(y - first_word[1]) < 95 for y in gamma_y), (gamma_y, first_word)
-assert any(abs(y - second_word[1]) < 95 for y in gamma_y), (gamma_y, second_word)
+assert any(abs(y - first_word[1]) < 35 for y in gamma_y), (gamma_y, first_word)
+assert any(abs(y - second_word[1]) < 35 for y in gamma_y), (gamma_y, second_word)
 print("IMPE-TEST-INDEX-PAGE-LINKS-PASS: duplicate labels and native same-page occurrences link to distinct coordinates")
