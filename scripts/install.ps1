@@ -16,6 +16,10 @@ $XsrSource = Join-Path $RepoRoot "vendor/xsr"
 if (-not (Test-Path -LiteralPath (Join-Path $XsrSource "pyproject.toml"))) {
     throw "Bundled XSR runtime missing from $XsrSource. Use complete IMPE checkout or release archive."
 }
+$XsrVersionFile = Join-Path $XsrSource "VERSION"
+if (-not (Test-Path -LiteralPath $XsrVersionFile)) { throw "Bundled XSR VERSION is missing." }
+$XsrVersion = (Get-Content -LiteralPath $XsrVersionFile -Raw).Trim()
+if ($XsrVersion -notmatch '^\d+\.\d+(?:\.\d+)?$') { throw "Invalid bundled XSR VERSION: $XsrVersion" }
 
 $RuntimeFiles = @(
     "impe-system.tex",
@@ -328,7 +332,7 @@ if (-not $SkipXsrPython) {
     $XsrBuildRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("impe-xsr-build-" + [guid]::NewGuid().ToString("N"))
     try {
         New-Item -ItemType Directory -Force -Path (Join-Path $XsrBuildRoot "src") | Out-Null
-        foreach ($file in @("pyproject.toml", "README.md", "LICENSE")) {
+        foreach ($file in @("pyproject.toml", "README.md", "LICENSE", "VERSION")) {
             Copy-Item -LiteralPath (Join-Path $XsrSource $file) -Destination (Join-Path $XsrBuildRoot $file) -Force
         }
         Copy-Item -LiteralPath (Join-Path $XsrSource "src/xsr") -Destination (Join-Path $XsrBuildRoot "src") -Recurse -Force
@@ -340,7 +344,7 @@ if (-not $SkipXsrPython) {
             Remove-Item -LiteralPath $XsrBuildRoot -Recurse -Force
         }
     }
-    & $VenvPython -c "import xsr; assert xsr.__version__ == '0.10'"
+    & $VenvPython -c "import xsr; assert xsr.__version__ == '$XsrVersion'"
     if ($LASTEXITCODE -ne 0) { throw "Bundled XSR Python validation failed." }
     $XsrExecutable = $VenvPython.Replace([char]92, [char]47)
     if ($XsrExecutable -match '[%#{}"$]') {
@@ -359,7 +363,7 @@ if (-not $SkipXsrPython) {
         $XsrConfig, (($ConfigLines -join $Newline) + $Newline),
         (New-Object System.Text.UTF8Encoding($false))
     )
-    Write-Host "  Bundled XSR: 0.10 (private Python: $VenvPython)"
+    Write-Host "  Bundled XSR: $XsrVersion (private Python: $VenvPython)"
 }
 else {
     Remove-StaleItem -Path $XsrConfig

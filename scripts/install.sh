@@ -26,10 +26,14 @@ fi
 
 package_root=$texmf_root/tex/latex/impe
 xsr_source=$repo_root/vendor/xsr
-if [ ! -f "$xsr_source/pyproject.toml" ]; then
-    echo "Bundled XSR 0.10 runtime missing: $xsr_source" >&2
+if [ ! -f "$xsr_source/pyproject.toml" ] || [ ! -f "$xsr_source/VERSION" ]; then
+    echo "Bundled XSR runtime missing: $xsr_source" >&2
     exit 1
 fi
+xsr_version=$(cat "$xsr_source/VERSION")
+case "$xsr_version" in
+    *[!0-9.]*|''|.*|*.) echo "Invalid bundled XSR VERSION: $xsr_version" >&2; exit 1 ;;
+esac
 legacy_package_root=$texmf_root/tex/latex/nextsystem
 warning_count=0
 
@@ -277,78 +281,27 @@ else
             exit 1
         fi
     fi
-    if ! "$xsr_python" -m pip install --disable-pip-version-check --no-input --upgrade "$xsr_source"; then
+    # Build in a temporary copy rather than polluting the vendored source tree.
+    xsr_stage=$(mktemp -d "${TMPDIR:-/tmp}/impe-xsr-build.XXXXXX") || exit 1
+    if ! (
+        trap 'rm -rf "$xsr_stage"' EXIT
+        mkdir -p "$xsr_stage/src" || exit 1
+        for file in pyproject.toml README.md LICENSE VERSION; do
+            cp "$xsr_source/$file" "$xsr_stage/$file" || exit 1
+        done
+        cp -R "$xsr_source/src/xsr" "$xsr_stage/src/" || exit 1
+        "$xsr_python" -m pip install --disable-pip-version-check --no-input --upgrade "$xsr_stage"
+    ); then
         echo "Bundled XSR Python installation failed." >&2
         exit 1
     fi
-    if ! "$xsr_python" -c 'import xsr; assert xsr.__version__ == "0.10"'; then
+    if ! "$xsr_python" -c "import xsr; assert xsr.__version__ == '$xsr_version'"; then
         echo "Bundled XSR Python validation failed." >&2
         exit 1
     fi
     xsr_python_path=$(CDPATH= cd -P "$(dirname "$xsr_python")" && pwd)/$(basename "$xsr_python")
     case "$xsr_python_path" in
-        *'%'*|*'#'*|*'{'*|*'}'*|*'"'*|*'if test_legacy_managed_install "$legacy_package_root"; then
-    has_managed_legacy_install=true
-    echo "  Managed legacy installation detected: $legacy_package_root"
-    move_legacy_local_overrides "$legacy_package_root" "$package_root"
-fi
-
-installed_local_override=$package_root/impe.local.tex
-if [ "$has_bundled_assets" = true ]; then
-    installed_font_root=$package_root/assets/fonts
-    write_auto_override=true
-    if [ -f "$installed_local_override" ] &&
-        ! grep -F 'Auto-generated during installation' "$installed_local_override" >/dev/null 2>&1; then
-        write_auto_override=false
-        echo "  Preserving user-managed impe.local.tex."
-    fi
-    if [ "$write_auto_override" = true ]; then
-        if ! printf '%s\n' \
-            '% Auto-generated during installation.' \
-            '% This file anchors the bundled font root inside the installed texmf tree.' \
-            "\\SetCatalogFontRoot{$installed_font_root}" >"$installed_local_override"; then
-            warn_install "Failed to write $installed_local_override"
-        fi
-    fi
-elif [ -f "$installed_local_override" ] &&
-    grep -F 'Auto-generated during installation' "$installed_local_override" >/dev/null 2>&1; then
-    remove_stale_item "$installed_local_override"
-fi
-
-if [ "$has_managed_legacy_install" = true ]; then
-    if [ "$warning_count" -eq 0 ]; then
-        remove_legacy_managed_install "$legacy_package_root"
-    else
-        echo "WARNING: The legacy installation was preserved because the canonical install completed with warnings." >&2
-    fi
-fi
-
-if command -v mktexlsr >/dev/null 2>&1; then
-    echo "Refreshing TeX filename database with mktexlsr..."
-    if ! mktexlsr "$texmf_root"; then
-        warn_install "mktexlsr failed. Refresh the TeX filename database manually if needed."
-    fi
-else
-    warn_install "mktexlsr not found in PATH. Refresh the TeX filename database manually if needed."
-fi
-
-echo
-echo "Installation complete."
-echo "You can now use:"
-echo '  \documentclass{impebeamer}'
-echo '  \UseTemplateSet{...}'
-echo "Legacy next* package and class names remain available."
-if [ "$has_bundled_assets" = true ]; then
-    echo "Bundled font assets were installed with this package."
-else
-    echo "No bundled font assets were installed; point your local setup to a font library if needed."
-fi
-
-if [ "$warning_count" -gt 0 ]; then
-    echo
-    echo "Completed with $warning_count warning(s)."
-fi
-*)
+        *'%'*|*'#'*|*'{'*|*'}'*|*'"'*|*'$'*)
             echo "Unsafe shell/TeX characters in XSR Python path: $xsr_python_path" >&2
             exit 1 ;;
     esac
@@ -362,7 +315,7 @@ fi
         echo "Failed to generate XSR TeX runtime configuration." >&2
         exit 1
     fi
-    echo "  Bundled XSR: 0.10 (private Python: $xsr_python_path)"
+    echo "  Bundled XSR: $xsr_version (private Python: $xsr_python_path)"
 fi
 
 has_managed_legacy_install=false
