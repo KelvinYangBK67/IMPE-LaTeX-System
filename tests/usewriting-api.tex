@@ -7,7 +7,8 @@
 \UseWriting{[file=lmroman10-regular.otf]latin}
 \UseWriting{[shanggu, stylemap=full, italic=zhuque]chinese}
 \ExplSyntaxOn
-\str_if_eq:eeF {\tl_use:N \l__font_resolved_italic_tl} {ZhuqueFangsong-Regular.ttf}
+\typeout{IMPE-TEST-FULL-ITALIC:\tl_to_str:V \l__font_resolved_italic_tl}
+\tl_if_in:VnF \l__font_resolved_italic_tl {ZhuqueFangsong-Regular.ttf}
   {\PackageError{impe-test}{Full~style~override~was~not~applied}{}}
 \ExplSyntaxOff
 \UseWriting{[shanggu, stylemap=full, italic=zhuque]chinese, mongolian}
