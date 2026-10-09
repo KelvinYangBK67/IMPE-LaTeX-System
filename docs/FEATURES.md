@@ -2,6 +2,18 @@
 
 [繁體中文](FEATURES-zh.md)
 
+## Feature API policy (1.0.4)
+
+A feature may be a **curated package stack** rather than a new language for
+existing LaTeX constructs. New documents should use the native environments
+of the packages enabled by `tables`, `image`, and `drawing`.
+The legacy `Table*`, `NiceBooktable*`, `OneImage*`, `PanelFigure*`,
+and `ExampleBlock` interfaces remain available for IMPE 1.x compatibility;
+they are no longer recommended for new work. No existing arguments or feature
+ids have been removed. The `lists_envs` feature is compatibility-only.
+Layout presets still configure book running heads in 1.0.4; their eventual
+ownership transfer to the `headers` feature is tracked separately in #16.
+
 ## Structure
 
 ```text
@@ -108,7 +120,9 @@ It also defines default theorem-like environments:
 
 The theorem counter is reset by section. In `_zh` wrapper classes, environment
 names are localized to Chinese. Inline math is set with `\displaystyle` by
-default.
+default. After loading `math`, use `\SetInlineMathStyle{text}` to restore the
+pre-feature inline-math token list or `\SetInlineMathStyle{display}` to restore
+IMPE's preferred default. Existing documents keep the display-style default.
 
 Example:
 
@@ -187,7 +201,11 @@ See Section~\ref{sec:intro}.
 ### `citations`
 
 Loads `csquotes` and `biblatex`. The default citation style is English APA.
-Author lists in citations use `&` as the final-name delimiter.
+For IMPE-managed biblatex loading, legacy citation author delimiters remain
+unchanged for 1.x documents. If biblatex was already loaded, IMPE emits a
+warning and preserves its existing style, package options, and name delimiters.
+A citation style must be selected **before biblatex is first loaded**: backend
+and citation/bibliography style cannot be reliably replaced afterwards.
 
 Example:
 
@@ -280,6 +298,14 @@ Index generation normally needs an index pass in addition to the LaTeX runs.
 
 ### `tables`
 
+Recommended use: `\UseFeature{tables}` loads the standard table package stack
+(`booktabs`, `longtable`, `tabularx`, `threeparttable`, etc.). Write native
+`table`/`tabular`/`longtable` markup; `L/C/R` and `P/M/B` columns and
+`\TablesSetup` remain available. Defaults are applied at feature load, so later
+preamble settings can override them. The convenience environments listed below
+are **compatibility APIs**, retained for existing source only.
+
+
 Loads table packages and applies a small house style for table spacing:
 
 - `booktabs`
@@ -334,6 +360,13 @@ Example:
 
 ### `image`
 
+Recommended use: `\UseFeature{image}` prepares the normal image packages;
+write native `figure`, `\includegraphics` and `subfigure` where appropriate.
+Image search paths are appended, not substituted for user-defined
+`\graphicspath` entries. The wrappers below are **compatibility-only**;
+no general-purpose panel abstraction is promised for new code.
+
+
 Loads image and caption tooling:
 
 - `graphicx`
@@ -381,7 +414,7 @@ Example:
 \end{OneImage}
 ```
 
-### `lists_envs`
+### `lists_envs` (compatibility-only)
 
 Loads `setspace` and defines a single display environment:
 
@@ -424,9 +457,12 @@ package interfaces. See `tests/drawing.tex` for all three examples.
 
 ## Destination identities and index passes (1.0.2)
 
-The hyperlinks feature allocates `impe.dest.<sequence>` identities centrally for
-structural targets, TOC return targets, footnote marks/text and indexed terms.
-The internal sequence determines each ID independently of visible numbering.
+The hyperlinks feature uses one monotonic sequence across its targets.
+Native structural references retain the type prefix expected by `\autoref`,
+for example `section.impe.<sequence>` or `figure.impe.<sequence>`.
+TOC returns, footnotes and index helpers retain `impe.dest.<sequence>`.
+Explicit `\MakeLinkTarget*{...}` names are not replaced.
+
 The index feature loads hyperlinks. `\Term` still indexes the first occurrence
 per key; distinct keys can record multiple occurrences of the same display term.
 Each printed index page number links to that recorded occurrence, including
@@ -446,7 +482,7 @@ module option when shell execution is enabled. Ordinary custom `\index`
 encapsulations remain under imakeidx/hyperref control; the occurrence mechanism
 above is used by IMPE's `\Term` helper.
 
-## Inline image glyphs (1.0.3 internal)
+## Inline image glyphs (1.0.3)
 
 The glyphs feature is separate from Egyptian and Khitan font families.
 Enable \UseFeature{glyphs} or features={glyphs}; it loads only XSR's

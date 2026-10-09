@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impebeamer_zh}[2026/10/09 v1.0.3 IMPE class for Chinese beamer]
+\ProvidesClass{impebeamer_zh}[2026/10/09 v1.0.4 IMPE class for Chinese beamer]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{beamer}}

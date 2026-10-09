@@ -1,4 +1,6 @@
 % Feature module: image
+% Prefer native figure/includegraphics/subcaption; the convenience wrappers
+% below remain available for source compatibility throughout IMPE 1.x.
 
 \ifdefined\NextFeatureImageLoaded
   \endinput
@@ -13,7 +15,11 @@
 \RequirePackage{subcaption}
 
 \providecommand{\TemplateFigurePaths}{figs/}
-\graphicspath{{\TemplateFigurePaths}{images/}}
+% Extend any existing search path instead of overwriting user \graphicspath.
+\makeatletter
+\@ifundefined{Ginput@path}{\def\Ginput@path{}}{}
+\g@addto@macro\Ginput@path{{\TemplateFigurePaths}{images/}}
+\makeatother
 \providecommand{\OneImageDefaultWidth}{\linewidth}
 \providecommand{\OneImageMaxHeight}{0.75\textheight}
 \providecommand{\OneImageDefaultPlacement}{htbp}
@@ -129,6 +135,7 @@
 
 \NewDocumentCommand{\Panel}{ O{} m O{} O{} }{%
   \leavevmode
+  \begingroup
   \def\PanelThisMode{}%
   \def\PanelTrim{}%
   \def\PanelClip{auto}%
@@ -147,6 +154,7 @@
       \FeatureIfEmptyTF{#4}{}{ \label{#4} }%
     \end{subfigure}%
   \fi
+  \endgroup
   \stepcounter{PanelCol}%
   \ifnum\value{PanelCol}<\number\PanelCols
     \nobreak\hspace{\PanelSep}\nobreak
@@ -172,7 +180,9 @@
   \ifFeatureBeamer
     \par\noindent\centering\leavevmode
   \else
-    \begin{figure}[\PanelEnvPlacement]
+    % Float placement must be expanded before LaTeX scans option letters.
+    \edef\PanelFigureBeginFloat{\noexpand\begin{figure}[\PanelEnvPlacement]}%
+    \PanelFigureBeginFloat
       \centering
   \fi
 }{%

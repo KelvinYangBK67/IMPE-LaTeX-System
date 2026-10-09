@@ -34,13 +34,40 @@
   \edef#1{impe.dest.\the\NextHyperDestinationSequence}%
 }
 \newcommand{\NextHyperlinksCurrentTocTarget}{}
+\newif\ifNextHyperlinksExplicitLinkTarget
+\makeatletter
+% Keep explicit names supplied via MakeLinkTarget* untouched. The hook below
+% only rewrites automatically allocated names, retaining their semantic type.
+\NewCommandCopy{\NextHyperlinksOriginalMakeLinkTarget}{\MakeLinkTarget}
+\RenewDocumentCommand{\MakeLinkTarget}{s O{} m}{%
+  \IfBooleanTF{#1}{%
+    \begingroup
+      \NextHyperlinksExplicitLinkTargettrue
+      \NextHyperlinksOriginalMakeLinkTarget*[#2]{#3}%
+    \endgroup
+  }{\NextHyperlinksOriginalMakeLinkTarget[#2]{#3}}%
+}
+\def\NextHyperlinksTypeBeforeDot#1.#2\@nil{#1}
+\def\NextHyperlinksTypeWithoutStar#1*#2\@nil{#1}
+\makeatother
 \newif\ifNextHyperlinksHeadingShouldLink
 \makeatletter
-% Include hyperref's automatically allocated structural targets in the same
-% namespace; explicit user-supplied target names remain untouched.
+% Preserve reference types (section, figure, equation, etc.) so autoref and
+% other native reference tools retain their semantics. Explicit link targets
+% supplied via MakeLinkTarget* are not replaced.
 \AddToHook{__hyp/target/setname}[impe]{%
-  \NextHyperlinksAllocateDestination\NextHyperlinksAutoTarget
-  \Hy@MakeCurrentHref{\NextHyperlinksAutoTarget}%
+  \ifNextHyperlinksExplicitLinkTarget\else
+    \edef\NextHyperlinksTargetType{%
+      \expandafter\NextHyperlinksTypeBeforeDot\@currentHref.\@nil}%
+    % Hyperref also creates section*/chapter* targets. They are structural
+    % auto-targets, but autoref expects the unstarred semantic type.
+    \edef\NextHyperlinksTargetType{%
+      \expandafter\NextHyperlinksTypeWithoutStar\NextHyperlinksTargetType*\@nil}%
+    \NextHyperlinksAllocateDestination\NextHyperlinksAutoTarget
+    \edef\NextHyperlinksAutoTarget{%
+      \NextHyperlinksTargetType.impe.\the\NextHyperDestinationSequence}%
+    \Hy@MakeCurrentHref{\NextHyperlinksAutoTarget}%
+  \fi
 }
 \DeclareRobustCommand{\NextHyperlinksTocAnchor}[1]{%
   \Hy@raisedlink{\hypertarget{#1}{}}%
@@ -161,6 +188,8 @@
         \NextHyperlinksEndHeadingLink
       }%
     }%
+    % Optional sectioning levels are absent in some classes (notably Beamer).
+    \@ifundefined{paragraph}{}{%
     \let\NextHyperlinksOriginalParagraph\paragraph
     \RenewDocumentCommand{\paragraph}{s o +m}{%
       \IfBooleanTF{##1}{%
@@ -173,6 +202,8 @@
         \NextHyperlinksEndHeadingLink
       }%
     }%
+    }%
+    \@ifundefined{subparagraph}{}{%
     \let\NextHyperlinksOriginalSubparagraph\subparagraph
     \RenewDocumentCommand{\subparagraph}{s o +m}{%
       \IfBooleanTF{##1}{%
@@ -185,12 +216,16 @@
         \NextHyperlinksEndHeadingLink
       }%
     }%
+    }%
   }{}%
 }
 \AtBeginDocument{\NextHyperlinksPatchHeadingCommands}
 \makeatother
 
 \makeatletter
+% Beamer footnotes have overlay and frame options; retain their native
+% parser and navigation, rather than replacing it with the paper parser.
+\@ifclassloaded{beamer}{}{%
 \RenewDocumentCommand{\footnote}{o +m}{%
   \NextHyperlinksAllocateDestination\NextHyperFootnoteMarkTarget
   \NextHyperlinksAllocateDestination\NextHyperFootnoteTextTarget
@@ -220,11 +255,7 @@
     }%
   \endgroup
 }
+}% End non-Beamer footnote specialization.
 \makeatother
 
-\hypersetup{
-  pdfauthor={},
-  pdftitle={},
-  pdfsubject={},
-  pdfkeywords={}
-}
+% Respect PDF metadata already set by the document or another package.

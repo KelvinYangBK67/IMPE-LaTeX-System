@@ -8,8 +8,10 @@
 直接使用 `tikzpicture`、`axis`、`forest` 的標準套件介面。
 三種最小範例見 `tests/drawing.tex`。
 
-hyperlinks 以共用遞增序列配置 `impe.dest.<sequence>`，涵蓋結構標題、
-目錄返回點、雙向腳註與術語索引；識別由內部序列決定，與顯示編號各自獨立。
+hyperlinks 使用共用遞增序列配置唯一目的地。結構性引用保留
+`\autoref` 所需的語義前綴（例如 `section.impe.<sequence>`），目錄返回點、
+雙向腳註及術語索引則仍使用 `impe.dest.<sequence>`，均不依賴可見編號。
+明確建立的 `\MakeLinkTarget*{...}` 名稱不會被覆寫。
 index 會載入 hyperlinks。`\Term` 依 key 記錄首次出現；不同 key 可記錄
 同一顯示術語的多個位置。索引頁碼直接連到所記錄的正文位置，重設頁碼後
 即使兩個實體頁都顯示 1，仍能準確抵達各自位置。xindy 使用內部位置及固定的
@@ -20,6 +22,17 @@ index 會載入 hyperlinks。`\Term` 依 key 記錄首次出現；不同 key 可
 `texindy -L english -C utf8 -M <job>-impe <job>.idx`，再執行兩次 XeLaTeX。
 允許 shell 執行時，imakeidx 會自動傳入相同模組選項。
 一般自訂 `\index` 封裝仍由 imakeidx/hyperref 處理；上述位置機制用於 `\Term`。
+
+## 1.0.4 Feature 介面原則
+
+Feature 可以只負責**按功能載入成熟套件**，不必重新定義原生 LaTeX
+語法。新文件使用 `tables`、`image`、`drawing` 準備相關套件後，
+直接使用原生表格、圖片及繪圖環境。
+`Table*`、`NiceBooktable*`、`OneImage*`、`PanelFigure*` 和
+`ExampleBlock` 仍保留原有參數與功能，維持 IMPE 1.x 相容；
+不再推薦於新文件使用。原有 feature id 均未刪除。
+`lists_envs` 僅作相容用途。書籍 Layout 的頁眉目前仍沿用既有行為；
+日後將頁眉統一交予 `headers` 的計畫另見 #16。
 
 ## 結構
 
@@ -123,6 +136,8 @@ Computer Modern 設定。如果已經載入 `fonts={mlmodern}`，`math` feature
 - `remark`
 
 定理計數依 section 重置。在 `_zh` wrapper class 中，環境名稱會切換成中文。行內數學預設使用 `\displaystyle`。
+載入 `math` 後可使用 `\SetInlineMathStyle{text}` 還原 Feature 載入前的
+行內數學設定，或以 `\SetInlineMathStyle{display}` 恢復 IMPE 預設。
 
 例：
 
@@ -196,7 +211,10 @@ See Section~\ref{sec:intro}.
 ### `citations`
 
 載入 `csquotes` 和 `biblatex`。預設引用格式是英文 APA。
-引用中的作者列表預設使用 `&` 作為最後兩位作者之間的連接符。
+由 IMPE 首次載入 biblatex 時，既有 1.x 文件仍保留原有的 `&` 作者分隔樣式。
+若使用者已先載入 biblatex，IMPE 只發出警告並保留原有樣式、套件選項及作者
+分隔設定。後端與書目樣式無法安全地於 biblatex 載入後強制覆寫，
+因此 `\UseCitationStyle` 必須在第一次載入 biblatex 前呼叫。
 
 例：
 
@@ -284,6 +302,12 @@ See \textcite{doe2026} for a narrative citation, or use
 
 ### `tables`
 
+新文件推薦 `\UseFeature{tables}` 一次載入 `booktabs`、`longtable`、
+`tabularx`、`threeparttable` 等成熟套件，再直接使用原生環境。
+保留 `L/C/R`、`P/M/B` 欄型與 `\TablesSetup`。預設在 Feature 載入時
+套用，之後的導言區設定可以覆寫。下列自訂環境僅作**相容用途**。
+
+
 載入表格套件並套用輕量表格間距風格：
 
 - `booktabs`
@@ -337,6 +361,12 @@ See \textcite{doe2026} for a narrative citation, or use
 
 ### `image`
 
+新文件推薦 `\UseFeature{image}` 後直接使用原生 `figure`、
+`\includegraphics`、`subfigure` 等語法。IMPE 的圖片路徑現在只追加，
+不覆寫既有 `\graphicspath`。下列單圖及多圖便利環境僅保留**相容用途**，
+不作為新文件的通用多圖抽象。
+
+
 載入圖片和 caption 工具：
 
 - `graphicx`
@@ -384,7 +414,7 @@ See \textcite{doe2026} for a narrative citation, or use
 \end{OneImage}
 ```
 
-### `lists_envs`
+### `lists_envs`（僅相容）
 
 載入 `setspace`，並定義一個展示用環境：
 
@@ -418,7 +448,7 @@ This is an indented example block.
 - `\UseFeatures{a,b,c}`
 - 在 `\UseTemplateSet{...}` 中使用 `features = {...}`
 
-## 1.0.3（內部）：獨立行內圖片字形
+## 1.0.3：獨立行內圖片字形
 
 glyphs 是獨立可選 feature，與埃及及契丹字體分開。
 以 \UseFeature{glyphs} 或 features={glyphs} 載入；

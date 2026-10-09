@@ -4,11 +4,14 @@ xetex
 
 # IMPE runtime and manual dependencies exercised by the regression suite.
 adjustbox
+beamer
+biblatex
 bidi
 booktabs
 catchfile
 caption
 cm-unicode
+csquotes
 ctex
 fontspec
 geometry

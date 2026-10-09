@@ -1,0 +1,62 @@
+% Regression: native feature stacks and retained 1.x convenience interfaces.
+\documentclass{impeart}
+\UseFeatures{math,tables,image,lists_envs,headers,hyperlinks}
+\title{Feature API Compatibility}
+\SetInlineMathStyle{text}
+\begin{document}
+\maketitle
+\section{Native and legacy interfaces}\label{sec:compat}
+Native inline math: $a+b=c$. \SetInlineMathStyle{display}
+Display-style inline math: $\frac12$. \SetInlineMathStyle{text}
+
+\begin{table}[htbp]
+\centering
+\begin{tabularx}{0.8\linewidth}{LX}
+\toprule
+Key & Value\\
+\midrule
+native & package syntax remains usable\\
+\bottomrule
+\end{tabularx}
+\caption{Native table}\label{tab:native}
+\end{table}
+\begin{TableBook}{ll}{Legacy table}{tab:legacy}
+A & B\\
+\midrule
+C & D\\
+\end{TableBook}
+\begin{ExampleBlock}
+Legacy italic example block remains available.
+\end{ExampleBlock}
+\begin{OneImage}[htbp][0.25\linewidth][0.25\textheight]
+  {manual/showcase/impe-showcase.pdf}[Legacy image][fig:legacy]
+\end{OneImage}
+\begin{PanelFigure}[2][height=0.12\textheight]{Legacy panels}[fig:panels]
+  \Panel{manual/showcase/impe-showcase.pdf}[Panel 1][fig:p1]
+  \Panel[height=0.08\textheight]{manual/showcase/impe-showcase.pdf}[Panel 2][fig:p2]
+\end{PanelFigure}
+\makeatletter
+% Preserve even explicit dotted target names supplied by the document.
+\MakeLinkTarget*{manual.custom.target}
+\edef\IMPEManualTarget{\@currentHref}
+\def\IMPEExpectedManualTarget{manual.custom.target}
+\ifx\IMPEManualTarget\IMPEExpectedManualTarget\else
+  \PackageError{feature-regression}{Explicit hyperlink target was changed}{}
+\fi
+% On pass 2, verify the label anchor still retains the type used by autoref.
+\@ifundefined{r@sec:compat}{}{%
+  \edef\IMPESectionAnchor{\getrefbykeydefault{sec:compat}{anchor}{}}%
+  \edef\IMPESectionType{%
+    \expandafter\NextHyperlinksTypeBeforeDot\IMPESectionAnchor.\@nil}%
+  \typeout{IMPE-TEST-SECTION-ANCHOR: \IMPESectionAnchor}%
+  \typeout{IMPE-TEST-SECTION-TYPE: \IMPESectionType}%
+  \def\IMPEExpectedSectionType{section}%
+  \ifx\IMPESectionType\IMPEExpectedSectionType\else
+    \PackageError{feature-regression}{Section autoref type was lost}{}
+  \fi
+}
+\makeatother
+Cross references: \autoref{sec:compat}, \autoref{tab:native},
+\autoref{fig:legacy}. Normal footnote.\footnote{Bidirectional paper footnote.}
+\typeout{IMPE-TEST-FEATURE-API-COMPAT-PASS}
+\end{document}

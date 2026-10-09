@@ -1,6 +1,6 @@
-# IMPE 內附 XSR 0.10：本地驗收清單
+# IMPE 內附 XSR 1.0：本地驗收清單
 
-狀態：IMPE 1.0.3 已整合 XSR 0.10，以版本標籤保存原始碼快照。
+狀態：IMPE 已整合內附 XSR 1.0；目前 1.0.4 原始碼不建立 Git Tag。
 這份清單專門驗證 GitHub CI 無法替使用者確認的本地安裝環境。
 CI 綠燈不代表已在使用者自己的電腦上完成本地安裝驗證。
 
@@ -14,7 +14,7 @@ CI 綠燈不代表已在使用者自己的電腦上完成本地安裝驗證。
     git switch main
     git pull --ff-only origin main
 
-使用已同步的 main 或 v1.0.3 標籤進行驗證；不需切回過時的整合分支。不要 reset --hard。
+使用已同步的 main 進行驗證；不需切回過時的整合分支。不要 reset --hard。
 
 需要 XeLaTeX（建議 TeX Live 2026）、Python 3.11+ 及可用 pip。
 首次建立虛擬環境時，pip 可能需要網路以獲取 XSR 的依賴。
@@ -29,7 +29,7 @@ CI 綠燈不代表已在使用者自己的電腦上完成本地安裝驗證。
 
 預期：來源校驗通過；兩個 kpsewhich 路徑均指向同一份新安裝的
 TEXMF（其中 xsr-core.sty 位於 tex/latex/impe/xsr/）；XSR Python
-版本為 0.10，路徑位於專用 xsr-venv，不是全域 site-packages。
+版本為 1.0，路徑位於專用 xsr-venv，不是全域 site-packages。
 自定義 -TexmfRoot 時請相應替換以上路徑。
 
 同時檢查安裝器生成的

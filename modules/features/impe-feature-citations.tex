@@ -18,9 +18,11 @@
 }
 
 \makeatletter
+\newif\ifNextCitationBiblatexPreloaded
 \@ifpackageloaded{biblatex}
-  {}
-  {%
+  {\NextCitationBiblatexPreloadedtrue
+   \PackageWarningNoLine{feature-citations}{biblatex was already loaded; retaining its style and options. Set citation style before biblatex loading}}%
+  {\NextCitationBiblatexPreloadedfalse%
     \edef\NextCitationLoadBiblatex{%
       \noexpand\RequirePackage[\NextCitationBiblatexOptions]{biblatex}%
     }%
@@ -29,9 +31,14 @@
 
 \makeatother
 
+% Preserve already-loaded biblatex styles, including their delimiter rules.
+% The historical IMPE delimiter override is retained only for IMPE-managed
+% loading, so existing output does not silently change in 1.x.
+\ifNextCitationBiblatexPreloaded\else
 \DeclareDelimFormat{finalnamedelim}{%
   \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}%
   \addspace\&\space}
 \DeclareDelimFormat[textcite]{finalnamedelim}{%
   \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}%
   \addspace\&\space}
+\fi

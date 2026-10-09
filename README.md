@@ -5,7 +5,7 @@
 IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
 multilingual typesetting, and optional document features.
 
-Current versioned repository state: `v1.0.3` (2026-10-09; Git tag only, without a GitHub Release). See [CHANGELOG.md](CHANGELOG.md).
+Current repository version: `1.0.4` (2026-10-09; no Git tag or GitHub Release). See [CHANGELOG.md](CHANGELOG.md).
 
 ## Quick Start
 
@@ -42,7 +42,7 @@ existing documents and ship in the full and core distributions.
 | XeLaTeX | Supported and used by manuals, showcase, and general regressions |
 | LuaLaTeX | Legacy externalized backend removed |
 | Unicode-range global routing | XeLaTeX |
-| Optional XSR integration | XSR 0.10, Python and XeLaTeX shell-escape/preprocess |
+| Optional XSR integration | Bundled XSR 1.0, Python and XeLaTeX shell-escape/preprocess |
 | TeX Live | 2026 tested |
 | Windows | CI tested |
 | Linux | CI tested |
@@ -161,13 +161,13 @@ for public contact and support.
 
 MIT License. See [LICENSE](LICENSE).
 
-In v1.0.3: `fonts={egyptian,khitan_small}` activates Unicode-aware
+Since 1.0.3: `fonts={egyptian,khitan_small}` activates Unicode-aware
 Noto-backed composition; `features={glyphs}` independently enables image glyphs.
 
-### Bundled XSR 0.10
+### Bundled XSR 1.0
 
 The ordinary IMPE source checkout, core archive and full archive all include
-a pinned XSR TeX/Python runtime under vendor/xsr. No additional checkout,
+a pinned XSR 1.0 TeX/Python runtime under vendor/xsr. No additional checkout,
 submodule, or independent user-managed XSR installation is needed.
 The IMPE installer copies XSR TeX packages to user TEXMF, creates an isolated
 Python environment under ~/texmf/scripts/impe/xsr-venv (or the configured
@@ -186,5 +186,5 @@ not include Noto fonts.
 
 CTAN is a source archive. TeX Live does not execute pip on package installation,
 so a CTAN-only TeX installation is not automatically a complete Python runtime.
-Use the IMPE core/full installer for the fully managed setup. XSR remains 0.10
+Use the IMPE core/full installer for the fully managed setup. XSR is pinned at 1.0
 and is independently developed upstream.

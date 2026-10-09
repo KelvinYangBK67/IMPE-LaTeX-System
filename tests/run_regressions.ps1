@@ -156,11 +156,14 @@ try {
         "font-sources-api",
         "font-bundled-priority",
         "drawing",
-        "libertinus-math"
+        "libertinus-math",
+        "feature-api-compat",
+        "citations-preloaded",
+        "beamer-hyperlinks"
     )
 
     foreach ($name in $tests) {
-        $passes = if ($name -eq "hyperlink-anchors") { 3 } else { 1 }
+        $passes = if ($name -eq "hyperlink-anchors") { 3 } elseif ($name -eq "feature-api-compat") { 2 } else { 1 }
         foreach ($pass in 1..$passes) {
             Write-Host "Running $name (pass $pass of $passes)..."
             $texInput = "tests/$name.tex"
@@ -207,6 +210,17 @@ finally {
     $env:TEXINPUTS = $oldTexInputs
 }
 
+foreach ($name in @("feature-api-compat", "citations-preloaded", "beamer-hyperlinks")) {
+    $log = Get-Content -LiteralPath (Join-Path $BuildRoot "$name.log") -Raw
+    $marker = "IMPE-TEST-$($name.ToUpperInvariant())-PASS"
+    if ($log -notmatch [regex]::Escape($marker)) {
+        throw "Feature 1.0.4 regression is missing marker: $marker"
+    }
+}
+$preloadedLog = Get-Content -LiteralPath (Join-Path $BuildRoot "citations-preloaded.log") -Raw
+if (($preloadedLog -replace '\s+', ' ') -notmatch 'biblatex was already loaded') {
+    throw "Preloaded biblatex did not issue the compatibility warning."
+}
 $fontModeLog = Get-Content (Join-Path $BuildRoot "font-mode-aliases.log") -Raw
 $compactFontModeLog = $fontModeLog -replace '\s',''
 $expectedFontModes = @(
