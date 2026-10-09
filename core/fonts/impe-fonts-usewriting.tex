@@ -29,6 +29,7 @@
 \tl_new:N \l__writing_native_tl
 \tl_new:N \l__writing_selected_scope_tl
 \tl_new:N \l__writing_effective_name_tl
+\tl_new:N \l__writing_saved_fallback_tl
 \prop_new:N \l__writing_overrides_prop
 \int_new:N \l__writing_brackets_int
 \bool_new:N \l__writing_in_options_bool
@@ -376,7 +377,9 @@
           {
             % Global-only legacy families retain their global CJK/main effects;
             % local families retain their rendering hooks and vertical builders.
+            \tl_set:NV \l__writing_saved_fallback_tl \l__font_fallback_mode_tl
             \__font_reset_state:
+            \tl_set:Nn \l__font_fallback_mode_tl {soft}
             \exp_args:NnV \keys_set:nn {font/declare} \l_tmpa_tl
             \tl_set:NV \l__font_scope_tl \l__writing_selected_scope_tl
             \tl_set:NV \l__font_decl_family_id_tl \l__writing_source_tl
@@ -430,6 +433,7 @@
                   { !\tl_if_blank_p:V \l__writing_file_tl }
                   { \tl_set:Nn \l__font_fallback_mode_tl {strict} }
                 \__font_apply_declaration:
+                \tl_set:NV \l__font_fallback_mode_tl \l__writing_saved_fallback_tl
               }
           }
       }
