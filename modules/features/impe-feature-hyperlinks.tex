@@ -33,6 +33,13 @@
   \global\advance\NextHyperDestinationSequence by 1\relax
   \edef#1{impe.dest.\the\NextHyperDestinationSequence}%
 }
+% Central destination allocator for IMPE-managed occurrences.
+% Explicit user destination names remain untouched; managed links use
+% unique identities even when visible counters are reset.
+\newcommand{\NextHyperlinksCreateOccurrenceTarget}[1]{%
+  \NextHyperlinksAllocateDestination#1%
+  \Hy@raisedlink{\hypertarget{#1}{}}%
+}
 \newcommand{\NextHyperlinksCurrentTocTarget}{}
 \newif\ifNextHyperlinksExplicitLinkTarget
 \makeatletter

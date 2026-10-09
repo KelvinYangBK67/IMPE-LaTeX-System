@@ -45,6 +45,15 @@ OCCURRENCE-ALPHA: \Term{Alpha}.\footnote{Repeated footnote one.}
 OCCURRENCE-BETA: \Term{Beta}.\footnote{Repeated footnote two.}
 \Term[key=alpha-second]{Alpha} records a second occurrence under the same index term.
 \clearpage
+\setcounter{page}{1}
+OCCURRENCE-GAMMA-FIRST: \index{Gamma}Gamma at start of this page.
+\par\vspace{4cm}
+OCCURRENCE-GAMMA-SECOND: \index{Gamma}Gamma lower on the same page.
+\par
+OCCURRENCE-DELTA: \index{Delta@Delta display}Delta with a sort/display key.
+\par
+OCCURRENCE-LEGACY-FORMAT: \index{Formatted|textbf}Formatted native encapsulation.
+\clearpage
 \printindex
 
 \typeout{IMPE-TEST-HYPERLINK-ANCHORS-PASS}

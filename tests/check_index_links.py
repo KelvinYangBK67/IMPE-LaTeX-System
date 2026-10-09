@@ -28,4 +28,22 @@ alpha_numbers = [w for w in index.get_text("words")
 alpha_links = [link for link in index.get_links()
                if any(fitz.Rect(w[:4]).intersects(link["from"]) for w in alpha_numbers)]
 assert {link.get("page") for link in alpha_links} == set(locations.values()), alpha_links
-print("IMPE-TEST-INDEX-PAGE-LINKS-PASS: two visible page 1 links, distinct occurrences")
+# Two native \index occurrences on the SAME physical page must have
+# distinct destinations/positions (a page-only jump is not sufficient).
+gamma_page = next(page for page in doc if "OCCURRENCE-GAMMA-FIRST" in page.get_text())
+first_word = next(w for w in gamma_page.get_text("words")
+                  if w[4] == "OCCURRENCE-GAMMA-FIRST:")
+second_word = next(w for w in gamma_page.get_text("words")
+                   if w[4] == "OCCURRENCE-GAMMA-SECOND:")
+assert second_word[1] - first_word[1] > 80, (first_word, second_word)
+gamma_term = next(w for w in index.get_text("words") if w[4] == "Gamma")
+gamma_page_words = [w for w in index.get_text("words")
+                    if w[4].rstrip(",") == "1" and w[5:7] == gamma_term[5:7]]
+gamma_links = [link for link in index.get_links()
+               if link.get("page") == gamma_page.number
+               and any(fitz.Rect(w[:4]).intersects(link["from"]) for w in gamma_page_words)]
+gamma_y = sorted({round(link["to"].y) for link in gamma_links})
+assert len(gamma_y) >= 2, (gamma_y, gamma_links)
+assert any(abs(y - first_word[1]) < 95 for y in gamma_y), (gamma_y, first_word)
+assert any(abs(y - second_word[1]) < 95 for y in gamma_y), (gamma_y, second_word)
+print("IMPE-TEST-INDEX-PAGE-LINKS-PASS: duplicate labels and native same-page occurrences link to distinct coordinates")

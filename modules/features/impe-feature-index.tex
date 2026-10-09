@@ -11,24 +11,33 @@
 \providecommand{\IndexTitle}{}
 \makeatletter
 % xindy receives an opaque occurrence ordinal, never the visible page label.
-% Keep the small style beside the job so installed/core builds need no extra
-% xindy search path.  A fixed attribute is required (not dynamic encapsulators).
+% The custom location class also covers native \index occurrences without a
+% formatting encapsulator.  This preserves the original sort/display grammar.
+% Keep the style beside the job (no additional installed xindy search path).
 \newwrite\NextIndexStyleFile
 \immediate\openout\NextIndexStyleFile=\jobname-impe.xdy
 \immediate\write\NextIndexStyleFile{(define-attributes ("NextIndexLocation"))}
 \immediate\write\NextIndexStyleFile{(define-location-class "impe-occurrence" ("arabic-numbers" :sep "." "arabic-numbers") :var)}
+\immediate\write\NextIndexStyleFile{(markup-locref :class "impe-occurrence" :open "\@backslashchar NextIndexLocation\@charlb" :close "\@charrb")}
 \immediate\write\NextIndexStyleFile{(markup-locref :attr "NextIndexLocation" :open "\@backslashchar NextIndexLocation\@charlb" :close "\@charrb")}
 \immediate\closeout\NextIndexStyleFile
 \DeclareRobustCommand{\NextIndexLocation}[1]{%
   \hyperref[impe-index-#1]{\pageref*{impe-index-#1}}%
 }
+% Write an occurrence through the shared Hyperlinks destination allocator.
+% Grouping prevents the synthetic index label from replacing the most recent
+% section/equation/figure reference context for a later user \label.
+\newcommand{\NextIndexWriteOccurrenceTo}[2]{%
+  \begingroup
+    \NextHyperlinksCreateOccurrenceTarget\NextIndexTarget
+    \edef\NextIndexOrdinal{0.\the\NextHyperDestinationSequence}%
+    \edef\@currentHref{\NextIndexTarget}%
+    \label{impe-index-\NextIndexOrdinal}%
+    \imki@wrindexentry{#1}{#2|NextIndexLocation}{\NextIndexOrdinal}%
+  \endgroup
+}
 \newcommand{\NextIndexWriteOccurrence}[1]{%
-  \NextHyperlinksAllocateDestination\NextIndexTarget
-  \edef\NextIndexOrdinal{0.\the\NextHyperDestinationSequence}%
-  \Hy@raisedlink{\hypertarget{\NextIndexTarget}{}}%
-  \edef\@currentHref{\NextIndexTarget}%
-  \label{impe-index-\NextIndexOrdinal}%
-  \imki@wrindexentry{\jobname}{#1|NextIndexLocation}{\NextIndexOrdinal}%
+  \NextIndexWriteOccurrenceTo{\jobname}{#1}%
 }
 \ifx\IndexTitle\@empty
   \makeindex[intoc,options=-M \jobname-impe]
@@ -36,6 +45,38 @@
   \makeindex[title={\IndexTitle}, intoc,options=-M \jobname-impe]
 \fi
 \makeatother
+
+% Native \index: keep the imakeidx public syntax and index grammar.  For the
+% default index, an ordinary entry (including sort@display and nested ! keys)
+% gets an occurrence-specific destination, just like \Term.
+% Explicit |... encapsulations, index ranges/cross-references, and additional
+% named indexes retain their native handling until the Index integration (#20)
+% establishes an unambiguous formatting/processing contract.
+\makeatletter
+\newcommand{\NextIndexNativeWrite}[1]{%
+  \@bsphack
+  \NextIndexWriteOccurrenceTo{\jobname}{#1}%
+  \@esphack
+}
+\makeatother
+\ExplSyntaxOn
+\cs_new_protected:Npn \__next_index_native_dispatch:n #1
+  {
+    \tl_if_in:nnTF {#1} {|}
+      { \NextIndexNativeIndex{#1} }
+      { \NextIndexNativeWrite{#1} }
+  }
+\cs_new_protected:Npn \NextIndexNativeDispatch #1
+  { \__next_index_native_dispatch:n {#1} }
+\ExplSyntaxOff
+\AtBeginDocument{%
+  \let\NextIndexNativeIndex\index
+  \RenewDocumentCommand{\index}{o m}{%
+    \IfNoValueTF{##1}
+      {\NextIndexNativeDispatch{##2}}
+      {\NextIndexNativeIndex[##1]{##2}}%
+  }%
+}
 
 \indexsetup{
   othercode = {
