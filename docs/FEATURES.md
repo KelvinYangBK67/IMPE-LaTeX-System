@@ -498,3 +498,19 @@ Example:
 
 The optional metadata does not create a hidden PDF text layer, and
 trim only clips the rendered TeX box, not the original source image.
+
+
+### Native index occurrence links (1.0.4 development)
+
+The default native `\\index{...}` command now allocates an occurrence-specific
+PDF destination using the same sequence as IMPE-managed links. Plain entries,
+`sort@display`, and `!` subentries use the generated
+`<job>-impe.xdy` style and retain the normal printed page number. Compile
+the index with `texindy -L english -C utf8 -M <job>-impe <job>.idx`
+and rerun XeLaTeX twice. The precise link position is where `\\index` is
+written: place it immediately before the indexed term.
+
+Advanced `|...` encapsulations (including ranges and cross-references) and
+additional named indexes currently keep their native imakeidx behavior rather
+than being silently reinterpreted. These paths remain part of the full
+Index integration tracked in #20. The legacy `\\Term` interface still works.

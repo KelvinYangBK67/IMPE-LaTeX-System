@@ -2,6 +2,7 @@
 % Repeated structural numbers and footnotes must receive unique link targets.
 \documentclass{impereport_zh}
 \UseFeatures{hyperlinks,headers,index}
+\RequirePackage{amsmath} % third-party equation reference adapter coverage
 
 \title{Hyperlink Anchor Regression}
 \HeaderTitle{Anchor Regression}
@@ -35,6 +36,10 @@ More body text.
 \section{Long Number Section}
 Long-number body text.
 
+\begin{equation}\label{eq:managed-first} x=1 \end{equation}
+\setcounter{equation}{0}
+\begin{equation}\label{eq:managed-second} x=2 \end{equation}
+EQUATION-REFS: \eqref{eq:managed-first} and \eqref{eq:managed-second}.
 \clearpage
 \setcounter{page}{1}
 \setcounter{footnote}{0}
@@ -44,6 +49,15 @@ OCCURRENCE-ALPHA: \Term{Alpha}.\footnote{Repeated footnote one.}
 \setcounter{footnote}{0}
 OCCURRENCE-BETA: \Term{Beta}.\footnote{Repeated footnote two.}
 \Term[key=alpha-second]{Alpha} records a second occurrence under the same index term.
+\clearpage
+\setcounter{page}{1}
+OCCURRENCE-GAMMA-FIRST: \index{Gamma}Gamma at start of this page.
+\par\vspace{4cm}
+OCCURRENCE-GAMMA-SECOND: \index{Gamma}Gamma lower on the same page.
+\par
+OCCURRENCE-DELTA: \index{Delta@Delta display}Delta with a sort/display key.
+\par
+OCCURRENCE-LEGACY-FORMAT: \index{Formatted|textbf}Formatted native encapsulation.
 \clearpage
 \printindex
 
