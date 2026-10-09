@@ -109,6 +109,11 @@
 \__writing_native:nn {tibetan} {bold}
 \__writing_native:nn {vietnamese_quocngu} {bold}
 \__writing_native:nn {vietnamese_hannom} {bold}
+\clist_map_inline:nn {cmu,gentium,charis}
+  { \__writing_native:nn {#1} {bold,italic,bolditalic} }
+\__writing_native:nn {noto} {bold,italic,bolditalic,sans,sansbold,sansitalic,sansbolditalic,mono,monobold}
+\__writing_native:nn {times} {bold,italic,bolditalic}
+\__writing_native:nn {libertinus} {bold,italic,bolditalic,sans,sansbold,sansitalic,mono}
 \__writing_native:nn {zhuque} {}
 \__writing_native:nn {kaiti} {}
 \__writing_native:nn {fangsong} {}
@@ -300,6 +305,30 @@
     \clist_if_in:VnF \l__writing_native_tl {monobold} { \tl_clear:N \l__font_mono_bold_tl }
   }
 
+% The new native policy deliberately means REGULAR fallback, not the
+% legacy "use bold if bolditalic is missing" series substitution.
+\cs_new_protected:Npn \__writing_regular_fallbacks:
+  {
+    \tl_if_blank:VT \l__font_bold_tl
+      { \tl_set:NV \l__font_bold_tl \l__font_regular_tl }
+    \tl_if_blank:VT \l__font_italic_tl
+      { \tl_set:NV \l__font_italic_tl \l__font_regular_tl }
+    \tl_if_blank:VT \l__font_bolditalic_tl
+      { \tl_set:NV \l__font_bolditalic_tl \l__font_regular_tl }
+    \tl_if_blank:VT \l__font_sans_tl
+      { \tl_set:NV \l__font_sans_tl \l__font_regular_tl }
+    \tl_if_blank:VT \l__font_sans_bold_tl
+      { \tl_set:NV \l__font_sans_bold_tl \l__font_sans_tl }
+    \tl_if_blank:VT \l__font_sans_italic_tl
+      { \tl_set:NV \l__font_sans_italic_tl \l__font_sans_tl }
+    \tl_if_blank:VT \l__font_sans_bolditalic_tl
+      { \tl_set:NV \l__font_sans_bolditalic_tl \l__font_sans_tl }
+    \tl_if_blank:VT \l__font_mono_tl
+      { \tl_set:NV \l__font_mono_tl \l__font_regular_tl }
+    \tl_if_blank:VT \l__font_mono_bold_tl
+      { \tl_set:NV \l__font_mono_bold_tl \l__font_mono_tl }
+  }
+
 \cs_new_protected:Npn \__writing_assign_style:nn #1#2
   {
     \str_if_eq:nnTF {#2} {normal}
@@ -363,10 +392,15 @@
               {
                 \tl_set:NV \l__font_regular_tl \l__writing_font_tl
                 \tl_clear:N \l__font_path_tl
-                \__writing_clear_non_native:
                 \tl_clear:N \l__font_bold_tl
                 \tl_clear:N \l__font_italic_tl
                 \tl_clear:N \l__font_bolditalic_tl
+                \tl_clear:N \l__font_sans_tl
+                \tl_clear:N \l__font_sans_bold_tl
+                \tl_clear:N \l__font_sans_italic_tl
+                \tl_clear:N \l__font_sans_bolditalic_tl
+                \tl_clear:N \l__font_mono_tl
+                \tl_clear:N \l__font_mono_bold_tl
               }
             \tl_if_blank:VF \l__writing_file_tl
               {
@@ -385,6 +419,8 @@
               }
             \prop_map_inline:Nn \l__writing_overrides_prop
               { \__writing_assign_style:nn {##1} {##2} }
+            \str_if_eq:VnT \l__writing_stylemap_tl {native}
+              { \__writing_regular_fallbacks: }
             \bool_if:NT \l__writing_valid_bool
               {
                 % Missing user-supplied resources are an error rather than
