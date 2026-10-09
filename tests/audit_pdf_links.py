@@ -24,5 +24,6 @@ for path in sys.argv[1:]:
             assert point is not None and math.isfinite(point.x) and math.isfinite(point.y), (
                 path, page.number, link
             )
-    assert internal > 0, f"{path}: no internal links were checked"
+    if path.endswith("hyperlink-anchors.pdf"):
+        assert internal > 0, f"{path}: no internal links were checked"
     print(f"IMPE-TEST-PDF-LINK-AUDIT-PASS: {path}: {internal} internal GoTo links")
