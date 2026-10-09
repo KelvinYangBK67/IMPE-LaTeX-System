@@ -1,0 +1,394 @@
+% IMPE 1.0.5 development: one public new font entry, \UseWriting.
+% All legacy public entry points remain registered in the old font registry.
+% This module reads catalog metadata but does not mutate legacy declarations.
+\ExplSyntaxOn
+\prop_new:N \g__writing_profile_pack_prop
+\prop_new:N \g__writing_pack_source_prop
+\prop_new:N \g__writing_pack_native_prop
+\prop_new:N \g__writing_pack_default_stylemap_prop
+\prop_new:N \g__writing_pack_regular_override_prop
+\prop_new:N \g__writing_style_font_prop
+\prop_new:N \g__writing_style_path_prop
+
+\tl_new:N \l__writing_entry_tl
+\tl_new:N \l__writing_profile_tl
+\tl_new:N \l__writing_options_tl
+\tl_new:N \l__writing_pack_tl
+\tl_new:N \l__writing_source_tl
+\tl_new:N \l__writing_stylemap_tl
+\tl_new:N \l__writing_font_tl
+\tl_new:N \l__writing_file_tl
+\tl_new:N \l__writing_writing_tl
+\tl_new:N \l__writing_native_tl
+\tl_new:N \l__writing_selected_scope_tl
+\tl_new:N \l__writing_effective_name_tl
+\prop_new:N \l__writing_overrides_prop
+\int_new:N \l__writing_brackets_int
+\bool_new:N \l__writing_in_options_bool
+\bool_new:N \l__writing_valid_bool
+\seq_new:N \l__writing_parts_seq
+\seq_new:N \l__writing_option_parts_seq
+
+\cs_new_protected:Npn \__writing_profile:nn #1#2
+  { \prop_gput:Nnn \g__writing_profile_pack_prop {#1} {#2} }
+\cs_new_protected:Npn \__writing_alias:nn #1#2
+  { \prop_gput:Nnn \g__writing_pack_source_prop {#1} {#2} }
+\cs_new_protected:Npn \__writing_native:nn #1#2
+  { \prop_gput:Nnn \g__writing_pack_native_prop {#1} {#2} }
+\cs_new_protected:Npn \__writing_full:n #1
+  { \prop_gput:Nnn \g__writing_pack_default_stylemap_prop {#1} {full} }
+\cs_new_protected:Npn \__writing_style_alias:nnn #1#2#3
+  {
+    \prop_gput:Nnn \g__writing_style_font_prop {#1} {#2}
+    \prop_gput:Nnn \g__writing_style_path_prop {#1} {#3}
+  }
+
+% Every legacy catalog family is a valid new profile and a possible pack.
+% This is a DATA bridge, not a redefinition of \UseFont or its routing.
+\prop_map_inline:Nn \g__font_family_default_prop
+  {
+    \__writing_profile:nn {#1} {#1}
+    \__writing_alias:nn {#1} {#1}
+  }
+\__writing_profile:nn {latin} {cmu}
+\__writing_profile:nn {chinese} {shanggu}
+\__writing_profile:nn {mongol} {mongolian}
+\__writing_profile:nn {chinese-sc} {chinese_simplified}
+\__writing_profile:nn {chinese-tc} {shanggu}
+\__writing_profile:nn {japanese} {japanese}
+\__writing_profile:nn {korean} {korean}
+\__writing_profile:nn {arabic} {arabic}
+\__writing_profile:nn {mongolian} {mongolian}
+
+% Predefined aliases refer to existing catalog data; none implies a font is
+% installed. Special role aliases are separate from their parent series.
+\__writing_alias:nn {naskh} {arabic}
+\__writing_alias:nn {ruqaa} {arabic}
+\__writing_alias:nn {nastaliq} {urdu}
+\__writing_alias:nn {zhuque} {shanggu}
+\__writing_alias:nn {kaiti} {sim}
+\__writing_alias:nn {fangsong} {sim}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {ruqaa} {ArefRuqaa-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {zhuque} {ZhuqueFangsong-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {kaiti} {simkai.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {fangsong} {simfang.ttf}
+\__writing_style_alias:nnn {zhuque} {ZhuqueFangsong-Regular.ttf} {\CatalogFontRoot/shanggu/}
+\__writing_style_alias:nnn {kaiti} {simkai.ttf} {}
+\__writing_style_alias:nnn {fangsong} {simfang.ttf} {}
+\__writing_style_alias:nnn {ruqaa} {ArefRuqaa-Regular.ttf} {\CatalogFontRoot/arabic/}
+\__writing_style_alias:nnn {naskh} {NotoNaskhArabic-Regular.ttf} {\CatalogFontRoot/arabic/}
+\__writing_style_alias:nnn {nastaliq} {NotoNastaliqUrdu-Regular.ttf} {\CatalogFontRoot/urdu/}
+
+% A deliberately explicit same-series list. Do not infer cultural style
+% substitutions (e.g. Ruqaa as italic) from Western NFSS slot names.
+\clist_map_inline:nn
+  {cmu,noto,times,gentium,charis,libertinus,mlmodern}
+  { \__writing_full:n {#1} }
+\clist_map_inline:nn
+  {armenian,hindi,devanagari,tamil,georgian,arabic,urdu,hebrew,
+   chinese_simplified,chinese_traditional,japanese,korean,thai,
+   vietnamese_quocngu,vietnamese_hannom,manchu,tibetan,shanggu}
+  { \__writing_native:nn {#1} {bold} }
+\clist_map_inline:nn
+  {armenian,hindi,devanagari,tamil,georgian,
+   chinese_simplified,chinese_traditional,japanese,korean,shanggu}
+  { \__writing_native:nn {#1} {bold,sans,sansbold} }
+\__writing_native:nn {tamil} {bold,italic,bolditalic,sans,sansbold}
+\__writing_native:nn {thai} {bold}
+\__writing_native:nn {shanggu} {bold,sans,sansbold,mono,monobold}
+\__writing_native:nn {sim} { }
+\__writing_native:nn {mongolian} { }
+\__writing_native:nn {tibetan} {bold}
+\__writing_native:nn {vietnamese_quocngu} {bold}
+\__writing_native:nn {vietnamese_hannom} {bold}
+
+\cs_new_protected:Npn \__writing_error:nn #1#2
+  {
+    \bool_set_false:N \l__writing_valid_bool
+    \PackageError{impe-writing}{#1}{#2}
+  }
+
+\keys_define:nn {impe/writing}
+  {
+    stylemap .tl_set:N = \l__writing_stylemap_tl,
+    font .tl_set:N = \l__writing_font_tl,
+    file .tl_set:N = \l__writing_file_tl,
+    writing .tl_set:N = \l__writing_writing_tl,
+    bold .code:n = { \prop_put:Nnn \l__writing_overrides_prop {bold} {#1} },
+    italic .code:n = { \prop_put:Nnn \l__writing_overrides_prop {italic} {#1} },
+    bolditalic .code:n = { \prop_put:Nnn \l__writing_overrides_prop {bolditalic} {#1} },
+    sans .code:n = { \prop_put:Nnn \l__writing_overrides_prop {sans} {#1} },
+    sansbold .code:n = { \prop_put:Nnn \l__writing_overrides_prop {sansbold} {#1} },
+    sansitalic .code:n = { \prop_put:Nnn \l__writing_overrides_prop {sansitalic} {#1} },
+    sansbolditalic .code:n = { \prop_put:Nnn \l__writing_overrides_prop {sansbolditalic} {#1} },
+    mono .code:n = { \prop_put:Nnn \l__writing_overrides_prop {mono} {#1} },
+    monobold .code:n = { \prop_put:Nnn \l__writing_overrides_prop {monobold} {#1} },
+    .unknown:n =
+      { \__writing_error:nn {Unknown~writing~option~'\l_keys_key_str'} {Check~the~UseWriting~option~name.} },
+  }
+
+\cs_new_protected:Npn \__writing_reset_options:
+  {
+    \tl_clear:N \l__writing_pack_tl
+    \tl_clear:N \l__writing_font_tl
+    \tl_clear:N \l__writing_file_tl
+    \tl_clear:N \l__writing_writing_tl
+    \tl_clear:N \l__writing_stylemap_tl
+    \prop_clear:N \l__writing_overrides_prop
+    \bool_set_true:N \l__writing_valid_bool
+  }
+
+% Parse [optional pack, key=value, ...]profile.  TeX brace groups are
+% restored when mapping; commas inside braced file names stay protected.
+\cs_new_protected:Npn \__writing_entry_char:n #1
+  {
+    \str_case:enF { \tl_to_str:n {#1} }
+      {
+        {[} { \bool_set_true:N \l__writing_in_options_bool }
+        {]} { \bool_set_false:N \l__writing_in_options_bool }
+      }
+      {
+        \bool_if:NTF \l__writing_in_options_bool
+          { \tl_put_right:Nn \l__writing_options_tl {#1} }
+          { \tl_put_right:Nn \l__writing_profile_tl {#1} }
+      }
+  }
+\cs_new_protected:Npn \__writing_parse_entry:n #1
+  {
+    \tl_clear:N \l__writing_options_tl
+    \tl_clear:N \l__writing_profile_tl
+    \bool_set_false:N \l__writing_in_options_bool
+    \tl_map_inline:nn {#1}
+      {
+        \tl_if_single_token:nTF {##1}
+          { \__writing_entry_char:n {##1} }
+          {
+            \bool_if:NTF \l__writing_in_options_bool
+              { \tl_put_right:Nn \l__writing_options_tl { {##1} } }
+              { \tl_put_right:Nn \l__writing_profile_tl { {##1} } }
+          }
+      }
+    \tl_trim_spaces:N \l__writing_profile_tl
+    \tl_trim_spaces:N \l__writing_options_tl
+    \tl_if_blank:VF \l__writing_profile_tl
+      { \__writing_apply: }
+  }
+
+\cs_new_protected:Npn \__writing_item_char:n #1
+  {
+    \str_case:enF { \tl_to_str:n {#1} }
+      {
+        {[}
+          {
+            \int_incr:N \l__writing_brackets_int
+            \tl_put_right:Nn \l__writing_entry_tl {#1}
+          }
+        {]}
+          {
+            \int_decr:N \l__writing_brackets_int
+            \tl_put_right:Nn \l__writing_entry_tl {#1}
+          }
+        {,}
+          {
+            \int_compare:nNnTF {\l__writing_brackets_int} = {0}
+              {
+                \exp_args:NV \__writing_parse_entry:n \l__writing_entry_tl
+                \tl_clear:N \l__writing_entry_tl
+              }
+              { \tl_put_right:Nn \l__writing_entry_tl {#1} }
+          }
+      }
+      { \tl_put_right:Nn \l__writing_entry_tl {#1} }
+  }
+\cs_new_protected:Npn \__writing_parse:n #1
+  {
+    \tl_clear:N \l__writing_entry_tl
+    \int_zero:N \l__writing_brackets_int
+    \tl_map_inline:nn {#1}
+      {
+        \tl_if_single_token:nTF {##1}
+          { \__writing_item_char:n {##1} }
+          { \tl_put_right:Nn \l__writing_entry_tl { {##1} } }
+      }
+    \int_compare:nNnF {\l__writing_brackets_int} = {0}
+      { \__writing_error:nn {Unbalanced~UseWriting~brackets} {Close~every~optional~[...].} }
+    \exp_args:NV \__writing_parse_entry:n \l__writing_entry_tl
+  }
+
+\cs_new_protected:Npn \__writing_read_options:
+  {
+    \__writing_reset_options:
+    \prop_get:NVNTF \g__writing_profile_pack_prop \l__writing_profile_tl \l__writing_pack_tl
+      { }
+      { \__writing_error:nn {Unknown~writing~profile~'\l__writing_profile_tl'} {Use~a~registered~profile.} }
+    \tl_if_blank:VF \l__writing_options_tl
+      {
+        \exp_args:NNV \seq_set_split:Nnn \l__writing_option_parts_seq {,} \l__writing_options_tl
+        \seq_pop_left:NN \l__writing_option_parts_seq \l_tmpa_tl
+        \tl_trim_spaces:N \l_tmpa_tl
+        \tl_if_in:VnTF \l_tmpa_tl {=}
+          { \seq_put_left:NV \l__writing_option_parts_seq \l_tmpa_tl }
+          {
+            \tl_if_blank:VF \l_tmpa_tl
+              { \tl_set_eq:NN \l__writing_pack_tl \l_tmpa_tl }
+          }
+        \tl_set:Nx \l_tmpa_tl { \seq_use:Nn \l__writing_option_parts_seq {,} }
+        \tl_if_blank:VF \l_tmpa_tl
+          { \exp_args:NnV \keys_set:nn {impe/writing} \l_tmpa_tl }
+      }
+    \bool_if:NT \l__writing_valid_bool
+      {
+        \prop_get:NVNTF \g__writing_pack_source_prop \l__writing_pack_tl \l__writing_source_tl
+          { }
+          { \__writing_error:nn {Unknown~font~pack~'\l__writing_pack_tl'} {Use~a~registered~pack~alias,~font=...,~or~file=....} }
+      }
+    \tl_if_blank:VF \l__writing_font_tl
+      {
+        \tl_if_blank:VF \l__writing_file_tl
+          { \__writing_error:nn {font~and~file~are~mutually~exclusive} {Choose~one~resource~source.} }
+      }
+    \tl_if_blank:VTF \l__writing_stylemap_tl
+      {
+        \prop_get:NVNTF \g__writing_pack_default_stylemap_prop \l__writing_pack_tl \l__writing_stylemap_tl
+          { }
+          { \tl_set:Nn \l__writing_stylemap_tl {native} }
+      }
+      { }
+    \str_if_eq:VnF \l__writing_stylemap_tl {native}
+      {
+        \str_if_eq:VnF \l__writing_stylemap_tl {full}
+          { \__writing_error:nn {Invalid~stylemap} {Use~native~or~full.} }
+      }
+    \tl_if_blank:VF \l__writing_writing_tl
+      {
+        \str_if_eq:VnF \l__writing_writing_tl {horizontal}
+          {
+            \str_if_eq:VnF \l__writing_writing_tl {vertical}
+              { \__writing_error:nn {Invalid~writing~mode} {Use~horizontal~or~vertical.} }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__writing_clear_non_native:
+  {
+    \prop_get:NVNTF \g__writing_pack_native_prop \l__writing_pack_tl \l__writing_native_tl
+      { }
+      {
+        \prop_get:NVNTF \g__writing_pack_native_prop \l__writing_source_tl \l__writing_native_tl
+          { } { \tl_clear:N \l__writing_native_tl }
+      }
+    \clist_if_in:VnF \l__writing_native_tl {bold} { \tl_clear:N \l__font_bold_tl }
+    \clist_if_in:VnF \l__writing_native_tl {italic} { \tl_clear:N \l__font_italic_tl }
+    \clist_if_in:VnF \l__writing_native_tl {bolditalic} { \tl_clear:N \l__font_bolditalic_tl }
+    \clist_if_in:VnF \l__writing_native_tl {sans} { \tl_clear:N \l__font_sans_tl }
+    \clist_if_in:VnF \l__writing_native_tl {sansbold} { \tl_clear:N \l__font_sans_bold_tl }
+    \clist_if_in:VnF \l__writing_native_tl {sansitalic} { \tl_clear:N \l__font_sans_italic_tl }
+    \clist_if_in:VnF \l__writing_native_tl {sansbolditalic} { \tl_clear:N \l__font_sans_bolditalic_tl }
+    \clist_if_in:VnF \l__writing_native_tl {mono} { \tl_clear:N \l__font_mono_tl }
+    \clist_if_in:VnF \l__writing_native_tl {monobold} { \tl_clear:N \l__font_mono_bold_tl }
+  }
+
+\cs_new_protected:Npn \__writing_assign_style:nn #1#2
+  {
+    \str_if_eq:nnTF {#2} {normal}
+      {
+        \tl_set_eq:NN \l_tmpa_tl \l__font_regular_tl
+        \tl_set_eq:NN \l_tmpb_tl \l__font_path_tl
+      }
+      {
+        \prop_get:NnNTF \g__writing_style_font_prop {#2} \l_tmpa_tl
+          { \prop_get:NnN \g__writing_style_path_prop {#2} \l_tmpb_tl }
+          {
+            \__writing_error:nn {Unknown~style~alias~'#2'}
+              {Use~normal~or~a~registered~style~alias.}
+            \tl_set_eq:NN \l_tmpa_tl \l__font_regular_tl
+            \tl_set_eq:NN \l_tmpb_tl \l__font_path_tl
+          }
+      }
+    \str_case:nn {#1}
+      {
+        {bold} { \tl_set_eq:NN \l__font_bold_tl \l_tmpa_tl \tl_set_eq:NN \l__font_bold_path_tl \l_tmpb_tl }
+        {italic} { \tl_set_eq:NN \l__font_italic_tl \l_tmpa_tl \tl_set_eq:NN \l__font_italic_path_tl \l_tmpb_tl }
+        {bolditalic} { \tl_set_eq:NN \l__font_bolditalic_tl \l_tmpa_tl \tl_set_eq:NN \l__font_bolditalic_path_tl \l_tmpb_tl }
+        {sans} { \tl_set_eq:NN \l__font_sans_tl \l_tmpa_tl \tl_set_eq:NN \l__font_sans_path_tl \l_tmpb_tl }
+        {sansbold} { \tl_set_eq:NN \l__font_sans_bold_tl \l_tmpa_tl \tl_set_eq:NN \l__font_sans_bold_path_tl \l_tmpb_tl }
+        {sansitalic} { \tl_set_eq:NN \l__font_sans_italic_tl \l_tmpa_tl \tl_set_eq:NN \l__font_sans_italic_path_tl \l_tmpb_tl }
+        {sansbolditalic} { \tl_set_eq:NN \l__font_sans_bolditalic_tl \l_tmpa_tl \tl_set_eq:NN \l__font_sans_bolditalic_path_tl \l_tmpb_tl }
+        {mono} { \tl_set_eq:NN \l__font_mono_tl \l_tmpa_tl \tl_set_eq:NN \l__font_mono_path_tl \l_tmpb_tl }
+        {monobold} { \tl_set_eq:NN \l__font_mono_bold_tl \l_tmpa_tl \tl_set_eq:NN \l__font_mono_bold_path_tl \l_tmpb_tl }
+      }
+  }
+
+\cs_new_protected:Npn \__writing_apply:
+  {
+    \__writing_read_options:
+    \bool_if:NT \l__writing_valid_bool
+      {
+        \prop_get:NVNTF \g__font_family_local_prop \l__writing_source_tl \l_tmpa_tl
+          { \tl_set:Nn \l__writing_selected_scope_tl {local} }
+          {
+            \prop_get:NVNTF \g__font_family_global_prop \l__writing_source_tl \l_tmpa_tl
+              { \tl_set:Nn \l__writing_selected_scope_tl {global} }
+              { \__writing_error:nn {Missing~source~declaration} {Check~the~font~catalog.} }
+          }
+        \bool_if:NT \l__writing_valid_bool
+          {
+            % Global-only legacy families retain their global CJK/main effects;
+            % local families retain their rendering hooks and vertical builders.
+            \__font_reset_state:
+            \exp_args:NnV \keys_set:nn {font/declare} \l_tmpa_tl
+            \tl_set:NV \l__font_scope_tl \l__writing_selected_scope_tl
+            \tl_set:NV \l__font_decl_family_id_tl \l__writing_source_tl
+            \tl_if_blank:VTF \l__font_name_tl
+              { \tl_set:Nx \l__font_name_tl {writing_\l__writing_profile_tl} }
+              { \tl_set:Nx \l__font_name_tl {writing_\l__writing_profile_tl} }
+            \tl_if_blank:VTF \l__font_command_tl
+              { \tl_set:Nx \l__font_command_tl {impewriting\l__writing_profile_tl} }
+              { }
+            \prop_get:NVNT \g__writing_pack_regular_override_prop \l__writing_pack_tl \l_tmpa_tl
+              { \tl_set_eq:NN \l__font_regular_tl \l_tmpa_tl }
+            \str_if_eq:VnT \l__writing_stylemap_tl {native}
+              { \__writing_clear_non_native: }
+            \tl_if_blank:VF \l__writing_font_tl
+              {
+                \tl_set:NV \l__font_regular_tl \l__writing_font_tl
+                \tl_clear:N \l__font_path_tl
+                \__writing_clear_non_native:
+                \tl_clear:N \l__font_bold_tl
+                \tl_clear:N \l__font_italic_tl
+                \tl_clear:N \l__font_bolditalic_tl
+              }
+            \tl_if_blank:VF \l__writing_file_tl
+              {
+                \tl_set:NV \l__font_regular_tl \l__writing_file_tl
+                \tl_clear:N \l__font_path_tl
+                \__writing_clear_non_native:
+                \tl_clear:N \l__font_bold_tl
+                \tl_clear:N \l__font_italic_tl
+                \tl_clear:N \l__font_bolditalic_tl
+              }
+            \tl_if_blank:VF \l__writing_writing_tl
+              {
+                \str_if_eq:VnTF \l__writing_writing_tl {horizontal}
+                  { \tl_clear:N \l__font_layout_tl }
+                  { \tl_set:Nn \l__font_layout_tl {vertical} }
+              }
+            \prop_map_inline:Nn \l__writing_overrides_prop
+              { \__writing_assign_style:nn {##1} {##2} }
+            \bool_if:NT \l__writing_valid_bool
+              {
+                % Missing user-supplied resources are an error rather than
+                % a silent change of font; old families retain soft fallback.
+                \bool_lazy_or:nnT
+                  { !\tl_if_blank_p:V \l__writing_font_tl }
+                  { !\tl_if_blank_p:V \l__writing_file_tl }
+                  { \tl_set:Nn \l__font_fallback_mode_tl {strict} }
+                \__font_apply_declaration:
+              }
+          }
+      }
+  }
+
+\NewDocumentCommand \UseWriting { m }
+  { \__writing_parse:n {#1} }
+\ExplSyntaxOff
