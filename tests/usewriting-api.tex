@@ -1,0 +1,38 @@
+% IMPE 1.0.5 development: new public entry, legacy API remains usable.
+\documentclass{article}
+\usepackage{impe}
+
+% One required argument; commas inside [...] are not profile separators.
+\UseWriting{[font=Latin Modern Roman]latin}
+\UseWriting{[file=lmroman10-regular.otf]latin}
+\UseWriting{[shanggu, stylemap=full, italic=zhuque]chinese, mongolian}
+\ExplSyntaxOn
+\str_if_eq:eeF {\tl_use:N \l__font_resolved_italic_tl} {ZhuqueFangsong-Regular.ttf}
+  {\PackageError{impe-test}{Full~style~override~was~not~applied}{}}
+\ExplSyntaxOff
+% Without full, the unrelated Zhuque italic is deliberately absent.
+\UseWriting{[shanggu]chinese}
+\ExplSyntaxOn
+\str_if_eq:eeF {\tl_use:N \l__font_resolved_italic_tl} {\tl_use:N \l__font_regular_tl}
+  {\PackageError{impe-test}{Native~stylemap~must~fall~back~to~normal}{}}
+\ExplSyntaxOff
+% Empty pack uses the existing per-profile default; native faces include
+% the declared same-series Shanggu bold and sans families.
+\UseWriting{[stylemap=native]chinese}
+\ExplSyntaxOn
+\tl_if_blank:VTF \l__font_bold_tl
+  {\PackageError{impe-test}{Native~Shanggu~bold~missing}{}}
+  {}
+\tl_if_blank:VTF \l__font_sans_tl
+  {\PackageError{impe-test}{Native~Shanggu~sans~missing}{}}
+  {}
+\ExplSyntaxOff
+% A system font alias is not mistaken for a profile or a positional pack.
+\UseWriting{[naskh]arabic}
+\UseWriting{[writing=horizontal]mongolian}
+% The old registry and its public controls remain available in the same file.
+\UseFont{cmu}[global]
+\UseFont{gentium}[local]
+\begin{document}
+\typeout{IMPE-TEST-USEWRITING-PASS}
+\end{document}
