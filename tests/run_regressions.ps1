@@ -148,6 +148,7 @@ try {
         "canonical-entry",
         "legacy-entry",
         "font-mode-aliases",
+        "usewriting-api",
         "local-font-override",
         "same-family-shaping",
         "routing-scalability",
