@@ -200,7 +200,8 @@ try {
         & $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" "tests/$name.tex" | Out-Null
         $negativeLog = Get-Content -LiteralPath (Join-Path $BuildRoot "$name.log") -Raw
         if ($LASTEXITCODE -eq 0 -or $negativeLog -notmatch [regex]::Escape($layoutNegativeTests[$name])) {
-            throw "Layout negative regression did not reject $name correctly."
+            Write-Host (($negativeLog -split "`n" | Select-Object -Last 40) -join "`n")
+            throw "Layout negative regression did not reject $name correctly (exit $LASTEXITCODE)."
         }
     }
     & python (Join-Path $TestRoot 'check_index_links.py') (Join-Path $BuildRoot 'hyperlink-anchors.pdf')
