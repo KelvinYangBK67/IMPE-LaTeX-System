@@ -48,6 +48,7 @@
   }{\NextHyperlinksOriginalMakeLinkTarget[#2]{#3}}%
 }
 \def\NextHyperlinksTypeBeforeDot#1.#2\@nil{#1}
+\def\NextHyperlinksTypeWithoutStar#1*#2\@nil{#1}
 \makeatother
 \newif\ifNextHyperlinksHeadingShouldLink
 \makeatletter
@@ -58,6 +59,10 @@
   \ifNextHyperlinksExplicitLinkTarget\else
     \edef\NextHyperlinksTargetType{%
       \expandafter\NextHyperlinksTypeBeforeDot\@currentHref.\@nil}%
+    % Hyperref also creates section*/chapter* targets. They are structural
+    % auto-targets, but autoref expects the unstarred semantic type.
+    \edef\NextHyperlinksTargetType{%
+      \expandafter\NextHyperlinksTypeWithoutStar\NextHyperlinksTargetType*\@nil}%
     \NextHyperlinksAllocateDestination\NextHyperlinksAutoTarget
     \edef\NextHyperlinksAutoTarget{%
       \NextHyperlinksTargetType.impe.\the\NextHyperDestinationSequence}%
