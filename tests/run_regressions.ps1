@@ -206,7 +206,16 @@ try {
         }
     }
     & python (Join-Path $TestRoot 'check_index_links.py') (Join-Path $BuildRoot 'hyperlink-anchors.pdf')
-    if ($LASTEXITCODE -ne 0) { throw 'PDF index link semantics failed.' }
+    if ($LASTEXITCODE -ne 0) {
+        foreach ($suffix in @('idx', 'ind')) {
+            $indexDebugPath = Join-Path $BuildRoot "hyperlink-anchors.$suffix"
+            if (Test-Path -LiteralPath $indexDebugPath) {
+                Write-Host "Index diagnostic: $indexDebugPath"
+                Get-Content -LiteralPath $indexDebugPath | Out-Host
+            }
+        }
+        throw 'PDF index link semantics failed.'
+    }
     & $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" tests/font-unknown.tex | Out-Null
     if ($LASTEXITCODE -eq 0 -or
         (Get-Content (Join-Path $BuildRoot 'font-unknown.log') -Raw) -notmatch 'Unknown font family mode') {
