@@ -33,7 +33,7 @@
                 {right}{\cs_if_exist:NT \@openrighttrue {\@openrighttrue}}
                 {any}{\cs_if_exist:NT \@openrightfalse {\@openrightfalse}}
               }
-              {\PackageError{impe-layout}{Invalid book.chapter-opening: #2}{Use right or any.}}
+              {\PackageError{impe-layout}{Invalid~book.chapter-opening:~#2}{Use~right~or~any.}}
           }
         {headers.style}
           {
@@ -41,7 +41,7 @@
             \HeaderStyle{#2}
           }
       }
-      {\PackageError{impe-layout}{Unknown parameter #1}{Check the documented layout keys.}}
+      {\PackageError{impe-layout}{Unknown~parameter~#1}{Check~the~documented~layout~keys.}}
   }
 
 \cs_new_protected:Npn \__impe_layout_geometry:n #1
@@ -60,17 +60,17 @@
             \str_if_eq:nnTF {#2}{local}
               {
                 \prop_if_in:NnTF \l__impe_layout_scope_seen_prop {#1}
-                  {\PackageError{impe-layout}{Duplicate local parameter #1}{Set each parameter once per scope.}}
+                  {\PackageError{impe-layout}{Duplicate~local~parameter~#1}{Set~each~parameter~once~per~scope.}}
                   {
                     \prop_put:Nnn \l__impe_layout_scope_seen_prop {#1}{set}
                     \__impe_layout_config_apply:nn {#1}{#3}
                   }
               }
-              {\PackageError{impe-layout}{Page or feature parameter #1 is not local}{Use LayoutSetup in the preamble.}}
+              {\PackageError{impe-layout}{Page~or~feature~parameter~#1~is~not~local}{Use~LayoutSetup~in~the~preamble.}}
           }
           {
             \prop_if_in:NnTF \g__impe_layout_config_seen_prop {#1}
-              {\PackageError{impe-layout}{Duplicate document parameter #1}{Set each parameter once per document.}}
+              {\PackageError{impe-layout}{Duplicate~document~parameter~#1}{Set~each~parameter~once~per~document.}}
               {
                 \prop_gput:Nnn \g__impe_layout_config_seen_prop {#1}{set}
                 \bool_gset_true:N \g__impe_layout_config_used_bool
