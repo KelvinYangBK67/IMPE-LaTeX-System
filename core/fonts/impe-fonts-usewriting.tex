@@ -134,7 +134,7 @@
     sansbolditalic .code:n = { \prop_put:Nnn \l__writing_overrides_prop {sansbolditalic} {#1} },
     mono .code:n = { \prop_put:Nnn \l__writing_overrides_prop {mono} {#1} },
     monobold .code:n = { \prop_put:Nnn \l__writing_overrides_prop {monobold} {#1} },
-    .unknown:n =
+    unknown .code:n =
       { \__writing_error:nn {Unknown~writing~option~'\l_keys_key_str'} {Check~the~UseWriting~option~name.} },
   }
 
