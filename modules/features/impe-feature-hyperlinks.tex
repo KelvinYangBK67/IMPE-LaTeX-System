@@ -188,6 +188,8 @@
         \NextHyperlinksEndHeadingLink
       }%
     }%
+    % Optional sectioning levels are absent in some classes (notably Beamer).
+    \@ifundefined{paragraph}{}{%
     \let\NextHyperlinksOriginalParagraph\paragraph
     \RenewDocumentCommand{\paragraph}{s o +m}{%
       \IfBooleanTF{##1}{%
@@ -200,6 +202,8 @@
         \NextHyperlinksEndHeadingLink
       }%
     }%
+    }%
+    \@ifundefined{subparagraph}{}{%
     \let\NextHyperlinksOriginalSubparagraph\subparagraph
     \RenewDocumentCommand{\subparagraph}{s o +m}{%
       \IfBooleanTF{##1}{%
@@ -211,7 +215,7 @@
           {\NextHyperlinksOriginalSubparagraph[##2]{##3}}%
         \NextHyperlinksEndHeadingLink
       }%
-    }%
+    }%    }%
   }{}%
 }
 \AtBeginDocument{\NextHyperlinksPatchHeadingCommands}
