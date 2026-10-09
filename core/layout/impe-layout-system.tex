@@ -16,3 +16,10 @@
   \subimport{./}{impe-layout-defaults.tex}
   \subimport{../../catalog/}{impe-layouts-catalog.tex}
 \fi
+
+% Public parameter overlays are layered on top of the existing component model.
+\ifNextSystemInstalled
+  \input{core/layout/impe-layout-config.tex}
+\else
+  \subimport{./}{impe-layout-config.tex}
+\fi
