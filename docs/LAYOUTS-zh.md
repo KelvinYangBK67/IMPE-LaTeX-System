@@ -2,6 +2,53 @@
 
 [English](LAYOUTS.md)
 
+## 文件級參數設定（1.0.4）
+
+標準類別採用 `lang=en`（預設）或 `lang=zh`，決定原有語言 UI、字體及
+Layout 預設，不強制綁定書寫方向。類別選項 `direction=horizontal-ltr`
+已可用；`horizontal-rtl`、`vertical-ltr`、`vertical-rtl` 暫時只有
+保留入口，會明確報錯，不會假裝已提供真正的全文方向排版（#11）。
+
+```tex
+\documentclass[lang=zh,oneside,openany]{impebook}
+\LayoutSetup{
+  page.inner = 3cm,
+  page.top = 2.5cm,
+  text.line-stretch = 1.5
+}
+% 也可以：\LayoutSet{text.par-indent}{2em}
+\begin{document}
+\begin{LayoutScope}{text.line-stretch=1.2,text.par-indent=0pt}
+局部段落。
+\end{LayoutScope}
+\end{document}
+```
+
+未列出的參數，以及明確留空的參數，均保留預設或繼承值。同一作用域中，
+非空參數只能顯式賦值**一次**，不論透過幾次 `\LayoutSetup`、
+`\LayoutSet` 呼叫。重複則報錯。巢狀 `LayoutScope` 有獨立作用域，
+進入時繼承外層設定，結束後恢復。頁面及 feature 級設定僅供導言區使用。
+
+| 參數 | 取值 | 可局部修改 |
+| --- | --- | --- |
+| `page.top`、`page.bottom`、`page.inner`、`page.outer`、`page.left`、`page.right`、`page.binding-offset` | TeX 尺寸 | 否 |
+| `text.line-stretch`、`text.list-line-stretch` | 行距倍數 | 是 |
+| `text.par-indent`、`text.par-skip`、`text.left-skip`、`text.right-skip` | TeX 尺寸／glue | 是 |
+| `book.chapter-opening` | `right`、`any` | 否 |
+| `headers.style` | `running`、`title`、`classic` | 否 |
+
+如需指定非預設 Layout，先呼叫 `\UseLayout{...}`，再追加個別參數。
+既有 Component 組合、`\LayoutPresetRegister`、`\UseLayouts` 均繼續支援，
+並未被參數接口取代。不同的頁面預設可再次配置 `geometry`，避免套件選項衝突；
+原生 LaTeX 設定仍可用，但未由 IMPE 攔截或禁止。
+
+`head_fancy_chapter` 相容組件交由 `headers` feature 實作頁眉；
+書籍 Layout 尊重底層類別的 `oneside` 與 `openany` 選項。
+`report` Layout 名稱保留相容性，不再建議新文件使用。
+
+原有 `impe*_zh`、`next*_zh` 類別保留。新文件推薦
+`\documentclass[lang=zh]{impebook}` 等參數化寫法。
+
 ## 結構
 
 ```text
@@ -29,6 +76,9 @@ core/layout/impe-layout-system.tex
 - load-once registry 行為
 
 目前的 core 檔案分工如下：
+
+- `impe-layout-config.tex`
+  文件參數註冊、重複設定檢查與局部段落作用域。
 
 - `impe-layout-system.tex`
   layout 子系統的公開入口。它會載入 defaults 層與集中式 preset catalog。

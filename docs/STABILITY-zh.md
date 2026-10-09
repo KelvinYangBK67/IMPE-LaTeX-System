@@ -34,3 +34,9 @@ CTAN `impe-framework` 發佈、新手冊、模板、示例與一般受維護來�
 `impe*` 入口。
 
 新文件使用標準 `impe*` 入口。日後若改變 `next*` 的支援狀態，須明確記錄。
+
+## 語言參數化標準類別（1.0.4）
+
+新文件建議採用 `\\documentclass[lang=zh]{impebook}`（`impeart`、
+`impereport`、`impebeamer` 同理），而非 `*_zh`。
+原有 `*_zh` 入口在 1.x 中繼續作為受支援的相容別名。

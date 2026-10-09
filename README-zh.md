@@ -13,7 +13,7 @@ IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由
 若 wrapper class 的預設值符合文件需求，可直接使用：
 
 ```tex
-\documentclass{impeart_zh}
+\documentclass[lang=zh]{impeart}
 
 \title{範例文件}
 \author{作者}
@@ -33,7 +33,10 @@ Hello, IMPE.
 標準入口是 `impe.sty`、`impeart`、`impeart_zh`、`impebook`、
 `impebook_zh`、`impereport`、`impereport_zh`、`impebeamer` 與
 `impebeamer_zh`。舊的 `next*` 名稱供既有文件相容使用，並收錄於
-full 與 core release。
+full 與 core release。`_zh` 類別已轉為相容入口；新文件推薦
+`\\documentclass[lang=zh]{impeart}` 等標準類別。全局 Layout 參數可用
+`\\LayoutSetup{...}`，段落局部參數可用 `LayoutScope`，參見
+[Layouts](docs/LAYOUTS-zh.md)。
 
 ## 支援矩陣
 

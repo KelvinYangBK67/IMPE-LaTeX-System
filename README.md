@@ -33,6 +33,10 @@ The canonical entry points are `impe.sty`, `impeart`, `impeart_zh`,
 `impebook`, `impebook_zh`, `impereport`, `impereport_zh`, `impebeamer`, and
 `impebeamer_zh`. The older `next*` names remain compatibility wrappers for
 existing documents and ship in the full and core distributions.
+For new Chinese documents, prefer `\\documentclass[lang=zh]{impeart}` (and
+analogous `impebook`, `impereport`, `impebeamer`) over the historical `_zh`
+classes. Use `\\LayoutSetup{...}` and `LayoutScope` for document-wide and
+paragraph-local parameters; see [Layouts](docs/LAYOUTS.md).
 
 ## Support Matrix
 
