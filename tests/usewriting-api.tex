@@ -29,6 +29,19 @@
   {\PackageError{impe-test}{Native~Shanggu~sans~missing}{}}
   {}
 \ExplSyntaxOff
+% Third-party legacy family registrations also become usable via new selector.
+% Registration itself and old commands must remain unchanged.
+\FontRegisterFamily{
+  id=writing_custom,defaultmode=local,
+  local={command=WCU,name=writing_custom_local,
+    regular=lmroman10-regular.otf,bold=lmroman10-bold.otf}
+}
+\UseFont{writing_custom}[local]
+\UseWriting{writing_custom}
+\ExplSyntaxOn
+\prop_if_in:NnF \g__writing_profile_pack_prop {writing_custom}
+  {\PackageError{impe-test}{Late~legacy~profile~missing}{}}
+\ExplSyntaxOff
 % A system font alias is not mistaken for a profile or a positional pack.
 \UseWriting{[naskh]arabic}
 \UseWriting{[writing=horizontal]mongolian}
