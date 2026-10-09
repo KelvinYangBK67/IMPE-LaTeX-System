@@ -40,7 +40,7 @@ assert second_word[1] - first_word[1] > 80, (first_word, second_word)
 # rather than assuming it is printed on the final PDF page.
 gamma_index_candidates = [
     (p, w) for p in doc if p.number > gamma_page.number
-    for w in p.get_text("words") if w[4] == "Gamma"
+    for w in p.get_text("words") if w[4].rstrip(",") == "Gamma"
 ]
 if not gamma_index_candidates:
     print("Missing Gamma index entry; final pages:",
