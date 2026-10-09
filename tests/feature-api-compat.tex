@@ -48,6 +48,8 @@ Legacy italic example block remains available.
   \edef\IMPESectionAnchor{\getrefbykeydefault{sec:compat}{anchor}{}}%
   \edef\IMPESectionType{%
     \expandafter\NextHyperlinksTypeBeforeDot\IMPESectionAnchor.\@nil}%
+  \typeout{IMPE-TEST-SECTION-ANCHOR: \IMPESectionAnchor}%
+  \typeout{IMPE-TEST-SECTION-TYPE: \IMPESectionType}%
   \def\IMPEExpectedSectionType{section}%
   \ifx\IMPESectionType\IMPEExpectedSectionType\else
     \PackageError{feature-regression}{Section autoref type was lost}{}
