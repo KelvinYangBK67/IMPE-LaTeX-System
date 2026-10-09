@@ -69,6 +69,7 @@ if ($ArchiveTimestamp.Year -lt 1980 -or $ArchiveTimestamp.Year -gt 2107) {
 
 $CanonicalTopLevelFiles = @(
     "impe-system.tex",
+    "impe-class-options.tex",
     "impe.sty",
     "impeart.cls",
     "impeart_zh.cls",

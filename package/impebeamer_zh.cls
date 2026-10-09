@@ -1,13 +1,7 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impebeamer_zh}[2026/10/09 v1.0.4 IMPE class for Chinese beamer]
-
+\ProvidesClass{impebeamer_zh}[2026/10/09 v1.0.4 Compatibility alias for impebeamer with lang=zh]
 \makeatletter
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{beamer}}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{impebeamer}}
 \ProcessOptions\relax
-\def\NextSystemUiTag{zh}
-\def\NextDefaultLayout{beamer}
-\def\NextDefaultGlobalFonts{cmu,shanggu}
-\providecommand{\NextBeamerAuthorShape}{\itshape}
-\LoadClass{beamer}
-\RequirePackage{impe}
+\LoadClass[lang=zh]{impebeamer}
 \makeatother
