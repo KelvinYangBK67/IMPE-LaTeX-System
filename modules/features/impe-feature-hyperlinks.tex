@@ -38,7 +38,7 @@
 \makeatletter
 % Keep explicit names supplied via MakeLinkTarget* untouched. The hook below
 % only rewrites automatically allocated names, retaining their semantic type.
-\let\NextHyperlinksOriginalMakeLinkTarget\MakeLinkTarget
+\NewCommandCopy{\NextHyperlinksOriginalMakeLinkTarget}{\MakeLinkTarget}
 \RenewDocumentCommand{\MakeLinkTarget}{s O{} m}{%
   \IfBooleanTF{#1}{%
     \begingroup
