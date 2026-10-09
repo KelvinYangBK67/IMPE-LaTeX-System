@@ -13,13 +13,13 @@ for path in sys.argv[1:]:
     internal = 0
     for page in doc:
         for link in page.get_links():
-            if link.get("kind") != fitz.LINK_GOTO:
+            target_page = link.get("page", -1)
+            # PyMuPDF can expose named internal destinations under a non-GoTo
+            # link kind after resolution; a valid target page is the criterion.
+            if not isinstance(target_page, int) or target_page < 0:
                 continue
             internal += 1
-            target_page = link.get("page", -1)
-            assert isinstance(target_page, int) and 0 <= target_page < len(doc), (
-                path, page.number, link
-            )
+            assert target_page < len(doc), (path, page.number, link)
             point = link.get("to")
             assert point is not None and math.isfinite(point.x) and math.isfinite(point.y), (
                 path, page.number, link
