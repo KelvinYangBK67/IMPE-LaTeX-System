@@ -189,7 +189,6 @@
 \cs_new_protected:cpn { __layout_component_slides_madrid_nav: }
   {
     \RequirePackage{etoolbox}
-    \RequirePackage{multicol}
     \mode<presentation>
     \usetheme{Madrid}
     \usefonttheme{professionalfonts}
@@ -208,6 +207,12 @@
     \setbeamerfont{block title}{family=\sffamily,series=\bfseries}
     \setbeamerfont{block body}{family=\sffamily}
     \setbeamerfont{section in head/foot}{family=\sffamily}
+  }
+
+% Beamer convenience interfaces are separate from theme/layout configuration.
+\cs_new_protected:cpn { __layout_component_slides_impe_helpers: }
+  {
+    \RequirePackage{multicol}
     \providecommand{\AgendaTitle}{Contents}
     \newcommand{\AgendaFrame}{
       \begingroup

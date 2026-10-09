@@ -160,6 +160,7 @@ try {
         "feature-api-compat",
         "layout-config",
         "lang-option-zh",
+        "lang-legacy-zh",
         "layout-geometry-switch",
         "citations-preloaded",
         "beamer-hyperlinks"
@@ -228,7 +229,7 @@ finally {
     $env:TEXINPUTS = $oldTexInputs
 }
 
-foreach ($name in @("feature-api-compat", "citations-preloaded", "beamer-hyperlinks", "layout-config", "lang-option-zh", "layout-geometry-switch")) {
+foreach ($name in @("feature-api-compat", "citations-preloaded", "beamer-hyperlinks", "layout-config", "lang-option-zh", "lang-legacy-zh", "layout-geometry-switch")) {
     $log = Get-Content -LiteralPath (Join-Path $BuildRoot "$name.log") -Raw
     $marker = "IMPE-TEST-$($name.ToUpperInvariant())-PASS"
     if ($log -notmatch [regex]::Escape($marker)) {
