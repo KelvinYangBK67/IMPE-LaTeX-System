@@ -151,6 +151,10 @@
     \tl_if_blank:VTF \l__font_family_global_tl
       { }
       { \prop_put:NVV \g__font_family_global_prop \l__font_family_id_tl \l__font_family_global_tl }
+    % Optional new writing API receives late custom family registrations.
+    % With no new API installed, this is a no-op.
+    \cs_if_exist:NT \__writing_legacy_registered:
+      { \__writing_legacy_registered: }
   }
 
 \cs_new_protected:Npn \__font_family_use_declaration:nnn #1#2#3
