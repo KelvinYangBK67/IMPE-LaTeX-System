@@ -2,6 +2,7 @@
 % Preset components remain the authority for unspecified values.
 \RequirePackage{expl3}
 \RequirePackage{xparse}
+\makeatletter
 \ExplSyntaxOn
 \prop_new:N \g__impe_layout_config_seen_prop
 \prop_new:N \l__impe_layout_scope_seen_prop
@@ -104,10 +105,8 @@
   {\keys_set:nn {impe/layout-config}{#1}}
 \NewDocumentCommand{\LayoutSet}{mm}
   {\keys_set:nn {impe/layout-config}{#1={#2}}}
-\makeatletter
 \@onlypreamble\LayoutSetup
 \@onlypreamble\LayoutSet
-\makeatother
 
 % Paragraph completion must precede scope restoration: \par inside the group
 % ensures the local baseline and paragraph parameters remain active.
@@ -126,3 +125,4 @@
     \ignorespacesafterend
   }
 \ExplSyntaxOff
+\makeatother
