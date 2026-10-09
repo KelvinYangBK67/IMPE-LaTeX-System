@@ -228,7 +228,7 @@
       { \__writing_error:nn {Unknown~writing~profile~'\l__writing_profile_tl'} {Use~a~registered~profile.} }
     \tl_if_blank:VF \l__writing_options_tl
       {
-        \exp_args:NNV \seq_set_split:Nnn \l__writing_option_parts_seq {,} \l__writing_options_tl
+        \exp_args:NNnV \seq_set_split:Nnn \l__writing_option_parts_seq {,} \l__writing_options_tl
         \seq_pop_left:NN \l__writing_option_parts_seq \l_tmpa_tl
         \tl_trim_spaces:N \l_tmpa_tl
         \tl_if_in:VnTF \l_tmpa_tl {=}
