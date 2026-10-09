@@ -16,6 +16,7 @@
 \prop_new:N \g__writing_style_font_prop
 \prop_new:N \g__writing_style_path_prop
 
+\tl_new:N \l__writing_input_tl
 \tl_new:N \l__writing_entry_tl
 \tl_new:N \l__writing_profile_tl
 \tl_new:N \l__writing_options_tl
@@ -180,6 +181,8 @@
               { \tl_put_right:Nn \l__writing_profile_tl { {##1} } }
           }
       }
+    \tl_replace_all:Nnn \l__writing_profile_tl {\__writing_space_marker:} { ~ }
+    \tl_replace_all:Nnn \l__writing_options_tl {\__writing_space_marker:} { ~ }
     \tl_trim_spaces:N \l__writing_profile_tl
     \tl_trim_spaces:N \l__writing_options_tl
     \tl_if_blank:VF \l__writing_profile_tl
@@ -207,9 +210,13 @@
   }
 \cs_new_protected:Npn \__writing_parse:n #1
   {
+    % Undelimited TeX argument scanning skips category-10 spaces. Convert
+    % them to an inert marker while scanning, then restore them before l3keys.
+    \tl_set:Nn \l__writing_input_tl {#1}
+    \tl_replace_all:Nnn \l__writing_input_tl { ~ } {\__writing_space_marker:}
     \tl_clear:N \l__writing_entry_tl
     \int_zero:N \l__writing_brackets_int
-    \tl_map_inline:nn {#1}
+    \exp_args:NV \tl_map_inline:nn \l__writing_input_tl
       {
         \tl_if_single_token:nTF {##1}
           { \__writing_item_char:n {##1} }
