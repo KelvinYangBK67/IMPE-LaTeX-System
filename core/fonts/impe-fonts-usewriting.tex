@@ -235,7 +235,7 @@
           { \seq_put_left:NV \l__writing_option_parts_seq \l_tmpa_tl }
           {
             \tl_if_blank:VF \l_tmpa_tl
-              { \tl_set_eq:NN \l__writing_pack_tl \l_tmpa_tl }
+              { \tl_set:NV \l__writing_pack_tl \l_tmpa_tl }
           }
         \tl_set:Nx \l_tmpa_tl { \seq_use:Nn \l__writing_option_parts_seq {,} }
         \tl_if_blank:VF \l_tmpa_tl
