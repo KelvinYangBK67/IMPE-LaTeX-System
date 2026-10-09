@@ -445,12 +445,10 @@
       }
   }
 
-% Keep third-party old-family declarations available to the new selector.
-% Legacy semantics and execution still belong to the original registry.
-\cs_new_eq:NN \__writing_legacy_register_family:n \FontRegisterFamily
-\RenewDocumentCommand \FontRegisterFamily { m }
+% Called after each original \FontRegisterFamily declaration. This does not
+% wrap xparse's public command, so legacy registration stays untouched.
+\cs_new_protected:Npn \__writing_legacy_registered:
   {
-    \__writing_legacy_register_family:n {#1}
     \tl_if_blank:VF \l__font_family_id_tl
       {
         \prop_if_in:NVF \g__writing_profile_pack_prop \l__font_family_id_tl
