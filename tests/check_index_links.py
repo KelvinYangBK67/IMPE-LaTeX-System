@@ -36,10 +36,20 @@ first_word = next(w for w in gamma_page.get_text("words")
 second_word = next(w for w in gamma_page.get_text("words")
                    if w[4] == "OCCURRENCE-GAMMA-SECOND:")
 assert second_word[1] - first_word[1] > 80, (first_word, second_word)
-gamma_term = next(w for w in index.get_text("words") if w[4] == "Gamma")
-gamma_page_words = [w for w in index.get_text("words")
+# The index can extend over multiple physical pages; locate the Gamma entry
+# rather than assuming it is printed on the final PDF page.
+gamma_index_candidates = [
+    (p, w) for p in doc if p.number > gamma_page.number
+    for w in p.get_text("words") if w[4] == "Gamma"
+]
+if not gamma_index_candidates:
+    print("Missing Gamma index entry; final pages:",
+          [(p.number, p.get_text()[:1800]) for p in list(doc)[-3:]])
+assert gamma_index_candidates
+gamma_index, gamma_term = gamma_index_candidates[-1]
+gamma_page_words = [w for w in gamma_index.get_text("words")
                     if w[4].rstrip(",") == "1" and w[5:7] == gamma_term[5:7]]
-gamma_links = [link for link in index.get_links()
+gamma_links = [link for link in gamma_index.get_links()
                if link.get("page") == gamma_page.number
                and any(fitz.Rect(w[:4]).intersects(link["from"]) for w in gamma_page_words)]
 gamma_y = sorted({round(link["to"].y) for link in gamma_links})
