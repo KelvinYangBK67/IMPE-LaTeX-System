@@ -63,6 +63,25 @@
 \prop_if_in:NnT \g__writing_profile_pack_prop {writing_custom}
   {\PackageError{impe-test}{Font~preset~must~not~be~a~Unicode~profile}{}}
 \ExplSyntaxOff
+% Curated profiles are Unicode sets, not historical font IDs.
+\UseWriting{japanese}
+\ExplSyntaxOn
+\prop_get:NnNTF \g__writing_active_coverage_prop {japanese} \l_tmpa_tl
+  {
+    \tl_if_in:VnF \l_tmpa_tl {CJKUnifiedIdeographs}
+      {\PackageError{impe-test}{Japanese~Unicode~profile~lost~Han}{}}
+    \tl_if_in:VnF \l_tmpa_tl {Hiragana}
+      {\PackageError{impe-test}{Japanese~Unicode~profile~lost~Kana}{}}
+  }
+  {\PackageError{impe-test}{Japanese~Unicode~profile~missing}{}}
+\ExplSyntaxOff
+\UseWriting{[font=lmroman10-regular.otf]jurchen}
+\ExplSyntaxOn
+\prop_get:NnNTF \g__writing_active_coverage_prop {jurchen} \l_tmpa_tl
+  { \tl_if_in:VnF \l_tmpa_tl {JurchenRadicals}
+      {\PackageError{impe-test}{Unicode~18.0~Jurchen~radicals~missing}{}} }
+  {\PackageError{impe-test}{Jurchen~profile~missing}{}}
+\ExplSyntaxOff
 % A system font alias is not mistaken for a profile or a positional pack.
 \UseWriting{[aref]arabic}
 \ExplSyntaxOn
