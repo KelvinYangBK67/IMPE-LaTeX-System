@@ -795,6 +795,12 @@
             \tl_set:Nn \l__writing_profile_behavior_tl
               {scriptclass=latin,inlinebehavior=normal,layout={},specialmodule={},script={},language={},features={}}
             \tl_set:Nn \l__writing_selected_scope_tl {local}
+            % A pure font uses Generic: it cannot select a special renderer.
+            \str_if_eq:VnT \l__writing_writing_tl {vertical}
+              {
+                \__writing_error:nn {Vertical~writing~requires~a~profile}
+                  {Select~a~writing~profile~with~a~local~vertical~renderer.}
+              }
             \bool_if:NF \l__writing_local_call_bool
               {
                 \__writing_error:nn {Profile-less~fonts~require~local~use}

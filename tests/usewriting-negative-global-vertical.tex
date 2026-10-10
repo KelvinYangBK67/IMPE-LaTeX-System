@@ -1,0 +1,6 @@
+% Declaring a local-only renderer is valid; globally activating it is not.
+\documentclass{article}
+\usepackage{impe}
+\DeclareWriting{local-vertical-only}{[file=lmroman10-regular.otf,writing=vertical]mongolian}
+\UseFont{local-vertical-only}[global]
+\begin{document}Text\end{document}
