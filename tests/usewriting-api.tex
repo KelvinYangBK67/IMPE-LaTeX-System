@@ -29,6 +29,23 @@
   {\PackageError{impe-test}{Native~Shanggu~sans~missing}{}}
   {}
 \ExplSyntaxOff
+% A non-default pack changes the resource, not the profile's shaping policy.
+\UseWriting{[gentium]arabic}
+\ExplSyntaxOn
+\str_if_eq:VnF \l__font_script_tl {Arabic}
+  {\PackageError{impe-test}{Arabic~profile~lost~its~script}{}}
+\str_if_eq:VnF \l__font_inline_behavior_tl {rtl}
+  {\PackageError{impe-test}{Arabic~profile~lost~RTL}{}}
+\tl_if_in:VnF \l__font_regular_tl {GentiumPlus-Regular.ttf}
+  {\PackageError{impe-test}{Gentium~pack~resource~missing}{}}
+\ExplSyntaxOff
+\UseWriting{[writing=horizontal]mongolian}
+\ExplSyntaxOn
+\tl_if_blank:VF \l__font_layout_tl
+  {\PackageError{impe-test}{Explicit~horizontal~writing~was~ignored}{}}
+\tl_if_in:VnF \l__font_features_tl {script=mong}
+  {\PackageError{impe-test}{Mongolian~shaping~was~lost}{}}
+\ExplSyntaxOff
 % Third-party legacy family registrations also become usable via new selector.
 % Registration itself and old commands must remain unchanged.
 \FontRegisterFamily{
