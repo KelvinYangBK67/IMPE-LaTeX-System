@@ -50,12 +50,12 @@
 \UseFont{gentium}[local]
 % New API must not overwrite an already active legacy \GEN command.
 \ExplSyntaxOn
-\tl_set:Nx \l_tmpa_tl {\cs_meaning:c {GEN}}
-\tl_gset:Nx \g_tmpa_tl {\tl_use:N \l_tmpa_tl}
+\tl_new:N \g__test_legacy_gen_tl
+\tl_gset:Nx \g__test_legacy_gen_tl {\cs_meaning:c {GEN}}
 \ExplSyntaxOff
 \UseWriting{gentium}
 \ExplSyntaxOn
-\str_if_eq:eeF {\cs_meaning:c {GEN}} {\tl_use:N \g_tmpa_tl}
+\str_if_eq:eeF {\cs_meaning:c {GEN}} {\tl_use:N \g__test_legacy_gen_tl}
   {\PackageError{impe-test}{Legacy~GEN~was~overwritten}{}}
 \ExplSyntaxOff
 \begin{document}
