@@ -16,6 +16,8 @@
 \prop_new:N \g__writing_pack_bold_override_prop
 \prop_new:N \g__writing_style_font_prop
 \prop_new:N \g__writing_style_path_prop
+\prop_new:N \g__writing_owned_public_command_prop
+\int_new:N \g__writing_declaration_int
 
 \tl_new:N \l__writing_input_tl
 \tl_new:N \l__writing_entry_tl
@@ -34,6 +36,7 @@
 \tl_new:N \l__writing_profile_default_pack_tl
 \tl_new:N \l__writing_profile_source_tl
 \tl_new:N \l__writing_profile_command_tl
+\tl_new:N \l__writing_public_command_tl
 \tl_new:N \l__writing_profile_behavior_tl
 \prop_new:N \l__writing_overrides_prop
 \int_new:N \l__writing_brackets_int
@@ -472,15 +475,31 @@
             \tl_set:NV \l__font_decl_family_id_tl \l__writing_profile_source_tl
             \clist_clear:N \l__font_unicode_blocks_clist
             \tl_set:NV \l__font_command_tl \l__writing_profile_command_tl
-            \tl_set:Nx \l__font_name_tl {writing_\l__writing_profile_tl}
-            % A previously activated legacy command must retain its
-            % original font selection and behavior. Keep the new local
-            % builder behind a private command in that case.
+            % Each binding receives fresh NFSS identifiers: fontspec's
+            % \newfontfamily cannot redeclare the same internal control name.
+            \int_gincr:N \g__writing_declaration_int
+            \tl_set:Nx \l__font_name_tl
+              {writing_\l__writing_profile_tl _\int_use:N \g__writing_declaration_int}
+            \tl_set:NV \l__writing_public_command_tl \l__font_command_tl
             \tl_if_blank:VTF \l__font_command_tl
-              { \tl_set:Nx \l__font_command_tl {impewriting\l__writing_profile_tl} }
               {
+                \tl_clear:N \l__writing_public_command_tl
+                \tl_set:Nx \l__font_command_tl
+                  {impewriting\int_use:N \g__writing_declaration_int}
+              }
+              {
+                % Keep an already registered *legacy* public command intact.
+                % A command created by an earlier UseWriting is ours to update.
                 \exp_args:NV \cs_if_exist:cT \l__font_command_tl
-                  { \tl_set:Nx \l__font_command_tl {impewriting\l__writing_profile_tl} }
+                  {
+                    \prop_if_in:NVF \g__writing_owned_public_command_prop
+                      \l__font_command_tl
+                      {
+                        \tl_clear:N \l__writing_public_command_tl
+                        \tl_set:Nx \l__font_command_tl
+                          {impewriting\int_use:N \g__writing_declaration_int}
+                      }
+                  }
               }
             \prop_get:NVNT \g__writing_pack_regular_override_prop \l__writing_pack_tl \l_tmpa_tl
               { \tl_set:NV \l__font_regular_tl \l_tmpa_tl }
@@ -535,6 +554,11 @@
                   { !\tl_if_blank_p:V \l__writing_file_tl }
                   { \tl_set:Nn \l__font_fallback_mode_tl {strict} }
                 \__font_apply_declaration:
+                \tl_if_blank:VF \l__writing_public_command_tl
+                  {
+                    \prop_gput:NVn \g__writing_owned_public_command_prop
+                      \l__writing_public_command_tl {new-api}
+                  }
                 \tl_set:NV \l__font_fallback_mode_tl \l__writing_saved_fallback_tl
               }
           }
