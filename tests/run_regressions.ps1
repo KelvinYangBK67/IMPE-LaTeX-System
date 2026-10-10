@@ -149,6 +149,7 @@ try {
         "legacy-entry",
         "font-mode-aliases",
         "usewriting-api",
+        "usewriting-local-first-use",
         "local-font-override",
         "same-family-shaping",
         "routing-scalability",
