@@ -498,6 +498,12 @@
         \cs_if_exist:cT { __font_force_roman_#2: }
           { \use:c { __font_force_roman_#2: } }
         \use:c { __fontrm_#2 }
+        \cs_if_exist:cT { __font_force_cjk_#2: }
+          {
+            \cs_if_exist:NT \xeCJKsetup
+              { \xeCJKsetup { AutoFallBack = false } }
+            \use:c { __font_force_cjk_#2: }
+          }
         \bool_set_false:N \l__font_reapply_style_bool
         \str_if_eq:eeF { \use:c { f@series } } { \mddefault }
           {
@@ -589,6 +595,14 @@
     \use:c { __font_space_policy_\l__font_vertical_base_name_tl : }
     \use:c { __font_map_sf_\l__font_vertical_base_name_tl : }
     \use:c { __font_map_tt_\l__font_vertical_base_name_tl : }
+    \cs_if_exist:cT { __font_force_roman_\l__font_vertical_base_name_tl : }
+      { \use:c { __font_force_roman_\l__font_vertical_base_name_tl : } }
+    \cs_if_exist:cT { __font_force_cjk_\l__font_vertical_base_name_tl : }
+      {
+        \cs_if_exist:NT \xeCJKsetup
+          { \xeCJKsetup { AutoFallBack = false } }
+        \use:c { __font_force_cjk_\l__font_vertical_base_name_tl : }
+      }
     \str_case:VnF \l__font_vertical_style_family_tl
       {
         { sans } { \use:c { __fontsf_\l__font_vertical_base_name_tl } }
@@ -917,6 +931,37 @@
             \exp_not:c { __fonttt_\l__font_name_tl }
             [ \tl_use:N \l__font_mono_options_tl ]
             { \l__font_resolved_mono_tl }
+          }
+      }
+
+    % An anonymous local font without a Profile must still control CJK
+    % characters if xeCJK is active. Give xeCJK the same selected font
+    % rather than letting its global CJK family override the local one.
+    \cs_if_exist:NT \l__writing_local_call_bool
+      {
+        \bool_if:NT \l__writing_local_call_bool
+          {
+            \str_if_eq:VnF \l__font_script_class_tl {cjk}
+              {
+                \cs_if_exist:NT \newCJKfontfamily
+                  {
+                    \__font_build_main_options:
+                    \use:x
+                      {
+                        \exp_not:N \newCJKfontfamily
+                        [ { __fontcjk_\l__font_name_tl } ]
+                        \exp_not:c { __fontcjk_\l__font_name_tl }
+                        [ \tl_use:N \l__font_main_options_tl ]
+                        { \l__font_regular_tl }
+                      }
+                    \use:x
+                      {
+                        \exp_not:N \cs_set_protected:cpn
+                          { __font_force_cjk_\l__font_name_tl : }
+                          { \exp_not:c { __fontcjk_\l__font_name_tl } }
+                      }
+                  }
+              }
           }
       }
 
