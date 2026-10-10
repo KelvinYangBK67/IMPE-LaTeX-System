@@ -915,9 +915,17 @@
         % A new resource alias is a convenient UseFont preset as well.
         \prop_get:NnNTF \g__writing_legacy_profile_prop {#1} \l_tmpa_tl
           {
-            \tl_set:NV \l__writing_profile_tl \l_tmpa_tl
-            \tl_set:Nn \l__writing_options_tl {#1}
-            \__writing_apply:
+            \tl_if_blank:nTF {#2}
+              {
+                \tl_set:NV \l__writing_profile_tl \l_tmpa_tl
+                \tl_set:Nn \l__writing_options_tl {#1}
+                \__writing_apply:
+              }
+              {
+                \PackageError{impe-writing}
+                  {New~font~aliases~do~not~support~legacy~scope~overrides}
+                  {Use~a~legacy~preset~for~[local|global],~or~select~a~font~in~UseWriting.}
+              }
           }
           {
             \PackageError{impe-writing}{Unknown~font~preset~'#1'}
