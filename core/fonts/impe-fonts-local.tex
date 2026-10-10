@@ -143,9 +143,16 @@
               }
           }
           {
-            \__writing_legacy_local_spec:nnN {#1} {#2} \l_tmpa_tl
-            \tl_if_blank:VF \l_tmpa_tl
-              { \exp_args:NV \__writing_typeset:nnn \l_tmpa_tl {} {#3} }
+            \prop_if_in:NnTF \g__writing_legacy_profile_prop {#1}
+              {
+                \__writing_legacy_local_spec:nnN {#1} {#2} \l_tmpa_tl
+                \tl_if_blank:VF \l_tmpa_tl
+                  { \exp_args:NV \__writing_typeset:nnn \l_tmpa_tl {} {#3} }
+              }
+              {
+                % Preserve the 1.0.1 diagnostic for an unknown family ID.
+                \__font_family_use_loader:nn {#1} {local}
+              }
           }
       }
   }
