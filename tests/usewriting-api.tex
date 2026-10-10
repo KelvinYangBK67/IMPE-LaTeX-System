@@ -62,6 +62,11 @@
   {\PackageError{impe-test}{Late~legacy~profile~missing}{}}
 \ExplSyntaxOff
 % A system font alias is not mistaken for a profile or a positional pack.
+\UseWriting{[ruqaa]arabic}
+\ExplSyntaxOn
+\tl_if_in:VnF \l__font_resolved_bold_tl {ArefRuqaa-Bold.ttf}
+  {\PackageError{impe-test}{Ruqaa~native~bold~face~missing}{}}
+\ExplSyntaxOff
 \UseWriting{[naskh]arabic}
 \UseWriting{[writing=horizontal]mongolian}
 % The old registry and its public controls remain available in the same file.
