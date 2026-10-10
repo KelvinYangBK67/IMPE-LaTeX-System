@@ -79,7 +79,7 @@
 \tl_new:N \g__test_legacy_gen_tl
 \tl_gset:Nx \g__test_legacy_gen_tl {\cs_meaning:c {GEN}}
 \ExplSyntaxOff
-\UseWriting{gentium}
+\UseWriting{[gentium]basic}
 \ExplSyntaxOn
 \str_if_eq:eeF {\cs_meaning:c {GEN}} {\tl_use:N \g__test_legacy_gen_tl}
   {\PackageError{impe-test}{Legacy~GEN~was~overwritten}{}}
