@@ -165,7 +165,11 @@
         \tl_set:Nx \l_tmpb_tl { scope = #2, familyid = #1, \exp_not:n {#3} }
         \exp_args:NV \FontDeclare \l_tmpb_tl
         \str_if_eq:nnT {#2} {local}
-          { \prop_put:NnV \g__font_family_command_prop {#1} \l__font_command_tl }
+          {
+            \prop_put:NnV \g__font_family_command_prop {#1} \l__font_command_tl
+            \cs_if_exist:NT \__writing_wrap_legacy_local:n
+              { \__writing_wrap_legacy_local:n {#1} }
+          }
         \prop_put:Nnn \g__font_family_loaded_prop { #1 / #2 } { loaded }
       }
   }
