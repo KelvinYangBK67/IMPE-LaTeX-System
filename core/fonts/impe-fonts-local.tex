@@ -59,7 +59,14 @@
     \int_zero:N \l__writing_local_entry_count_int
     % Bare file=... and font=... contain no Unicode profile; do not
     % interpret their option-list commas as profile separators.
-    \regex_match:nnTF { \A \s* (file|font) \s* = } {#1}
+    \regex_match:nnTF
+      {
+        \A \s*
+        (file|font|stylemap|writing|bold|italic|bolditalic|sans|
+         sansbold|sansitalic|sansbolditalic|mono|monobold)
+        \s* =
+      }
+      {#1}
       { \__writing_parse_entry:n {#1} }
       { \__writing_parse:n {#1} }
     \bool_set_false:N \l__writing_local_call_bool
