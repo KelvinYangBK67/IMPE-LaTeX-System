@@ -116,3 +116,25 @@
 
 \DeclareRangeProfile{mongolian}{mongolian}
 \DeclareRangeProfile{tibetan}{tibetan}
+
+% Writing-profile composition in the new API.  These registrations do not
+% replace any legacy rangeprofile; e.g. cjk-jp deliberately stays Kana-only
+% for existing \UseFont documents, while new japanese owns Han+Kana.
+% The Coptic codepoints 03E2..03EF must not be consumed by Greek.
+\DeclareRangeCodepointKey{greek-main}{"0370}{"03E1}
+\DeclareRangeCodepointKey{greek-post-coptic}{"03F0}{"03FF}
+\DeclareRangeKey{greek-only}{greek-main,greek-post-coptic,GreekExtended,AncientGreekNumbers}
+\DeclareRangeKey{jurchen}{Jurchen,JurchenRadicals}
+\DeclareRangeKey{seal}{Seal}
+\DeclareRangeKey{proto-cuneiform}{ArchaicCuneiformNumerals}
+\DeclareRangeProfile{basic}{latin,greek-only,cyrillic}
+\DeclareRangeProfile{han}{han,cjk-punctuation}
+\DeclareRangeProfile{chinese}{han,bopomofo,cjk-punctuation}
+\DeclareRangeProfile{japanese}{han,kana,cjk-punctuation}
+\DeclareRangeProfile{korean}{han,hangul,cjk-punctuation}
+\DeclareRangeProfile{kana}{kana}
+\DeclareRangeProfile{hangul}{hangul}
+\DeclareRangeProfile{jurchen}{jurchen}
+\DeclareRangeProfile{seal}{seal}
+\DeclareRangeProfile{proto-cuneiform}{proto-cuneiform}
+\DeclareRangeProfile{greek-only}{greek-only}
