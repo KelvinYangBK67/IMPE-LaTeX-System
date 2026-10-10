@@ -1,9 +1,10 @@
 # IMPE writing and font selection (1.0.5 development)
 
 Development specification for draft PR #23. No version tag or release is created.
-The only newly added **public TeX command** is `\UseWriting`. The original
-`\UseFont` remains the **recommended short preset interface**; all of its
-existing identifiers and `[local|global]` modes are preserved.
+New public interfaces are `\UseWriting`, `\DeclareWriting`, and `\Writing`.
+The existing `\Font` is redesigned as a forced-local preset selector.
+`\UseFont` retains its original `[local|global]` mode and historic presets;
+local shortcuts such as `\SA`, `\MO`, `\MOv` remain recommended aliases.
 
 ## The four registries
 
@@ -91,6 +92,66 @@ common Western multi-face packs `basic`, `cmu`, `times`,
 default to `full`. `stylemap=full` enables optional historical
 cross-family substitutions without treating those substitute fonts as
 native series members. Explicit overrides take priority over both maps.
+
+## Named declarations and forced local typesetting
+
+Declarations are configuration storage only; they do not select a global font
+or register a Unicode route. They can be used from the preamble:
+
+```tex
+\DeclareWriting{my-han}{[shanggu,stylemap=full,italic=zhuque]chinese}
+\DeclareWriting{my-roman}{file=lmroman10-regular.otf}
+\DeclareWriting{my-mongolian}{[mnglwhite,writing=vertical]mongolian}
+
+\Font{my-han}{漢字}
+\Font{my-roman}{Latin text}
+\Font{my-mongolian}{ᠮᠣᠩᠭᠣᠯ}
+
+% No prior declaration/UseWriting/UseFont is necessary for built-in presets:
+\Font{sanskrit}{संस्कृतम्}
+\Font{mongolian}[writing=vertical]{ᠮᠣᠩᠭᠣᠯ}
+
+% Anonymous, inline declarations:
+\Writing{[tiro]devanagari}{संस्कृतम्}
+\Writing{file=lmroman10-regular.otf}{Some text}
+```
+
+Public signatures:
+
+- `\DeclareWriting{Name}{Configuration}`: define a reusable name,
+  without installing fonts or affecting the main text.
+- `\Font{Name}[Overrides]{Text}`: forced local Preset rendering; the
+  same Preset name resolver as `\UseFont{Name}`, including custom names
+  and built-in resources.
+- `\Writing{Configuration}{Text}`: anonymous forced local rendering,
+  with the same profile/pack/options syntax as `\UseWriting`.
+- `\UseFont{Name}[local]`: prepare a named local binding;
+  `\UseFont{Name}[global]`: activate globally (subject to capability checks).
+
+**Local is not mini-global routing.** A local binding uses one selected font
+resource and (if present) one Renderer for the *entire* text argument. It
+ignores the Unicode coverage ranges of its Profile and suppresses IMPE's
+existing global range-enter hooks while the local rendering command runs.
+Unsupported characters may become missing glyphs; no automatic
+Unicode-range fallback is performed. Nested explicit local calls can override
+the outer local font. Multiple Profile entries in one local call are rejected.
+
+The Profile is optional in local mode. `file=...` or `font=...` alone
+selects a generic font renderer, with no IMPE script-specific processing.
+A Profile activates its associated renderer policy. This differs from global
+`\UseWriting`, in which Profile coverage determines the selected
+Unicode ranges. Global profile-less font declarations are rejected; a named
+profile-less configuration may still be prepared with `\UseFont{Name}[local]`.
+
+Local vertical (e.g. Mongolian with `writing=vertical`) reuses IMPE's
+existing rotation renderer. **Global vertical writing remains unsupported**:
+attempting to activate it globally is an error. Renderer options are validated
+against the chosen scope. In particular, `\MOv[0pt]{...}` retains its
+historic optional-argument syntax, and the original local shortcut names
+remain recommended alternatives to `\Font`.
+
+Local bindings are cached by their complete configuration and per-call
+overrides to avoid repeatedly declaring the same NFSS font series.
 
 ## Curated Unicode profiles
 
