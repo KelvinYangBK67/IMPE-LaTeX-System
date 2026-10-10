@@ -108,6 +108,32 @@
 \UseFont{sanskrit}
 \UseFont{basic}
 \UseFont{tiro}
+% The declaration only records a local configuration: no prior UseWriting
+% or UseFont call is necessary before Font/Writing typesetting.
+\DeclareWriting{test-local-roman}{file=lmroman10-regular.otf}
+\DeclareWriting{test-local-roman-series}{file=lmroman10-regular.otf,bold=normal}
+\DeclareWriting{test-local-devanagari}{[tiro]devanagari}
+\DeclareWriting{test-local-mongolian}{[mnglwhite,writing=vertical]mongolian}
+\ExplSyntaxOn
+\prop_if_in:NnF \g__writing_named_prop {test-local-roman}
+  {\PackageError{impe-test}{Named~font~declaration~missing}{}}
+\ExplSyntaxOff
 \begin{document}
+\Font{test-local-roman}{Regular~Latin.}
+\Font{test-local-roman}{Cached~Latin.}
+\Writing{file=lmroman10-regular.otf}{Inline~file~font.}
+\Font{test-local-roman-series}{Series~font.}
+\Font{test-local-devanagari}{संस्कृतम्}
+\Font{sanskrit}{संस्कृतम्}
+\Font{tiro}{संस्कृतम्}
+\Writing{[tiro]devanagari}{संस्कृतम्}
+\Font{test-local-mongolian}{ᠮᠣᠩᠭᠣᠯ}
+\Font{mongolian}[writing=vertical]{ᠮᠣᠩᠭᠣᠯ}
+\Writing{[shanggu]chinese}{漢字 Latin}
+\ExplSyntaxOn
+\int_compare:nNnF {\prop_count:N \g__writing_local_cache_prop} > {4}
+  {\PackageError{impe-test}{Local~font~cache~was~not~populated}{}}
+\ExplSyntaxOff
+\typeout{IMPE-TEST-LOCAL-WRITING-PASS}
 \typeout{IMPE-TEST-USEWRITING-PASS}
 \end{document}
