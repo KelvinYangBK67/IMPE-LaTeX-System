@@ -103,6 +103,11 @@
 \str_if_eq:eeF {\cs_meaning:c {GEN}} {\tl_use:N \g__test_legacy_gen_tl}
   {\PackageError{impe-test}{Legacy~GEN~was~overwritten}{}}
 \ExplSyntaxOff
+% Old presets and new aliases coexist through the same public UseFont.
+% Sanskrit is deliberately an old preset name, NOT a Unicode profile.
+\UseFont{sanskrit}
+\UseFont{basic}
+\UseFont{tiro}
 \begin{document}
 \typeout{IMPE-TEST-USEWRITING-PASS}
 \end{document}
