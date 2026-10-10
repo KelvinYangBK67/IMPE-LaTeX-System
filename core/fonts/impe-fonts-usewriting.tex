@@ -9,6 +9,8 @@
 \cs_generate_variant:Nn \clist_if_in:nnF { VnF }
 \cs_generate_variant:Nn \str_case:nnF { enF }
 \prop_new:N \g__writing_profile_pack_prop
+\prop_new:N \g__writing_profile_coverage_prop
+\prop_new:N \g__writing_legacy_profile_prop
 \prop_new:N \g__writing_pack_source_prop
 \prop_new:N \g__writing_pack_native_prop
 \prop_new:N \g__writing_pack_default_stylemap_prop
@@ -46,8 +48,11 @@
 \seq_new:N \l__writing_parts_seq
 \seq_new:N \l__writing_option_parts_seq
 
-\cs_new_protected:Npn \__writing_profile:nn #1#2
-  { \prop_gput:Nnn \g__writing_profile_pack_prop {#1} {#2} }
+\cs_new_protected:Npn \__writing_profile:nnn #1#2#3
+  {
+    \prop_gput:Nnn \g__writing_profile_pack_prop {#1} {#2}
+    \prop_gput:Nnn \g__writing_profile_coverage_prop {#1} {#3}
+  }
 \cs_new_protected:Npn \__writing_alias:nn #1#2
   { \prop_gput:Nnn \g__writing_pack_source_prop {#1} {#2} }
 \cs_new_protected:Npn \__writing_native:nn #1#2
@@ -60,40 +65,214 @@
     \prop_gput:Nnn \g__writing_style_path_prop {#1} {#3}
   }
 
-% Every legacy catalog family is a valid new profile and a possible pack.
-% This is a DATA bridge, not a redefinition of \UseFont or its routing.
-\prop_map_inline:Nn \g__font_family_default_prop
-  {
-    \__writing_profile:nn {#1} {#1}
-    \__writing_alias:nn {#1} {#1}
-  }
-\__writing_profile:nn {latin} {cmu}
-\__writing_profile:nn {chinese} {shanggu}
-\__writing_profile:nn {mongol} {mongolian}
-\__writing_profile:nn {chinese-sc} {chinese_simplified}
-\__writing_profile:nn {chinese-tc} {shanggu}
-\__writing_profile:nn {japanese} {japanese}
-\__writing_profile:nn {korean} {korean}
-\__writing_profile:nn {arabic} {arabic}
-\__writing_profile:nn {mongolian} {mongolian}
+% The curated profile list is NOT generated from Blocks.txt: it is a
+% maintained map of Unicode codepoint sets. No language detection.
+\__writing_profile:nnn {basic} {basic} {basic}
+\__writing_profile:nnn {latin} {basic} {latin}
+\__writing_profile:nnn {greek} {basic} {greek-only}
+\__writing_profile:nnn {cyrillic} {basic} {cyrillic}
+\__writing_profile:nnn {armenian} {armenian} {armenian}
+\__writing_profile:nnn {georgian} {georgian} {georgian}
+\__writing_profile:nnn {hebrew} {hebrew} {hebrew}
+\__writing_profile:nnn {arabic} {naskh} {arabic}
+\__writing_profile:nnn {syriac} {syriac} {syriac}
+\__writing_profile:nnn {samaritan} {samaritan} {samaritan}
+\__writing_profile:nnn {aramaic} {aramaic} {imperial-aramaic}
+\__writing_profile:nnn {nabataean} {nabataean} {nabataean}
+\__writing_profile:nnn {phoenician} {phoenician} {phoenician}
+\__writing_profile:nnn {avestan} {avestan} {avestan}
+\__writing_profile:nnn {pahlavi-parthian} {pahlavi-parthian} {inscriptional-parthian}
+\__writing_profile:nnn {pahlavi-inscriptional} {pahlavi-inscriptional} {inscriptional-pahlavi}
+\__writing_profile:nnn {pahlavi-psalter} {pahlavi-psalter} {psalter-pahlavi}
+\__writing_profile:nnn {manichaean} {manichaean} {manichaean}
+\__writing_profile:nnn {sogdian} {sogdian} {sogdian}
+\__writing_profile:nnn {old-sogdian} {old-sogdian} {old-sogdian}
+\__writing_profile:nnn {old-uyghur} {old-uyghur} {old-uyghur}
+\__writing_profile:nnn {devanagari} {devanagari} {devanagari}
+\__writing_profile:nnn {tamil} {tamil} {tamil}
+\__writing_profile:nnn {thai} {thai} {thai}
+\__writing_profile:nnn {brahmi} {brahmi} {brahmi}
+\__writing_profile:nnn {kharoshthi} {kharoshthi} {kharoshthi}
+\__writing_profile:nnn {tibetan} {tibetan} {tibetan}
+\__writing_profile:nnn {coptic} {coptic} {coptic-main,coptic-legacy}
+\__writing_profile:nnn {glagolitic} {glagolitic} {glagolitic}
+\__writing_profile:nnn {old-italic} {old-italic} {old-italic}
+\__writing_profile:nnn {old-hungarian} {old-hungarian} {old-hungarian}
+\__writing_profile:nnn {runic} {runic} {runic}
+\__writing_profile:nnn {old-turkic} {old-turkic} {old-turkic}
+\__writing_profile:nnn {carian} {carian} {carian}
+\__writing_profile:nnn {cuneiform} {cuneiform} {cuneiform}
+\__writing_profile:nnn {egyptian} {egyptian} {egyptian}
+\__writing_profile:nnn {khitan-small} {khitan-small} {khitan-small}
+\__writing_profile:nnn {tangut} {tangut} {tangut}
+\__writing_profile:nnn {han} {shanggu} {han}
+\__writing_profile:nnn {chinese} {shanggu} {han,bopomofo}
+\__writing_profile:nnn {japanese} {japanese} {han,kana}
+\__writing_profile:nnn {korean} {korean} {han,hangul}
+\__writing_profile:nnn {kana} {japanese} {kana}
+\__writing_profile:nnn {hangul} {korean} {hangul}
+\__writing_profile:nnn {bopomofo} {iming} {bopomofo}
+\__writing_profile:nnn {mongolian} {mnglwhite} {mongolian}
+\__writing_profile:nnn {jurchen} {} {jurchen}
+\__writing_profile:nnn {seal} {} {seal}
+\__writing_profile:nnn {proto-cuneiform} {} {proto-cuneiform}
+\__writing_profile:nnn {bengali} {} {Bengali,BengaliSupplement}
+\__writing_profile:nnn {gurmukhi} {} {Gurmukhi}
+\__writing_profile:nnn {gujarati} {} {Gujarati}
+\__writing_profile:nnn {oriya} {} {Oriya}
+\__writing_profile:nnn {telugu} {} {Telugu}
+\__writing_profile:nnn {kannada} {} {Kannada}
+\__writing_profile:nnn {malayalam} {} {Malayalam}
+\__writing_profile:nnn {sinhala} {} {Sinhala}
+\__writing_profile:nnn {lao} {} {Lao}
+\__writing_profile:nnn {myanmar} {} {Myanmar,MyanmarExtendedA,MyanmarExtendedB}
+\__writing_profile:nnn {ethiopic} {} {Ethiopic,EthiopicExtended,EthiopicExtendedA,EthiopicExtendedB}
+\__writing_profile:nnn {khmer} {} {Khmer,KhmerSymbols}
+\__writing_profile:nnn {ogham} {} {Ogham}
+\__writing_profile:nnn {cherokee} {} {Cherokee,CherokeeSupplement}
+\__writing_profile:nnn {nko} {} {NKo}
+\__writing_profile:nnn {tifinagh} {} {Tifinagh}
+\__writing_profile:nnn {yi} {} {YiSyllables,YiRadicals}
+\__writing_profile:nnn {adlam} {} {Adlam}
+\__writing_profile:nnn {thaana} {} {Thaana}
+\__writing_profile:nnn {mandaic} {} {Mandaic}
 
-% Predefined aliases refer to existing catalog data; none implies a font is
-% installed. Special role aliases are separate from their parent series.
+% Resource names belong to a separate namespace from Unicode profiles.
+\__writing_alias:nn {basic} {noto}
+\__writing_alias:nn {cmu} {cmu}
+\__writing_alias:nn {times} {times}
+\__writing_alias:nn {gentium} {gentium}
+\__writing_alias:nn {charis} {charis}
+\__writing_alias:nn {libertinus} {libertinus}
+\__writing_alias:nn {latinmodern} {mlmodern}
+\__writing_alias:nn {chinese-simplified} {chinese_simplified}
+\__writing_alias:nn {chinese-traditional} {chinese_traditional}
+\__writing_alias:nn {japanese} {japanese}
+\__writing_alias:nn {korean} {korean}
+\__writing_alias:nn {wenjin} {wenjin}
+\__writing_alias:nn {shanggu} {shanggu}
+\__writing_alias:nn {armenian} {armenian}
+\__writing_alias:nn {devanagari} {devanagari}
+\__writing_alias:nn {tamil} {tamil}
+\__writing_alias:nn {georgian} {georgian}
+\__writing_alias:nn {tibetan} {tibetan}
+\__writing_alias:nn {hebrew} {hebrew}
+\__writing_alias:nn {arabic} {arabic}
+\__writing_alias:nn {syriac} {syriac}
+\__writing_alias:nn {syriac-eastern} {syriac_eastern}
+\__writing_alias:nn {syriac-western} {syriac}
+\__writing_alias:nn {thai} {thai}
+\__writing_alias:nn {thai-looped} {thai}
 \__writing_alias:nn {naskh} {arabic}
-\__writing_alias:nn {ruqaa} {arabic}
+\__writing_alias:nn {kufi} {arabic}
 \__writing_alias:nn {nastaliq} {urdu}
+\__writing_alias:nn {aref} {arabic}
+\__writing_alias:nn {davidlibre} {hebrew}
+\__writing_alias:nn {khawa} {tibetan}
+\__writing_alias:nn {carian} {anatolian}
+\__writing_alias:nn {coptic} {coptic}
+\__writing_alias:nn {cuneiform} {cuneiform}
+\__writing_alias:nn {glagolitic} {glagolitic}
+\__writing_alias:nn {old-italic} {italic}
+\__writing_alias:nn {old-hungarian} {hungarian}
+\__writing_alias:nn {runic} {runic}
+\__writing_alias:nn {brahmi} {brahmi}
+\__writing_alias:nn {kharoshthi} {kharosthi}
+\__writing_alias:nn {aramaic} {aramaic}
+\__writing_alias:nn {nabataean} {nabataean}
+\__writing_alias:nn {phoenician} {phoenician}
+\__writing_alias:nn {avestan} {avestan}
+\__writing_alias:nn {pahlavi-parthian} {pahlavi_parthian}
+\__writing_alias:nn {pahlavi-inscriptional} {pahlavi_inscriptional}
+\__writing_alias:nn {pahlavi-psalter} {pahlavi_psalter}
+\__writing_alias:nn {manichaean} {manichaean}
+\__writing_alias:nn {samaritan} {samaritan}
+\__writing_alias:nn {sogdian} {sogdian}
+\__writing_alias:nn {old-sogdian} {sogdian_old}
+\__writing_alias:nn {old-turkic} {turkic}
+\__writing_alias:nn {old-uyghur} {uyghur}
+\__writing_alias:nn {egyptian} {egyptian}
+\__writing_alias:nn {khitan-small} {khitan_small}
+\__writing_alias:nn {tangut} {tangut}
+\__writing_alias:nn {mongolian} {mongolian}
+\__writing_alias:nn {mnglwhite} {mongolian}
+\__writing_alias:nn {mngltitle} {mongolian}
+\__writing_alias:nn {mnglwriting} {mongolian}
+\__writing_alias:nn {mnglart} {mongolian}
+\__writing_alias:nn {monbaiti} {mongolian_baiti}
+\__writing_alias:nn {abxy} {manchu}
+\__writing_alias:nn {segoeuihistoric} {segoe}
+\__writing_alias:nn {tiro} {sanskrit}
+\__writing_alias:nn {iming} {bopomofo}
 \__writing_alias:nn {zhuque} {shanggu}
-\__writing_alias:nn {kaiti} {sim}
-\__writing_alias:nn {fangsong} {sim}
-\prop_gput:Nnn \g__writing_pack_regular_override_prop {ruqaa} {ArefRuqaa-Regular.ttf}
-\prop_gput:Nnn \g__writing_pack_bold_override_prop {ruqaa} {ArefRuqaa-Bold.ttf}
+\__writing_alias:nn {simsun} {sim}
+\__writing_alias:nn {simhei} {sim}
+\__writing_alias:nn {simfang} {sim}
+\__writing_alias:nn {simkai} {sim}
+\__writing_alias:nn {arial} {times}
+\__writing_alias:nn {consolas} {times}
+\__writing_alias:nn {nomnatong} {vietnamese_hannom}
+\__writing_alias:nn {minhnguyen} {vietnamese_hannom}
+\__writing_alias:nn {gothicnguyen} {vietnamese_hannom}
+\__writing_alias:nn {syrcom} {syriac}
+\__writing_alias:nn {syrcom-edessa} {syriac}
+\__writing_alias:nn {syrcom-midyat} {syriac}
+\__writing_alias:nn {syrcom-jerusalem} {syriac}
+\__writing_alias:nn {syrcom-jerusalem-bold} {syriac}
+\__writing_alias:nn {syrcom-adiabene} {syriac_eastern}
+\__writing_alias:nn {syrcom-ctesiphon} {syriac_eastern}
+\__writing_alias:nn {tangut-n4694} {tangut}
+\__writing_alias:nn {new-tangut-std} {tangut}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {aref} {ArefRuqaa-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {kufi} {NotoKufiArabic-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {arabic} {NotoSansArabic-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {syriac} {NotoSansSyriac-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {syriac-eastern} {NotoSansSyriacEastern-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {syriac-western} {NotoSansSyriacWestern-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {thai-looped} {NotoSansThaiLooped-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {khawa} {KhaWaBetsugsSans-Text-Normal.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {davidlibre} {DavidLibre-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {mnglwhite} {mnglwhiteotf.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {mngltitle} {mngltitleotf.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {mnglwriting} {mnglwritingotf.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {mnglart} {mnglartotf.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {tiro} {TiroDevanagariSanskrit-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {iming} {I.Ming-8.10.ttf}
 \prop_gput:Nnn \g__writing_pack_regular_override_prop {zhuque} {ZhuqueFangsong-Regular.ttf}
-\prop_gput:Nnn \g__writing_pack_regular_override_prop {kaiti} {simkai.ttf}
-\prop_gput:Nnn \g__writing_pack_regular_override_prop {fangsong} {simfang.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {simsun} {simsun.ttc}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {simhei} {simhei.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {simfang} {simfang.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {simkai} {simkai.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {arial} {arial.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {consolas} {consola.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {nomnatong} {NomNaTong-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {minhnguyen} {Minh Nguyen Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {gothicnguyen} {Gothic Nguyen Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {syrcom-edessa} {SyrCOMEdessa.otf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {syrcom-midyat} {SyrCOMMidyat.otf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {syrcom-jerusalem} {SyrCOMJerusalem.otf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {syrcom-jerusalem-bold} {SyrCOMJerusalemBold.otf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {syrcom-adiabene} {SyrCOMAdiabene.otf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {syrcom-ctesiphon} {SyrCOMCtesiphon.otf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {tangut-n4694} {Tangut N4694 V3.10.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {new-tangut-std} {new Tangut Std V2.008.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {aref} {ArefRuqaa-Bold.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {kufi} {NotoKufiArabic-Bold.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {arabic} {NotoSansArabic-Bold.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {syriac} {NotoSansSyriac-Bold.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {syriac-eastern} {NotoSansSyriacEastern-Bold.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {syriac-western} {NotoSansSyriacWestern-Bold.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {thai-looped} {NotoSansThaiLooped-Bold.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {khawa} {KhaWaBetsugsSans-Text-Bold.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {davidlibre} {DavidLibre-Bold.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {arial} {arialbd.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {consolas} {consolab.ttf}
+\prop_gput:Nnn \g__writing_pack_bold_override_prop {minhnguyen} {Minh Nguyen Bold.ttf}
+
 \__writing_style_alias:nnn {zhuque} {ZhuqueFangsong-Regular.ttf} {\CatalogFontRoot/shanggu/}
-\__writing_style_alias:nnn {kaiti} {simkai.ttf} {}
-\__writing_style_alias:nnn {fangsong} {simfang.ttf} {}
-\__writing_style_alias:nnn {ruqaa} {ArefRuqaa-Regular.ttf} {\CatalogFontRoot/arabic/}
+\__writing_style_alias:nnn {simkai} {simkai.ttf} {}
+\__writing_style_alias:nnn {simfang} {simfang.ttf} {}
+\__writing_style_alias:nnn {aref} {ArefRuqaa-Regular.ttf} {\CatalogFontRoot/arabic/}
 \__writing_style_alias:nnn {naskh} {NotoNaskhArabic-Regular.ttf} {\CatalogFontRoot/arabic/}
 \__writing_style_alias:nnn {nastaliq} {NotoNastaliqUrdu-Regular.ttf} {\CatalogFontRoot/urdu/}
 
