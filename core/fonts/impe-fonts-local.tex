@@ -118,6 +118,56 @@
       }
   }
 
+% Keep the original 1.0.1 builder as an internal backend. The familiar
+% \SA, \HI, \MO, etc. become short aliases of \Font after local loading.
+% Suffix 'v' keeps its original optional argument and rotation renderer.
+\tl_new:N \l__writing_legacy_offset_tl
+\keys_define:nn {impe/legacy-vertical}
+  {
+    writing .code:n = {},
+    vertical-offset .tl_set:N = \l__writing_legacy_offset_tl,
+  }
+\cs_new_protected:Npn \__writing_wrap_legacy_local:n #1
+  {
+    \prop_get:NnNT \g__font_family_command_prop {#1} \l_tmpa_tl
+      {
+        \tl_if_blank:VF \l_tmpa_tl
+          {
+            \tl_set:Nx \l_tmpb_tl { __writing_raw_\l_tmpa_tl }
+            \exp_args:NVV \cs_set_eq:cc \l_tmpb_tl \l_tmpa_tl
+            \exp_args:Nc \RenewDocumentCommand {\l_tmpa_tl} {+m}
+              { \Font{#1}{##1} }
+            \tl_set:Nx \l_tmpc_tl { \l_tmpa_tl v }
+            \exp_args:NV \cs_if_exist:cT \l_tmpc_tl
+              {
+                \tl_set:Nx \l_tmpb_tl { __writing_raw_\l_tmpc_tl }
+                \exp_args:NVV \cs_set_eq:cc \l_tmpb_tl \l_tmpc_tl
+                \exp_args:Nc \RenewDocumentCommand {\l_tmpc_tl} { O{0pt} m }
+                  { \Font{#1}[writing=vertical,vertical-offset={##1}]{##2} }
+              }
+          }
+      }
+  }
+
+% Vertical legacy calls use the existing rotation renderer verbatim.
+% The optional offset is carried through without changing 1.0.1 semantics.
+\cs_new_protected:Npn \__writing_font_legacy_vertical:nnn #1#2#3
+  {
+    \__font_family_use_loader:nn {#1} {local}
+    \tl_set:Nn \l__writing_legacy_offset_tl {0pt}
+    \keys_set:nn {impe/legacy-vertical} {#2}
+    \prop_get:NnNT \g__font_family_command_prop {#1} \l_tmpa_tl
+      {
+        \tl_set:Nx \l_tmpb_tl {__writing_raw_\l_tmpa_tl v}
+        \exp_args:NV \cs_if_exist:cTF \l_tmpb_tl
+          { \use:c {\l_tmpb_tl}[\l__writing_legacy_offset_tl]{#3} }
+          {
+            \PackageError{impe-writing}{No~vertical~renderer~for~'#1'}
+              {Choose~a~writing~profile~with~a~local~vertical~renderer.}
+          }
+      }
+  }
+
 % Same preset-name resolver as UseFont, without the requirement to pre-load.
 % Overrides are passed through the writing engine; no Unicode routing.
 \cs_new_protected:Npn \__writing_font_local:nnn #1#2#3
@@ -134,12 +184,19 @@
                 \__font_family_use_loader:nn {#1} {local}
                 \prop_get:NnNT \g__font_family_command_prop {#1} \l_tmpa_tl
                   {
-                    \use:c {\l_tmpa_tl} {#3}
+                    \tl_set:Nx \l_tmpb_tl {__writing_raw_\l_tmpa_tl}
+                    \exp_args:NV \cs_if_exist:cTF \l_tmpb_tl
+                      { \use:c {\l_tmpb_tl} {#3} }
+                      { \use:c {\l_tmpa_tl} {#3} }
                   }
               }
               {
-                \__writing_legacy_local_spec:nnN {#1} {#2} \l_tmpa_tl
-                \exp_args:NV \__writing_typeset:nnn \l_tmpa_tl {} {#3}
+                \regex_match:nnTF { \A \s* writing \s* = \s* vertical } {#2}
+                  { \__writing_font_legacy_vertical:nnn {#1} {#2} {#3} }
+                  {
+                    \__writing_legacy_local_spec:nnN {#1} {#2} \l_tmpa_tl
+                    \exp_args:NV \__writing_typeset:nnn \l_tmpa_tl {} {#3}
+                  }
               }
           }
           {
