@@ -22,6 +22,11 @@
 \prop_new:N \g__writing_style_path_prop
 \prop_new:N \g__writing_owned_public_command_prop
 \int_new:N \g__writing_declaration_int
+% The local caller bypasses Unicode coverage routing; the profile supplies
+% a renderer policy only. This is not a Unicode-range scope.
+\bool_new:N \l__writing_local_call_bool
+\tl_new:N \l__writing_call_overrides_tl
+\tl_new:N \g__writing_last_local_command_tl
 
 \tl_new:N \l__writing_input_tl
 \tl_new:N \l__writing_entry_tl
@@ -471,7 +476,19 @@
     \tl_replace_all:Nnn \l__writing_options_tl {\__writing_space_marker:} { ~ }
     \tl_trim_spaces:N \l__writing_profile_tl
     \tl_trim_spaces:N \l__writing_options_tl
-    \tl_if_blank:VF \l__writing_profile_tl
+    % A bare key=value list is a generic font declaration with no profile.
+    \tl_if_blank:VTF \l__writing_options_tl
+      {
+        \tl_if_in:VnT \l__writing_profile_tl {=}
+          {
+            \tl_set:NV \l__writing_options_tl \l__writing_profile_tl
+            \tl_clear:N \l__writing_profile_tl
+          }
+      }
+      { }
+    \bool_lazy_or:nnT
+      { ! \tl_if_blank_p:V \l__writing_profile_tl }
+      { ! \tl_if_blank_p:V \l__writing_options_tl }
       { \__writing_apply: }
   }
 
@@ -516,9 +533,12 @@
 \cs_new_protected:Npn \__writing_read_options:
   {
     \__writing_reset_options:
-    \prop_get:NVNTF \g__writing_profile_pack_prop \l__writing_profile_tl \l__writing_pack_tl
-      { }
-      { \__writing_error:nn {Unknown~writing~profile~'\l__writing_profile_tl'} {Use~a~registered~profile.} }
+    \tl_if_blank:VF \l__writing_profile_tl
+      {
+        \prop_get:NVNTF \g__writing_profile_pack_prop \l__writing_profile_tl \l__writing_pack_tl
+          { }
+          { \__writing_error:nn {Unknown~writing~profile~'\l__writing_profile_tl'} {Use~a~registered~profile.} }
+      }
     \tl_if_blank:VF \l__writing_options_tl
       {
         \exp_args:NNnV \seq_set_split:Nnn \l__writing_option_parts_seq {,} \l__writing_options_tl
@@ -537,6 +557,8 @@
         \tl_if_blank:VF \l_tmpa_tl
           { \exp_args:NnV \keys_set:nn {impe/writing} \l_tmpa_tl }
       }
+    \tl_if_blank:VF \l__writing_call_overrides_tl
+      { \exp_args:NnV \keys_set:nn {impe/writing} \l__writing_call_overrides_tl }
     \bool_if:NT \l__writing_valid_bool
       {
         \tl_if_blank:VTF \l__writing_pack_tl
@@ -754,9 +776,27 @@
   {
     \__writing_read_options:
     \bool_if:NT \l__writing_valid_bool
-      { \__writing_resolve_unicode_coverage: }
-    \bool_if:NT \l__writing_valid_bool
-      { \__writing_prepare_profile_behavior: }
+      {
+        \tl_if_blank:VTF \l__writing_profile_tl
+          {
+            % A pure font has no Unicode routing nor special renderer.
+            \tl_set:Nn \l__writing_profile_behavior_tl
+              {scriptclass=latin,inlinebehavior=normal,layout={},specialmodule={},script={},language={},features={}}
+            \tl_set:Nn \l__writing_selected_scope_tl {local}
+            \bool_if:NF \l__writing_local_call_bool
+              {
+                \__writing_error:nn {Profile-less~fonts~require~local~use}
+                  {Use~\string\Font~or~\string\Writing,~or~declare~a~Unicode~profile~for~global~routing.}
+              }
+          }
+          {
+            \bool_if:NF \l__writing_local_call_bool
+              { \__writing_resolve_unicode_coverage: }
+            \__writing_prepare_profile_behavior:
+          }
+      }
+    \bool_if:NT \l__writing_local_call_bool
+      { \tl_set:Nn \l__writing_selected_scope_tl {local} }
     \bool_if:NT \l__writing_valid_bool
       {
         % Prefer the profile's required scope; use the pack's alternate
@@ -820,6 +860,13 @@
                       }
                   }
               }
+            % The private local entry must never replace \SA, \MO, etc.
+            \bool_if:NT \l__writing_local_call_bool
+              {
+                \tl_clear:N \l__writing_public_command_tl
+                \tl_set:Nx \l__font_command_tl
+                  {impewriting\int_use:N \g__writing_declaration_int}
+              }
             \prop_get:NVNT \g__writing_pack_regular_override_prop \l__writing_pack_tl \l_tmpa_tl
               { \tl_set:NV \l__font_regular_tl \l_tmpa_tl }
             \prop_get:NVNT \g__writing_pack_bold_override_prop \l__writing_pack_tl \l_tmpa_tl
@@ -860,6 +907,20 @@
                   { \tl_clear:N \l__font_layout_tl }
                   { \tl_set:Nn \l__font_layout_tl {vertical} }
               }
+            \bool_if:NT \l__writing_local_call_bool
+              {
+                \tl_if_blank:VT \l__writing_writing_tl
+                  { \tl_clear:N \l__font_layout_tl }
+                \tl_clear:N \l__font_cjk_fallback_tl
+              }
+            \str_if_eq:VnT \l__font_layout_tl {vertical}
+              {
+                \bool_if:NF \l__writing_local_call_bool
+                  {
+                    \__writing_error:nn {Global~vertical~writing~is~unsupported}
+                      {Use~a~local~Writing/Font~call~with~writing=vertical.}
+                  }
+              }
             \prop_map_inline:Nn \l__writing_overrides_prop
               { \__writing_assign_style:nn {##1} {##2} }
             \str_if_eq:VnT \l__writing_stylemap_tl {native}
@@ -873,6 +934,12 @@
                   { !\tl_if_blank_p:V \l__writing_file_tl }
                   { \tl_set:Nn \l__font_fallback_mode_tl {strict} }
                 \__font_apply_declaration:
+                \bool_if:NT \l__writing_local_call_bool
+                  {
+                    \tl_gset:NV \g__writing_last_local_command_tl \l__font_command_tl
+                    \str_if_eq:VnT \l__font_layout_tl {vertical}
+                      { \tl_gput_right:Nn \g__writing_last_local_command_tl {v} }
+                  }
                 \tl_if_blank:VF \l__writing_public_command_tl
                   {
                     \prop_gput:NVn \g__writing_owned_public_command_prop
