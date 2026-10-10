@@ -39,6 +39,7 @@ assert re.search(r"\\DeclareRangeProfile\{korean\}\{han,hangul,cjk-punctuation\}
 assert re.search(r"\\DeclareRangeCodepointKey\{coptic-legacy\}\{\"03E2\}\{\"03EF\}", ranges)
 assert re.search(r"\\DeclareRangeCodepointKey\{greek-main\}\{\"0370\}\{\"03E1\}", ranges)
 assert re.search(r"\\DeclareRangeCodepointKey\{greek-post-coptic\}\{\"03F0\}\{\"03FF\}", ranges)
+assert re.search(r"\\DeclareRangeKey\{greek-only\}\{greek-main-codepoints,greek-post-coptic-codepoints,GreekExtended,AncientGreekNumbers\}", ranges)
 
 range_keys = set(re.findall(r"\\DeclareRangeKey\{([^{}]+)\}", ranges))
 range_keys |= set(re.findall(r"\\DeclareRangeCodepointKey\{([^{}]+)\}", ranges))
