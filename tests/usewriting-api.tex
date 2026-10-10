@@ -108,6 +108,15 @@
 \UseFont{sanskrit}
 \UseFont{basic}
 \UseFont{tiro}
+% Existing local shortcuts remain callable and act as Font aliases,
+% including the vertical optional-argument form.
+\UseFont{mongolian}[local]
+\ExplSyntaxOn
+\cs_if_exist:cF {__writing_raw_MO}
+  {\PackageError{impe-test}{Legacy~MO~alias~was~not~registered}{}}
+\cs_if_exist:cF {__writing_raw_MOv}
+  {\PackageError{impe-test}{Legacy~MOv~alias~was~not~registered}{}}
+\ExplSyntaxOff
 % The declaration only records a local configuration: no prior UseWriting
 % or UseFont call is necessary before Font/Writing typesetting.
 \DeclareWriting{test-local-roman}{file=lmroman10-regular.otf}
@@ -127,6 +136,8 @@
 \Font{sanskrit}{संस्कृतम्}
 \Font{tiro}{संस्कृतम्}
 \Writing{[tiro]devanagari}{संस्कृतम्}
+\MO{ᠮᠣᠩᠭᠣᠯ}
+\MOv[0pt]{ᠮᠣᠩᠭᠣᠯ}
 \Font{test-local-mongolian}{ᠮᠣᠩᠭᠣᠯ}
 \Font{mongolian}[writing=vertical]{ᠮᠣᠩᠭᠣᠯ}
 \Writing{[shanggu]chinese}{漢字 Latin}
