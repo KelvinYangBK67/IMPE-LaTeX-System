@@ -106,9 +106,9 @@
 \__writing_profile:nnn {khitan-small} {khitan-small} {khitan-small}
 \__writing_profile:nnn {tangut} {tangut} {tangut}
 \__writing_profile:nnn {han} {shanggu} {han}
-\__writing_profile:nnn {chinese} {shanggu} {han,bopomofo}
-\__writing_profile:nnn {japanese} {japanese} {han,kana}
-\__writing_profile:nnn {korean} {korean} {han,hangul}
+\__writing_profile:nnn {chinese} {shanggu} {chinese}
+\__writing_profile:nnn {japanese} {japanese} {japanese}
+\__writing_profile:nnn {korean} {korean} {korean}
 \__writing_profile:nnn {kana} {japanese} {kana}
 \__writing_profile:nnn {hangul} {korean} {hangul}
 \__writing_profile:nnn {bopomofo} {iming} {bopomofo}
@@ -276,32 +276,76 @@
 \__writing_style_alias:nnn {naskh} {NotoNaskhArabic-Regular.ttf} {\CatalogFontRoot/arabic/}
 \__writing_style_alias:nnn {nastaliq} {NotoNastaliqUrdu-Regular.ttf} {\CatalogFontRoot/urdu/}
 
-\prop_gput:Nnn \g__writing_legacy_profile_prop {basic} {basic}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {chinese-simplified} {chinese}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {chinese-traditional} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {cmu} {basic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {noto} {basic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {times} {basic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {gentium} {basic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {charis} {basic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {libertinus} {basic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {mlmodern} {basic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {anatolian} {carian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {coptic} {coptic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {bopomofo} {bopomofo}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {cuneiform} {cuneiform}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {glagolitic} {glagolitic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {italic} {old-italic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {hungarian} {old-hungarian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {runic} {runic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {armenian} {armenian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {hindi} {devanagari}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {sanskrit} {devanagari}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {devanagari} {devanagari}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {tamil} {tamil}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {brahmi} {brahmi}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {georgian} {georgian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {tibetan} {tibetan}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {arabic} {arabic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {urdu} {arabic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {aramaic} {aramaic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {nabataean} {nabataean}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {hebrew} {hebrew}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {syriac} {syriac}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {syriac_eastern} {syriac}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {kharosthi} {kharoshthi}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {egyptian} {egyptian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {khitan_small} {khitan-small}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {pahlavi_parthian} {pahlavi-parthian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {pahlavi_inscriptional} {pahlavi-inscriptional}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {pahlavi_psalter} {pahlavi-psalter}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {avestan} {avestan}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {manichaean} {manichaean}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {phoenician} {phoenician}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {samaritan} {samaritan}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {sogdian} {sogdian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {sogdian_old} {old-sogdian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {chinese_simplified} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {chinese_traditional} {chinese}
 \prop_gput:Nnn \g__writing_legacy_profile_prop {japanese} {japanese}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {korean} {korean}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {tiro} {devanagari}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {shanggu} {chinese}
 \prop_gput:Nnn \g__writing_legacy_profile_prop {wenjin} {chinese}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {simsun} {chinese}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {simhei} {chinese}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {simfang} {chinese}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {simkai} {chinese}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {zhuque} {chinese}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {iming} {bopomofo}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {naskh} {arabic}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {aref} {arabic}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {kufi} {arabic}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {nastaliq} {arabic}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {davidlibre} {hebrew}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {khawa} {tibetan}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {mnglwhite} {mongolian}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {mngltitle} {mongolian}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {mnglwriting} {mongolian}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {mnglart} {mongolian}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {monbaiti} {mongolian}
-\prop_gput:Nnn \g__writing_legacy_profile_prop {abxy} {mongolian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {shanggu} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {sim} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {korean} {korean}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {tangut} {tangut}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {mongolian} {mongolian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {mongolian_baiti} {mongolian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {manchu} {mongolian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {segoe} {brahmi}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {thai} {thai}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {turkic} {old-turkic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {uyghur} {old-uyghur}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {vietnamese_quocngu} {latin}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {vietnamese_hannom} {han}
+
+% Every normalised resource alias can also be a \UseFont preset.  This
+% automatic mapping is from the RESOURCE source family, not a new profile.
+\prop_map_inline:Nn \g__writing_pack_source_prop
+  {
+    \prop_if_in:NnF \g__writing_legacy_profile_prop {#1}
+      {
+        \prop_get:NnNT \g__writing_legacy_profile_prop {#2} \l_tmpa_tl
+          { \prop_gput:NnV \g__writing_legacy_profile_prop {#1} \l_tmpa_tl }
+      }
+  }
 
 % A deliberately explicit same-series list. Do not infer cultural style
 % substitutions (e.g. Ruqaa as italic) from Western NFSS slot names.
