@@ -852,6 +852,20 @@
     \__font_build_main_options:
     \__font_build_sans_options:
     \__font_build_mono_options:
+    % When a CJK binding is first requested inside the document, xeCJK
+    % cannot be loaded at runtime. Pure local rendering needs no automatic
+    % CJK routing, so use fontspec directly if xeCJK was not preloaded.
+    \cs_if_exist:NT \l__writing_local_call_bool
+      {
+        \bool_if:NT \l__writing_local_call_bool
+          {
+            \cs_if_exist:NF \newCJKfontfamily
+              {
+                \str_if_eq:VnT \l__font_script_class_tl {cjk}
+                  { \tl_set:Nn \l__font_script_class_tl {latin} }
+              }
+          }
+      }
     \str_if_eq:VnTF \l__font_script_class_tl { cjk }
       {
         \cs_if_exist:NF \newCJKfontfamily
