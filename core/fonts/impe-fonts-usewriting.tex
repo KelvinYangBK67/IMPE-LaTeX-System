@@ -10,6 +10,8 @@
 \cs_generate_variant:Nn \str_case:nnF { enF }
 \prop_new:N \g__writing_profile_pack_prop
 \prop_new:N \g__writing_profile_coverage_prop
+\prop_new:N \g__writing_active_coverage_prop
+\clist_new:N \l__writing_coverage_blocks_clist
 \prop_new:N \g__writing_legacy_profile_prop
 \prop_new:N \g__writing_pack_source_prop
 \prop_new:N \g__writing_pack_native_prop
@@ -662,6 +664,33 @@
       }
   }
 
+% Resolve manually grouped Unicode ranges to concrete existing Unicode
+% block IDs; no Script=language inference, no font names in coverage.
+\cs_new_protected:Npn \__writing_resolve_unicode_coverage:
+  {
+    \clist_clear:N \l__writing_coverage_blocks_clist
+    \prop_get:NVNTF \g__writing_profile_coverage_prop
+      \l__writing_profile_tl \l_tmpa_tl
+      {
+        \prop_get:NVNT \g__font_range_profile_keys_prop
+          \l_tmpa_tl \l_tmpb_tl
+          { \tl_set:NV \l_tmpa_tl \l_tmpb_tl }
+        \exp_args:NV \clist_map_inline:nn \l_tmpa_tl
+          {
+            \prop_get:NnNTF \g__font_range_key_blocks_prop {##1} \l_tmpb_tl
+              { \clist_put_right:NV \l__writing_coverage_blocks_clist \l_tmpb_tl }
+              { \clist_put_right:Nn \l__writing_coverage_blocks_clist {##1} }
+          }
+        \prop_gput:NVx \g__writing_active_coverage_prop
+          \l__writing_profile_tl
+          { \clist_use:Nn \l__writing_coverage_blocks_clist {,} }
+      }
+      {
+        \__writing_error:nn {Unknown~Unicode~coverage~profile}
+          {Check~the~curated~Unicode~profile~registry.}
+      }
+  }
+
 % Capture *writing* behavior from the profile's own catalog declaration.
 % The selected pack is then used exclusively as the font/resource source.
 % This is why [shanggu]tibetan still has Tibetan behavior rather than
@@ -718,6 +747,8 @@
 \cs_new_protected:Npn \__writing_apply:
   {
     \__writing_read_options:
+    \bool_if:NT \l__writing_valid_bool
+      { \__writing_resolve_unicode_coverage: }
     \bool_if:NT \l__writing_valid_bool
       { \__writing_prepare_profile_behavior: }
     \bool_if:NT \l__writing_valid_bool
