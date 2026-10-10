@@ -114,15 +114,26 @@
 \ExplSyntaxOn
 \cs_if_exist:cF {__writing_raw_MO}
   {\PackageError{impe-test}{Legacy~MO~alias~was~not~registered}{}}
-\cs_if_exist:cF {__writing_raw_MOv}
-  {\PackageError{impe-test}{Legacy~MOv~alias~was~not~registered}{}}
+% The optional MOv builder is absent when its font is unavailable and
+% the legacy loader installs a generic fallback. Test this suffix below
+% with a known present TeX Live font.
 \ExplSyntaxOff
 % The declaration only records a local configuration: no prior UseWriting
 % or UseFont call is necessary before Font/Writing typesetting.
 \DeclareWriting{test-local-roman}{file=lmroman10-regular.otf}
 \DeclareWriting{test-local-roman-series}{file=lmroman10-regular.otf,bold=normal}
 \DeclareWriting{test-local-devanagari}{[tiro]devanagari}
-\DeclareWriting{test-local-mongolian}{[mnglwhite,writing=vertical]mongolian}
+\DeclareWriting{test-local-mongolian}{[file=lmroman10-regular.otf,writing=vertical]mongolian}
+\FontRegisterFamily{
+  id=writing_vertical_demo,defaultmode=local,
+  local={command=VDE,name=writing_vertical_demo_local,
+    regular=lmroman10-regular.otf,layout=vertical}
+}
+\UseFont{writing_vertical_demo}[local]
+\ExplSyntaxOn
+\cs_if_exist:cF {__writing_raw_VDEv}
+  {\PackageError{impe-test}{Vertical~local~alias~was~not~registered}{}}
+\ExplSyntaxOff
 \ExplSyntaxOn
 \prop_if_in:NnF \g__writing_named_prop {test-local-roman}
   {\PackageError{impe-test}{Named~font~declaration~missing}{}}
@@ -137,9 +148,9 @@
 \Font{tiro}{संस्कृतम्}
 \Writing{[tiro]devanagari}{संस्कृतम्}
 \MO{ᠮᠣᠩᠭᠣᠯ}
-\MOv[0pt]{ᠮᠣᠩᠭᠣᠯ}
+\VDEv[0pt]{Vertical demonstration}
 \Font{test-local-mongolian}{ᠮᠣᠩᠭᠣᠯ}
-\Font{mongolian}[writing=vertical]{ᠮᠣᠩᠭᠣᠯ}
+\Font{writing_vertical_demo}[writing=vertical]{Vertical demonstration}
 \Writing{[shanggu]chinese}{漢字 Latin}
 \ExplSyntaxOn
 \int_compare:nNnF {\prop_count:N \g__writing_local_cache_prop} > {4}
