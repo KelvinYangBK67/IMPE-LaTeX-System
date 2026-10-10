@@ -31,6 +31,10 @@
 \tl_new:N \l__writing_selected_scope_tl
 \tl_new:N \l__writing_effective_name_tl
 \tl_new:N \l__writing_saved_fallback_tl
+\tl_new:N \l__writing_profile_default_pack_tl
+\tl_new:N \l__writing_profile_source_tl
+\tl_new:N \l__writing_profile_command_tl
+\tl_new:N \l__writing_profile_behavior_tl
 \prop_new:N \l__writing_overrides_prop
 \int_new:N \l__writing_brackets_int
 \bool_new:N \l__writing_in_options_bool
@@ -377,17 +381,82 @@
       }
   }
 
+% Capture *writing* behavior from the profile's own catalog declaration.
+% The selected pack is then used exclusively as the font/resource source.
+% This is why [shanggu]tibetan still has Tibetan behavior rather than
+% inheriting the CJK behavior of its font pack.
+\cs_new_protected:Npn \__writing_prepare_profile_behavior:
+  {
+    \prop_get:NVNTF \g__writing_profile_pack_prop
+      \l__writing_profile_tl \l__writing_profile_default_pack_tl
+      { }
+      { \tl_clear:N \l__writing_profile_default_pack_tl }
+    \prop_get:NVNTF \g__writing_pack_source_prop
+      \l__writing_profile_default_pack_tl \l__writing_profile_source_tl
+      { }
+      { \tl_clear:N \l__writing_profile_source_tl }
+    \prop_get:NVNTF \g__font_family_local_prop
+      \l__writing_profile_source_tl \l_tmpa_tl
+      { \tl_set:Nn \l__writing_selected_scope_tl {local} }
+      {
+        \prop_get:NVNTF \g__font_family_global_prop
+          \l__writing_profile_source_tl \l_tmpa_tl
+          { \tl_set:Nn \l__writing_selected_scope_tl {global} }
+          {
+            \__writing_error:nn {Writing~profile~has~no~catalog~declaration}
+              {Check~the~profile~default~pack.}
+          }
+      }
+    \bool_if:NT \l__writing_valid_bool
+      {
+        \__font_reset_state:
+        \exp_args:NnV \keys_set:nn {font/declare} \l_tmpa_tl
+        \tl_set:NV \l__writing_profile_command_tl \l__font_command_tl
+        \tl_set:Nx \l__writing_profile_behavior_tl
+          {
+            script={\exp_not:V \l__font_script_tl},
+            language={\exp_not:V \l__font_language_tl},
+            features={\exp_not:V \l__font_features_tl},
+            scriptclass={\exp_not:V \l__font_script_class_tl},
+            inlinebehavior={\exp_not:V \l__font_inline_behavior_tl},
+            inlineaxis={\exp_not:V \l__font_inline_axis_tl},
+            inlinedirection={\exp_not:V \l__font_inline_direction_tl},
+            blockprogression={\exp_not:V \l__font_block_progression_tl},
+            layout={\exp_not:V \l__font_layout_tl},
+            verticalstrategy={\exp_not:V \l__font_vertical_strategy_tl},
+            specialmodule={\exp_not:V \l__font_special_module_tl},
+            backend={\exp_not:V \l__font_backend_tl},
+          }
+      }
+  }
+
 \cs_new_protected:Npn \__writing_apply:
   {
     \__writing_read_options:
     \bool_if:NT \l__writing_valid_bool
+      { \__writing_prepare_profile_behavior: }
+    \bool_if:NT \l__writing_valid_bool
       {
-        \prop_get:NVNTF \g__font_family_local_prop \l__writing_source_tl \l_tmpa_tl
-          { \tl_set:Nn \l__writing_selected_scope_tl {local} }
+        % Prefer the profile's required scope; use the pack's alternate
+        % declaration only if it has no matching local/global form.
+        \str_if_eq:VnTF \l__writing_selected_scope_tl {global}
           {
             \prop_get:NVNTF \g__font_family_global_prop \l__writing_source_tl \l_tmpa_tl
-              { \tl_set:Nn \l__writing_selected_scope_tl {global} }
-              { \__writing_error:nn {Missing~source~declaration} {Check~the~font~catalog.} }
+              { }
+              {
+                \prop_get:NVNTF \g__font_family_local_prop \l__writing_source_tl \l_tmpa_tl
+                  { }
+                  { \__writing_error:nn {Missing~source~declaration} {Check~the~font~catalog.} }
+              }
+          }
+          {
+            \prop_get:NVNTF \g__font_family_local_prop \l__writing_source_tl \l_tmpa_tl
+              { }
+              {
+                \prop_get:NVNTF \g__font_family_global_prop \l__writing_source_tl \l_tmpa_tl
+                  { }
+                  { \__writing_error:nn {Missing~source~declaration} {Check~the~font~catalog.} }
+              }
           }
         \bool_if:NT \l__writing_valid_bool
           {
@@ -397,8 +466,12 @@
             \__font_reset_state:
             \tl_set:Nn \l__font_fallback_mode_tl {soft}
             \exp_args:NnV \keys_set:nn {font/declare} \l_tmpa_tl
+            % Do not let the selected font pack override writing behavior.
+            \exp_args:NnV \keys_set:nn {font/declare} \l__writing_profile_behavior_tl
             \tl_set:NV \l__font_scope_tl \l__writing_selected_scope_tl
-            \tl_set:NV \l__font_decl_family_id_tl \l__writing_source_tl
+            \tl_set:NV \l__font_decl_family_id_tl \l__writing_profile_source_tl
+            \clist_clear:N \l__font_unicode_blocks_clist
+            \tl_set:NV \l__font_command_tl \l__writing_profile_command_tl
             \tl_set:Nx \l__font_name_tl {writing_\l__writing_profile_tl}
             % A previously activated legacy command must retain its
             % original font selection and behavior. Keep the new local
