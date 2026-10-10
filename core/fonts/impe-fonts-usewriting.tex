@@ -489,7 +489,19 @@
     \bool_lazy_or:nnT
       { ! \tl_if_blank_p:V \l__writing_profile_tl }
       { ! \tl_if_blank_p:V \l__writing_options_tl }
-      { \__writing_apply: }
+      {
+        \bool_if:NTF \l__writing_local_call_bool
+          {
+            \int_incr:N \l__writing_local_entry_count_int
+            \int_compare:nNnTF {\l__writing_local_entry_count_int} = {1}
+              { \__writing_apply: }
+              {
+                \PackageError{impe-writing}{Local~writing~requires~one~binding}
+                  {Local~font~calls~cannot~route~multiple~Unicode~profiles.}
+              }
+          }
+          { \__writing_apply: }
+      }
   }
 
 \cs_new_protected:Npn \__writing_item_char:n #1
@@ -797,6 +809,11 @@
       }
     \bool_if:NT \l__writing_local_call_bool
       { \tl_set:Nn \l__writing_selected_scope_tl {local} }
+    \cs_if_exist:NT \l__writing_force_global_bool
+      {
+        \bool_if:NT \l__writing_force_global_bool
+          { \tl_set:Nn \l__writing_selected_scope_tl {global} }
+      }
     \bool_if:NT \l__writing_valid_bool
       {
         % Prefer the profile's required scope; use the pack's alternate
