@@ -425,9 +425,15 @@
 
 \NewDocumentCommand{\UseFont}{m O{}}
   {
-    \tl_if_blank:nTF {#2}
-      { \__font_family_use_default:n {#1} }
-      { \__font_family_use_loader:nn {#1} {#2} }
+    % Legacy fallback works before the new writing engine has been loaded.
+    % Thereafter both public APIs dispatch through its single preset entry.
+    \cs_if_exist:NTF \__writing_legacy_preset:nn
+      { \__writing_legacy_preset:nn {#1} {#2} }
+      {
+        \tl_if_blank:nTF {#2}
+          { \__font_family_use_default:n {#1} }
+          { \__font_family_use_loader:nn {#1} {#2} }
+      }
   }
 
 \NewDocumentCommand{\UseFonts}{m O{}}
