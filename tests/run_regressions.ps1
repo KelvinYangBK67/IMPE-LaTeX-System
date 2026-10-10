@@ -192,6 +192,7 @@ try {
         }
     }
     $layoutNegativeTests = @{
+        'usewriting-negative-source' = 'Conflicting font resource selectors'
         'layout-negative-duplicate' = 'Duplicate document parameter'
         'layout-negative-duplicate-scope' = 'Duplicate local parameter'
         'layout-negative-local-page' = 'is not local'
