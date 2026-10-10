@@ -276,10 +276,37 @@
 \__writing_style_alias:nnn {naskh} {NotoNaskhArabic-Regular.ttf} {\CatalogFontRoot/arabic/}
 \__writing_style_alias:nnn {nastaliq} {NotoNastaliqUrdu-Regular.ttf} {\CatalogFontRoot/urdu/}
 
+\prop_gput:Nnn \g__writing_legacy_profile_prop {basic} {basic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {chinese-simplified} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {chinese-traditional} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {japanese} {japanese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {korean} {korean}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {tiro} {devanagari}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {shanggu} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {wenjin} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {simsun} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {simhei} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {simfang} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {simkai} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {zhuque} {chinese}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {iming} {bopomofo}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {naskh} {arabic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {aref} {arabic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {kufi} {arabic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {nastaliq} {arabic}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {davidlibre} {hebrew}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {khawa} {tibetan}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {mnglwhite} {mongolian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {mngltitle} {mongolian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {mnglwriting} {mongolian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {mnglart} {mongolian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {monbaiti} {mongolian}
+\prop_gput:Nnn \g__writing_legacy_profile_prop {abxy} {mongolian}
+
 % A deliberately explicit same-series list. Do not infer cultural style
 % substitutions (e.g. Ruqaa as italic) from Western NFSS slot names.
 \clist_map_inline:nn
-  {cmu,noto,times,gentium,charis,libertinus,mlmodern}
+  {cmu,basic,times,gentium,charis,libertinus,latinmodern}
   { \__writing_full:n {#1} }
 \clist_map_inline:nn
   {armenian,hindi,devanagari,tamil,georgian,arabic,urdu,hebrew,
@@ -304,9 +331,21 @@
 \__writing_native:nn {times} {bold,italic,bolditalic}
 \__writing_native:nn {libertinus} {bold,italic,bolditalic,sans,sansbold,sansitalic,mono}
 \__writing_native:nn {zhuque} {}
-\__writing_native:nn {kaiti} {}
-\__writing_native:nn {fangsong} {}
-\__writing_native:nn {ruqaa} {bold}
+\__writing_native:nn {simkai} {}
+\__writing_native:nn {simfang} {}
+\__writing_native:nn {aref} {bold}
+\__writing_native:nn {arabic} {bold}
+\__writing_native:nn {kufi} {bold}
+\__writing_native:nn {naskh} {bold}
+\__writing_native:nn {syriac} {bold}
+\__writing_native:nn {syriac-eastern} {bold}
+\__writing_native:nn {syriac-western} {bold}
+\__writing_native:nn {thai-looped} {bold}
+\__writing_native:nn {khawa} {bold}
+\__writing_native:nn {davidlibre} {bold}
+\__writing_native:nn {arial} {bold,italic,bolditalic}
+\__writing_native:nn {consolas} {bold}
+\__writing_native:nn {minhnguyen} {bold}
 
 \cs_new_protected:Npn \__writing_error:nn #1#2
   {
@@ -448,9 +487,25 @@
       }
     \bool_if:NT \l__writing_valid_bool
       {
-        \prop_get:NVNTF \g__writing_pack_source_prop \l__writing_pack_tl \l__writing_source_tl
-          { }
-          { \__writing_error:nn {Unknown~font~pack~'\l__writing_pack_tl'} {Use~a~registered~pack~alias,~font=...,~or~file=....} }
+        \tl_if_blank:VTF \l__writing_pack_tl
+          {
+            \bool_lazy_and:nnTF
+              { \tl_if_blank_p:V \l__writing_font_tl }
+              { \tl_if_blank_p:V \l__writing_file_tl }
+              {
+                \__writing_error:nn {Profile~has~no~default~font}
+                  {Specify~font=...~or~file=...~for~this~Unicode~profile.}
+              }
+              { \tl_set:Nn \l__writing_source_tl {noto} }
+          }
+          {
+            \prop_get:NVNTF \g__writing_pack_source_prop \l__writing_pack_tl \l__writing_source_tl
+              { }
+              {
+                \__writing_error:nn {Unknown~font~pack~'\l__writing_pack_tl'}
+                  {Use~a~registered~font~alias,~font=...,~or~file=....}
+              }
+          }
       }
     \bool_if:NT \l__writing_explicit_pack_bool
       {
@@ -573,10 +628,14 @@
       \l__writing_profile_tl \l__writing_profile_default_pack_tl
       { }
       { \tl_clear:N \l__writing_profile_default_pack_tl }
-    \prop_get:NVNTF \g__writing_pack_source_prop
-      \l__writing_profile_default_pack_tl \l__writing_profile_source_tl
-      { }
-      { \tl_clear:N \l__writing_profile_source_tl }
+    \tl_if_blank:VTF \l__writing_profile_default_pack_tl
+      { \tl_set:Nn \l__writing_profile_source_tl {noto} }
+      {
+        \prop_get:NVNTF \g__writing_pack_source_prop
+          \l__writing_profile_default_pack_tl \l__writing_profile_source_tl
+          { }
+          { \tl_set:Nn \l__writing_profile_source_tl {noto} }
+      }
     \prop_get:NVNTF \g__font_family_local_prop
       \l__writing_profile_source_tl \l_tmpa_tl
       { \tl_set:Nn \l__writing_selected_scope_tl {local} }
@@ -748,21 +807,43 @@
 % wrap xparse's public command, so legacy registration stays untouched.
 \cs_new_protected:Npn \__writing_legacy_registered:
   {
+    % Third-party legacy families are presets, not new Unicode profiles.
     \tl_if_blank:VF \l__font_family_id_tl
       {
-        \prop_if_in:NVF \g__writing_profile_pack_prop \l__font_family_id_tl
+        \prop_if_in:NVF \g__writing_legacy_profile_prop \l__font_family_id_tl
           {
-            \prop_gput:NVV \g__writing_profile_pack_prop
-              \l__font_family_id_tl \l__font_family_id_tl
-          }
-        \prop_if_in:NVF \g__writing_pack_source_prop \l__font_family_id_tl
-          {
-            \prop_gput:NVV \g__writing_pack_source_prop
-              \l__font_family_id_tl \l__font_family_id_tl
+            \prop_gput:NVn \g__writing_legacy_profile_prop
+              \l__font_family_id_tl {basic}
           }
       }
   }
 
+% Legacy preset -> Unicode profile: old names stay valid, including
+% sanskrit, hindi, sim, syriac_eastern, and the old local/global option.
+% The registry loader remains the compatibility backend of the dispatcher:
+% rewriting its routing would change old PDFs.
+\cs_new_protected:Npn \__writing_legacy_preset:nn #1#2
+  {
+    \prop_if_in:NnTF \g__font_family_default_prop {#1}
+      {
+        \tl_if_blank:nTF {#2}
+          { \__font_family_use_default:n {#1} }
+          { \__font_family_use_loader:nn {#1} {#2} }
+      }
+      {
+        % A new resource alias is a convenient UseFont preset as well.
+        \prop_get:NnNTF \g__writing_legacy_profile_prop {#1} \l_tmpa_tl
+          {
+            \tl_set:NV \l__writing_profile_tl \l_tmpa_tl
+            \tl_set:Nn \l__writing_options_tl {#1}
+            \__writing_apply:
+          }
+          {
+            \PackageError{impe-writing}{Unknown~font~preset~'#1'}
+              {Select~a~registered~legacy~preset~or~new~font~alias.}
+          }
+      }
+  }
 \NewDocumentCommand \UseWriting { m }
   { \__writing_parse:n {#1} }
 \ExplSyntaxOff
