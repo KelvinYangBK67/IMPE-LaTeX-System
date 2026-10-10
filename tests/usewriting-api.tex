@@ -56,16 +56,18 @@
     regular=lmroman10-regular.otf,bold=lmroman10-bold.otf}
 }
 \UseFont{writing_custom}[local]
-\UseWriting{writing_custom}
+\UseFont{writing_custom}
 \ExplSyntaxOn
-\prop_if_in:NnF \g__writing_profile_pack_prop {writing_custom}
-  {\PackageError{impe-test}{Late~legacy~profile~missing}{}}
+\prop_if_in:NnF \g__writing_legacy_profile_prop {writing_custom}
+  {\PackageError{impe-test}{Late~legacy~preset~missing}{}}
+\prop_if_in:NnT \g__writing_profile_pack_prop {writing_custom}
+  {\PackageError{impe-test}{Font~preset~must~not~be~a~Unicode~profile}{}}
 \ExplSyntaxOff
 % A system font alias is not mistaken for a profile or a positional pack.
-\UseWriting{[ruqaa]arabic}
+\UseWriting{[aref]arabic}
 \ExplSyntaxOn
 \tl_if_in:VnF \l__font_resolved_bold_tl {ArefRuqaa-Bold.ttf}
-  {\PackageError{impe-test}{Ruqaa~native~bold~face~missing}{}}
+  {\PackageError{impe-test}{Aref~native~bold~face~missing}{}}
 \ExplSyntaxOff
 \UseWriting{[naskh]arabic}
 \UseWriting{[writing=horizontal]mongolian}
