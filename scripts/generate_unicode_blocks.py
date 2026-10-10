@@ -44,7 +44,7 @@ def parse_blocks(raw: str) -> list[tuple[str, int, int]]:
         if not match:
             continue
         start, end, official_name = match.groups()
-        name = re.sub(r"[^A-Za-z0-9]", "", official_name)
+        name = "".join(part[0].upper() + part[1:] for part in re.split(r"[^A-Za-z0-9]+", official_name) if part)
         if name in seen:
             raise ValueError(f"Duplicate Unicode block: {name}")
         seen.add(name)
@@ -79,6 +79,19 @@ def render(blocks: list[tuple[str, int, int]]) -> str:
                 lines.append(f'\\DeclareUnicodeBlock{{{old}}}{{"{a:X}}}{{"{b:X}}}')
         else:
             lines.append(f'\\DeclareUnicodeBlock{{{name}}}{{"{start:X}}}{{"{end:X}}}')
+    # Historical IMPE block identifiers are stable aliases of official blocks.
+    aliases = {
+        "CanadianAboriginal": "UnifiedCanadianAboriginalSyllabics",
+        "MiscTechnical": "MiscellaneousTechnical",
+        "MiscSymbols": "MiscellaneousSymbols",
+        "MiscSymbolsAndPictographs": "MiscellaneousSymbolsAndPictographs",
+    }
+    official = {name: (a, b) for name, a, b in blocks}
+    lines.append("")
+    lines.append("% Deprecated IMPE block aliases retained for legacy ranges.")
+    for legacy, canonical in aliases.items():
+        a, b = official[canonical]
+        lines.append(f'\\DeclareUnicodeBlock{{{legacy}}}{{"{a:X}}}{{"{b:X}}}')
     return "\n".join(lines) + "\n"
 
 
