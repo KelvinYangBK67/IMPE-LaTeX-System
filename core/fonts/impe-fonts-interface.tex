@@ -583,6 +583,9 @@
 
 \cs_new_protected:Npn \__font_vertical_use_base:n #1
   {
+    % Rotation typesets word boxes through the same forced-local routing
+    % guard as horizontal local commands. Global range hooks must not enter.
+    \bool_set_true:N \l__font_local_override_bool
     \use:c { __font_space_policy_\l__font_vertical_base_name_tl : }
     \use:c { __font_map_sf_\l__font_vertical_base_name_tl : }
     \use:c { __font_map_tt_\l__font_vertical_base_name_tl : }
