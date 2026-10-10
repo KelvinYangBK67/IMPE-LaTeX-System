@@ -1,126 +1,185 @@
-# \UseWriting (1.0.5 development)
+# IMPE writing and font selection (1.0.5 development)
 
-This is the **sole new public font command** for the initial writing-profile
-API. It is not yet part of a tagged or published release. Existing
-\UseFont, \UseFonts, \Font, \FontDeclare, \FontRegisterFamily and script commands
-remain available and retain their original registry and loading semantics.
+Development specification for draft PR #23. No version tag or release is created.
+The only newly added **public TeX command** is `\UseWriting`. The original
+`\UseFont` remains the **recommended short preset interface**; all of its
+existing identifiers and `[local|global]` modes are preserved.
 
-## Syntax
+## The four registries
+
+1. **Unicode blocks**: purely numeric data, version-pinned to UCD 18.0.0.
+   `catalog/fonts/impe-unicode-blocks.generated.tex` includes the seven new
+   Unicode 18.0 blocks, including Jurchen and Seal. Use
+   `python scripts/generate_unicode_blocks.py --download` (or
+   `--input Blocks.txt`) to produce an up-to-date complete block table.
+   That script **does not create writing profiles**. The legacy split of the
+   Devanagari block is preserved for existing range routes.
+2. **Writing profiles**: maintained compositions of Unicode **codepoint
+   ranges**. The current curated set has **69 profiles**. Profile identity
+   depends only on a Unicode set, never on language names or installed fonts.
+3. **Font resources**: distinct, recognizable font-family/face names and
+   optional multi-face packs. A script-level generic name is reserved for a
+   **Noto** resource; non-Noto resources require a family-specific name.
+4. **UseFont presets**: all **59 original registered family IDs** map to
+   a compatible preset with historical styles, scopes, script hooks, ranges,
+   command names and fallbacks. Preset identifiers do not become Unicode
+   profiles. For example, `sanskrit` is a preset, not a writing profile.
+
+The legacy range keys and range profiles remain available as internal
+compatibility data. For the new API, CJK punctuation is INCLUDED in
+`han` and is not a public standalone Profile.
+
+## Quick preset interface
 
 ```tex
-\UseWriting{[shanggu,stylemap=full,italic=zhuque]chinese,mongolian}
-\UseWriting{chinese,arabic,tibetan}
-\UseWriting{[naskh]arabic}
-\UseWriting{[font=Latin Modern Roman]latin}
-\UseWriting{[file=fonts/custom.ttf]latin}
-\UseWriting{[writing=horizontal]mongolian}
+\UseFont{sanskrit}
+\UseFont{shanggu}
+\UseFont{arabic}
+\UseFont{mongolian}
+\UseFont{noto}          % legacy ID remains valid; NOT a new pack alias
+\UseFont{sanskrit}[global]
+\UseFonts{egyptian,khitan_small}
 ```
 
-Form: `[PackName, key=value, ...]ProfileName`, repeated with **top-level**
-commas. The brackets and pack name may be omitted. The first unkeyed token
-inside brackets must be a registered pack alias; arbitrary system font names
-must use `font=`, and physical file paths must use `file=`. Braced values
-protect internal commas in TeX arguments.
+The old family namespace remains unchanged. `\UseFont{sanskrit}`
+retains its original Tiro font choice and Sanskrit shaping/legacy routing.
+The dispatcher checks the old Registry first and invokes the legacy loader
+as a compatibility recipe; for newly named font aliases, it uses the same
+writing/pack selection code as `\UseWriting`. This deliberately avoids
+rewriting old auto-global routes and changing output from existing documents.
 
-## Options
+## Advanced interface
 
-| Option | Values | Default |
+```tex
+\UseWriting{
+  [shanggu,stylemap=full,italic=zhuque]chinese,
+  [tiro]devanagari,
+  [naskh]arabic,
+  [mnglwhite,writing=horizontal]mongolian,
+  egyptian
+}
+\UseWriting{[simsun]chinese}
+\UseWriting{[chinese-simplified]chinese}
+\UseWriting{[chinese-traditional]chinese}
+\UseWriting{[font=Noto Naskh Arabic]arabic}
+\UseWriting{[file={fonts/Font, Version 2.ttf}]arabic}
+```
+
+Each item is `[PackName, key=value, ...]ProfileName`. Square brackets
+and positional PackName are independently optional. Multiple profiles are
+comma-separated **outside brackets and TeX brace groups**. Only the first
+item within square brackets may omit `key=`, and it must be a registered
+resource alias. Raw system font names require `font=`; paths require
+`file=`. `font`, `file` and a positional PackName are mutually exclusive.
+Ordinary spaces around keys are accepted.
+
+| Option | Accepted values | Default |
 |---|---|---|
-| positional pack | registered alias | profile's default |
-| `stylemap` | `native`, `full` | pack default; `native` except common Western combinations |
-| `font` | installed system font name | not set |
-| `file` | explicit existing font file | not set |
-| `writing` | `horizontal`, `vertical` | profile/catalog behavior |
-| `bold`, `italic`, `bolditalic` | `normal` or registered style alias | resulting pack mapping |
-| `sans`, `sansbold`, `sansitalic`, `sansbolditalic` | ditto | resulting pack mapping |
-| `mono`, `monobold` | ditto | resulting pack mapping |
+| positional PackName | registered resource alias | selected Profile's default |
+| `stylemap` | `native` or `full` | per pack |
+| `font` | installed font family name | unset |
+| `file` | physical font file path | unset |
+| `writing` | `vertical`, `horizontal` | profile's layout |
+| `bold`, `italic`, `bolditalic` | `normal` or registered style alias | style resolver |
+| `sans`, `sansbold`, `sansitalic`, `sansbolditalic` | same | style resolver |
+| `mono`, `monobold` | same | style resolver |
 
-`font` and `file` are mutually exclusive. A directly selected resource
-is checked in strict mode; preconfigured legacy catalog families retain their
-soft font-availability fallback. Arbitrary system font names are **never**
-accepted in the unkeyed pack position.
+The new API normally uses `stylemap=native`: preserve genuine faces and
+same-series Serif/Sans, fall back to Regular for undefined styles. The
+common Western multi-face packs `basic`, `cmu`, `times`,
+`gentium`, `charis`, `libertinus`, and `latinmodern`
+default to `full`. `stylemap=full` enables optional historical
+cross-family substitutions without treating those substitute fonts as
+native series members. Explicit overrides take priority over both maps.
 
-`stylemap=native` retains the explicit genuine same-series faces
-identified in the built-in catalog; missing faces resolve to the normal
-face using the existing font engine. `stylemap=full` selects all legacy
-style slots for the named pack. Explicit overrides take precedence over
-both modes. These are *style* maps, unrelated to a pack's glyph fallback
-chain; WenJin's P0/P2/P3 configuration remains active.
+## Curated Unicode profiles
 
-Common Western packs `cmu`, `noto`, `times`, `gentium`,
-`charis`, `libertinus`, and `mlmodern` default to `full`.
-The native policy deliberately does not assume that Ruq'ah is the italic
-of Naskh, or that Zhuque FangSong is the italic of Shanggu Serif.
+The primary composition examples are:
 
-## Profiles
+| Profile | Unicode coverage | Default resource |
+|---|---|---|
+| `basic` | Latin + Greek (minus Coptic letters) + Cyrillic | `basic` |
+| `latin`, `greek`, `cyrillic` | respective codepoint sets | `basic` |
+| `han` | Han + CJK punctuation/forms | `shanggu` |
+| `chinese` | Han + CJK punctuation/forms + Bopomofo | `shanggu` |
+| `japanese` | Han + Kana + CJK punctuation/forms | `japanese` |
+| `korean` | Han + Hangul + CJK punctuation/forms | `korean` |
+| `coptic` | Coptic + U+03E2–03EF, excluding the rest of Greek/Coptic | `coptic` |
+| `devanagari` | selected Devanagari extended/Indic/Vedic ranges | `devanagari` |
+| `arabic` | Arabic blocks, including relevant extended/forms | `naskh` |
+| `mongolian` | Mongolian + Mongolian Supplement | `mnglwhite` |
+| `egyptian`, `khitan-small`, `tangut` | respective Unicode sets and format controls | matching Noto resource |
+| `jurchen`, `seal`, `proto-cuneiform` | Unicode 18.0 Jurchen, Seal, Archaic Cuneiform Numerals | **none** |
 
-All **59 legacy family IDs** are also registered as the corresponding
-profile names (including `egyptian`, `khitan_small`, `sanskrit`,
-`tibetan`, `mongolian`, `manchu`, `arabic`, `urdu`, etc.).
-In addition, the following semantic aliases exist:
+All other curated profiles are listed by `\\__writing_profile:nnn` entries
+in `core/fonts/impe-fonts-usewriting.tex`. They include Armenian,
+Georgian, Hebrew, Syriac, Samaritan, Aramaic, Nabataean, Phoenician,
+Avestan, Pahlavi variants, Manichaean, Sogdian variants, Old Uyghur,
+Tamil, Thai, Brahmi, Kharoshthi, Tibetan, Glagolitic, Runic,
+Old Italic/Hungarian/Turkic, Carian, Cuneiform, Bopomofo, Kana,
+Hangul, and a selection of other Unicode 18 scripts.
 
-| Profile | Default pack |
-|---|---|
-| `latin` | `cmu` |
-| `chinese` | `shanggu` |
-| `chinese-sc` | `chinese_simplified` |
-| `chinese-tc` | `shanggu` |
-| `mongol` | `mongolian` |
+No `chinese-sc`, `chinese-tc`, `urdu`, `hindi`, `sanskrit`,
+`manchu`, `syriac-eastern`, or `cjk-punctuation` is exposed
+as an independent writing profile: these are font choices, language
+names, or historical combinations, not distinct Unicode profiles.
 
-`japanese`, `korean`, `arabic`, and `mongolian` also explicitly
-retain their matching family defaults.
+Profiles can overlap: `chinese`, `japanese`, and `korean`
+share Han codepoints. Unicode alone cannot select a language-specific
+regional glyph; no language guessing is performed. Existing legacy
+global/range routing retains its prior conflict policy; unified new-API
+overlapping-range ownership is a separate integration concern.
 
-Complete legacy-derived profile/pack IDs (59):
+## Normalized font resources and packs
 
-| Group | IDs |
-|---|---|
-| Western | `cmu`, `noto`, `times`, `gentium`, `charis`, `libertinus`, `mlmodern` |
-| Simple script fonts | `anatolian`, `coptic`, `bopomofo`, `cuneiform`, `glagolitic`, `italic`, `hungarian`, `runic` |
-| Indian and related | `armenian`, `hindi`, `sanskrit`, `devanagari`, `tamil`, `brahmi`, `georgian`, `tibetan` |
-| RTL and ancient scripts | `arabic`, `urdu`, `aramaic`, `nabataean`, `hebrew`, `syriac`, `syriac_eastern`, `kharosthi`, `egyptian`, `khitan_small`, `pahlavi_parthian`, `pahlavi_inscriptional`, `pahlavi_psalter`, `avestan`, `manichaean`, `phoenician`, `samaritan`, `sogdian`, `sogdian_old` |
-| CJK | `chinese_simplified`, `chinese_traditional`, `japanese`, `wenjin`, `shanggu`, `sim`, `korean`, `tangut` |
-| Central / East Asian | `mongolian`, `mongolian_baiti`, `manchu`, `segoe`, `thai`, `turkic`, `uyghur`, `vietnamese_quocngu`, `vietnamese_hannom` |
+Noto generic resource names use **complete identifiers**, never
+`noto`, `sc`, `tc`, `jp`, or `kr` in the new resource namespace.
 
-Pack selection does not replace the chosen Profile's shaping properties:
-Script, Language, direction, line-breaking policy, and specialized backend
-are inherited from the Profile. The Pack supplies font resources, family
-faces and font-specific adaptations. A font still needs suitable glyph coverage.
+- Noto Western/general: `basic`.
+- Noto CJK: `chinese-simplified`, `chinese-traditional`,
+  `japanese`, `korean`.
+- Noto other multi-face: `armenian`, `devanagari`, `tamil`,
+  `georgian`, `hebrew`, `arabic`, `naskh`, `kufi`,
+  `nastaliq`, `syriac`, `syriac-eastern`, `syriac-western`,
+  `tibetan`, `thai`, `thai-looped`.
+- Noto single-face: `carian`, `coptic`, `cuneiform`,
+  `glagolitic`, `old-italic`, `old-hungarian`, `runic`,
+  `brahmi`, `kharoshthi`, `aramaic`, `nabataean`,
+  `phoenician`, `avestan`, `pahlavi-parthian`,
+  `pahlavi-inscriptional`, `pahlavi-psalter`, `manichaean`,
+  `samaritan`, `sogdian`, `old-sogdian`, `old-turkic`,
+  `old-uyghur`, `egyptian`, `khitan-small`, `tangut`,
+  `mongolian`.
+- Non-Noto families/packs: `cmu`, `times`, `gentium`,
+  `charis`, `libertinus`, `latinmodern`, `shanggu`,
+  `wenjin`, `aref`, `davidlibre`, `khawa`, `abxy`,
+  `minhnguyen`, `syrcom`.
+- Non-Noto explicit faces: `tiro`, `iming`, `zhuque`,
+  `simsun`, `simhei`, `simfang`, `simkai`,
+  `arial`, `consolas`, `segoeuihistoric`,
+  `monbaiti`, `mnglwhite`, `mngltitle`,
+  `mnglwriting`, `mnglart`, `nomnatong`,
+  `gothicnguyen`, `tangut-n4694`,
+  `new-tangut-std`, and the individually named `syrcom-*` faces.
 
-Repeated `\\UseWriting` calls allocate fresh internal font family identifiers.
-The latest new-API selection updates a command first activated by
-`\\UseWriting`; if the command was already activated by the legacy loader,
-it is not silently overwritten. The legacy loader remains independently usable.
+Only the resource selected by the pack/family is implicitly available.
+`shanggu` keeps its own Serif/Sans regular/bold even under native mode;
+`zhuque` is an independent face available via `italic=zhuque`
+or `stylemap=full`. WenJin's glyph P0/P2/P3 fallback is not a style
+and is not controlled by `stylemap`.
 
-This first phase uses the existing `FontDeclare` implementation as its
-rendering adapter. Profile-specific shaping, Tibetan/Thai breaks, CJK family
-handling, Mongolian vertical builders, and XSR module loading stay in the
-established modules. The single new command is an *activation and selection*
-entry; it does **not** add a new inline text command. For Mongolian vertical
-runs in horizontal documents, use the existing vertical text commands
-(e.g. `\\MOv`) provided by the applicable installed legacy declaration.
+## Technical scope / compatibility
 
-## Pack aliases
+The writing engine resolves the Profile's Unicode coverage independently
+from a Font Pack. Script, shaping behavior, RTL, existing local vertical
+builders, and XSR come from the selected Profile's default declaration;
+font faces and glyph fallback come from the selected Pack or explicit font.
+This first-phase adapter preserves existing local/global binding pathways
+rather than replacing them with a new competing XeTeX interchar router.
+It does **not yet claim complete Unicode auto-binding arbitration** for
+overlapping new profiles.
 
-Every legacy catalog family ID is a valid pack alias. In addition:
-
-| Alias | Resource / catalog series |
-|---|---|
-| `naskh` | Noto Naskh Arabic (from `arabic`) |
-| `ruqaa` | Aref Ruqaa (from `arabic`) |
-| `nastaliq` | Noto Nastaliq Urdu (from `urdu`) |
-| `zhuque` | Zhuque FangSong (from `shanggu`) |
-| `kaiti` | `simkai.ttf` (from `sim`) |
-| `fangsong` | `simfang.ttf` (from `sim`) |
-
-The style override values `normal`, `naskh`, `ruqaa`,
-`nastaliq`, `zhuque`, `kaiti`, `fangsong` are supported
-in this phase. Registering arbitrary extra packs/styles and changing
-document-wide direction are future APIs.
-
-## Compatibility
-
-Legacy `\\UseFont` continues to load via the original registry; unlike
-new `\\UseWriting`, it preserves all historically declared style substitutions
-and routing policy. Both APIs use existing fontspec/xeCJK/XSR building blocks.
-In particular, the first phase does not rewrite legacy range ownership, nor
-redefine old public commands. The new semantics are opt-in.
+The new `\\UseWriting` entry is not a stand-in for inline text commands:
+existing `\\MOv`, `\\IMPEEgyptianText`, etc. remain applicable.
+All legacy `\\UseFont` IDs, scopes and script-specific rendering continue
+to execute through the old loader under the shared preset dispatcher.
