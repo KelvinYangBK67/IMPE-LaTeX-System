@@ -854,16 +854,27 @@
       {
         \cs_if_exist:NF \newCJKfontfamily
           { \RequirePackage{xeCJK} }
+        % Legacy local setup may initialize the document's CJK main font.
+        % A new forced-local binding must never do so.
         \bool_if:NF \g__font_cjk_main_declared_bool
           {
-            \use:x
+            \bool_set_true:N \l_tmpa_bool
+            \cs_if_exist:NT \l__writing_local_call_bool
               {
-                \exp_not:N \setCJKmainfont
-                [ \tl_use:N \l__font_main_options_tl ]
-                { \l__font_regular_tl }
+                \bool_if:NT \l__writing_local_call_bool
+                  { \bool_set_false:N \l_tmpa_bool }
               }
-            \__font_apply_cjk_fallback_family:n { \CJKrmdefault }
-            \bool_gset_true:N \g__font_cjk_main_declared_bool
+            \bool_if:NT \l_tmpa_bool
+              {
+                \use:x
+                  {
+                    \exp_not:N \setCJKmainfont
+                    [ \tl_use:N \l__font_main_options_tl ]
+                    { \l__font_regular_tl }
+                  }
+                \__font_apply_cjk_fallback_family:n { \CJKrmdefault }
+                \bool_gset_true:N \g__font_cjk_main_declared_bool
+              }
           }
         \use:x
           {
