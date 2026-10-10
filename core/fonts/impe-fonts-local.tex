@@ -141,14 +141,14 @@
         \tl_if_blank:VF \l_tmpa_tl
           {
             \tl_set:Nx \l_tmpb_tl { __writing_raw_\l_tmpa_tl }
-            \exp_args:NVV \cs_set_eq:cc \l_tmpb_tl \l_tmpa_tl
+            \exp_args:Ncc \NewCommandCopy {\l_tmpb_tl} {\l_tmpa_tl}
             \exp_args:Nc \RenewDocumentCommand {\l_tmpa_tl} {+m}
               { \Font{#1}{##1} }
             \tl_set:Nx \l_tmpc_tl { \l_tmpa_tl v }
             \exp_args:NV \cs_if_exist:cT \l_tmpc_tl
               {
                 \tl_set:Nx \l_tmpb_tl { __writing_raw_\l_tmpc_tl }
-                \exp_args:NVV \cs_set_eq:cc \l_tmpb_tl \l_tmpc_tl
+                \exp_args:Ncc \NewCommandCopy {\l_tmpb_tl} {\l_tmpc_tl}
                 \exp_args:Nc \RenewDocumentCommand {\l_tmpc_tl} { O{0pt} m }
                   { \Font{#1}[writing=vertical,vertical-offset={##1}]{##2} }
               }
