@@ -81,6 +81,16 @@ Complete legacy-derived profile/pack IDs (59):
 | CJK | `chinese_simplified`, `chinese_traditional`, `japanese`, `wenjin`, `shanggu`, `sim`, `korean`, `tangut` |
 | Central / East Asian | `mongolian`, `mongolian_baiti`, `manchu`, `segoe`, `thai`, `turkic`, `uyghur`, `vietnamese_quocngu`, `vietnamese_hannom` |
 
+Pack selection does not replace the chosen Profile's shaping properties:
+Script, Language, direction, line-breaking policy, and specialized backend
+are inherited from the Profile. The Pack supplies font resources, family
+faces and font-specific adaptations. A font still needs suitable glyph coverage.
+
+Repeated `\\UseWriting` calls allocate fresh internal font family identifiers.
+The latest new-API selection updates a command first activated by
+`\\UseWriting`; if the command was already activated by the legacy loader,
+it is not silently overwritten. The legacy loader remains independently usable.
+
 This first phase uses the existing `FontDeclare` implementation as its
 rendering adapter. Profile-specific shaping, Tibetan/Thai breaks, CJK family
 handling, Mongolian vertical builders, and XSR module loading stay in the
