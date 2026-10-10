@@ -932,7 +932,7 @@
               }
             \str_if_eq:VnT \l__font_layout_tl {vertical}
               {
-                \bool_if:NF \l__writing_local_call_bool
+                \str_if_eq:VnT \l__writing_selected_scope_tl {global}
                   {
                     \__writing_error:nn {Global~vertical~writing~is~unsupported}
                       {Use~a~local~Writing/Font~call~with~writing=vertical.}
