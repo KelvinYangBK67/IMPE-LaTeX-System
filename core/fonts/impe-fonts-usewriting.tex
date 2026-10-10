@@ -484,6 +484,8 @@
               }
             \prop_get:NVNT \g__writing_pack_regular_override_prop \l__writing_pack_tl \l_tmpa_tl
               { \tl_set:NV \l__font_regular_tl \l_tmpa_tl }
+            \prop_get:NVNT \g__writing_pack_bold_override_prop \l__writing_pack_tl \l_tmpa_tl
+              { \tl_set:NV \l__font_bold_tl \l_tmpa_tl }
             \str_if_eq:VnT \l__writing_stylemap_tl {native}
               { \__writing_clear_non_native: }
             \tl_if_blank:VF \l__writing_font_tl
