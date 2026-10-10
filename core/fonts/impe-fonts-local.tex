@@ -47,7 +47,7 @@
       }
       { \__writing_build_local:nn {#1} {#2} }
     \tl_if_blank:VF \l__writing_cached_command_tl
-      { \use:c { \l__writing_cached_command_tl } {#3} }
+      { \tl_if_blank:nF {#3} { \use:c { \l__writing_cached_command_tl } {#3} } }
   }
 
 \cs_new_protected:Npn \__writing_build_local:nn #1#2
@@ -103,7 +103,7 @@
                   {
                     \str_if_eq:nnT {##2} {#1}
                       {
-                        \prop_if_in:NnF \g__writing_pack_source_prop {\l_tmpc_tl}
+                        \prop_if_in:NVF \g__writing_pack_source_prop \l_tmpc_tl
                           { \tl_set:Nn \l_tmpc_tl {##1} }
                       }
                   }
@@ -134,9 +134,7 @@
                 \__font_family_use_loader:nn {#1} {local}
                 \prop_get:NnNT \g__font_family_command_prop {#1} \l_tmpa_tl
                   {
-                    \bool_set_true:N \l__font_local_override_bool
                     \use:c {\l_tmpa_tl} {#3}
-                    \bool_set_false:N \l__font_local_override_bool
                   }
               }
               {
