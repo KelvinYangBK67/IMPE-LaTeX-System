@@ -35,6 +35,7 @@
 \int_new:N \l__writing_brackets_int
 \bool_new:N \l__writing_in_options_bool
 \bool_new:N \l__writing_valid_bool
+\bool_new:N \l__writing_explicit_pack_bool
 \seq_new:N \l__writing_parts_seq
 \seq_new:N \l__writing_option_parts_seq
 
@@ -155,6 +156,7 @@
     \tl_clear:N \l__writing_stylemap_tl
     \prop_clear:N \l__writing_overrides_prop
     \bool_set_true:N \l__writing_valid_bool
+    \bool_set_false:N \l__writing_explicit_pack_bool
   }
 
 % Parse [optional pack, key=value, ...]profile.  TeX brace groups are
@@ -249,7 +251,10 @@
           { \seq_put_left:NV \l__writing_option_parts_seq \l_tmpa_tl }
           {
             \tl_if_blank:VF \l_tmpa_tl
-              { \tl_set:NV \l__writing_pack_tl \l_tmpa_tl }
+              {
+                \tl_set:NV \l__writing_pack_tl \l_tmpa_tl
+                \bool_set_true:N \l__writing_explicit_pack_bool
+              }
           }
         \tl_set:Nx \l_tmpa_tl { \seq_use:Nn \l__writing_option_parts_seq {,} }
         \tl_if_blank:VF \l_tmpa_tl
@@ -260,6 +265,16 @@
         \prop_get:NVNTF \g__writing_pack_source_prop \l__writing_pack_tl \l__writing_source_tl
           { }
           { \__writing_error:nn {Unknown~font~pack~'\l__writing_pack_tl'} {Use~a~registered~pack~alias,~font=...,~or~file=....} }
+      }
+    \bool_if:NT \l__writing_explicit_pack_bool
+      {
+        \bool_lazy_or:nnT
+          { !\tl_if_blank_p:V \l__writing_font_tl }
+          { !\tl_if_blank_p:V \l__writing_file_tl }
+          {
+            \__writing_error:nn {Conflicting~font~resource~selectors}
+              {Use~only~a~positional~pack,~font=...,~or~file=....}
+          }
       }
     \tl_if_blank:VF \l__writing_font_tl
       {
@@ -385,9 +400,15 @@
             \tl_set:NV \l__font_scope_tl \l__writing_selected_scope_tl
             \tl_set:NV \l__font_decl_family_id_tl \l__writing_source_tl
             \tl_set:Nx \l__font_name_tl {writing_\l__writing_profile_tl}
+            % A previously activated legacy command must retain its
+            % original font selection and behavior. Keep the new local
+            % builder behind a private command in that case.
             \tl_if_blank:VTF \l__font_command_tl
               { \tl_set:Nx \l__font_command_tl {impewriting\l__writing_profile_tl} }
-              { }
+              {
+                \exp_args:NV \cs_if_exist:cT \l__font_command_tl
+                  { \tl_set:Nx \l__font_command_tl {impewriting\l__writing_profile_tl} }
+              }
             \prop_get:NVNT \g__writing_pack_regular_override_prop \l__writing_pack_tl \l_tmpa_tl
               { \tl_set:NV \l__font_regular_tl \l_tmpa_tl }
             \str_if_eq:VnT \l__writing_stylemap_tl {native}
