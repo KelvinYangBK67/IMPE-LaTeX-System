@@ -44,7 +44,8 @@
 \tl_if_blank:VF \l__font_layout_tl
   {\PackageError{impe-test}{Explicit~horizontal~writing~was~ignored}{}}
 \typeout{IMPE-TEST-MONGOL-FEATURES:\tl_to_str:V \l__font_features_tl}
-\str_if_in:eeF {\tl_to_str:V \l__font_features_tl} {script=mong}
+\tl_set:Nx \l_tmpa_tl {\tl_to_str:V \l__font_features_tl}
+\exp_args:NV \str_if_in:nnF \l_tmpa_tl {script=mong}
   {\PackageError{impe-test}{Mongolian~shaping~was~lost}{}}
 \ExplSyntaxOff
 % Third-party legacy family registrations also become usable via new selector.
