@@ -186,15 +186,25 @@
           {
             \tl_if_blank:nTF {#2}
               {
-                % The 1.0.1 local builder remains the compatibility backend
-                % for unmodified legacy presets and their special renderers.
-                \__font_family_use_loader:nn {#1} {local}
-                \prop_get:NnNT \g__font_family_command_prop {#1} \l_tmpa_tl
+                \prop_if_in:NnTF \g__font_family_local_prop {#1}
                   {
-                    \tl_set:Nx \l_tmpb_tl {__writing_raw_\l_tmpa_tl}
-                    \exp_args:NV \cs_if_exist:cTF \l_tmpb_tl
-                      { \use:c {\l_tmpb_tl} {#3} }
-                      { \use:c {\l_tmpa_tl} {#3} }
+                    % The 1.0.1 local builder remains the compatibility
+                    % backend for historical presets and special renderers.
+                    \__font_family_use_loader:nn {#1} {local}
+                    \prop_get:NnNT \g__font_family_command_prop {#1} \l_tmpa_tl
+                      {
+                        \tl_set:Nx \l_tmpb_tl {__writing_raw_\l_tmpa_tl}
+                        \exp_args:NV \cs_if_exist:cTF \l_tmpb_tl
+                          { \use:c {\l_tmpb_tl} {#3} }
+                          { \use:c {\l_tmpa_tl} {#3} }
+                      }
+                  }
+                  {
+                    % A global-only historical preset (e.g. shanggu)
+                    % still supports independent forced local typesetting.
+                    \__writing_legacy_local_spec:nnN {#1} {} \l_tmpa_tl
+                    \tl_if_blank:VF \l_tmpa_tl
+                      { \exp_args:NV \__writing_typeset:nnn \l_tmpa_tl {} {#3} }
                   }
               }
               {
