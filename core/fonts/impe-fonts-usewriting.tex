@@ -234,6 +234,7 @@
 \prop_gput:Nnn \g__writing_pack_regular_override_prop {thai-looped} {NotoSansThaiLooped-Regular.ttf}
 \prop_gput:Nnn \g__writing_pack_regular_override_prop {khawa} {KhaWaBetsugsSans-Text-Normal.ttf}
 \prop_gput:Nnn \g__writing_pack_regular_override_prop {davidlibre} {DavidLibre-Regular.ttf}
+\prop_gput:Nnn \g__writing_pack_regular_override_prop {mongolian} {NotoSansMongolian-Regular.ttf}
 \prop_gput:Nnn \g__writing_pack_regular_override_prop {mnglwhite} {mnglwhiteotf.ttf}
 \prop_gput:Nnn \g__writing_pack_regular_override_prop {mngltitle} {mngltitleotf.ttf}
 \prop_gput:Nnn \g__writing_pack_regular_override_prop {mnglwriting} {mnglwritingotf.ttf}
@@ -381,6 +382,7 @@
 \__writing_native:nn {simfang} {}
 \__writing_native:nn {aref} {bold}
 \__writing_native:nn {arabic} {bold}
+\__writing_native:nn {hebrew} {bold,sans,sansbold}
 \__writing_native:nn {kufi} {bold}
 \__writing_native:nn {naskh} {bold}
 \__writing_native:nn {syriac} {bold}
@@ -389,9 +391,13 @@
 \__writing_native:nn {thai-looped} {bold}
 \__writing_native:nn {khawa} {bold}
 \__writing_native:nn {davidlibre} {bold}
-\__writing_native:nn {arial} {bold,italic,bolditalic}
+\__writing_native:nn {arial} {bold}
 \__writing_native:nn {consolas} {bold}
 \__writing_native:nn {minhnguyen} {bold}
+\clist_map_inline:nn
+  {syrcom,syrcom-edessa,syrcom-midyat,syrcom-jerusalem,
+   syrcom-jerusalem-bold,syrcom-adiabene,syrcom-ctesiphon}
+  { \__writing_native:nn {#1} {} }
 
 \cs_new_protected:Npn \__writing_error:nn #1#2
   {
