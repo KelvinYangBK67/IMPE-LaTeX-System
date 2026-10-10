@@ -43,6 +43,7 @@
 \ExplSyntaxOn
 \tl_if_blank:VF \l__font_layout_tl
   {\PackageError{impe-test}{Explicit~horizontal~writing~was~ignored}{}}
+\typeout{IMPE-TEST-MONGOL-FEATURES:\tl_to_str:V \l__font_features_tl}
 \tl_if_in:VnF \l__font_features_tl {script=mong}
   {\PackageError{impe-test}{Mongolian~shaping~was~lost}{}}
 \ExplSyntaxOff
