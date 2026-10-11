@@ -148,6 +148,15 @@ try {
         "canonical-entry",
         "legacy-entry",
         "font-mode-aliases",
+        "usewriting-api",
+        "usewriting-local-first-use",
+        "fallback-native",
+        "fallback-tangut-system",
+        "fallback-precedence",
+        "style-matrix",
+        "fallback-profile-identity",
+        "fallback-late-registration",
+        "fallback-cjk-glyph-matrix",
         "local-font-override",
         "same-family-shaping",
         "routing-scalability",
@@ -191,6 +200,11 @@ try {
         }
     }
     $layoutNegativeTests = @{
+        'usewriting-negative-source' = 'Conflicting font resource selectors'
+        'usewriting-negative-generic-vertical' = 'Vertical writing requires a profile'
+        'usewriting-negative-local-multiple' = 'Local writing requires one binding'
+        'usewriting-negative-global-vertical' = 'Global vertical writing is unsupported'
+        'usewriting-negative-duplicate-name' = 'already exists'
         'layout-negative-duplicate' = 'Duplicate document parameter'
         'layout-negative-duplicate-scope' = 'Duplicate local parameter'
         'layout-negative-local-page' = 'is not local'
@@ -204,6 +218,36 @@ try {
             Write-Host (($negativeLog -split "`n" | Select-Object -Last 40) -join "`n")
             throw "Layout negative regression did not reject $name correctly (exit $LASTEXITCODE)."
         }
+    }
+    & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-native.pdf')
+    if ($LASTEXITCODE -ne 0) { throw 'Native xeCJK fallback PDF regression failed.' }
+    & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-tangut-system.pdf')
+    if ($LASTEXITCODE -ne 0) { throw 'Tangut punctuation system fallback PDF regression failed.' }
+    & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-late-registration.pdf') FandolHei
+    if ($LASTEXITCODE -ne 0) { throw 'Late global font must enter existing CJK fallback chain.' }
+    & python (Join-Path $TestRoot 'check_fallback_cjk_matrix.py') (Join-Path $BuildRoot 'fallback-cjk-glyph-matrix.pdf')
+    if ($LASTEXITCODE -ne 0) { throw 'CJK missing glyph did not honor SansBoldItalic matrix precedence.' }
+    & python (Join-Path $TestRoot 'check_fallback_late.py') (Join-Path $BuildRoot 'fallback-late-registration.pdf')
+    if ($LASTEXITCODE -ne 0) { throw 'The glyph-level PDF span did not switch from Song to Hei after late registration.' }
+    & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-precedence.pdf') FandolHei
+    if ($LASTEXITCODE -ne 0) { throw 'Same-profile fallback precedence PDF regression failed.' }
+    # Verify that actual glyph substitution emits an actionable warning,
+    # and repeated occurrences of the same substitution are deduplicated.
+    $nativeFallbackLog = Get-Content -LiteralPath (Join-Path $BuildRoot 'fallback-native.log') -Raw
+    $nativeFallbackWarnings = [regex]::Matches($nativeFallbackLog, 'Glyph fallback for').Count
+    if ($nativeFallbackWarnings -ne 4 -or
+        $nativeFallbackLog -notmatch 'FandolSong-Regular\.otf') {
+        throw "Native xeCJK fallback warning regression: expected 4 distinct-source deduplicated Fandol warnings, got $nativeFallbackWarnings."
+    }
+    $precedenceFallbackLog = Get-Content -LiteralPath (Join-Path $BuildRoot 'fallback-precedence.log') -Raw
+    if ($precedenceFallbackLog -notmatch 'Glyph fallback for' -or
+        $precedenceFallbackLog -notmatch 'FandolHei-Regular\.otf') {
+        throw 'CJK fallback must use the same-profile FandolHei ahead of cross-profile FandolSong.'
+    }
+    $tangutFallbackLog = Get-Content -LiteralPath (Join-Path $BuildRoot 'fallback-tangut-system.log') -Raw
+    if ([regex]::Matches($tangutFallbackLog, 'Glyph fallback for').Count -ne 1 -or
+        $tangutFallbackLog -notmatch 'FandolSong-Regular\.otf') {
+        throw 'Tangut system punctuation fallback must warn exactly once with its actual replacement font.'
     }
     & python (Join-Path $TestRoot 'check_index_links.py') (Join-Path $BuildRoot 'hyperlink-anchors.pdf')
     if ($LASTEXITCODE -ne 0) {

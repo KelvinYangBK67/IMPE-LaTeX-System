@@ -1,0 +1,10 @@
+% Global Chinese fallback wins over an earlier/later Japanese candidate
+% when a locally selected Chinese font does not contain the target glyph.
+\documentclass{article}
+\usepackage{impe}
+\UseWriting{[file=FandolHei-Regular.otf]chinese}
+\UseWriting{[file=FandolSong-Regular.otf]japanese}
+\begin{document}
+\Writing{[file=lmroman10-regular.otf]chinese}{漢字}
+\typeout{IMPE-TEST-FALLBACK-PRECEDENCE-PASS}
+\end{document}

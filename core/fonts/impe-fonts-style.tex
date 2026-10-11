@@ -62,52 +62,89 @@
     \__font_resolve_field:NN \l__font_resolved_mono_bold_path_tl \l__font_resolved_mono_path_tl
   }
 
+
+% Style coordinates: Family(Sans=4), Weight(Bold=2), Shape(Italic=1).
+% Minimise the number of lost attributes; ties prefer preserving family,
+% then weight, then shape. Never upgrade a missing requested attribute.
+\prop_new:N \g__font_style_matrix_rank_prop
+\prop_gput:Nnn \g__font_style_matrix_rank_prop {0} {0}
+\prop_gput:Nnn \g__font_style_matrix_rank_prop {1} {1,0}
+\prop_gput:Nnn \g__font_style_matrix_rank_prop {2} {2,0}
+\prop_gput:Nnn \g__font_style_matrix_rank_prop {3} {3,2,1,0}
+\prop_gput:Nnn \g__font_style_matrix_rank_prop {4} {4,0}
+\prop_gput:Nnn \g__font_style_matrix_rank_prop {5} {5,4,1,0}
+\prop_gput:Nnn \g__font_style_matrix_rank_prop {6} {6,4,2,0}
+\prop_gput:Nnn \g__font_style_matrix_rank_prop {7} {7,6,5,3,4,2,1,0}
+\prop_new:N \l__font_matrix_face_prop
+\prop_new:N \l__font_matrix_path_prop
+\tl_new:N \l__font_matrix_order_tl
+
+\cs_new_protected:Npn \__font_matrix_register:nnNN #1#2#3#4
+  {
+    \tl_if_blank:VF #3
+      {
+        \prop_put:NnV \l__font_matrix_face_prop {#1} #3
+        \prop_put:NnV \l__font_matrix_path_prop {#1} #4
+      }
+  }
+
+\cs_new_protected:Npn \__font_matrix_pick:nNN #1#2#3
+  {
+    \tl_clear:N #2
+    \tl_clear:N #3
+    \prop_get:NnN \g__font_style_matrix_rank_prop {#1} \l__font_matrix_order_tl
+    \exp_args:NV \clist_map_inline:nn \l__font_matrix_order_tl
+      {
+        \tl_if_blank:VT #2
+          {
+            \prop_get:NnNT \l__font_matrix_face_prop {##1} #2
+              { \prop_get:NnN \l__font_matrix_path_prop {##1} #3 }
+          }
+      }
+    \tl_if_blank:VT #3
+      { \tl_set:NV #3 \l__font_path_tl }
+    % A direct font=/file= face is independent of the primary pack path.
+    \str_if_eq:VnT #3 {__impe_none__}
+      { \tl_clear:N #3 }
+  }
+
 \cs_new_protected:Npn \__font_resolve_style_fallbacks:
   {
-    \tl_set_eq:NN \l__font_resolved_bold_tl \l__font_bold_tl
-    \tl_set_eq:NN \l__font_resolved_italic_tl \l__font_italic_tl
-    \tl_set_eq:NN \l__font_resolved_bolditalic_tl \l__font_bolditalic_tl
-    \tl_set_eq:NN \l__font_resolved_sans_tl \l__font_sans_tl
-    \tl_set_eq:NN \l__font_resolved_sans_bold_tl \l__font_sans_bold_tl
-    \tl_set_eq:NN \l__font_resolved_sans_italic_tl \l__font_sans_italic_tl
-    \tl_set_eq:NN \l__font_resolved_sans_bolditalic_tl \l__font_sans_bolditalic_tl
-    \tl_set_eq:NN \l__font_resolved_mono_tl \l__font_mono_tl
-    \tl_set_eq:NN \l__font_resolved_mono_bold_tl \l__font_mono_bold_tl
-
-    \__font_resolve_field:NN \l__font_resolved_bold_tl \l__font_regular_tl
-    \__font_resolve_field:NN \l__font_resolved_italic_tl \l__font_regular_tl
-
-    \tl_if_blank:VTF \l__font_resolved_bolditalic_tl
-      {
-        \tl_if_blank:VTF \l__font_italic_tl
-          {
-            \tl_if_blank:VTF \l__font_bold_tl
-              { \tl_set_eq:NN \l__font_resolved_bolditalic_tl \l__font_regular_tl }
-              { \tl_set_eq:NN \l__font_resolved_bolditalic_tl \l__font_resolved_bold_tl }
-          }
-          { \tl_set_eq:NN \l__font_resolved_bolditalic_tl \l__font_resolved_italic_tl }
-      }
-      { }
-
-    \__font_resolve_field:NN \l__font_resolved_sans_tl \l__font_regular_tl
-    \__font_resolve_field:NN \l__font_resolved_sans_bold_tl \l__font_resolved_sans_tl
-    \tl_if_blank:VTF \l__font_resolved_sans_italic_tl
-      {
-        \tl_if_blank:VTF \l__font_sans_tl
-          { \tl_set_eq:NN \l__font_resolved_sans_italic_tl \l__font_resolved_italic_tl }
-          { \tl_set_eq:NN \l__font_resolved_sans_italic_tl \l__font_resolved_sans_tl }
-      }
-      { }
-    \tl_if_blank:VTF \l__font_resolved_sans_bolditalic_tl
-      {
-        \tl_if_blank:VTF \l__font_sans_bold_tl
-          { \tl_set_eq:NN \l__font_resolved_sans_bolditalic_tl \l__font_resolved_sans_italic_tl }
-          { \tl_set_eq:NN \l__font_resolved_sans_bolditalic_tl \l__font_resolved_sans_bold_tl }
-      }
-      { }
-    \__font_resolve_field:NN \l__font_resolved_mono_tl \l__font_regular_tl
-    \__font_resolve_field:NN \l__font_resolved_mono_bold_tl \l__font_resolved_mono_tl
-    \__font_resolve_path_fallbacks:
+    \prop_clear:N \l__font_matrix_face_prop
+    \prop_clear:N \l__font_matrix_path_prop
+    \__font_matrix_register:nnNN {0}{serif} \l__font_regular_tl \l__font_path_tl
+    \__font_matrix_register:nnNN {1}{serif-italic} \l__font_italic_tl \l__font_italic_path_tl
+    \__font_matrix_register:nnNN {2}{serif-bold} \l__font_bold_tl \l__font_bold_path_tl
+    \__font_matrix_register:nnNN {3}{serif-bolditalic} \l__font_bolditalic_tl \l__font_bolditalic_path_tl
+    \__font_matrix_register:nnNN {4}{sans} \l__font_sans_tl \l__font_sans_path_tl
+    \__font_matrix_register:nnNN {5}{sans-italic} \l__font_sans_italic_tl \l__font_sans_italic_path_tl
+    \__font_matrix_register:nnNN {6}{sans-bold} \l__font_sans_bold_tl \l__font_sans_bold_path_tl
+    \__font_matrix_register:nnNN {7}{sans-bolditalic} \l__font_sans_bolditalic_tl \l__font_sans_bolditalic_path_tl
+    \__font_matrix_pick:nNN {2} \l__font_resolved_bold_tl \l__font_resolved_bold_path_tl
+    \__font_matrix_pick:nNN {1} \l__font_resolved_italic_tl \l__font_resolved_italic_path_tl
+    \__font_matrix_pick:nNN {3} \l__font_resolved_bolditalic_tl \l__font_resolved_bolditalic_path_tl
+    \__font_matrix_pick:nNN {4} \l__font_resolved_sans_tl \l__font_resolved_sans_path_tl
+    \__font_matrix_pick:nNN {6} \l__font_resolved_sans_bold_tl \l__font_resolved_sans_bold_path_tl
+    \__font_matrix_pick:nNN {5} \l__font_resolved_sans_italic_tl \l__font_resolved_sans_italic_path_tl
+    \__font_matrix_pick:nNN {7} \l__font_resolved_sans_bolditalic_tl \l__font_resolved_sans_bolditalic_path_tl
+    \tl_if_blank:VTF \l__font_mono_tl
+      { \tl_set:NV \l__font_resolved_mono_tl \l__font_regular_tl
+        \tl_set:NV \l__font_resolved_mono_path_tl \l__font_path_tl }
+      { \tl_set:NV \l__font_resolved_mono_tl \l__font_mono_tl
+        \tl_set:NV \l__font_resolved_mono_path_tl \l__font_mono_path_tl }
+    \tl_if_blank:VTF \l__font_mono_bold_tl
+      { \tl_set:NV \l__font_resolved_mono_bold_tl \l__font_resolved_mono_tl
+        \tl_set:NV \l__font_resolved_mono_bold_path_tl \l__font_resolved_mono_path_tl }
+      { \tl_set:NV \l__font_resolved_mono_bold_tl \l__font_mono_bold_tl
+        \tl_set:NV \l__font_resolved_mono_bold_path_tl \l__font_mono_bold_path_tl }
+    \tl_if_blank:VT \l__font_resolved_mono_path_tl
+      { \tl_set:NV \l__font_resolved_mono_path_tl \l__font_path_tl }
+    \tl_if_blank:VT \l__font_resolved_mono_bold_path_tl
+      { \tl_set:NV \l__font_resolved_mono_bold_path_tl \l__font_path_tl }
+    \str_if_eq:VnT \l__font_resolved_mono_path_tl {__impe_none__}
+      { \tl_clear:N \l__font_resolved_mono_path_tl }
+    \str_if_eq:VnT \l__font_resolved_mono_bold_path_tl {__impe_none__}
+      { \tl_clear:N \l__font_resolved_mono_bold_path_tl }
   }
 
 \ExplSyntaxOff

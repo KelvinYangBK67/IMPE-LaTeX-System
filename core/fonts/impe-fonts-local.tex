@@ -1,0 +1,311 @@
+% IMPE 1.0.5: named, profile-optional, forced local font bindings.
+% A local binding applies its one font/renderer to the complete argument.
+% Unicode coverage is exclusively a global-routing concern.
+\ExplSyntaxOn
+\prop_new:N \g__writing_named_prop
+\prop_new:N \g__writing_local_cache_prop
+\prop_new:N \g__writing_local_renderer_prop
+\prop_new:N \g__writing_local_offset_prop
+\tl_new:N \l__writing_cache_key_tl
+\tl_new:N \l__writing_cached_command_tl
+\bool_new:N \l__writing_force_global_bool
+\int_new:N \l__writing_local_entry_count_int
+
+% Declarative only: do not perform font declarations or activate a route.
+\NewDocumentCommand \DeclareWriting { m +m }
+  {
+    \tl_if_blank:nTF {#1}
+      { \PackageError{impe-writing}{Empty~writing~preset~name}{Supply~a~unique~name.} }
+      {
+        \bool_set_false:N \l__writing_valid_bool
+        \prop_if_in:NnT \g__writing_named_prop {#1}
+          { \bool_set_true:N \l__writing_valid_bool }
+        \prop_if_in:NnT \g__font_family_default_prop {#1}
+          { \bool_set_true:N \l__writing_valid_bool }
+        \prop_if_in:NnT \g__writing_pack_source_prop {#1}
+          { \bool_set_true:N \l__writing_valid_bool }
+        \bool_if:NTF \l__writing_valid_bool
+          {
+            \PackageError{impe-writing}{Writing~preset~'#1'~already~exists}
+              {Choose~a~new~name;~built-in~presets~are~reserved.}
+          }
+          { \prop_gput:Nnn \g__writing_named_prop {#1} {#2} }
+      }
+  }
+
+% One local call may select one font and at most one profile. The
+% local override guard suppresses IMPE's pre-existing range-enter hooks.
+% Cache the internal rendering control, not a global Unicode route.
+\cs_new_protected:Npn \__writing_typeset:nnn #1#2#3
+  {
+    \tl_set:Nx \l__writing_cache_key_tl
+      { \tl_to_str:n {#1} / \tl_to_str:n {#2} }
+    \prop_get:NVNTF \g__writing_local_cache_prop
+      \l__writing_cache_key_tl \l__writing_cached_command_tl
+      {
+        \exp_args:NV \cs_if_exist:cTF \l__writing_cached_command_tl
+          { }
+          { \__writing_build_local:nn {#1} {#2} }
+      }
+      { \__writing_build_local:nn {#1} {#2} }
+    \tl_if_blank:VF \l__writing_cached_command_tl
+      {
+        \tl_if_blank:nF {#3}
+          {
+            \prop_get:NVNTF \g__writing_local_renderer_prop
+              \l__writing_cached_command_tl \l_tmpa_tl
+              {
+                \str_case:VnF \l_tmpa_tl
+                  {
+                    {egyptian} { \xsrEgyptianText{#3} }
+                    {khitan_small} { \xsrKhitanText{#3} }
+                  }
+                  { \use:c { \l__writing_cached_command_tl } {#3} }
+              }
+              {
+                \prop_get:NVNTF \g__writing_local_offset_prop
+                  \l__writing_cached_command_tl \l_tmpa_tl
+                  {
+                    \use:c { \l__writing_cached_command_tl }
+                      [\l_tmpa_tl]{#3}
+                  }
+                  { \use:c { \l__writing_cached_command_tl } {#3} }
+              }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__writing_build_local:nn #1#2
+  {
+    \tl_clear:N \l__writing_cached_command_tl
+    \tl_gclear:N \g__writing_last_local_command_tl
+    \tl_set:Nn \l__writing_call_overrides_tl {#2}
+    \bool_set_true:N \l__writing_local_call_bool
+    \int_zero:N \l__writing_local_entry_count_int
+    % Bare file=... and font=... contain no Unicode profile; do not
+    % interpret their option-list commas as profile separators.
+    \regex_match:nnTF
+      {
+        \A \s*
+        (file|font|stylemap|writing|bold|italic|bolditalic|sans|
+         sansbold|sansitalic|sansbolditalic|mono|monobold)
+        \s* =
+      }
+      {#1}
+      { \__writing_parse_entry:n {#1} }
+      { \__writing_parse:n {#1} }
+    \bool_set_false:N \l__writing_local_call_bool
+    \tl_clear:N \l__writing_call_overrides_tl
+    \int_compare:nNnT {\l__writing_local_entry_count_int} = {1}
+      {
+        \tl_set:NV \l__writing_cached_command_tl
+          \g__writing_last_local_command_tl
+        \tl_if_blank:VF \l__writing_cached_command_tl
+          {
+            \prop_gput:NVV \g__writing_local_cache_prop
+              \l__writing_cache_key_tl \l__writing_cached_command_tl
+            \str_case:Vn \l__font_special_module_tl
+              {
+                {egyptian}
+                  { \prop_gput:NVn \g__writing_local_renderer_prop
+                      \l__writing_cached_command_tl {egyptian} }
+                {khitan_small}
+                  { \prop_gput:NVn \g__writing_local_renderer_prop
+                      \l__writing_cached_command_tl {khitan_small} }
+              }
+            \str_if_eq:VnT \l__font_layout_tl {vertical}
+              {
+                \tl_if_blank:VTF \l__writing_offset_tl
+                  { \tl_set:Nn \l_tmpa_tl {0pt} }
+                  { \tl_set:NV \l_tmpa_tl \l__writing_offset_tl }
+                \prop_gput:NVV \g__writing_local_offset_prop
+                  \l__writing_cached_command_tl \l_tmpa_tl
+              }
+          }
+      }
+  }
+
+\NewDocumentCommand \Writing { m +m }
+  { \__writing_typeset:nnn {#1} {} {#2} }
+
+% Resolve a historical family/resource alias to the selected profile and
+% original source resource. This is only used for Font with local overrides.
+\cs_new_protected:Npn \__writing_legacy_local_spec:nnN #1#2#3
+  {
+    \tl_clear:N #3
+    \prop_get:NnNTF \g__writing_legacy_profile_prop {#1} \l_tmpb_tl
+      {
+        \tl_set:Nn \l_tmpc_tl {#1}
+        \prop_if_in:NnF \g__writing_pack_source_prop {#1}
+          {
+            \str_case:nnF {#1}
+              {
+                {sanskrit}{\tl_set:Nn \l_tmpc_tl {tiro}}
+                {hindi}{\tl_set:Nn \l_tmpc_tl {devanagari}}
+                {mongolian_baiti}{\tl_set:Nn \l_tmpc_tl {monbaiti}}
+                {mongolian}{\tl_set:Nn \l_tmpc_tl {mnglwhite}}
+                {chinese_simplified}{\tl_set:Nn \l_tmpc_tl {chinese-simplified}}
+                {chinese_traditional}{\tl_set:Nn \l_tmpc_tl {chinese-traditional}}
+              }
+              {
+                \prop_map_inline:Nn \g__writing_pack_source_prop
+                  {
+                    \str_if_eq:nnT {##2} {#1}
+                      {
+                        \prop_if_in:NVF \g__writing_pack_source_prop \l_tmpc_tl
+                          { \tl_set:Nn \l_tmpc_tl {##1} }
+                      }
+                  }
+              }
+          }
+        \tl_set:Nx #3
+          { [\exp_not:V \l_tmpc_tl,\exp_not:n {#2}]\exp_not:V \l_tmpb_tl }
+      }
+      {
+        \PackageError{impe-writing}{Unknown~font~preset~'#1'}
+          {Use~a~registered~preset~or~declare~one~first.}
+      }
+  }
+
+% Keep the original 1.0.1 builder as an internal backend. The familiar
+% \SA, \HI, \MO, etc. become short aliases of \Font after local loading.
+% Suffix 'v' keeps its original optional argument and rotation renderer.
+\tl_new:N \l__writing_legacy_offset_tl
+\keys_define:nn {impe/legacy-vertical}
+  {
+    writing .code:n = {},
+    offset .tl_set:N = \l__writing_legacy_offset_tl,
+    vertical-offset .tl_set:N = \l__writing_legacy_offset_tl,
+  }
+\cs_new_protected:Npn \__writing_wrap_legacy_local:n #1
+  {
+    \prop_get:NnNT \g__font_family_command_prop {#1} \l_tmpa_tl
+      {
+        \tl_if_blank:VF \l_tmpa_tl
+          {
+            \tl_set:Nx \l_tmpb_tl { __writing_raw_\l_tmpa_tl }
+            \exp_args:Ncc \NewCommandCopy {\l_tmpb_tl} {\l_tmpa_tl}
+            \exp_args:Nc \RenewDocumentCommand {\l_tmpa_tl} {+m}
+              { \Font{#1}{##1} }
+            \tl_set:Nx \l_tmpc_tl { \l_tmpa_tl v }
+            \exp_args:NV \cs_if_exist:cT \l_tmpc_tl
+              {
+                \tl_set:Nx \l_tmpb_tl { __writing_raw_\l_tmpc_tl }
+                \exp_args:Ncc \NewCommandCopy {\l_tmpb_tl} {\l_tmpc_tl}
+                \exp_args:Nc \RenewDocumentCommand {\l_tmpc_tl} { O{0pt} m }
+                  { \Font{#1}[writing=vertical,vertical-offset={##1}]{##2} }
+              }
+          }
+      }
+  }
+
+% Vertical legacy calls use the existing rotation renderer verbatim.
+% The optional offset is carried through without changing 1.0.1 semantics.
+\cs_new_protected:Npn \__writing_font_legacy_vertical:nnn #1#2#3
+  {
+    \__font_family_use_loader:nn {#1} {local}
+    \tl_set:Nn \l__writing_legacy_offset_tl {0pt}
+    \keys_set:nn {impe/legacy-vertical} {#2}
+    \prop_get:NnNT \g__font_family_command_prop {#1} \l_tmpa_tl
+      {
+        \tl_set:Nx \l_tmpb_tl {__writing_raw_\l_tmpa_tl v}
+        \exp_args:NV \cs_if_exist:cTF \l_tmpb_tl
+          { \use:c {\l_tmpb_tl}[\l__writing_legacy_offset_tl]{#3} }
+          {
+            \PackageError{impe-writing}{No~vertical~renderer~for~'#1'}
+              {Choose~a~writing~profile~with~a~local~vertical~renderer.}
+          }
+      }
+  }
+
+% Same preset-name resolver as UseFont, without the requirement to pre-load.
+% Overrides are passed through the writing engine; no Unicode routing.
+\cs_new_protected:Npn \__writing_font_local:nnn #1#2#3
+  {
+    \prop_get:NnNTF \g__writing_named_prop {#1} \l_tmpa_tl
+      { \exp_args:NV \__writing_typeset:nnn \l_tmpa_tl {#2} {#3} }
+      {
+        \prop_if_in:NnTF \g__font_family_default_prop {#1}
+          {
+            \tl_if_blank:nTF {#2}
+              {
+                \prop_if_in:NnTF \g__font_family_local_prop {#1}
+                  {
+                    % The 1.0.1 local builder remains the compatibility
+                    % backend for historical presets and special renderers.
+                    \__font_family_use_loader:nn {#1} {local}
+                    \prop_get:NnNT \g__font_family_command_prop {#1} \l_tmpa_tl
+                      {
+                        \tl_set:Nx \l_tmpb_tl {__writing_raw_\l_tmpa_tl}
+                        \exp_args:NV \cs_if_exist:cTF \l_tmpb_tl
+                          { \use:c {\l_tmpb_tl} {#3} }
+                          { \use:c {\l_tmpa_tl} {#3} }
+                      }
+                  }
+                  {
+                    % A global-only historical preset (e.g. shanggu)
+                    % still supports independent forced local typesetting.
+                    \__writing_legacy_local_spec:nnN {#1} {} \l_tmpa_tl
+                    \tl_if_blank:VF \l_tmpa_tl
+                      { \exp_args:NV \__writing_typeset:nnn \l_tmpa_tl {} {#3} }
+                  }
+              }
+              {
+                \regex_match:nnTF { writing \s* = \s* vertical } {#2}
+                  { \__writing_font_legacy_vertical:nnn {#1} {#2} {#3} }
+                  {
+                    \__writing_legacy_local_spec:nnN {#1} {#2} \l_tmpa_tl
+                    \exp_args:NV \__writing_typeset:nnn \l_tmpa_tl {} {#3}
+                  }
+              }
+          }
+          {
+            \prop_if_in:NnTF \g__writing_legacy_profile_prop {#1}
+              {
+                \__writing_legacy_local_spec:nnN {#1} {#2} \l_tmpa_tl
+                \tl_if_blank:VF \l_tmpa_tl
+                  { \exp_args:NV \__writing_typeset:nnn \l_tmpa_tl {} {#3} }
+              }
+              {
+                % Preserve the 1.0.1 diagnostic for an unknown family ID.
+                \__font_family_use_loader:nn {#1} {local}
+              }
+          }
+      }
+  }
+
+\RenewDocumentCommand \Font { m O{} +m }
+  { \__writing_font_local:nnn {#1} {#2} {#3} }
+
+% A named preset may also be activated via UseFont. Only explicit [local]
+% prepares a local-only configuration; global activation validates scope.
+\cs_new_eq:NN \__writing_original_legacy_preset:nn \__writing_legacy_preset:nn
+\cs_set_protected:Npn \__writing_legacy_preset:nn #1#2
+  {
+    \prop_get:NnNTF \g__writing_named_prop {#1} \l_tmpa_tl
+      {
+        \str_case:nnF {#2}
+          {
+            {local}
+              { \exp_args:NV \__writing_typeset:nnn \l_tmpa_tl {} {} }
+            {global}
+              {
+                \bool_set_true:N \l__writing_force_global_bool
+                \exp_args:NV \__writing_parse:n \l_tmpa_tl
+                \bool_set_false:N \l__writing_force_global_bool
+              }
+            {}
+              {
+                \bool_set_true:N \l__writing_force_global_bool
+                \exp_args:NV \__writing_parse:n \l_tmpa_tl
+                \bool_set_false:N \l__writing_force_global_bool
+              }
+          }
+          {
+            \PackageError{impe-writing}{Unknown~UseFont~mode~'#2'}
+              {Choose~[local]~or~[global].}
+          }
+      }
+      { \__writing_original_legacy_preset:nn {#1} {#2} }
+  }
+\ExplSyntaxOff

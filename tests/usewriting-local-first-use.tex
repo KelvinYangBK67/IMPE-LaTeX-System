@@ -1,0 +1,13 @@
+% No preloading: local font-only and CJK profile rendering first called
+% inside the document. This must not require a late xeCJK package load.
+\documentclass{article}
+\usepackage{impe}
+\DeclareWriting{local-first-plain}{file=lmroman10-regular.otf}
+\DeclareWriting{local-first-profile}{[file=lmroman10-regular.otf]chinese}
+\begin{document}
+\Font{local-first-plain}{Latin text without prior activation.}
+\Writing{file=lmroman10-regular.otf}{Another plain local font.}
+\Font{local-first-profile}{CJK profile in local forced-font mode.}
+\Font{shanggu}{漢字}
+\typeout{IMPE-TEST-WRITING-FIRST-USE-PASS}
+\end{document}

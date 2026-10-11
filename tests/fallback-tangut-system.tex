@@ -1,0 +1,9 @@
+% No IMPE global Chinese font: Tangut punctuation must find a TeX
+% Chinese fallback on demand, without an implicit Shanggu dependency.
+\documentclass{article}
+\usepackage{xeCJK}
+\usepackage{impe}
+\begin{document}
+\Writing{[file=lmroman10-regular.otf]tangut}{。}
+\typeout{IMPE-TEST-TANGUT-SYSTEM-FALLBACK-PASS}
+\end{document}
