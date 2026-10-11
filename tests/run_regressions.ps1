@@ -199,6 +199,16 @@ try {
         "layout-publication-beamer-43",
         "layout-publication-native-geometry",
         "layout-publication-explicit-fontsize",
+        "layout-legacy-book-en",
+        "layout-legacy-book-zh",
+        "layout-legacy-article-en",
+        "layout-legacy-article-zh",
+        "layout-legacy-report-en",
+        "layout-legacy-report-zh",
+        "layout-legacy-beamer",
+        "layout-legacy-beamer-explicit",
+        "layout-legacy-native-override",
+        "layout-legacy-alias-zh",
         "citations-preloaded",
         "beamer-hyperlinks"
     )
@@ -312,7 +322,7 @@ finally {
     $env:TEXINPUTS = $oldTexInputs
 }
 
-foreach ($name in @("feature-api-compat", "citations-preloaded", "beamer-hyperlinks", "layout-config", "lang-option-zh", "lang-legacy-zh", "layout-geometry-switch", "layout-publication-book-en", "layout-publication-book-zh", "layout-publication-article-en", "layout-publication-article-zh", "layout-publication-report-en", "layout-publication-report-zh", "layout-publication-beamer", "layout-publication-beamer-43", "layout-publication-native-geometry", "layout-publication-explicit-fontsize")) {
+foreach ($name in @("feature-api-compat", "citations-preloaded", "beamer-hyperlinks", "layout-config", "lang-option-zh", "lang-legacy-zh", "layout-geometry-switch", "layout-publication-book-en", "layout-publication-book-zh", "layout-publication-article-en", "layout-publication-article-zh", "layout-publication-report-en", "layout-publication-report-zh", "layout-publication-beamer", "layout-publication-beamer-43", "layout-publication-native-geometry", "layout-publication-explicit-fontsize", "layout-legacy-book-en", "layout-legacy-book-zh", "layout-legacy-article-en", "layout-legacy-article-zh", "layout-legacy-report-en", "layout-legacy-report-zh", "layout-legacy-beamer", "layout-legacy-beamer-explicit", "layout-legacy-native-override", "layout-legacy-alias-zh")) {
     $log = Get-Content -LiteralPath (Join-Path $BuildRoot "$name.log") -Raw
     $marker = "IMPE-TEST-$($name.ToUpperInvariant())-PASS"
     if ($log -notmatch [regex]::Escape($marker)) {

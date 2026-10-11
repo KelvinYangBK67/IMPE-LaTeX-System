@@ -14,6 +14,11 @@
 - New regression TeX fixtures cover page geometry, type defaults, native overrides,
   Beamer aspect ratio and custom class font size.
 
+- One-command `\UseLegacyLayout` restores 1.0.5 pre-redesign defaults
+  for all four document classes and both languages, including typography,
+  heading and page styles, plus the historical Beamer Madrid/4:3 defaults.
+  Native explicit aspect ratios and later author overrides take precedence.
+- Added bilingual legacy regression fixtures and native override tests.
 This is a draft layout redesign, not a tag, version increment, or formal release.
 The 1.0.5 internal source snapshot remains the last tagged target. Formal manual,
 showcase and packaging refreshes are deferred.

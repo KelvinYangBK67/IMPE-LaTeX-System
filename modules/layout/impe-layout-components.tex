@@ -14,6 +14,33 @@
     {\RequirePackage[#1]{geometry}}%
 }
 
+% Snapshot the base-class typography *before* publication defaults mutate it.
+% A legacy profile can then truly restore the 1.0.5 font/heading layer.
+\let\IMPELegacyBaseNormalSize\normalsize
+\let\IMPELegacyBaseFootnoteSize\footnotesize
+\let\IMPELegacyBaseSection\section
+\let\IMPELegacyBaseSubsection\subsection
+\let\IMPELegacyBasePlainStyle\ps@plain
+\@ifundefined{@makechapterhead}{}{%
+  \let\IMPELegacyBaseMakeChapterHead\@makechapterhead
+  \let\IMPELegacyBaseMakesChapterHead\@makeschapterhead
+}
+\newcommand{\NextLayoutRestoreLegacyTypography}{%
+  \let\normalsize\IMPELegacyBaseNormalSize
+  \let\footnotesize\IMPELegacyBaseFootnoteSize
+  \let\section\IMPELegacyBaseSection
+  \let\subsection\IMPELegacyBaseSubsection
+  \@ifundefined{IMPELegacyBaseMakeChapterHead}{}{%
+    \let\@makechapterhead\IMPELegacyBaseMakeChapterHead
+    \let\@makeschapterhead\IMPELegacyBaseMakesChapterHead
+  }%
+  \normalsize
+}
+\newcommand{\NextLayoutRestoreLegacyPlainStyle}{%
+  \let\ps@plain\IMPELegacyBasePlainStyle
+  \pagestyle{plain}%
+}
+
 \newcommand{\NextLayoutPageOneIn}{
   \if@twoside
     \NextLayoutSetGeometry{a4paper,margin=1in,bindingoffset=0.4cm}
@@ -437,4 +464,52 @@
     \setbeamerfont{normal~text}{size*={12pt}{18.5pt}}
   }
 
+\ExplSyntaxOff
+
+
+% 1.0.5 complete legacy profile: reset the class changes made by the new
+% defaults, then reapply the historical layout components.
+\ExplSyntaxOn
+\cs_new_protected:cpn { __layout_component_text_legacy_en_doc: }
+  {
+    \NextLayoutRestoreLegacyTypography
+    \use:c { __layout_component_text_en_doc: }
+  }
+\cs_new_protected:cpn { __layout_component_text_legacy_zh_doc: }
+  {
+    \NextLayoutRestoreLegacyTypography
+    \use:c { __layout_component_text_zh: }
+  }
+\cs_new_protected:cpn { __layout_component_text_legacy_en_book: }
+  {
+    \NextLayoutRestoreLegacyTypography
+    \use:c { __layout_component_text_en_book: }
+  }
+\cs_new_protected:cpn { __layout_component_text_legacy_zh_book: }
+  {
+    \NextLayoutRestoreLegacyTypography
+    \use:c { __layout_component_text_zh: }
+  }
+\cs_new_protected:cpn { __layout_component_head_legacy_plain: }
+  { \NextLayoutRestoreLegacyPlainStyle }
+\cs_new_protected:cpn { __layout_component_head_legacy_book: }
+  { \UseFeature{headers} \HeaderStyle{legacy-running} }
+
+\cs_new_protected:cpn { __layout_component_slides_legacy_beamer_geometry: }
+  {
+    % The Beamer class's 1.0.5 default was 4:3. Respect an explicitly
+    % requested native aspectratio, even when opting into the old style.
+    \cs_if_exist:NTF \ifIMPEClassAspectSeen
+      {
+        \ifIMPEClassAspectSeen
+        \else
+          \geometry{paperwidth=128mm,paperheight=96mm}
+        \fi
+      }
+      { \geometry{paperwidth=128mm,paperheight=96mm} }
+    \setbeamerfont{normal~text}{size=\normalsize}
+    \setbeamerfont{title}{size=\Large}
+    \setbeamerfont{frametitle}{size=\large}
+    \setbeamerfont{subtitle}{size=\normalsize}
+  }
 \ExplSyntaxOff

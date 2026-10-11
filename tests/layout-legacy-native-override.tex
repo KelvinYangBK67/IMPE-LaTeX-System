@@ -1,0 +1,14 @@
+% Native geometry still wins when applied after selecting the old profile.
+\documentclass[lang=zh]{impebook}
+\UseLegacyLayout
+\geometry{a5paper,inner=20mm,outer=24mm,top=22mm,bottom=27mm,
+          bindingoffset=0mm}
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{148mm}
+\IMPECheckDim{\paperheight}{210mm}
+\IMPECheckDim{\textwidth}{104mm}
+\IMPECheckDim{\textheight}{161mm}
+\begin{document}
+\chapter{Native override}
+\typeout{IMPE-TEST-LAYOUT-LEGACY-NATIVE-OVERRIDE-PASS}
+\end{document}

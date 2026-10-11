@@ -78,33 +78,51 @@
   id = legacy_zh_doc,
   targets = { article,report },
   page = page_a4_26mm,
-  text = text_zh
+  text = text_legacy_zh_doc,
+  head = head_legacy_plain
 }
 \LayoutPresetRegister{
   id = legacy_en_doc,
   targets = { article,report },
   page = page_a4_en_doc_145mm,
-  text = text_en_doc
+  text = text_legacy_en_doc,
+  head = head_legacy_plain
 }
 \LayoutPresetRegister{
   id = legacy_zh_book,
   targets = { book,report },
   page = page_a4_book,
-  text = text_zh,
-  head = head_fancy_chapter,
+  text = text_legacy_zh_book,
+  head = head_legacy_book,
   book = { book_openright, book_blankpage_empty }
 }
 \LayoutPresetRegister{
   id = legacy_en_book,
   targets = { book,report },
   page = page_a4_en_book_145mm,
-  text = text_en_book,
-  head = head_fancy_chapter,
+  text = text_legacy_en_book,
+  head = head_legacy_book,
   book = { book_openright, book_blankpage_empty }
 }
 \LayoutPresetRegister{
   id = legacy_beamer,
   targets = { beamer },
   text = text_beamer_dense,
-  slides = { slides_madrid_nav, slides_impe_helpers }
+  slides = { slides_legacy_beamer_geometry, slides_madrid_nav, slides_impe_helpers }
+}
+
+% Report was an alias of the article geometry and typography in 1.0.5.
+\LayoutPresetRegister{
+  id = legacy_zh_report,
+  targets = { report },
+  page = page_a4_26mm,
+  text = text_legacy_zh_doc,
+  head = head_legacy_plain
+}
+\LayoutPresetRegister{
+  id = legacy_en_report,
+  targets = { report },
+  page = page_a4_en_doc_145mm,
+  text = text_legacy_en_doc,
+  head = head_legacy_plain
 }
