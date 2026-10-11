@@ -1,24 +1,5 @@
 # Unreleased Changelog
 
-## Draft: Publication-first Layout defaults (Issue #22)
+No further changes beyond the 1.0.6 internal source snapshot have been recorded. See [CHANGELOG.md](CHANGELOG.md) and [CHANGELOG-zh.md](CHANGELOG-zh.md).
 
-- ISO B5 book trim, A4 article/report geometry, and Beamer 16:9 by default.
-- Distinct English/Chinese body sizes and baseline skips, tighter paragraph rhythm,
-  publication-oriented heading sizes, minimal academic slide defaults.
-- Paper classes receive consistent page styles: running book/report heads,
-  no article running head, centered footer page numbers including plain chapter pages;
-  intentional blank pages remain empty.
-- Existing convenience APIs and native geometry/fancyhdr overrides stay available.
-  Explicit Beamer aspectratio options take priority; legacy layout components and
-  opt-in legacy presets remain.
-- New regression TeX fixtures cover page geometry, type defaults, native overrides,
-  Beamer aspect ratio and custom class font size.
-
-- One-command `\UseLegacyLayout` restores 1.0.5 pre-redesign defaults
-  for all four document classes and both languages, including typography,
-  heading and page styles, plus the historical Beamer Madrid/4:3 defaults.
-  Native explicit aspect ratios and later author overrides take precedence.
-- Added bilingual legacy regression fixtures and native override tests.
-This is a draft layout redesign, not a tag, version increment, or formal release.
-The 1.0.5 internal source snapshot remains the last tagged target. Formal manual,
-showcase and packaging refreshes are deferred.
+The three manuals, canonical Showcase, tracked documentation PDFs and formal publication packaging remain intentionally deferred; this source snapshot is intended for a Git tag without a GitHub Release.
