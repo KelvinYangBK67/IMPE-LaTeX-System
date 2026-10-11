@@ -254,10 +254,8 @@
       }
   }
 
-\AtBeginDocument
-  {
-    \bool_gset_true:N \g__writing_fallback_started_bool
-    % Diagnose xeCJK subfamily routing before enabling the warning hook.
-    \__writing_fallback_refresh:
-  }
+% Registry collection stays active. Installation is withheld until the
+% xeCJK family/path routing regression is resolved; do not install a broken
+% fallback chain in every document.
+\AtBeginDocument { }
 \ExplSyntaxOff
