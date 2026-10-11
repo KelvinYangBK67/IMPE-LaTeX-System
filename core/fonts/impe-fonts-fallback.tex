@@ -31,7 +31,7 @@
 
 \cs_generate_variant:Nn \prop_if_in:NnF { NVF }
 \cs_generate_variant:Nn \seq_gput_right:Nn { NV }
-\cs_generate_variant:Nn \prop_gput:Nnn { NVV, NVn, NnV }
+\cs_generate_variant:Nn \prop_gput:Nnn { NVV, NVn, NnV, NVx }
 \cs_generate_variant:Nn \prop_get:NnNTF { NVNTF }
 
 % Keep the actual Writing Profile independent of the pack used to draw it.
@@ -307,21 +307,19 @@
           \__xeCJK_select_fallback_font:Nnnn
         \cs_set_protected:Npn \__xeCJK_select_fallback_font:Nnnn ##1##2##3##4
           {
-            \prop_get:NnNT
-              \g__writing_fallback_family_revision_prop {##3} \l_tmpa_tl
+            % xeCJK's selector receives its own resolved NFSS family,
+            % not necessarily our registered Writing family name. Track
+            % a global chain generation per cached font control instead.
+            \tl_set:Nx \l_tmpb_tl {\cs_to_str:N ##1}
+            \prop_get:NVNT \g__writing_fallback_cache_revision_prop
+              \l_tmpb_tl \l_tmpc_tl
               {
-                \tl_set:Nx \l_tmpb_tl {\cs_to_str:N ##1}
-                \prop_get:NVNT
-                  \g__writing_fallback_cache_revision_prop
-                  \l_tmpb_tl \l_tmpc_tl
-                  {
-                    \str_if_eq:VVF \l_tmpa_tl \l_tmpc_tl
-                      { \cs_undefine:N ##1 }
-                  }
-                \prop_gput:NVV
-                  \g__writing_fallback_cache_revision_prop
-                  \l_tmpb_tl \l_tmpa_tl
+                \int_compare:nNnF {\l_tmpc_tl} =
+                  {\g__writing_fallback_revision_int}
+                  { \cs_undefine:N ##1 }
               }
+            \prop_gput:NVx \g__writing_fallback_cache_revision_prop
+              \l_tmpb_tl {\int_use:N \g__writing_fallback_revision_int}
             \__writing_base_xecjk_select_fallback_font:Nnnn
               ##1{##2}{##3}{##4}
           }
