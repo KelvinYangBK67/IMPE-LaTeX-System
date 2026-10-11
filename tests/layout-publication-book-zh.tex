@@ -1,0 +1,18 @@
+% Check ISO B5 book geometry, typography and chapter/plain page number.
+\documentclass[lang=zh]{impebook}
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{176mm}
+\IMPECheckDim{\paperheight}{250mm}
+\IMPECheckDim{\textwidth}{123mm}
+\IMPECheckDim{\textheight}{196mm}
+\begin{document}
+\makeatletter
+\IMPECheckDim{\f@size pt}{10.5pt}
+\makeatother
+\IMPECheckDim{\baselineskip}{16.5pt}
+\chapter{First}
+第一章的內文。
+\chapter{Second}
+第二章的內文。
+\typeout{IMPE-TEST-LAYOUT-PUBLICATION-BOOK-ZH-PASS}
+\end{document}

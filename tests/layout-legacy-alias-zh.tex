@@ -1,0 +1,10 @@
+% Historical _zh class also resolves its appropriate old default.
+\documentclass{impeart_zh}
+\UseLegacyLayout
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{210mm}
+\IMPECheckDim{\textwidth}{158mm}
+\begin{document}
+An old class wrapper.
+\typeout{IMPE-TEST-LAYOUT-LEGACY-ALIAS-ZH-PASS}
+\end{document}

@@ -1,0 +1,25 @@
+% 1.0.5 legacy defaults for impebook, zh; new canonical default was applied first.
+\documentclass[lang=zh]{impebook}
+\UseLegacyLayout
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{210mm}
+\IMPECheckDim{\paperheight}{297mm}
+\IMPECheckDim{\textwidth}{150mm}
+\IMPECheckDim{\textheight}{245mm}
+\makeatletter
+\IMPECheckDim{\f@size pt}{10pt}
+\makeatother
+\makeatletter
+\def\IMPEExpectedLegacyHead{legacy-running}
+\ifx\NextHeaderStyleText\IMPEExpectedLegacyHead\else
+  \PackageError{layout-test}{Wrong legacy book header style}{}
+\fi
+\ifdim\headrulewidth=.4pt\else
+  \PackageError{layout-test}{Legacy running head rule not restored}{}
+\fi
+\makeatother
+\begin{document}
+\chapter{Old chapters}
+A paragraph under historical defaults.
+\typeout{IMPE-TEST-LAYOUT-LEGACY-BOOK-ZH-PASS}
+\end{document}

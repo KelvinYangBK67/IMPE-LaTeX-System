@@ -6,6 +6,25 @@ All notable versioned changes to IMPE LaTeX System are documented in this file.
 
 For changes since the latest versioned repository state, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
+## [1.0.6] - 2026-10-11
+
+Internal source snapshot for the publication-first Layout redesign (#22, PR #25). This is a versioned source milestone, not a formal CTAN/GitHub distribution. The English, German and Traditional Chinese manuals and canonical Showcase (TeX and tracked PDFs) remain at their previously published editions pending a future publication pass.
+
+### Layout defaults
+* Book (`impebook`, `lang=en`/`zh`): ISO B5 (176 × 250 mm), 19 mm inner / 31 mm outer / 3 mm binding offset and 22 mm top / 32 mm bottom margins; publication-oriented body sizes, heading scale and paragraph rhythm. Even/odd running heads and centered footer page numbers, including chapter openings; intentionally blank pages remain empty.
+* Article (`impeart`): A4 with 29 mm side, 28 mm top and 32 mm bottom margins; no default running head, centered footer number, language-calibrated typography.
+* Report (`impereport`): independent A4 presets instead of the article defaults, 31 mm left / 29 mm right / 29 mm top / 34 mm bottom; report running head and centered footer number.
+* Beamer (`impebeamer`): clean academic theme and 16:9 default. An explicit native `aspectratio` option remains authoritative.
+* English and Chinese text use distinct type sizes, baseline skips, heading sizes, paragraph indents and paragraph spacing. Explicit native class font-size options remain available.
+
+### API and compatibility
+* Added `\UseLegacyLayout` (preamble-only): automatically restores the 1.0.5 layout profile matching the active class and `lang`, including historical geometry, body and footnote sizing, heading styles, line stretch, running heads, chapter-opening page styles, and Beamer Madrid/4:3 defaults where no explicit aspect ratio was chosen.
+* Preserved the existing `\LayoutSetup`, `\LayoutSet`, `LayoutScope`, `\UseLayout`, `\HeaderStyle`, class options and legacy component IDs. Previously valid public API retains its meaning; visual PDF appearance and pagination may evolve between source versions.
+* IMPE continues to load `geometry` and `fancyhdr` for paper layouts. Native `\geometry`, `\fancyhead`/`\fancyfoot` and other user overrides issued after the selected preset take precedence; Beamer uses its native customization APIs. Legacy restoration does not guarantee byte-identical historical PDFs.
+
+### Validation and publication status
+* Added publication geometry/typography and full legacy-profile regressions for the four classes, both languages, Beamer explicit aspect ratios, native geometry overrides and `_zh` aliases. GitHub Actions validates on Linux and Windows.
+* Synchronized the bilingual `docs/` subsystem references, READMEs, class/package metadata and VERSION. No changes to manual/Showcase sources or PDFs, no new Git tag, GitHub Release or formal distribution packaging validation in this source-preparation step.
 ## [1.0.5] - 2026-10-11
 
 Internal source snapshot for the font/writing overhaul in merged PR #23; not yet a formal distribution release. Manuals and canonical showcase (both sources and tracked PDFs) intentionally remain on their previously published edition until formal publication.

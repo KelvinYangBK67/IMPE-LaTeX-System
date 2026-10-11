@@ -1,48 +1,128 @@
-% Centralized public layout-preset catalog.
-% Only public presets are registered here.
+% Centralized public layout presets: curated publication defaults.
+% Historical component ids remain available for custom legacy presets.
 
 \LayoutPresetRegister{
   id = zh_doc,
   targets = { article,report },
-  page = page_a4_26mm,
-  text = text_zh
-}
-
-\LayoutPresetRegister{
-  id = report,
-  targets = { report },
-  page = page_a4_26mm,
-  text = text_zh
+  page = page_article_publication,
+  text = text_article_zh_publication,
+  head = head_article_publication
 }
 
 \LayoutPresetRegister{
   id = en_doc,
   targets = { article,report },
-  page = page_a4_en_doc_145mm,
-  text = text_en_doc
+  page = page_article_publication,
+  text = text_article_en_publication,
+  head = head_article_publication
+}
+
+\LayoutPresetRegister{
+  id = zh_report,
+  targets = { report },
+  page = page_report_publication,
+  text = text_report_zh_publication,
+  head = head_report_publication
+}
+
+\LayoutPresetRegister{
+  id = en_report,
+  targets = { report },
+  page = page_report_publication,
+  text = text_report_en_publication,
+  head = head_report_publication
+}
+
+% The historical 'report' id remains a Chinese-report compatibility alias.
+\LayoutPresetRegister{
+  id = report,
+  targets = { report },
+  page = page_report_publication,
+  text = text_report_zh_publication,
+  head = head_report_publication
 }
 
 \LayoutPresetRegister{
   id = zh_book,
   targets = { book,report },
-  page = page_a4_book,
-  text = text_zh,
-  head = head_fancy_chapter,
+  page = page_book_publication,
+  text = text_book_zh_publication,
+  head = head_book_publication,
   book = { book_openright, book_blankpage_empty }
 }
 
 \LayoutPresetRegister{
   id = en_book,
   targets = { book,report },
-  page = page_a4_en_book_145mm,
-  text = text_en_book,
-  head = head_fancy_chapter,
+  page = page_book_publication,
+  text = text_book_en_publication,
+  head = head_book_publication,
   book = { book_openright, book_blankpage_empty }
 }
 
 \LayoutPresetRegister{
   id = beamer,
   targets = { beamer },
+  slides = { slides_academic_clean, slides_impe_helpers }
+}
+
+% Optional curated alternative; direct Beamer native theme commands remain usable.
+\LayoutPresetRegister{
+  id = beamer_zh,
+  targets = { beamer },
+  slides = { slides_academic_clean_zh, slides_impe_helpers }
+}
+
+% Legacy geometry/typography selections, for explicit migration of old PDFs.
+\LayoutPresetRegister{
+  id = legacy_zh_doc,
+  targets = { article,report },
+  page = page_a4_26mm,
+  text = text_legacy_zh_doc,
+  head = head_legacy_plain
+}
+\LayoutPresetRegister{
+  id = legacy_en_doc,
+  targets = { article,report },
+  page = page_a4_en_doc_145mm,
+  text = text_legacy_en_doc,
+  head = head_legacy_plain
+}
+\LayoutPresetRegister{
+  id = legacy_zh_book,
+  targets = { book,report },
+  page = page_a4_book,
+  text = text_legacy_zh_book,
+  head = head_legacy_book,
+  book = { book_openright, book_blankpage_empty }
+}
+\LayoutPresetRegister{
+  id = legacy_en_book,
+  targets = { book,report },
+  page = page_a4_en_book_145mm,
+  text = text_legacy_en_book,
+  head = head_legacy_book,
+  book = { book_openright, book_blankpage_empty }
+}
+\LayoutPresetRegister{
+  id = legacy_beamer,
+  targets = { beamer },
   text = text_beamer_dense,
-  slides = { slides_madrid_nav, slides_impe_helpers }
+  slides = { slides_legacy_beamer_geometry, slides_madrid_nav, slides_impe_helpers }
+}
+
+% Report was an alias of the article geometry and typography in 1.0.5.
+\LayoutPresetRegister{
+  id = legacy_zh_report,
+  targets = { report },
+  page = page_a4_26mm,
+  text = text_legacy_zh_doc,
+  head = head_legacy_plain
+}
+\LayoutPresetRegister{
+  id = legacy_en_report,
+  targets = { report },
+  page = page_a4_en_doc_145mm,
+  text = text_legacy_en_doc,
+  head = head_legacy_plain
 }

@@ -1,0 +1,10 @@
+% A native explicit ratio overrides the historical Beamer 4:3 default.
+\documentclass[lang=zh,aspectratio=169]{impebeamer}
+\UseLegacyLayout
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{160mm}
+\IMPECheckDim{\paperheight}{90mm}
+\begin{document}
+\begin{frame}{Explicit aspect}Retained.\end{frame}
+\typeout{IMPE-TEST-LAYOUT-LEGACY-BEAMER-EXPLICIT-PASS}
+\end{document}

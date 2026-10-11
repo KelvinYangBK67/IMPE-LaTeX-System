@@ -2,7 +2,7 @@
 
 [繁體中文](FEATURES-zh.md)
 
-## Feature API policy (1.0.4)
+## Feature API policy (established in 1.0.4; current in 1.0.6)
 
 A feature may be a **curated package stack** rather than a new language for
 existing LaTeX constructs. New documents should use the native environments
@@ -11,7 +11,7 @@ The legacy `Table*`, `NiceBooktable*`, `OneImage*`, `PanelFigure*`,
 and `ExampleBlock` interfaces remain available for IMPE 1.x compatibility;
 they are no longer recommended for new work. No existing arguments or feature
 ids have been removed. The `lists_envs` feature is compatibility-only.
-Layout presets still configure book running heads in 1.0.4; their eventual
+Layout presets configure class-specific headers in 1.0.6; their
 ownership transfer to the `headers` feature is tracked separately in #16.
 
 ## Structure

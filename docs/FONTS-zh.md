@@ -2,7 +2,7 @@
 
 [English](FONTS.md)
 
-## 1.0.5：Writing Profile 與字體資源
+## Writing Profile 與字體資源（1.0.5 引入，1.0.6 繼續使用）
 
 簡單選擇既有 preset 仍推薦 \UseFont{preset}（包含全部舊版 ID）。
 進階介面將 **Unicode Writing Profile**（文字路由及 Renderer 行為）與
@@ -541,7 +541,7 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 標準公開字體稽核位於 `manual/showcase/impe-showcase.tex`；聚焦的自動檢查則位於
 `tests/`。
 
-## 局部字體與字體面解析（1.0.5）
+## 局部字體與字體面解析（1.0.5 API，1.0.6 繼續支援）
 
 \UseFont{id}[local|global] 的既有載入／啟用模型與家族捷徑完整保留。
 1.0.5 的 \Font{名稱}[覆寫]{內容} 不僅支援舊家族，亦可使用

@@ -1,0 +1,13 @@
+% Check A4 report defaults (distinct from article).
+\documentclass[lang=en]{impereport}
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{210mm}
+\IMPECheckDim{\paperheight}{297mm}
+\IMPECheckDim{\textwidth}{150mm}
+\IMPECheckDim{\textheight}{234mm}
+\begin{document}
+\IMPECheckDim{\baselineskip}{15.5pt}
+\chapter{Example}
+Example paragraph.
+\typeout{IMPE-TEST-LAYOUT-PUBLICATION-REPORT-EN-PASS}
+\end{document}

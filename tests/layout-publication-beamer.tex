@@ -1,0 +1,11 @@
+% Beamer should choose a 16:9 academic theme without explicit class options.
+\documentclass{impebeamer}
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{160mm}
+\IMPECheckDim{\paperheight}{90mm}
+\begin{document}
+\begin{frame}{Heading}
+Slide body.
+\end{frame}
+\typeout{IMPE-TEST-LAYOUT-PUBLICATION-BEAMER-PASS}
+\end{document}

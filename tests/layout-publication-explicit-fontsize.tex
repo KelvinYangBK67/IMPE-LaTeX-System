@@ -1,0 +1,9 @@
+% Explicit base class size must survive IMPE's typography defaults.
+\documentclass[lang=zh,12pt]{impeart}
+\input{tests/layout-publication-assert.tex}
+\begin{document}
+\makeatletter
+\IMPECheckDim{\f@size pt}{12pt}
+\makeatother
+\typeout{IMPE-TEST-LAYOUT-PUBLICATION-EXPLICIT-FONTSIZE-PASS}
+\end{document}

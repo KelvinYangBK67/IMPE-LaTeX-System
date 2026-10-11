@@ -2,7 +2,7 @@
 
 [繁體中文](FONTS-zh.md)
 
-## 1.0.5: Writing Profiles and font resources
+## Writing Profiles and font resources (introduced in 1.0.5; current in 1.0.6)
 
 The recommended simple interface is still \UseFont{preset} (including all
 historical IDs). The advanced interface separates a **Unicode Writing Profile**
@@ -598,7 +598,7 @@ The canonical public font audit is
 `manual/showcase/impe-showcase.tex`. Focused automated checks live under
 `tests/`.
 
-## Local font selection and face resolution (1.0.5)
+## Local font selection and face resolution (1.0.5 API, still supported in 1.0.6)
 
 The original \UseFont{id}[local|global] activation model and legacy
 local family commands remain available. Since 1.0.5, \Font{id}[overrides]{text}

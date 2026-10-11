@@ -52,6 +52,20 @@ and existing class/font routing remain part of the supported 1.x contract.
 Automatic missing-glyph fallback is intentionally limited to CJK and xeCJK.
 The full syntax is in [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md).
 
+## Layout defaults and visual compatibility (1.0.6)
+
+The public layout commands, class options, preset selectors and their
+documented meanings remain supported throughout 1.x. Default page geometry,
+font size, baseline rhythm, headings, running heads and page numbering may
+change as layouts improve; visual page-for-page PDF compatibility is **not**
+part of the 1.x contract.
+
+Use `\UseLegacyLayout` immediately after the document class to restore
+the 1.0.5 layout parameters for the active book, article, report or Beamer
+class and the selected `lang=en`/`lang=zh` default. Later native LaTeX
+overrides take precedence; external font/package versions and byte-for-byte
+historical output are not pinned. The 1.0.6 defaults and exact dimensions
+are documented in [LAYOUTS.md](LAYOUTS.md).
 This internal source version does **not** constitute a refreshed manual/showcase
 publication. Their sources and tracked PDFs are deliberately deferred; formal
 release bundles require that documentation milestone to be completed.

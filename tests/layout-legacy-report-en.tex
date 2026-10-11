@@ -1,0 +1,21 @@
+% 1.0.5 legacy defaults for impereport, en; new canonical default was applied first.
+\documentclass[lang=en]{impereport}
+\UseLegacyLayout
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{210mm}
+\IMPECheckDim{\paperheight}{297mm}
+\IMPECheckDim{\textwidth}{145mm}
+\IMPECheckDim{\textheight}{232mm}
+\makeatletter
+\IMPECheckDim{\f@size pt}{10pt}
+\makeatother
+\makeatletter
+\ifx\ps@plain\IMPELegacyBasePlainStyle\else
+  \PackageError{layout-test}{Base plain page style not restored}{}
+\fi
+\makeatother
+\begin{document}
+\chapter{Old chapters}
+A paragraph under historical defaults.
+\typeout{IMPE-TEST-LAYOUT-LEGACY-REPORT-EN-PASS}
+\end{document}

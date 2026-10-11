@@ -14,6 +14,33 @@
     {\RequirePackage[#1]{geometry}}%
 }
 
+% Snapshot the base-class typography *before* publication defaults mutate it.
+% A legacy profile can then truly restore the 1.0.5 font/heading layer.
+\let\IMPELegacyBaseNormalSize\normalsize
+\let\IMPELegacyBaseFootnoteSize\footnotesize
+\let\IMPELegacyBaseSection\section
+\let\IMPELegacyBaseSubsection\subsection
+\let\IMPELegacyBasePlainStyle\ps@plain
+\@ifundefined{@makechapterhead}{}{%
+  \let\IMPELegacyBaseMakeChapterHead\@makechapterhead
+  \let\IMPELegacyBaseMakesChapterHead\@makeschapterhead
+}
+\newcommand{\NextLayoutRestoreLegacyTypography}{%
+  \let\normalsize\IMPELegacyBaseNormalSize
+  \let\footnotesize\IMPELegacyBaseFootnoteSize
+  \let\section\IMPELegacyBaseSection
+  \let\subsection\IMPELegacyBaseSubsection
+  \@ifundefined{IMPELegacyBaseMakeChapterHead}{}{%
+    \let\@makechapterhead\IMPELegacyBaseMakeChapterHead
+    \let\@makeschapterhead\IMPELegacyBaseMakesChapterHead
+  }%
+  \normalsize
+}
+\newcommand{\NextLayoutRestoreLegacyPlainStyle}{%
+  \let\ps@plain\IMPELegacyBasePlainStyle
+  \pagestyle{plain}%
+}
+
 \newcommand{\NextLayoutPageOneIn}{
   \if@twoside
     \NextLayoutSetGeometry{a4paper,margin=1in,bindingoffset=0.4cm}
@@ -261,4 +288,228 @@
       { \clist_map_inline:nn {#1} { \__layout_apply_component:n {##1} } }
   }
 
+\ExplSyntaxOff
+
+
+% --------------------------------------------------------------------------
+% Publication-oriented defaults. Legacy components above remain available.
+% These components set defaults only; native geometry/fancyhdr commands
+% issued later in the preamble are deliberately left in charge.
+% --------------------------------------------------------------------------
+\makeatletter
+
+\newcommand{\NextLayoutTypeDefaults}[4]{%
+  \RequirePackage{setspace}%
+  \setstretch{1}%
+  % Respect explicit 11pt/12pt base-class options: only replace the 10pt
+  % class default with the curated IMPE font and baseline dimensions.
+  \ifnum\@ptsize=\z@
+    \renewcommand{\normalsize}{%
+      \@setfontsize\normalsize{#1}{#2}%
+      \abovedisplayskip 9pt plus 2pt minus 4pt%
+      \belowdisplayskip \abovedisplayskip
+      \abovedisplayshortskip 0pt plus 2pt%
+      \belowdisplayshortskip 5pt plus 2pt minus 2pt%
+    }%
+    \renewcommand{\footnotesize}{\@setfontsize\footnotesize{#3}{#4}}%
+    \normalsize
+  \fi
+}
+\newcommand{\NextLayoutBookSections}[2]{%
+  \renewcommand{\section}{\@startsection{section}{1}{\z@}%
+    {-3.2ex \@plus -1ex \@minus -.2ex}{1.8ex \@plus .2ex}%
+    {\normalfont\bfseries\fontsize{#1}{17pt}\selectfont}}%
+  \renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}%
+    {-2.6ex \@plus -.8ex \@minus -.2ex}{1.2ex \@plus .2ex}%
+    {\normalfont\bfseries\fontsize{#2}{15pt}\selectfont}}%
+}
+\newcommand{\NextLayoutPaperSections}[2]{%
+  \renewcommand{\section}{\@startsection{section}{1}{\z@}%
+    {-3ex \@plus -1ex \@minus -.2ex}{1.4ex \@plus .2ex}%
+    {\normalfont\bfseries\fontsize{#1}{18pt}\selectfont}}%
+  \renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}%
+    {-2.5ex \@plus -.8ex \@minus -.2ex}{1ex \@plus .2ex}%
+    {\normalfont\bfseries\fontsize{#2}{16pt}\selectfont}}%
+}
+\newcommand{\NextLayoutBookChapterHead}{%
+  \def\@makechapterhead##1{%
+    \vspace*{30pt}%
+    {\parindent\z@\raggedright\normalfont
+      \ifnum\c@secnumdepth>\m@ne
+        {\large\@chapapp\space\thechapter\par\nobreak\vskip 12pt}%
+      \fi
+      \interlinepenalty\@M
+      {\fontsize{18pt}{23pt}\selectfont\bfseries ##1\par\nobreak}%
+      \vskip 26pt}}%
+  \def\@makeschapterhead##1{%
+    \vspace*{30pt}%
+    {\parindent\z@\raggedright\normalfont
+      \interlinepenalty\@M
+      {\fontsize{18pt}{23pt}\selectfont\bfseries ##1\par\nobreak}%
+      \vskip 26pt}}%
+}
+\newcommand{\NextLayoutReportChapterHead}{%
+  \def\@makechapterhead##1{%
+    \vspace*{22pt}%
+    {\parindent\z@\raggedright\normalfont
+      \ifnum\c@secnumdepth>\m@ne
+        {\large\@chapapp\space\thechapter\par\nobreak\vskip 10pt}%
+      \fi
+      \interlinepenalty\@M
+      {\fontsize{18pt}{23pt}\selectfont\bfseries ##1\par\nobreak}%
+      \vskip 22pt}}%
+  \def\@makeschapterhead##1{%
+    \vspace*{22pt}%
+    {\parindent\z@\raggedright\normalfont
+      \interlinepenalty\@M
+      {\fontsize{18pt}{23pt}\selectfont\bfseries ##1\par\nobreak}%
+      \vskip 22pt}}%
+}
+\makeatother
+
+\ExplSyntaxOn
+
+\cs_new_protected:cpn { __layout_component_page_book_publication: }
+  {
+    \NextLayoutSetGeometry{
+      b5paper,inner=19mm,outer=31mm,top=22mm,bottom=32mm,
+      bindingoffset=3mm
+    }
+  }
+\cs_new_protected:cpn { __layout_component_page_article_publication: }
+  { \NextLayoutSetGeometry{a4paper,left=29mm,right=29mm,top=28mm,bottom=32mm} }
+\cs_new_protected:cpn { __layout_component_page_report_publication: }
+  { \NextLayoutSetGeometry{a4paper,left=31mm,right=29mm,top=29mm,bottom=34mm} }
+
+\cs_new_protected:cpn { __layout_component_text_book_en_publication: }
+  {
+    \NextLayoutTypeDefaults{10.5pt}{14.5pt}{9pt}{12pt}
+    \setlength{\parindent}{1.3em}
+    \setlength{\parskip}{0pt}
+    \NextLayoutBookSections{13.5pt}{11.5pt}
+    \NextLayoutBookChapterHead
+  }
+\cs_new_protected:cpn { __layout_component_text_book_zh_publication: }
+  {
+    \use:c { __layout_component_text_zh: }
+    \NextLayoutTypeDefaults{10.5pt}{16.5pt}{9pt}{13.5pt}
+    \setlength{\parindent}{2em}
+    \setlength{\parskip}{0pt}
+    \NextLayoutBookSections{14pt}{12pt}
+    \NextLayoutBookChapterHead
+  }
+\cs_new_protected:cpn { __layout_component_text_article_en_publication: }
+  {
+    \NextLayoutTypeDefaults{11pt}{15.5pt}{9pt}{12pt}
+    \setlength{\parindent}{1.3em}
+    \setlength{\parskip}{0pt}
+    \NextLayoutPaperSections{14pt}{12pt}
+  }
+\cs_new_protected:cpn { __layout_component_text_article_zh_publication: }
+  {
+    \use:c { __layout_component_text_zh: }
+    \NextLayoutTypeDefaults{11pt}{17.5pt}{9pt}{13.5pt}
+    \setlength{\parindent}{2em}
+    \setlength{\parskip}{0pt}
+    \NextLayoutPaperSections{15pt}{12.5pt}
+  }
+\cs_new_protected:cpn { __layout_component_text_report_en_publication: }
+  {
+    \NextLayoutTypeDefaults{11pt}{15.5pt}{9pt}{12pt}
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{0.35em}
+    \NextLayoutPaperSections{13.5pt}{12pt}
+    \NextLayoutReportChapterHead
+  }
+\cs_new_protected:cpn { __layout_component_text_report_zh_publication: }
+  {
+    \use:c { __layout_component_text_zh: }
+    \NextLayoutTypeDefaults{11pt}{17.5pt}{9pt}{13.5pt}
+    \setlength{\parindent}{2em}
+    \setlength{\parskip}{0pt}
+    \NextLayoutPaperSections{14pt}{12.5pt}
+    \NextLayoutReportChapterHead
+  }
+
+\cs_new_protected:cpn { __layout_component_head_book_publication: }
+  { \UseFeature{headers} \HeaderStyle{running} }
+\cs_new_protected:cpn { __layout_component_head_article_publication: }
+  { \UseFeature{headers} \HeaderStyle{minimal} }
+\cs_new_protected:cpn { __layout_component_head_report_publication: }
+  { \UseFeature{headers} \HeaderStyle{report} }
+
+\cs_new_protected:cpn { __layout_component_slides_academic_clean: }
+  {
+    \mode<presentation>
+    \usetheme{default}
+    \usefonttheme{professionalfonts}
+    \setbeamersize{text~margin~left=9mm,text~margin~right=9mm}
+    \setbeamertemplate{navigation~symbols}{}
+    \setbeamertemplate{headline}{}
+    \setbeamertemplate{footline}{
+      \leavevmode\hbox to \paperwidth{\hfill
+        {\usebeamerfont{page~number~in~head/foot}\insertframenumber
+          \hspace*{3mm}}}
+      \vskip 2mm
+    }
+    \setbeamerfont{normal~text}{size*={12pt}{16.5pt}}
+    \setbeamerfont{title}{family=\sffamily,series=\bfseries,size*={24pt}{28pt}}
+    \setbeamerfont{frametitle}{family=\sffamily,series=\bfseries,size*={17pt}{21pt}}
+    \setbeamerfont{subtitle}{family=\sffamily,series=\mdseries,size*={14pt}{18pt}}
+    \setbeamerfont{page~number~in~head/foot}{size=\scriptsize}
+  }
+\cs_new_protected:cpn { __layout_component_slides_academic_clean_zh: }
+  {
+    \use:c { __layout_component_slides_academic_clean: }
+    \setbeamerfont{normal~text}{size*={12pt}{18.5pt}}
+  }
+
+\ExplSyntaxOff
+
+
+% 1.0.5 complete legacy profile: reset the class changes made by the new
+% defaults, then reapply the historical layout components.
+\ExplSyntaxOn
+\cs_new_protected:cpn { __layout_component_text_legacy_en_doc: }
+  {
+    \NextLayoutRestoreLegacyTypography
+    \use:c { __layout_component_text_en_doc: }
+  }
+\cs_new_protected:cpn { __layout_component_text_legacy_zh_doc: }
+  {
+    \NextLayoutRestoreLegacyTypography
+    \use:c { __layout_component_text_zh: }
+  }
+\cs_new_protected:cpn { __layout_component_text_legacy_en_book: }
+  {
+    \NextLayoutRestoreLegacyTypography
+    \use:c { __layout_component_text_en_book: }
+  }
+\cs_new_protected:cpn { __layout_component_text_legacy_zh_book: }
+  {
+    \NextLayoutRestoreLegacyTypography
+    \use:c { __layout_component_text_zh: }
+  }
+\cs_new_protected:cpn { __layout_component_head_legacy_plain: }
+  { \NextLayoutRestoreLegacyPlainStyle }
+\cs_new_protected:cpn { __layout_component_head_legacy_book: }
+  { \UseFeature{headers} \HeaderStyle{legacy-running} }
+
+\cs_new_protected:cpn { __layout_component_slides_legacy_beamer_geometry: }
+  {
+    % The Beamer class's 1.0.5 default was 4:3. Respect an explicitly
+    % requested native aspectratio, even when opting into the old style.
+    \cs_if_exist:NTF \ifIMPEClassAspectSeen
+      {
+        \ifIMPEClassAspectSeen
+        \else
+          \geometry{paperwidth=128mm,paperheight=96mm}
+        \fi
+      }
+      { \geometry{paperwidth=128mm,paperheight=96mm} }
+    \setbeamerfont{normal~text}{size=\normalsize}
+    \setbeamerfont{title}{size=\Large}
+    \setbeamerfont{frametitle}{size=\large}
+    \setbeamerfont{subtitle}{size=\normalsize}
+  }
 \ExplSyntaxOff

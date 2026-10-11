@@ -1,0 +1,12 @@
+% Native geometry always overrides curated preset in the preamble.
+\documentclass{impebook}
+\geometry{a5paper,inner=25mm,outer=20mm,top=23mm,bottom=28mm,bindingoffset=0mm}
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{148mm}
+\IMPECheckDim{\paperheight}{210mm}
+\IMPECheckDim{\textwidth}{103mm}
+\IMPECheckDim{\textheight}{159mm}
+\begin{document}
+\chapter{Native geometry}
+\typeout{IMPE-TEST-LAYOUT-PUBLICATION-NATIVE-GEOMETRY-PASS}
+\end{document}

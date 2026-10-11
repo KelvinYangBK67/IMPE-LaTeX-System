@@ -1,0 +1,10 @@
+% 1.0.5 Beamer was 4:3 with Madrid.
+\documentclass{impebeamer}
+\UseLegacyLayout
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{128mm}
+\IMPECheckDim{\paperheight}{96mm}
+\begin{document}
+\begin{frame}{Historical slide}Classic Madrid style.\end{frame}
+\typeout{IMPE-TEST-LAYOUT-LEGACY-BEAMER-PASS}
+\end{document}

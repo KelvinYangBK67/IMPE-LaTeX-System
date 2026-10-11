@@ -23,7 +23,7 @@ index 會載入 hyperlinks。`\Term` 依 key 記錄首次出現；不同 key 可
 允許 shell 執行時，imakeidx 會自動傳入相同模組選項。
 一般自訂 `\index` 封裝仍由 imakeidx/hyperref 處理；上述位置機制用於 `\Term`。
 
-## 1.0.4 Feature 介面原則
+## Feature 介面原則（1.0.4 確立，1.0.6 繼續適用）
 
 Feature 可以只負責**按功能載入成熟套件**，不必重新定義原生 LaTeX
 語法。新文件使用 `tables`、`image`、`drawing` 準備相關套件後，
@@ -31,7 +31,7 @@ Feature 可以只負責**按功能載入成熟套件**，不必重新定義原�
 `Table*`、`NiceBooktable*`、`OneImage*`、`PanelFigure*` 和
 `ExampleBlock` 仍保留原有參數與功能，維持 IMPE 1.x 相容；
 不再推薦於新文件使用。原有 feature id 均未刪除。
-`lists_envs` 僅作相容用途。書籍 Layout 的頁眉目前仍沿用既有行為；
+`lists_envs` 僅作相容用途。1.0.6 Book Layout 已採用新的頁眉及頁腳頁碼默認；
 日後將頁眉統一交予 `headers` 的計畫另見 #16。
 
 ## 結構

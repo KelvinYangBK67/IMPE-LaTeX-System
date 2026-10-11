@@ -23,3 +23,51 @@
 \else
   \subimport{./}{impe-layout-config.tex}
 \fi
+
+
+% Restore the documented 1.0.5 default layout for the active class/language.
+% This is a single explicit preamble opt-in; subsequent native overrides win.
+\ExplSyntaxOn
+\tl_new:N \l__impe_legacy_class_tl
+\tl_new:N \l__impe_legacy_language_tl
+\bool_new:N \g__impe_legacy_selected_bool
+\NewDocumentCommand{\UseLegacyLayout}{}
+  {
+    \bool_if:NF \g__impe_legacy_selected_bool
+      {
+        \tl_set:Nx \l__impe_legacy_class_tl { \LayoutCurrentClass }
+        \tl_set:Nx \l__impe_legacy_language_tl { \NextSystemUiTag }
+        \str_if_eq:VnF \l__impe_legacy_language_tl { zh }
+          { \tl_set:Nn \l__impe_legacy_language_tl { en } }
+        \str_case:VnF \l__impe_legacy_class_tl
+          {
+            {book}
+              {
+                \exp_args:Nx \UseLayout
+                  { legacy_\l__impe_legacy_language_tl _book }
+              }
+            {article}
+              {
+                \exp_args:Nx \UseLayout
+                  { legacy_\l__impe_legacy_language_tl _doc }
+              }
+            {report}
+              {
+                \exp_args:Nx \UseLayout
+                  { legacy_\l__impe_legacy_language_tl _report }
+              }
+            {beamer}
+              { \UseLayout{legacy_beamer} }
+          }
+          {
+            \PackageError{impe-layout}
+              {Legacy~layout~unsupported~for~class~\LayoutCurrentClass}
+              {Use~book,~article,~report~or~beamer.}
+          }
+        \bool_gset_true:N \g__impe_legacy_selected_bool
+      }
+  }
+\ExplSyntaxOff
+\makeatletter
+\@onlypreamble\UseLegacyLayout
+\makeatother

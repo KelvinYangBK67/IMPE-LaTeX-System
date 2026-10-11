@@ -6,6 +6,25 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 最新版本化倉庫狀態之後的變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
+## [1.0.6] - 2026-10-11
+
+本版為 #22／PR #25 的出版級 Layout 重構原始碼快照，尚非正式 CTAN／GitHub 發佈。英文、德文、繁體中文手冊及標準 Showcase 的 TeX 原始碼與追蹤中的 PDF 均繼續沿用上一公開版本，留待正式發佈時同步更新。
+
+### 排版默認值
+* Book（`impebook`、中英文）：預設 ISO B5（176 × 250mm），內側 19mm、外側 31mm、裝訂額外 3mm、上 22mm、下 32mm；調整正文、章節標題及段落節奏。奇偶頁書名／章名頁眉，頁碼在頁腳中央；章首頁保留頁碼，補白頁維持空白。
+* Article（`impeart`）：A4，左右 29mm、上 28mm、下 32mm；默認不設頁眉，頁碼置於頁腳中央，正文依語言調整。
+* Report（`impereport`）：改為獨立於 Article 的 A4 設定，左 31mm、右 29mm、上 29mm、下 34mm；報告頁眉及頁腳中央頁碼。
+* Beamer（`impebeamer`）：簡潔學術主題，預設 16:9；明確指定原生 `aspectratio` 時尊重使用者選擇。
+* 中英文正文分別校準字號、實際基線距、標題級別與首行縮排及段間距；明確指定的原生 Class 字號選項仍有效。
+
+### API 與相容性
+* 新增導言區 `\UseLegacyLayout`：依當前 Class 及 `lang` 一鍵恢復 1.0.5 Layout，涵蓋紙張版心、正文與腳註字號、章節標題、行距、頁眉頁腳、章首頁及 Beamer Madrid／4:3 默認（使用者顯式設定其他比例時仍以指定值為準）。
+* 保留 `\LayoutSetup`、`\LayoutSet`、`LayoutScope`、`\UseLayout`、`\HeaderStyle`、Class 選項及舊 Component ID。1.x 承諾既有公開 API 的可用性與語義，但不保證跨版本的 PDF 外觀及分頁完全相同。
+* 紙本 Layout 自動載入 `geometry`、`fancyhdr`，允許在預設之後直接使用 `\geometry`、`\fancyhead`／`\fancyfoot` 等原生覆寫；Beamer 繼續使用原生接口。舊版 Profile 不保證 PDF 位元完全一致。
+
+### 驗證與發佈狀態
+* 新增中英文四類文件的新版版心／文字回歸、舊版 Profile、Beamer 比例、原生覆寫與 `_zh` 相容別名測試；Linux、Windows GitHub Actions 執行。
+* 同步中英文 `docs/` 技術文件、README、Class／Package 版本 metadata 與 VERSION。本次不改三語手冊或 Showcase 的源碼／PDF、不打 tag、不建立 GitHub Release，正式發佈封裝驗證留待日後。
 ## [1.0.5] - 2026-10-11
 
 字體／Writing 架構的內部原始碼版本，已合併 PR #23；尚非正式對外發佈。三語手冊與標準 Showcase 的 TeX 原始碼、追蹤中的 PDF 均刻意保留上一版，待正式發佈時一併修訂與重建。

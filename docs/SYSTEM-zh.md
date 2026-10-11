@@ -117,13 +117,22 @@ checkout 內的文件可載入 package 層原始碼：
 | `impeart_zh` | `zh_doc` | `cmu,shanggu` | 中文 |
 | `impebook` | `en_book` | `cmu` | 英文 |
 | `impebook_zh` | `zh_book` | `cmu,shanggu` | 中文 |
-| `impereport` | `en_doc` | `cmu` | 英文 |
-| `impereport_zh` | `zh_doc` | `cmu,shanggu` | 中文 |
+| `impereport` | `en_report` | `cmu` | 英文 |
+| `impereport_zh` | `zh_report` | `cmu,shanggu` | 中文 |
 | `impebeamer` | `beamer` | `cmu` | 英文 |
-| `impebeamer_zh` | `beamer` | `cmu,shanggu` | 中文 |
+| `impebeamer_zh` | `beamer_zh` | `cmu,shanggu` | 中文 |
 
 Wrapper 載入 `impe` 時會套用這些預設值。若要手動選擇每個 component，請使用標準
 class 加上明確的 `\UseTemplateSet`。
+
+## Layout 與舊版快照（1.0.6）
+
+標準 Layout 預設：Book 採 ISO B5；Article／Report 各有獨立 A4
+版式；Beamer 採簡潔 16:9 學術主題。兩種語言的正文參數不同。
+導言區的 `\UseLegacyLayout` 可按 Class 與語言一鍵恢復 1.0.5
+默認設定；Beamer 在沒有顯式比例時恢復 Madrid／4:3。
+紙本 Layout 已載入 `geometry` 與 `fancyhdr`，用戶可直接以其原生
+命令覆寫。詳見 [Layouts](LAYOUTS-zh.md)。
 
 ## 標題與頁眉狀態
 

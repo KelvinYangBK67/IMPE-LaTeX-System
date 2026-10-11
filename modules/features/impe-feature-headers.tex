@@ -33,16 +33,38 @@
 }
 \@namedef{NextFeatureHeadersStyle@title}{%
   \if@twoside
-    \fancyhead[LE]{\itshape\small\NextFeatureHeaderTitleContent}%
-    \fancyhead[RO]{\itshape\small\NextFeatureHeaderTitleContent}%
-    \fancyfoot[LE]{\small\thepage}%
-    \fancyfoot[RO]{\small\thepage}%
+    \fancyhead[LE,RO]{\itshape\small\NextFeatureHeaderTitleContent}%
   \else
     \fancyhead[C]{\itshape\small\NextFeatureHeaderTitleContent}%
-    \fancyfoot[C]{\small\thepage}%
   \fi
+  \fancyfoot[C]{\small\thepage}%
 }
 \@namedef{NextFeatureHeadersStyle@running}{%
+  \if@twoside
+    \fancyhead[LE]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyhead[RO]{\itshape\small\leftmark}%
+  \else
+    \fancyhead[L]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyhead[R]{\itshape\small\leftmark}%
+  \fi
+  \fancyfoot[C]{\small\thepage}%
+}
+\@namedef{NextFeatureHeadersStyle@classic}{\@nameuse{NextFeatureHeadersStyle@running}}
+\@namedef{NextFeatureHeadersStyle@minimal}{%
+  \fancyfoot[C]{\small\thepage}%
+}
+\@namedef{NextFeatureHeadersStyle@report}{%
+  \if@twoside
+    \fancyhead[LE]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyhead[RO]{\itshape\small\leftmark}%
+  \else
+    \fancyhead[L]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyhead[R]{\itshape\small\leftmark}%
+  \fi
+  \fancyfoot[C]{\small\thepage}%
+}
+\@namedef{NextFeatureHeadersStyle@legacy-running}{%
+  % Exact 1.0.5 defaults: numbers in the running head, no footer.
   \if@twoside
     \fancyhead[LE]{\small\thepage}%
     \fancyhead[RE]{\itshape\small\NextFeatureHeaderTitleContent}%
@@ -53,13 +75,52 @@
     \fancyhead[R]{\small\thepage}%
   \fi
 }
-\@namedef{NextFeatureHeadersStyle@classic}{\@nameuse{NextFeatureHeadersStyle@running}}
+\@namedef{NextFeatureHeadersStyle@legacy-title}{%
+  \if@twoside
+    \fancyhead[LE]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyhead[RO]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyfoot[LE]{\small\thepage}%
+    \fancyfoot[RO]{\small\thepage}%
+  \else
+    \fancyhead[C]{\itshape\small\NextFeatureHeaderTitleContent}%
+    \fancyfoot[C]{\small\thepage}%
+  \fi
+}
+\newcommand{\NextFeatureHeadersLegacyRules}{%
+  \def\IMPELegacyStyleRunning{legacy-running}%
+  \def\IMPELegacyStyleTitle{legacy-title}%
+  \ifx\NextHeaderStyleText\IMPELegacyStyleRunning
+    \renewcommand{\headrulewidth}{0.4pt}%
+  \else
+    \ifx\NextHeaderStyleText\IMPELegacyStyleTitle
+      \renewcommand{\headrulewidth}{0.4pt}%
+    \fi
+  \fi
+}
+\newcommand{\NextFeatureHeadersPlainStyle}{%
+  \fancypagestyle{plain}{%
+    \fancyhf{}%
+    \def\IMPELegacyStyleRunning{legacy-running}%
+    \def\IMPELegacyStyleTitle{legacy-title}%
+    \ifx\NextHeaderStyleText\IMPELegacyStyleRunning
+      % 1.0.5 plain: no header and no page number.
+    \else
+      \ifx\NextHeaderStyleText\IMPELegacyStyleTitle
+        % 1.0.5 plain: no header and no page number.
+      \else
+        \fancyfoot[C]{\small\thepage}%
+      \fi
+    \fi
+    \renewcommand{\headrulewidth}{0pt}%
+    \renewcommand{\footrulewidth}{0pt}%
+  }%
+}
 \newcommand{\NextFeatureHeadersApplyStyle}{%
   \@ifundefined{NextFeatureHeadersStyle@\NextHeaderStyleText}
     {%
       \PackageError{feature-headers}
         {Unknown header style `\NextHeaderStyleText`}
-        {Use `title` or `running`.}%
+        {Use `title`, `running`, `classic`, `minimal` , `report`, `legacy-running` or `legacy-title`.}%
     }
     {\@nameuse{NextFeatureHeadersStyle@\NextHeaderStyleText}}%
 }
@@ -79,14 +140,11 @@
       \renewcommand{\subsubsectionmark}[1]{}%
     }%
   \NextFeatureHeadersApplyStyle
-  \renewcommand{\headrulewidth}{0.4pt}%
+  \renewcommand{\headrulewidth}{0pt}%
   \renewcommand{\footrulewidth}{0pt}%
   \setlength{\headheight}{14pt}%
-  \fancypagestyle{plain}{%
-    \fancyhf{}%
-    \renewcommand{\headrulewidth}{0pt}%
-    \renewcommand{\footrulewidth}{0pt}%
-  }%
+  \NextFeatureHeadersLegacyRules
+  \NextFeatureHeadersPlainStyle
 }
 \makeatother
 

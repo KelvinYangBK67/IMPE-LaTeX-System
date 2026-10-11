@@ -5,9 +5,9 @@
 IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
 multilingual typesetting, and optional document features.
 
-Current source version: `1.0.5` (2026-10-11; internal snapshot, not a formal publication). See [CHANGELOG.md](CHANGELOG.md).
+Current source version: `1.0.6` (2026-10-11; internal snapshot, not a formal publication). See [CHANGELOG.md](CHANGELOG.md).
 
-**Documentation status:** the English, German and Traditional Chinese manuals and the canonical showcase (TeX sources and PDFs) intentionally remain at the prior published edition. Consult the updated [writing/font API reference](docs/USEWRITING-1.0.5.md) and [font reference](docs/FONTS.md) for 1.0.5. The manuals, showcase, PDF rebuild and distributable archives will be synchronized before any formal release.
+**Documentation status:** the English, German and Traditional Chinese manuals and the canonical showcase (TeX sources and PDFs) intentionally remain at the prior published edition. Consult the updated [writing/font API reference](docs/USEWRITING-1.0.5.md) and [font reference](docs/FONTS.md) for the 1.0.5 writing API, still supported in 1.0.6. The manuals, showcase, PDF rebuild and distributable archives will be synchronized before any formal release.
 
 ## Quick Start
 
@@ -40,7 +40,22 @@ analogous `impebook`, `impereport`, `impebeamer`) over the historical `_zh`
 classes. Use `\\LayoutSetup{...}` and `LayoutScope` for document-wide and
 paragraph-local parameters; see [Layouts](docs/LAYOUTS.md).
 
-## Writing and font selection (1.0.5)
+## Layout defaults (1.0.6)
+
+Book defaults to ISO B5; article and report use distinct A4 layouts;
+Beamer defaults to a clean academic 16:9 theme. English and Chinese body
+typography, running heads, footer numbers and chapter-opening pages are
+independently calibrated. Existing public layout API remains available,
+but default PDF pagination is not frozen.
+
+To restore the original 1.0.5 layout of an existing document, add
+`\UseLegacyLayout` directly after the document class, before any other
+layout overrides. It automatically selects the correct language and class.
+Paper classes already load `geometry` and `fancyhdr`; for advanced control
+use native `\geometry{...}` and `\fancyhead{...}` after the defaults.
+See [Layouts](docs/LAYOUTS.md) and [stability policy](docs/STABILITY.md).
+
+## Writing and font selection (introduced in 1.0.5; retained in 1.0.6)
 
 The recommended quick interface for existing registered font presets remains
 \UseFont{preset}. For a separate Unicode Writing Profile and font resource,
