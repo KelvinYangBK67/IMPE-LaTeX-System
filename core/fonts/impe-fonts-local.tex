@@ -4,6 +4,8 @@
 \ExplSyntaxOn
 \prop_new:N \g__writing_named_prop
 \prop_new:N \g__writing_local_cache_prop
+\prop_new:N \g__writing_local_renderer_prop
+\prop_new:N \g__writing_local_offset_prop
 \tl_new:N \l__writing_cache_key_tl
 \tl_new:N \l__writing_cached_command_tl
 \bool_new:N \l__writing_force_global_bool
@@ -47,7 +49,30 @@
       }
       { \__writing_build_local:nn {#1} {#2} }
     \tl_if_blank:VF \l__writing_cached_command_tl
-      { \tl_if_blank:nF {#3} { \use:c { \l__writing_cached_command_tl } {#3} } }
+      {
+        \tl_if_blank:nF {#3}
+          {
+            \prop_get:NVNTF \g__writing_local_renderer_prop
+              \l__writing_cached_command_tl \l_tmpa_tl
+              {
+                \str_case:VnF \l_tmpa_tl
+                  {
+                    {egyptian} { \xsrEgyptianText{#3} }
+                    {khitan_small} { \xsrKhitanText{#3} }
+                  }
+                  { \use:c { \l__writing_cached_command_tl } {#3} }
+              }
+              {
+                \prop_get:NVNTF \g__writing_local_offset_prop
+                  \l__writing_cached_command_tl \l_tmpa_tl
+                  {
+                    \use:c { \l__writing_cached_command_tl }
+                      [\l_tmpa_tl]{#3}
+                  }
+                  { \use:c { \l__writing_cached_command_tl } {#3} }
+              }
+          }
+      }
   }
 
 \cs_new_protected:Npn \__writing_build_local:nn #1#2
@@ -79,6 +104,23 @@
           {
             \prop_gput:NVV \g__writing_local_cache_prop
               \l__writing_cache_key_tl \l__writing_cached_command_tl
+            \str_case:Vn \l__font_special_module_tl
+              {
+                {egyptian}
+                  { \prop_gput:NVn \g__writing_local_renderer_prop
+                      \l__writing_cached_command_tl {egyptian} }
+                {khitan_small}
+                  { \prop_gput:NVn \g__writing_local_renderer_prop
+                      \l__writing_cached_command_tl {khitan_small} }
+              }
+            \str_if_eq:VnT \l__font_layout_tl {vertical}
+              {
+                \tl_if_blank:VTF \l__writing_offset_tl
+                  { \tl_set:Nn \l_tmpa_tl {0pt} }
+                  { \tl_set:NV \l_tmpa_tl \l__writing_offset_tl }
+                \prop_gput:NVV \g__writing_local_offset_prop
+                  \l__writing_cached_command_tl \l_tmpa_tl
+              }
           }
       }
   }
@@ -209,7 +251,7 @@
                   }
               }
               {
-                \regex_match:nnTF { \A \s* writing \s* = \s* vertical } {#2}
+                \regex_match:nnTF { writing \s* = \s* vertical } {#2}
                   { \__writing_font_legacy_vertical:nnn {#1} {#2} {#3} }
                   {
                     \__writing_legacy_local_spec:nnN {#1} {#2} \l_tmpa_tl

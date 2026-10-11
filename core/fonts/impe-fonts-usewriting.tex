@@ -971,6 +971,14 @@
                   { \tl_clear:N \l__font_layout_tl }
                 \tl_clear:N \l__font_cjk_fallback_tl
               }
+            \tl_if_blank:VF \l__writing_offset_tl
+              {
+                \str_if_eq:VnF \l__font_layout_tl {vertical}
+                  {
+                    \__writing_error:nn {Offset~requires~cross-direction~local~writing}
+                      {On~horizontal~pages,~use~writing=vertical~with~offset=....}
+                  }
+              }
             \str_if_eq:VnT \l__font_layout_tl {vertical}
               {
                 \str_if_eq:VnT \l__writing_selected_scope_tl {global}
