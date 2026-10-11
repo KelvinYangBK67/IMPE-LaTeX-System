@@ -223,6 +223,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Tangut punctuation system fallback PDF regression failed.' }
     & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-late-registration.pdf') FandolHei
     if ($LASTEXITCODE -ne 0) { throw 'Late global font must enter existing CJK fallback chain.' }
+    & python (Join-Path $TestRoot 'check_fallback_late.py') (Join-Path $BuildRoot 'fallback-late-registration.pdf')
+    if ($LASTEXITCODE -ne 0) { throw 'The glyph-level PDF span did not switch from Song to Hei after late registration.' }
     & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-precedence.pdf') FandolHei
     if ($LASTEXITCODE -ne 0) { throw 'Same-profile fallback precedence PDF regression failed.' }
     # Verify that actual glyph substitution emits an actionable warning,
