@@ -10,6 +10,11 @@
 \prop_new:N \g__writing_cjk_family_profile_prop
 \prop_new:N \g__writing_fallback_warning_prop
 \prop_new:N \g__writing_fallback_configured_prop
+% Preserve only the explicitly available faces, not the face substitutions already
+% calculated at declaration time. A missing glyph needs a new matrix walk.
+\prop_new:N \g__writing_face_font_prop
+\prop_new:N \g__writing_face_path_prop
+\prop_new:N \g__writing_cjk_family_owner_prop
 % xeCJK caches the NFSS font selected for a fallback tier, independently of
 % its mutable family declaration. Only invalidate a cache after its owning
 % fallback chain has changed.
@@ -27,6 +32,15 @@
 \tl_new:N \l__writing_fallback_selected_font_tl
 \tl_new:N \l__writing_effective_profile_tl
 \tl_new:N \l__writing_fallback_signature_tl
+\tl_new:N \l__writing_fallback_owner_tl
+\tl_new:N \l__writing_fallback_face_key_tl
+\tl_new:N \l__writing_fallback_face_options_tl
+\tl_new:N \l__writing_fallback_face_entry_tl
+\tl_new:N \l__writing_fallback_matrix_order_tl
+\tl_new:N \l__writing_fallback_font_key_tl
+\prop_new:N \l__writing_fallback_seen_prop
+\int_new:N \l__writing_fallback_coordinate_int
+\int_new:N \l__writing_fallback_style_int
 
 \cs_generate_variant:Nn \prop_if_in:NnF { NVF }
 \cs_generate_variant:Nn \seq_gput_right:Nn { NV }
@@ -45,6 +59,22 @@
           \l__font_decl_family_id_tl \l__writing_effective_profile_tl
           { }
           { \tl_set:Nn \l__writing_effective_profile_tl {basic} }
+      }
+  }
+
+% Store exact source faces while the declaration still owns the eight
+% original fields. Do not use resolved BoldFont/ItalicFont fallbacks here.
+\cs_new_protected:Npn \__writing_fallback_store_faces:
+  {
+    \prop_map_inline:Nn \l__font_matrix_face_prop
+      {
+        \tl_set:Nx \l__writing_fallback_face_key_tl
+          {\l__font_name_tl/##1}
+        \prop_gput:NVn \g__writing_face_font_prop
+          \l__writing_fallback_face_key_tl {##2}
+        \prop_get:NnN \l__font_matrix_path_prop {##1} \l_tmpa_tl
+        \prop_gput:NVV \g__writing_face_path_prop
+          \l__writing_fallback_face_key_tl \l_tmpa_tl
       }
   }
 
@@ -71,6 +101,7 @@
   {
     \bool_if:NF \l__font_use_latex_fallback_bool
       {
+        \__writing_fallback_store_faces:
         \str_if_eq:VnT \l__font_script_class_tl {cjk}
           {
             \tl_if_blank:VF \l__font_name_tl
@@ -81,6 +112,15 @@
                 \__writing_fallback_effective_profile:
                 \prop_gput:NVV \g__writing_cjk_family_profile_prop
                   \l_tmpa_tl \l__writing_effective_profile_tl
+                \prop_gput:NVV \g__writing_cjk_family_owner_prop
+                  \l_tmpa_tl \l__font_name_tl
+                \tl_set:Nx \l_tmpa_tl { __fontsf_\l__font_name_tl }
+                \exp_args:NV \seq_if_in:NnF \g__writing_cjk_family_seq \l_tmpa_tl
+                  { \seq_gput_right:NV \g__writing_cjk_family_seq \l_tmpa_tl }
+                \prop_gput:NVV \g__writing_cjk_family_profile_prop
+                  \l_tmpa_tl \l__writing_effective_profile_tl
+                \prop_gput:NVV \g__writing_cjk_family_owner_prop
+                  \l_tmpa_tl \l__font_name_tl
                 \bool_if:NT \g__writing_fallback_started_bool
                   { \__writing_fallback_refresh: }
               }
@@ -219,6 +259,164 @@
           {lmroman10-regular.otf} } { }
   }
 
+
+% Request coordinate is read from the active NFSS series/shape only when a
+% CJK glyph actually fails. Sans is determined by the xeCJK family in use.
+\cs_new_protected:Npn \__writing_fallback_coordinate:n #1
+  {
+    \int_zero:N \l__writing_fallback_coordinate_int
+    \regex_match:nnT { \A (sf|__fontsf_) } {#1}
+      { \int_add:Nn \l__writing_fallback_coordinate_int {4} }
+    \str_if_eq:eeF {\use:c{f@series}} {\mddefault}
+      { \int_add:Nn \l__writing_fallback_coordinate_int {2} }
+    \tl_set:Nx \l_tmpa_tl {\use:c{f@shape}}
+    \str_case:Vn \l_tmpa_tl
+      {
+        {it}{\int_incr:N \l__writing_fallback_coordinate_int}
+        {sl}{\int_incr:N \l__writing_fallback_coordinate_int}
+      }
+    \int_set:Nn \l__writing_fallback_style_int
+      { \int_mod:nn {\l__writing_fallback_coordinate_int} {4} }
+    \prop_get:NxN \g__font_style_matrix_rank_prop
+      {\int_use:N \l__writing_fallback_coordinate_int}
+      \l__writing_fallback_matrix_order_tl
+  }
+
+% Add one explicitly declared face, and force its use for the requested NFSS
+% style. Passing the same face as Bold/Italic/BI is essential: otherwise
+% fontspec may substitute a different glyph-bearing face behind the matrix.
+\cs_new_protected:Npn \__writing_fallback_add_face:nn #1#2
+  {
+    \tl_set:Nx \l__writing_fallback_face_key_tl {#1/#2}
+    \prop_get:NVNT \g__writing_face_font_prop
+      \l__writing_fallback_face_key_tl
+      \l__writing_fallback_candidate_font_tl
+      {
+        \prop_get:NVN \g__writing_face_path_prop
+          \l__writing_fallback_face_key_tl
+          \l__writing_fallback_candidate_path_tl
+        \str_if_eq:VnT \l__writing_fallback_candidate_path_tl
+          {__impe_none__}
+          { \tl_clear:N \l__writing_fallback_candidate_path_tl }
+        \tl_if_blank:VT \l__writing_fallback_candidate_path_tl
+          {
+            \tl_if_in:VnT \l__writing_fallback_candidate_font_tl {/}
+              {
+                \tl_set:NV \l__writing_fallback_candidate_path_tl
+                  \l__writing_fallback_candidate_font_tl
+                \regex_replace_once:nnN { [^/]+ \Z } {}
+                  \l__writing_fallback_candidate_path_tl
+                \regex_replace_once:nnN { \A .*/ } {}
+                  \l__writing_fallback_candidate_font_tl
+              }
+          }
+        \tl_set:Nx \l__writing_fallback_font_key_tl
+          {
+            \tl_to_str:V \l__writing_fallback_candidate_path_tl /
+            \tl_to_str:V \l__writing_fallback_candidate_font_tl
+          }
+        \prop_if_in:NVF \l__writing_fallback_seen_prop
+          \l__writing_fallback_font_key_tl
+          {
+            \prop_put:NVn \l__writing_fallback_seen_prop
+              \l__writing_fallback_font_key_tl {seen}
+            \tl_clear:N \l__writing_fallback_face_options_tl
+            \tl_if_blank:VF \l__writing_fallback_candidate_path_tl
+              {
+                \tl_put_right:Nx \l__writing_fallback_face_options_tl
+                  {Path={\exp_not:V \l__writing_fallback_candidate_path_tl},}
+              }
+            \int_case:nn \l__writing_fallback_style_int
+              {
+                {1}{
+                  \tl_put_right:Nx \l__writing_fallback_face_options_tl
+                    {ItalicFont={\exp_not:V \l__writing_fallback_candidate_font_tl},}
+                }
+                {2}{
+                  \tl_put_right:Nx \l__writing_fallback_face_options_tl
+                    {BoldFont={\exp_not:V \l__writing_fallback_candidate_font_tl},}
+                }
+                {3}{
+                  \tl_put_right:Nx \l__writing_fallback_face_options_tl
+                    {BoldItalicFont={\exp_not:V \l__writing_fallback_candidate_font_tl},}
+                }
+              }
+            \tl_if_blank:VTF \l__writing_fallback_face_options_tl
+              {
+                \clist_put_right:NV \l__writing_fallback_candidates_clist
+                  \l__writing_fallback_candidate_font_tl
+              }
+              {
+                \regex_replace_once:nnN { , \Z } {}
+                  \l__writing_fallback_face_options_tl
+                % Extra outer group protects commas within fontspec options
+                % from xeCJK's clist of fallback candidates.
+                \tl_set:Nx \l__writing_fallback_face_entry_tl
+                  {
+                    {
+                      [\exp_not:V \l__writing_fallback_face_options_tl]
+                      {\exp_not:V \l__writing_fallback_candidate_font_tl}
+                    }
+                  }
+                \clist_put_right:NV \l__writing_fallback_candidates_clist
+                  \l__writing_fallback_face_entry_tl
+              }
+          }
+      }
+  }
+\cs_generate_variant:Nn \prop_get:NnN { NVN, NxN }
+\cs_generate_variant:Nn \prop_put:Nnn { NVn }
+
+\cs_new_protected:Npn \__writing_fallback_add_source:n #1
+  {
+    \exp_args:NV \clist_map_inline:nn \l__writing_fallback_matrix_order_tl
+      { \__writing_fallback_add_face:nn {#1}{##1} }
+  }
+
+\cs_new_protected:Npn \__writing_fallback_collect_matrix:
+  {
+    \prop_clear:N \l__writing_fallback_seen_prop
+    % First try other faces of the selected primary font resource.
+    \tl_if_blank:VF \l__writing_fallback_owner_tl
+      {
+        \exp_args:NV \__writing_fallback_add_source:n
+          \l__writing_fallback_owner_tl
+      }
+    % Same Writing Profile before other CJK profiles, irrespective of the
+    % historical resource's own legacy pack name.
+    \seq_map_inline:Nn \g__writing_pool_order_seq
+      {
+        \str_if_eq:eeF {##1}{\l__writing_fallback_owner_tl}
+          {
+            \prop_get:NnN \g__writing_pool_profile_prop {##1}
+              \l__writing_fallback_candidate_profile_tl
+            \str_if_eq:VVT \l__writing_fallback_candidate_profile_tl
+              \l__writing_fallback_target_profile_tl
+              { \__writing_fallback_add_source:n {##1} }
+          }
+      }
+    \seq_map_inline:Nn \g__writing_pool_order_seq
+      {
+        \str_if_eq:eeF {##1}{\l__writing_fallback_owner_tl}
+          {
+            \prop_get:NnN \g__writing_pool_profile_prop {##1}
+              \l__writing_fallback_candidate_profile_tl
+            \str_if_eq:VVF \l__writing_fallback_candidate_profile_tl
+              \l__writing_fallback_target_profile_tl
+              {
+                \str_case:Vn \l__writing_fallback_candidate_profile_tl
+                  {
+                    {han}{\__writing_fallback_add_source:n {##1}}
+                    {chinese}{\__writing_fallback_add_source:n {##1}}
+                    {japanese}{\__writing_fallback_add_source:n {##1}}
+                    {korean}{\__writing_fallback_add_source:n {##1}}
+                    {tangut}{\__writing_fallback_add_source:n {##1}}
+                  }
+              }
+          }
+      }
+  }
+
 \cs_new_protected:Npn \__writing_fallback_refresh_family:n #1
   {
     \clist_clear:N \l__writing_fallback_candidates_clist
@@ -227,7 +425,14 @@
     \prop_get:NnNTF \g__writing_cjk_family_profile_prop {#1}
       \l__writing_fallback_target_profile_tl { }
       { \tl_set:Nn \l__writing_fallback_target_profile_tl {chinese} }
-    \__writing_fallback_collect:n {#1}
+    \__writing_fallback_coordinate:n {#1}
+    \prop_get:NnNTF \g__writing_cjk_family_owner_prop {#1}
+      \l__writing_fallback_owner_tl
+      { \__writing_fallback_collect_matrix: }
+      {
+        \tl_clear:N \l__writing_fallback_owner_tl
+        \__writing_fallback_collect:n {#1}
+      }
     \__writing_fallback_system_fonts:
     % A repeated identical chain does nothing. On a real pool change, xeCJK
     % redeclares each named /FallBack tier; the candidate list only grows
@@ -298,6 +503,19 @@
 
 \cs_new_protected:Npn \__writing_fallback_install_warning_hook:
   {
+    \cs_if_exist:NT \__xeCJK_fallback_loop:nnNN
+      {
+        \cs_new_eq:NN \__writing_base_xecjk_fallback_loop:nnNN
+          \__xeCJK_fallback_loop:nnNN
+        \cs_set_protected:Npn \__xeCJK_fallback_loop:nnNN ##1##2##3##4
+          {
+            % ##2 is xeCJK's registered family (rm/sf/private family).
+            % ##1 is its current NFSS font and is not a registry key.
+            \__writing_fallback_refresh_family:n {##2}
+            \__writing_base_xecjk_fallback_loop:nnNN
+              {##1}{##2}##3##4
+          }
+      }
     \cs_if_exist:NT \__xeCJK_select_fallback_font:Nnnn
       {
         \cs_new_eq:NN \__writing_base_xecjk_select_fallback_font:Nnnn
