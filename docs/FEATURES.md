@@ -256,14 +256,14 @@ Override them before loading the feature if a document needs another style:
 \SetCitationBiblatexOptions{backend=biber,style=numeric}
 ```
 
-### \`index\` (native-first)
+### `index` (native-first)
 
-The recommended indexing API is **imakeidx's native** \`\index\`,
-\`\makeindex\`, and \`\printindex\`. The feature loads \`imakeidx\` (with
-\`xindy\` for its own default index) and \`hyperlinks\`. It does **not** create
-an IMPE-specific indexing language or load \`glossaries-extra\`.
+The recommended indexing API is **imakeidx's native** `\index`,
+`\makeindex`, and `\printindex`. The feature loads `imakeidx` (with
+`xindy` for its own default index) and `hyperlinks`. It does **not** create
+an IMPE-specific indexing language or load `glossaries-extra`.
 
-\`\`\`tex
+```tex
 \UseFeature{index}
 ...
 Buddhism\index{Buddhism}
@@ -271,47 +271,47 @@ Mahayana\index{Buddhism!Mahayana}
 Dharma\index{dharma@Dharma}
 \index{Buddhism|see{religion}}
 \printindex
-\`\`\`
+```
 
 For the default index initialized by IMPE, ordinary native entries, including
-\`sort@display\` and \`!\` hierarchy, receive an occurrence-level PDF
-destination shared with the \`hyperlinks\` feature. Repeated page labels and
-multiple marks on the same page remain distinct. Put \`\index\` next to the
-word to be targeted. The small generated \`<job>-impe.xdy\` file only maps
+`sort@display` and `!` hierarchy, receive an occurrence-level PDF
+destination shared with the `hyperlinks` feature. Repeated page labels and
+multiple marks on the same page remain distinct. Put `\index` next to the
+word to be targeted. The small generated `<job>-impe.xdy` file only maps
 opaque occurrences back to real page labels; **sorting, grouping, printing,
 cross-references, and formats stay with xindy and imakeidx**.
 
-Native index grammar is never reinterpreted: explicit \`|...\` formatting,
-\`|see\`, \`|seealso\`, range delimiters, and named indexes pass unchanged
+Native index grammar is never reinterpreted: explicit `|...` formatting,
+`|see`, `|seealso`, range delimiters, and named indexes pass unchanged
 to imakeidx. Their links follow the chosen native backend; IMPE's exact
 occurrence-target guarantee applies only to ordinary entries in its default
 index. For multiple indexes, use native declarations and printing:
 
-\`\`\`tex
+```tex
 \UseFeature{index}
 \makeindex[name=people,title={People},program=xindy]
 ...
 \index[people]{Müller, Anna}
 \printindex[people]
-\`\`\`
+```
 
-If the document already loaded \`imakeidx\` and declared its own default
-\`\makeindex\`, IMPE respects that configuration rather than redefining it.
+If the document already loaded `imakeidx` and declared its own default
+`\makeindex`, IMPE respects that configuration rather than redefining it.
 Its native location and link handling remain in charge. Index files generally
 need an external indexer pass; for the IMPE-created default index use
 
-\`\`\`sh
+```sh
 texindy -L english -C utf8 -M <job>-impe <job>.idx
-\`\`\`
+```
 
 then run XeLaTeX twice. Named indexes use the indexer's native command
-matching their \`\makeindex\` settings. Pre-existing MakeIndex defaults use
-\`makeindex <job>.idx\`.
+matching their `\makeindex` settings. Pre-existing MakeIndex defaults use
+`makeindex <job>.idx`.
 
 For term registration, descriptions and first-use behavior, use the separate
-native \`glossaries-extra\` package directly (and its documented indexing
+native `glossaries-extra` package directly (and its documented indexing
 integration if desired); it is not automatically loaded by this feature.
-Historical \`\Term\` forms, \`\IndexTitle\`, their original formatting,
+Historical `\Term` forms, `\IndexTitle`, their original formatting,
 and first-occurrence semantics remain available **only for 1.x source
 compatibility**. They are not the recommended authoring API.
 
