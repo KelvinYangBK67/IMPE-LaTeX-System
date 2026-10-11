@@ -10,6 +10,10 @@
 \ExplSyntaxOn
 \int_compare:nNnF {\g__font_cjk_main_priority_int} = {3}
   {\PackageError{impe-test}{Chinese profile lost its global priority}{}}
+\typeout{IMPE-DEBUG-POOL-SIZE:\seq_count:N \g__writing_pool_order_seq}
+\prop_map_inline:Nn \g__writing_pool_profile_prop
+  {\typeout{IMPE-DEBUG-POOL-ENTRY:##1=##2}}
+\typeout{IMPE-DEBUG-CURRENT-PROFILE:\tl_to_str:V \l__font_decl_writing_profile_tl}
 \bool_set_false:N \l_tmpa_bool
 \bool_set_false:N \l_tmpb_bool
 \seq_map_inline:Nn \g__writing_pool_order_seq
