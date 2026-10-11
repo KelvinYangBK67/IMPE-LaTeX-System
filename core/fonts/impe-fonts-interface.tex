@@ -49,6 +49,8 @@
 \tl_new:N \l__font_feature_options_tl
 \tl_new:N \l__font_special_entry_tl
 \tl_new:N \l__font_decl_family_id_tl
+% Original Writing Profile, never inferred from the selected resource.
+\tl_new:N \l__font_decl_writing_profile_tl
 \clist_new:N \l__font_unicode_blocks_clist
 \bool_new:N \l__font_use_latex_fallback_bool
 \bool_new:N \l__font_nextsystem_installed_bool
@@ -131,6 +133,7 @@
     \tl_clear:N \l__font_special_module_tl
     \tl_clear:N \l__font_missing_face_tl
     \tl_clear:N \l__font_decl_family_id_tl
+    \tl_clear:N \l__font_decl_writing_profile_tl
     \clist_clear:N \l__font_unicode_blocks_clist
     \tl_clear:N \l__font_backend_tl
     \tl_clear:N \l__font_script_class_tl
@@ -186,6 +189,7 @@
     command      .tl_set:N = \l__font_command_tl,
     layout       .tl_set:N = \l__font_layout_tl,
     familyid     .tl_set:N = \l__font_decl_family_id_tl,
+    writingprofile .tl_set:N = \l__font_decl_writing_profile_tl,
     backend      .tl_set:N = \l__font_backend_tl,
     fallbackmode .tl_set:N = \l__font_fallback_mode_tl,
     specialmodule .tl_set:N = \l__font_special_module_tl,
@@ -1009,19 +1013,21 @@
       {
         % Chinese > Japanese > Korean, irrespective of declaration order.
         \int_zero:N \l__font_cjk_candidate_priority_int
-        \cs_if_exist:NT \g__writing_legacy_profile_prop
+        \tl_set:NV \l_tmpa_tl \l__font_decl_writing_profile_tl
+        \tl_if_blank:VT \l_tmpa_tl
           {
-            \prop_get:NVNT \g__writing_legacy_profile_prop
-              \l__font_decl_family_id_tl \l_tmpa_tl
+            \cs_if_exist:NT \g__writing_legacy_profile_prop
               {
-                \str_case:Vn \l_tmpa_tl
-                  {
-                    {chinese}{\int_set:Nn \l__font_cjk_candidate_priority_int {3}}
-                    {han}{\int_set:Nn \l__font_cjk_candidate_priority_int {3}}
-                    {japanese}{\int_set:Nn \l__font_cjk_candidate_priority_int {2}}
-                    {korean}{\int_set:Nn \l__font_cjk_candidate_priority_int {1}}
-                  }
+                \prop_get:NVNT \g__writing_legacy_profile_prop
+                  \l__font_decl_family_id_tl \l_tmpa_tl { }
               }
+          }
+        \str_case:Vn \l_tmpa_tl
+          {
+            {chinese}{\int_set:Nn \l__font_cjk_candidate_priority_int {3}}
+            {han}{\int_set:Nn \l__font_cjk_candidate_priority_int {3}}
+            {japanese}{\int_set:Nn \l__font_cjk_candidate_priority_int {2}}
+            {korean}{\int_set:Nn \l__font_cjk_candidate_priority_int {1}}
           }
         \int_compare:nNnF
           {\l__font_cjk_candidate_priority_int} <
