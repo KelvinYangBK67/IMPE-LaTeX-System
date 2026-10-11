@@ -5,7 +5,9 @@
 IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
 multilingual typesetting, and optional document features.
 
-Current repository version: `1.0.4` (2026-10-09; no Git tag or GitHub Release). See [CHANGELOG.md](CHANGELOG.md).
+Current source version: `1.0.5` (2026-10-11; internal snapshot, not a formal publication). See [CHANGELOG.md](CHANGELOG.md).
+
+**Documentation status:** the English, German and Traditional Chinese manuals and the canonical showcase (TeX sources and PDFs) intentionally remain at the prior published edition. Consult the updated [writing/font API reference](docs/USEWRITING-1.0.5.md) and [font reference](docs/FONTS.md) for 1.0.5. The manuals, showcase, PDF rebuild and distributable archives will be synchronized before any formal release.
 
 ## Quick Start
 
@@ -37,6 +39,27 @@ For new Chinese documents, prefer `\\documentclass[lang=zh]{impeart}` (and
 analogous `impebook`, `impereport`, `impebeamer`) over the historical `_zh`
 classes. Use `\\LayoutSetup{...}` and `LayoutScope` for document-wide and
 paragraph-local parameters; see [Layouts](docs/LAYOUTS.md).
+
+## Writing and font selection (1.0.5)
+
+The recommended quick interface for existing registered font presets remains
+\UseFont{preset}. For a separate Unicode Writing Profile and font resource,
+select a pack explicitly:
+
+```tex
+\UseWriting{[shanggu]chinese}
+\DeclareWriting{han-note}{[shanggu]chinese}
+\begin{document}
+\Font{han-note}{漢字}
+\Writing{[tiro]devanagari}{संस्कृतम्}
+\end{document}
+```
+
+The configuration in \DeclareWriting is stored without activating a font;
+\Font and \Writing select their fonts only within the supplied text.
+CJK missing glyphs use xeCJK's 2×2×2 face-priority fallback; non-CJK
+automatic missing-glyph substitution is intentionally excluded.
+See [1.0.5 Writing API](docs/USEWRITING-1.0.5.md).
 
 ## Support Matrix
 

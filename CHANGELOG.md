@@ -6,6 +6,23 @@ All notable versioned changes to IMPE LaTeX System are documented in this file.
 
 For changes since the latest versioned repository state, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
+## [1.0.5] - 2026-10-11
+
+Internal source snapshot for the font/writing overhaul in merged PR #23; not yet a formal distribution release. Manuals and canonical showcase (both sources and tracked PDFs) intentionally remain on their previously published edition until formal publication.
+
+### Added
+* Split font selection into Unicode 18.0.0 blocks (353 official blocks), 69 curated Writing Profiles, separately named font resources/packs (85 aliases), and backward-compatible presets for all 59 legacy registered families. A resource override preserves its Writing Profile's behavior.
+* Introduced \UseWriting{[pack,options]profile}, \DeclareWriting{name}{configuration}, \Font{name}[overrides]{text} and \Writing{configuration}{text}. Preserved existing \UseFont modes, local shortcuts, vertical/XSR renderers and registered font resources.
+* Added native xeCJK CJK-only missing-glyph fallback respecting the eight-coordinate Serif/Sans × Regular/Bold × Upright/Italic style matrix, including glyph-coverage checks within the current resource, matching-profile priority, late font registrations, cache refresh and deduplicated warnings.
+
+### Compatibility and limitations
+* Kept 1.x legacy interfaces and explicit local override priority. General non-CJK missing-glyph fallback is intentionally out of scope.
+* New Writing Profile coverage does not yet implement an independent overlapping Unicode-range arbitration engine; true page-wide vertical writing is tracked separately.
+
+### Validation
+* Linux and Windows XeLaTeX regressions, XSR integration and direct PDF glyph-font inspections cover matrix rank selection, in-run face changes and registration-time updates.
+* Complete manual/showcase refresh, tracked PDF rebuild and formal distribution packaging validation are **deferred to the future publication step**. No Tag or GitHub Release is created as part of this source preparation.
+
 ## [1.0.4] - 2026-10-09
 
 Versioned feature API maintenance; source remains compatible with documented IMPE 1.x interfaces. No tag or GitHub Release is created by this change.

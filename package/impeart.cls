@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impeart}[2026/10/09 v1.0.4 IMPE class for article]
+\ProvidesClass{impeart}[2026/10/11 v1.0.5 IMPE class for article]
 \def\IMPEClassBase{article}
 \def\IMPEClassBeamerTag{beamer}
 \def\IMPEClassLayoutEn{en_doc}

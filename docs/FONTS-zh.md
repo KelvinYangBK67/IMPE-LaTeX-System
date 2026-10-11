@@ -2,6 +2,40 @@
 
 [English](FONTS.md)
 
+## 1.0.5：Writing Profile 與字體資源
+
+簡單選擇既有 preset 仍推薦 \UseFont{preset}（包含全部舊版 ID）。
+進階介面將 **Unicode Writing Profile**（文字路由及 Renderer 行為）與
+**Font resource/pack**（字體文件及已存在的字體面）分離。
+改用其他字體包不改變 Writing Profile。本版有 69 個人工維護的 Profile、
+85 個資源別名及原有 59 個家族 preset。
+
+```tex
+\UseWriting{[shanggu]chinese}
+\DeclareWriting{han-note}{[shanggu,stylemap=full,italic=zhuque]chinese}
+\begin{document}
+\Font{han-note}{漢字}
+\Writing{[tiro]devanagari}{संस्कृतम्}
+\end{document}
+```
+
+\UseWriting{[字體包,選項]Profile} 啟用全域 Writing／字體綁定；
+\DeclareWriting{名稱}{設定} 只保存設定，不立即修改字體。
+\Font{名稱}[覆寫]{內容} 與 \Writing{設定}{內容} 在參數內強制選擇一個
+局部字體／Renderer，無需先呼叫 \UseFont 或 \UseWriting。
+\UseFont{preset}[local|global] 仍維持原有載入模型，
+\SA、\JP、\MOv 等舊捷徑也繼續相容。
+
+**自動缺字備援只限 CJK。** xeCJK 以 Serif/Sans × Regular/Bold ×
+Upright/Italic 的 2×2×2 矩陣按逐字字形覆蓋選擇：
+先找目前字體資源中實際存在的其他字體面，再找相同 Writing Profile，
+最後才找其他 CJK Profile 的候選字體。字體面存在但缺少該字時繼續尋找；
+正文中途註冊新字體亦會更新候選鏈及快取。
+非 CJK 文字不提供通用缺字自動備援，重疊 Unicode Profile 的全域仲裁亦未實作。
+
+完整選項、別名及限制見 [1.0.5 Writing API](USEWRITING-1.0.5.md)。
+三語手冊與 Showcase 的原始碼及 PDF 暫時維持先前版本，正式公開發佈時再同步。
+
 ## 結構
 
 ```text
@@ -507,20 +541,19 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 標準公開字體稽核位於 `manual/showcase/impe-showcase.tex`；聚焦的自動檢查則位於
 `tests/`。
 
-## 通用局部選字（1.0.2）
+## 局部字體與字體面解析（1.0.5）
 
-`\UseFont{id}[local|global]` 保持原有載入／啟用意義。
-`\Font{id}{內容}` 經由登錄家族的公開命令排印局部內容，例如
-`\Font{hindi}{हिन्दी}` 與 `\HI{हिन्दी}` 等效。局部宣告按需載入；
-`\UseFont{id}[local]` 對未知 ID 或缺少 local mode 的家族回報既有錯誤。
-需要額外套件的家族請先在導言區使用 `\UseFont` 載入。
-原有家族命令繼續支援，字重、字形、局部覆寫 Unicode 全域路由、方向、
-CJK 間距與文字系統處理均共用原路徑。本版透過已登錄 family API 選用字體。
+\UseFont{id}[local|global] 的既有載入／啟用模型與家族捷徑完整保留。
+1.0.5 的 \Font{名稱}[覆寫]{內容} 不僅支援舊家族，亦可使用
+\DeclareWriting 登錄的具名設定及新字體資源；局部選擇無需先在導言區呼叫
+\UseFont。匿名版本則使用 \Writing{設定}{內容}。
+例如 \Font{hindi}{हिन्दी} 與 \HI{हिन्दी} 維持相容。
+原來的專用捷徑及其附加可選參數（如 \MOv[0pt]{...}）不受影響。
 
-每個字面獨立解析：先找設定路徑下的隨附檔案，再以登錄檔名／字體名稱
-交由 fontspec 查找 TeX Live 或系統字體，最後才採用既有嚴格錯誤或軟回退。
-隨附檔案始終優先。core 安裝可直接使用已可解析的字體；
-獨立字體庫可使用 `\SetCatalogFontRoot` 指定資源根目錄。
+各字體面先解析隨附檔案，再由 fontspec 尋找 TeX Live／系統字體。
+既有嚴格／軟回退是「字體檔案無法載入」的處理，與上述 xeCJK
+「字體存在但缺少某個 CJK 字形」的矩陣備援並不相同。
+獨立字體庫仍以 \SetCatalogFontRoot 設定。
 
 ## 1.0.3（內部）：埃及聖書字及契丹小字
 
@@ -531,5 +564,6 @@ CJK 間距與文字系統處理均共用原路徑。本版透過已登錄 family
 \KHSstackblock{...} 及顯式 XSR 入口。
 
 XSR 須讀取實際字體檔案。非 full 安裝應以 \SetCatalogFontRoot{...}
-設定字體鏡像，不能只依賴作業系統中的字體名稱。XSR 0.10 維護修正後，TeX Live 2024+ 的 shell 模式支援
-`-output-directory`；舊版須明確設定 `TEXMF_OUTPUT_DIRECTORY`，或使用預處理。
+設定字體鏡像，不能只依賴作業系統中的字體名稱。目前內附 XSR 1.0；TeX Live 2024+ 的 shell 模式可透過
+`TEXMF_OUTPUT_DIRECTORY` 支援 `-output-directory`；舊版引擎則可能需
+明確設定環境變數或採用預處理。

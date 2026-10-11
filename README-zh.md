@@ -5,8 +5,9 @@
 IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
 文件功能。
 
-目前倉庫版本：`1.0.4`（2026-10-09；不建立 Git Tag 或 GitHub Release）。版本記錄見
-[CHANGELOG-zh.md](CHANGELOG-zh.md)。
+目前原始碼版本：`1.0.5`（2026-10-11；內部版本，尚非正式發佈）。詳見 [CHANGELOG-zh.md](CHANGELOG-zh.md)。
+
+**文件狀態：**英文、德文、繁體中文手冊及 Showcase 的 TeX 原始碼和 PDF 暫時保留上一版，待正式發佈前再同步修訂。1.0.5 的正確字體介面請參閱 [Writing API 參考](docs/USEWRITING-1.0.5.md) 與 [字體參考](docs/FONTS-zh.md)；正式封裝及 PDF 重建亦留待日後處理。
 
 ## 快速開始
 
@@ -38,13 +39,31 @@ full 與 core release。`_zh` 類別已轉為相容入口；新文件推薦
 `\\LayoutSetup{...}`，段落局部參數可用 `LayoutScope`，參見
 [Layouts](docs/LAYOUTS-zh.md)。
 
+## Writing 與字體選擇（1.0.5）
+
+既有字體 preset 仍推薦使用 \UseFont{preset}；需要把字體資源與 Unicode Writing Profile 分開指定時，則使用：
+
+```tex
+\UseWriting{[shanggu]chinese}
+\DeclareWriting{han-note}{[shanggu]chinese}
+\begin{document}
+\Font{han-note}{漢字}
+\Writing{[tiro]devanagari}{संस्कृतम्}
+\end{document}
+```
+
+其中 \DeclareWriting 僅保存設定，不立即改變全域字體；
+\Font 與 \Writing 都只在所包圍的文字內強制選擇字體。
+CJK 缺字備援採用 xeCJK 的 2×2×2 字體面矩陣；非 CJK 不作通用逐字缺字替換。
+詳見 [1.0.5 Writing API](docs/USEWRITING-1.0.5.md)。
+
 ## 支援矩陣
 
 | 項目 | 支援狀態 |
 | --- | --- |
 | 主要文件引擎 | XeLaTeX |
 | XeLaTeX | 受支援；手冊、showcase 與一般回歸測試皆使用此引擎 |
-| LuaLaTeX | 用於明確設定的 backend hook |
+| LuaLaTeX | 舊版外部化 backend 已移除；非一般文件的主要受測引擎 |
 | Unicode-range 全域路由 | XeLaTeX |
 | 可選 XSR 整合 | 內附 XSR 1.0、Python 與 XeLaTeX shell-escape／預處理 |
 | TeX Live | 已測試 2026 |

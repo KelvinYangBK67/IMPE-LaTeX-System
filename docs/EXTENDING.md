@@ -58,3 +58,14 @@ updates, and any required manual or showcase change. Focused probes may be
 used locally during development and kept as local scratch files. Run
 `tests/run_regressions.ps1 -PublicFonts` before release; use public font
 fixtures for tests and CTAN packaging.
+
+## Writing Profiles and resources (1.0.5)
+
+Prefer registering a font resource separately from a Unicode Writing Profile
+when the same face is reused with multiple script policies. Use the new
+\UseWriting / \DeclareWriting / \Font / \Writing entry points to test bindings
+without changing the existing \UseFont preset and local shortcut semantics.
+The implementation lives under core/fonts/impe-fonts-usewriting.tex and
+the related font fallback/style modules. Non-CJK automatic glyph fallback
+must not be added as a side effect of new resources.
+See [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md).
