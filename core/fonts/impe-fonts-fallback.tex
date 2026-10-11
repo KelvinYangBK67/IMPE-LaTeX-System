@@ -19,6 +19,7 @@
 \tl_new:N \l__writing_fallback_candidate_font_tl
 \tl_new:N \l__writing_fallback_candidate_path_tl
 \tl_new:N \l__writing_fallback_warning_key_tl
+\tl_new:N \l__writing_fallback_selected_font_tl
 
 \cs_generate_variant:Nn \prop_if_in:NnF { NVF }
 \cs_generate_variant:Nn \seq_gput_right:Nn { NV }
@@ -243,17 +244,25 @@
 % Emit a concise warning only when xeCJK has found an actual substitute.
 \cs_new_protected:Npn \__writing_fallback_report:nnn #1#2#3
   {
-    % xeCJK can pass a protected symbol token, not necessarily a literal
-    % character. Do not use character-code arithmetic on that argument.
+    % At this point xeCJK has already selected the successful fallback face.
+    % Use the actual font, not the internal /FallBack tier identifier.
+    \tl_set:Nx \l__writing_fallback_selected_font_tl { \fontname\font }
+    \regex_replace_once:nnN { \] .* \Z } { } \l__writing_fallback_selected_font_tl
+    \regex_replace_once:nnN { \A .* / } { } \l__writing_fallback_selected_font_tl
     \tl_set:Nx \l__writing_fallback_warning_key_tl
-      { \tl_to_str:n {#1} / \tl_to_str:n {#2} / \tl_to_str:n {#3} }
+      {
+        \tl_to_str:n {#2} / \tl_to_str:n {#3} /
+        \tl_to_str:V \l__writing_fallback_selected_font_tl
+      }
     \prop_if_in:NVF \g__writing_fallback_warning_prop
       \l__writing_fallback_warning_key_tl
       {
         \prop_gput:NVn \g__writing_fallback_warning_prop
           \l__writing_fallback_warning_key_tl {notified}
         \PackageWarning{impe-fonts}
-          {Glyph~fallback:~#1~->~#2~(\tl_to_str:n {#3})}
+          {Glyph~fallback~for~'\tl_to_str:n {#3}':~
+           \tl_to_str:n {#2}~->~
+           \tl_use:N \l__writing_fallback_selected_font_tl}
       }
   }
 

@@ -6,5 +6,7 @@
 \UseWriting{[file=FandolSong-Regular.otf]chinese}
 \begin{document}
 \Writing{[file=lmroman10-regular.otf]chinese}{漢字。}
+% Cross-profile fallback: Tangut punctuation uses existing Chinese fonts.
+\Writing{[file=lmroman10-regular.otf]tangut}{。}
 \typeout{IMPE-TEST-FALLBACK-NATIVE-PASS}
 \end{document}
