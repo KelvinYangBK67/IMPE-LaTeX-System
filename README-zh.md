@@ -5,9 +5,9 @@
 IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
 文件功能。
 
-目前原始碼版本：`1.0.5`（2026-10-11；內部版本，尚非正式發佈）。詳見 [CHANGELOG-zh.md](CHANGELOG-zh.md)。
+目前原始碼版本：`1.0.6`（2026-10-11；內部版本，尚非正式發佈）。詳見 [CHANGELOG-zh.md](CHANGELOG-zh.md)。
 
-**文件狀態：**英文、德文、繁體中文手冊及 Showcase 的 TeX 原始碼和 PDF 暫時保留上一版，待正式發佈前再同步修訂。1.0.5 的正確字體介面請參閱 [Writing API 參考](docs/USEWRITING-1.0.5.md) 與 [字體參考](docs/FONTS-zh.md)；正式封裝及 PDF 重建亦留待日後處理。
+**文件狀態：**英文、德文、繁體中文手冊及 Showcase 的 TeX 原始碼和 PDF 暫時保留上一版，待正式發佈前再同步修訂。1.0.5 引入、1.0.6 持續支援的字體介面請參閱 [Writing API 參考](docs/USEWRITING-1.0.5.md) 與 [字體參考](docs/FONTS-zh.md)；正式封裝及 PDF 重建亦留待日後處理。
 
 ## 快速開始
 
@@ -39,7 +39,20 @@ full 與 core release。`_zh` 類別已轉為相容入口；新文件推薦
 `\\LayoutSetup{...}`，段落局部參數可用 `LayoutScope`，參見
 [Layouts](docs/LAYOUTS-zh.md)。
 
-## Writing 與字體選擇（1.0.5）
+## Layout 新默認值（1.0.6）
+
+Book 預設 ISO B5；Article 與 Report 有各自的 A4 版式；
+Beamer 預設簡潔學術主題與 16:9 畫布。中英文正文、頁眉、
+頁腳頁碼與章節首頁分別調整。既有公開 API 保持相容，
+但新默認可能改變舊文件的 PDF 外觀及分頁。
+
+如需恢復 1.0.5 版面，在 `\documentclass` 後加入
+`\UseLegacyLayout` 即可自動依 Class、語言選擇舊 Profile。
+紙本文件已自動載入 `geometry` 及 `fancyhdr`，可於預設之後
+直接透過 `\geometry{...}`、`\fancyhead` 等原生命令覆寫。
+詳見 [Layouts](docs/LAYOUTS-zh.md) 及 [相容性政策](docs/STABILITY-zh.md)。
+
+## Writing 與字體選擇（1.0.5 引入，1.0.6 繼續支援）
 
 既有字體 preset 仍推薦使用 \UseFont{preset}；需要把字體資源與 Unicode Writing Profile 分開指定時，則使用：
 

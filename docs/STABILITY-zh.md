@@ -49,5 +49,16 @@ CTAN `impe-framework` 發佈、新手冊、模板、示例與一般受維護來�
 仍屬 IMPE 1.x 受支援介面。自動缺字備援刻意僅支援 CJK／xeCJK；
 完整語法見 [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md)。
 
+## Layout 默認值與外觀相容性（1.0.6）
+
+1.x 持續支援既有公開 Layout 命令、Class 選項、Preset 及其既定語義。
+但是默認紙張、版心、字號、實際基線距、章節標題、頁眉頁腳和頁碼
+位置可以隨版本改善；**不承諾** 重新編譯後 PDF 外觀或頁碼逐頁一致。
+
+如需原有的排版參數，請於 Class 之後呼叫 `\UseLegacyLayout`，
+它會依 Book／Article／Report／Beamer 和 `lang=en`／`lang=zh`
+恢復 1.0.5 默認設定。之後的原生 LaTeX 覆寫仍優先；
+不凍結外部字體／套件版本，也不保證 PDF 位元完全一致。
+1.0.6 新版數值及配置見 [LAYOUTS-zh.md](LAYOUTS-zh.md)。
 內部原始碼版本 **不代表** 三語手冊與 Showcase 已同步發佈。
 這些原始碼、追蹤中的 PDF 與正式封裝均待日後公開發佈階段更新。

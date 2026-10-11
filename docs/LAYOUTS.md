@@ -1,4 +1,4 @@
-# Layouts (publication-default proposal, issue #22)
+# Layouts — IMPE 1.0.6
 
 [繁體中文](LAYOUTS-zh.md)
 
@@ -11,7 +11,7 @@ not a replacement for geometry, fancyhdr, setspace or Beamer.
 This change intentionally adjusts the appearance of the canonical classes.
 Their names, previous \UseLayout and \LayoutSetup interfaces, and historical
 component IDs remain available. Existing PDFs may repaginate unless the author
-opts into a legacy layout preset.
+uses `\UseLegacyLayout` to restore the 1.0.5 layout profile.
 
 ## Canonical class defaults
 
@@ -44,7 +44,7 @@ setspace stretch factor; paragraph spacing is additional to baseline skip.
 
 Normal class sizes are installed for the default 10pt base-class option.
 Explicit `11pt` or `12pt` class options take precedence and retain their
-native sizing; users can also change fonts with `\\fontsize` or `\\setstretch`.
+native sizing; users can also change fonts with `\fontsize` or `\setstretch`.
 Book headings default to 18pt chapters, 13.5/14pt sections and 11.5/12pt
 subsections (en/zh). Article sections are 14/15pt. Report chapters are 18pt.
 Standard native overrides and normal font-size commands remain available.
@@ -78,6 +78,7 @@ The Beamer profile also resets its theme fonts. Exact PDF bytes, changes
 in external fonts and package versions are outside the compatibility contract.
 The command is preamble-only, idempotent and should precede explicit native
 overrides. Existing named `legacy_*` presets remain available.
+
 ## Native customization (preferred for detailed adjustments)
 
 ```tex
@@ -93,35 +94,35 @@ overrides. Existing named `legacy_*` presets remain available.
 \end{document}
 ```
 
-No second `\\usepackage{geometry}` or `\\usepackage{fancyhdr}` call
+No second `\usepackage{geometry}` or `\usepackage{fancyhdr}` call
 is needed for canonical book/article/report. Apply native overrides **after**
-the class and any alternative `\\UseLayout` selection. IMPE does not
-reapply its defaults at `\\begin{document}`, so later author settings win.
-Use native `\\geometry` to change the page and geometry together; changing
+the class and any alternative `\UseLayout` selection. IMPE does not
+reapply its defaults at `\begin{document}`, so later author settings win.
+Use native `\geometry` to change the page and geometry together; changing
 only the paper size does not imply automatic proportional margins. For
-Beamer use `aspectratio=...`, `\\setbeamersize`, `\\setbeamerfont` and
-`\\setbeamertemplate` instead of the paper-layout geometry preset.
+Beamer use `aspectratio=...`, `\setbeamersize`, `\setbeamerfont` and
+`\setbeamertemplate` instead of the paper-layout geometry preset.
 
 ## Minimal convenience interface
 
 The existing API remains supported:
 
-- `\\UseLayout{en_book}`, `\\UseLayout{zh_doc}` etc., including
+- `\UseLayout{en_book}`, `\UseLayout{zh_doc}` etc., including
   new `en_report`, `zh_report`, and `beamer_zh`.
-- `\\LayoutSetup{page.inner=...,page.top=...,text.line-stretch=...}`
-  and `\\LayoutSet{key}{value}`. Unset keys retain the chosen defaults.
+- `\LayoutSetup{page.inner=...,page.top=...,text.line-stretch=...}`
+  and `\LayoutSet{key}{value}`. Unset keys retain the chosen defaults.
   A nonblank key may be set only once in the same scope.
-- `\\begin{LayoutScope}{text.par-indent=...}...\end{LayoutScope}`
+- `\begin{LayoutScope}{text.par-indent=...}...\end{LayoutScope}`
   for paragraph-local settings.
-- `\\HeaderStyle{running|title|classic|minimal|report}` and
-  `\\HeaderTitle{...}`; complex page styles use native fancyhdr.
-- `\\UseTemplateSet{layout=...,fonts=...,features=...}`.
+- `\HeaderStyle{running|title|classic|minimal|report}` and
+  `\HeaderTitle{...}`; complex page styles use native fancyhdr.
+- `\UseTemplateSet{layout=...,fonts=...,features=...}`.
 
-Public `\\LayoutPresetRegister` / `\\LayoutPresetDeclare` and old component
-IDs are preserved for custom layouts. Legacy A4 typography/geometry is
-selectable via `legacy_en_doc`, `legacy_zh_doc`, `legacy_en_book`,
-`legacy_zh_book`, or `legacy_beamer`. These are opt-in approximations of
-the old presets, not a promise of byte-for-byte identical PDFs.
+Public `\LayoutPresetRegister` / `\LayoutPresetDeclare` and old component
+IDs are preserved for custom layouts. Historical 1.0.5 profiles are also
+selectable explicitly via `legacy_en_doc`, `legacy_zh_doc`, `legacy_en_book`,
+`legacy_zh_book`, or `legacy_beamer`. They restore the historical layout parameters,
+not a promise of byte-for-byte identical PDFs.
 
 ### Relevant files
 
@@ -131,5 +132,4 @@ the old presets, not a promise of byte-for-byte identical PDFs.
 - `core/layout/impe-layout-config.tex`: existing convenience parameters
 - `tests/layout-publication-*.tex`: size, typography and override regressions
 
-The **manuals and showcase** are intentionally not regenerated for this
-draft until a formal publication update.
+The **manuals and showcase** are intentionally not regenerated for this internal source version until a formal publication update.
