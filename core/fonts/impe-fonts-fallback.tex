@@ -10,6 +10,12 @@
 \prop_new:N \g__writing_cjk_family_profile_prop
 \prop_new:N \g__writing_fallback_warning_prop
 \prop_new:N \g__writing_fallback_configured_prop
+% xeCJK caches the NFSS font selected for a fallback tier, independently of
+% its mutable family declaration. Only invalidate a cache after its owning
+% fallback chain has changed.
+\prop_new:N \g__writing_fallback_family_revision_prop
+\prop_new:N \g__writing_fallback_cache_revision_prop
+\int_new:N \g__writing_fallback_revision_int
 \bool_new:N \g__writing_fallback_started_bool
 \bool_new:N \l__writing_has_global_chinese_bool
 \clist_new:N \l__writing_fallback_candidates_clist
@@ -251,6 +257,9 @@
       }
     \prop_gput:NnV \g__writing_fallback_configured_prop {#1}
       \l__writing_fallback_signature_tl
+    \int_gincr:N \g__writing_fallback_revision_int
+    \prop_gput:Nnx \g__writing_fallback_family_revision_prop {#1}
+      {\int_use:N \g__writing_fallback_revision_int}
   }
 
 \cs_new_protected:Npn \__writing_fallback_refresh:
@@ -292,6 +301,31 @@
 
 \cs_new_protected:Npn \__writing_fallback_install_warning_hook:
   {
+    \cs_if_exist:NT \__xeCJK_select_fallback_font:Nnnn
+      {
+        \cs_new_eq:NN \__writing_base_xecjk_select_fallback_font:Nnnn
+          \__xeCJK_select_fallback_font:Nnnn
+        \cs_set_protected:Npn \__xeCJK_select_fallback_font:Nnnn ##1##2##3##4
+          {
+            \prop_get:NnNT
+              \g__writing_fallback_family_revision_prop {##3} \l_tmpa_tl
+              {
+                \tl_set:Nx \l_tmpb_tl {\cs_to_str:N ##1}
+                \prop_get:NVNT
+                  \g__writing_fallback_cache_revision_prop
+                  \l_tmpb_tl \l_tmpc_tl
+                  {
+                    \str_if_eq:VVF \l_tmpa_tl \l_tmpc_tl
+                      { \cs_undefine:N ##1 }
+                  }
+                \prop_gput:NVV
+                  \g__writing_fallback_cache_revision_prop
+                  \l_tmpb_tl \l_tmpa_tl
+              }
+            \__writing_base_xecjk_select_fallback_font:Nnnn
+              ##1{##2}{##3}{##4}
+          }
+      }
     \cs_if_exist:NT \__xeCJK_fallback_loop_aux:nnnNN
       {
         \cs_new_eq:NN
