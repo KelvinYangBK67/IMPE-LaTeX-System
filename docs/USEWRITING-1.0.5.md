@@ -263,15 +263,22 @@ to execute through the old loader under the shared preset dispatcher.
 - The log emits a de-duplicated `Glyph fallback for ... to ...` warning after
   actual xeCJK substitution. Repeated identical substitutions from the same
   source do not generate repeated IMPE warnings.
-- The **2×2×2 Style Matrix** is implemented and tested for **missing face
-  declarations**. A separate glyph-coverage-aware walk of all eight face
-  coordinates is not yet integrated; the currently working xeCJK fallback
-  searches whole-font candidates. It must not be represented as completed.
-- General non-CJK missing-glyph substitution is **not yet implemented**. XeTeX
-  does not provide xeCJK's glyph-miss callback for other renderers, and
-  splitting text into independent characters would break Indic and Arabic
-  shaping. This requires renderer-aware run/cluster handling before enabling
-  by default.
+- **CJK only:** the **2×2×2 Style Matrix** is applied at glyph-miss
+  time, not only at font declaration time. For a requested face, candidate
+  positions use the same rank list as missing-face resolution (for example,
+  Sans Bold Italic: 7 → 6 → 5 → 3 → 4 → 2 → 1 → 0). A face that exists but
+  lacks the character is skipped by xeCJK's native glyph-coverage test.
+- Within the CJK fallback chain, candidate faces from the active font resource
+  come first, followed by globally registered resources of the same Writing
+  Profile, and then other CJK Profiles. Only **explicitly declared** face
+  resources participate in the matrix walk; declaration-time substitutions
+  must not masquerade as additional font faces.
+- xeCJK's family chain is rebuilt when the requested serif/sans, weight or
+  shape coordinate changes; cache revision checks avoid stale font selection.
+  Repeated misses at an unchanged coordinate reuse the installed chain.
+- **No automatic non-CJK missing-glyph fallback** is provided or planned as
+  part of this feature. Non-CJK fonts retain their existing fontspec/renderer
+  behavior; IMPE does not split complex-script text into independent glyphs.
 
 Tests: `tests/fallback-native.tex`, `tests/fallback-precedence.tex`,
 `tests/fallback-profile-identity.tex`, `tests/fallback-late-registration.tex`,
