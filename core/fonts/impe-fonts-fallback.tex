@@ -13,7 +13,6 @@
 % xeCJK caches the NFSS font selected for a fallback tier, independently of
 % its mutable family declaration. Only invalidate a cache after its owning
 % fallback chain has changed.
-\prop_new:N \g__writing_fallback_family_revision_prop
 \prop_new:N \g__writing_fallback_cache_revision_prop
 \int_new:N \g__writing_fallback_revision_int
 \bool_new:N \g__writing_fallback_started_bool
@@ -258,8 +257,6 @@
     \prop_gput:NnV \g__writing_fallback_configured_prop {#1}
       \l__writing_fallback_signature_tl
     \int_gincr:N \g__writing_fallback_revision_int
-    \prop_gput:Nnx \g__writing_fallback_family_revision_prop {#1}
-      {\int_use:N \g__writing_fallback_revision_int}
   }
 
 \cs_new_protected:Npn \__writing_fallback_refresh:
