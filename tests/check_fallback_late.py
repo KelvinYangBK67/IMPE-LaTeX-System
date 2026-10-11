@@ -14,4 +14,4 @@ for page in doc:
 
 assert "FandolSong" in font_by_character.get("漢", ""), font_by_character
 assert "FandolHei" in font_by_character.get("字", ""), font_by_character
-print("IMPE-TEST-FALLBACK-LATE-PDF-PASS", font_by_character)
+print("IMPE-TEST-FALLBACK-LATE-PDF-PASS", "Song:", font_by_character["漢"], "Hei:", font_by_character["字"])
