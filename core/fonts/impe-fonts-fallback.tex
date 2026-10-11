@@ -109,16 +109,13 @@
   {
     \seq_map_inline:Nn \g__writing_pool_order_seq
       {
-        \str_if_eq:nnF {##1} {\l__writing_fallback_target_name_tl}
+        \str_if_eq:eeF {##1} {\tl_use:N \l__writing_fallback_target_name_tl}
           {
             \prop_get:NnN \g__writing_pool_profile_prop {##1}
               \l__writing_fallback_candidate_profile_tl
-            \bool_if:nT
-              {
-                \str_if_eq_p:nn
-                  { \l__writing_fallback_candidate_profile_tl }
-                  { \l__writing_fallback_target_profile_tl }
-              }
+            \str_if_eq:VVT
+              \l__writing_fallback_candidate_profile_tl
+              \l__writing_fallback_target_profile_tl
               { \__writing_fallback_candidate:n {##1} }
           }
       }
@@ -155,6 +152,7 @@
   {
     \clist_clear:N \l__writing_fallback_candidates_clist
     \tl_set:Nn \l__writing_fallback_target_name_tl {#1}
+    \tl_replace_once:Nnn \l__writing_fallback_target_name_tl {__fontrm_} {}
     \prop_get:NnNTF \g__writing_cjk_family_profile_prop {#1}
       \l__writing_fallback_target_profile_tl { }
       { \tl_set:Nn \l__writing_fallback_target_profile_tl {chinese} }
@@ -186,14 +184,14 @@
 \cs_new_protected:Npn \__writing_fallback_report:nnn #1#2#3
   {
     \tl_set:Nx \l__writing_fallback_warning_key_tl
-      {\tl_to_str:n {#1}/\tl_to_str:n {#2}/\int_to_Hex:n {\`#3}}
+      {\tl_to_str:n {#1}/\tl_to_str:n {#2}/\int_to_Hex:n {`#3}}
     \prop_if_in:NVF \g__writing_fallback_warning_prop
       \l__writing_fallback_warning_key_tl
       {
         \prop_gput:NVn \g__writing_fallback_warning_prop
           \l__writing_fallback_warning_key_tl {notified}
         \PackageWarning{impe-fonts}
-          {Glyph~U+\int_to_Hex:n {\`#3}~fallback:~#1~->~#2}
+          {Glyph~U+\int_to_Hex:n {`#3}~fallback:~#1~->~#2}
       }
   }
 
