@@ -701,7 +701,7 @@
               {Use~only~one~of~font=...~or~file=...~per~face.}
           }
         \tl_clear:N \l_tmpa_tl
-        \tl_clear:N \l_tmpb_tl
+        \tl_set:Nn \l_tmpb_tl {__impe_none__}
         \tl_if_blank:VTF \l__writing_face_file_tl
           { \tl_set:NV \l_tmpa_tl \l__writing_face_font_tl }
           { \tl_set:NV \l_tmpa_tl \l__writing_face_file_tl }
@@ -989,8 +989,7 @@
               }
             \prop_map_inline:Nn \l__writing_overrides_prop
               { \__writing_assign_style:nn {##1} {##2} }
-            \str_if_eq:VnT \l__writing_stylemap_tl {native}
-              { \__writing_regular_fallbacks: }
+            % The 2x2x2 matrix resolves missing faces at declaration time.
             \bool_if:NT \l__writing_valid_bool
               {
                 % Missing user-supplied resources are an error rather than
