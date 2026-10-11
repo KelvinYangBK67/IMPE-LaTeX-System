@@ -55,6 +55,8 @@
 \bool_new:N \l__font_reapply_style_bool
 \bool_new:N \l__font_local_override_bool
 \bool_new:N \g__font_cjk_main_declared_bool
+\int_new:N \g__font_cjk_main_priority_int
+\int_new:N \l__font_cjk_candidate_priority_int
 \seq_new:N \g__font_loaded_special_modules_seq
 \seq_new:N \g__font_range_global_blocks_seq
 \prop_new:N \g__font_range_global_name_prop
@@ -1005,11 +1007,33 @@
     \__font_build_mono_options:
     \str_if_eq:VnTF \l__font_script_class_tl { cjk }
       {
-        \cs_if_exist:NF \setCJKmainfont
-          { \RequirePackage{xeCJK} }
-        \use:x
+        % Chinese > Japanese > Korean, irrespective of declaration order.
+        \int_zero:N \l__font_cjk_candidate_priority_int
+        \cs_if_exist:NT \g__writing_legacy_profile_prop
           {
-            \exp_not:N \setCJKmainfont
+            \prop_get:NVNT \g__writing_legacy_profile_prop
+              \l__font_decl_family_id_tl \l_tmpa_tl
+              {
+                \str_case:Vn \l_tmpa_tl
+                  {
+                    {chinese}{\int_set:Nn \l__font_cjk_candidate_priority_int {3}}
+                    {han}{\int_set:Nn \l__font_cjk_candidate_priority_int {3}}
+                    {japanese}{\int_set:Nn \l__font_cjk_candidate_priority_int {2}}
+                    {korean}{\int_set:Nn \l__font_cjk_candidate_priority_int {1}}
+                  }
+              }
+          }
+        \int_compare:nNnF
+          {\l__font_cjk_candidate_priority_int} <
+          {\g__font_cjk_main_priority_int}
+          {
+            \int_gset_eq:NN \g__font_cjk_main_priority_int
+              \l__font_cjk_candidate_priority_int
+            \cs_if_exist:NF \setCJKmainfont
+              { \RequirePackage{xeCJK} }
+            \use:x
+              {
+                \exp_not:N \setCJKmainfont
             [ \tl_use:N \l__font_main_options_tl ]
             { \l__font_regular_tl }
           }
@@ -1026,7 +1050,8 @@
             [ \tl_use:N \l__font_mono_options_tl ]
             { \l__font_resolved_mono_tl }
           }
-        \bool_gset_true:N \g__font_cjk_main_declared_bool
+            \bool_gset_true:N \g__font_cjk_main_declared_bool
+          }
       }
       {
         \use:x

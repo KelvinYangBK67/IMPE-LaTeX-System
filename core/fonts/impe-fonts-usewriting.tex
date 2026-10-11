@@ -848,8 +848,18 @@
             \__writing_prepare_profile_behavior:
           }
       }
-    \bool_if:NT \l__writing_local_call_bool
+    \bool_if:NTF \l__writing_local_call_bool
       { \tl_set:Nn \l__writing_selected_scope_tl {local} }
+      {
+        % Global CJK selection uses the full profile priority policy.
+        \str_case:Vn \l__writing_profile_tl
+          {
+            {chinese}{\tl_set:Nn \l__writing_selected_scope_tl {global}}
+            {han}{\tl_set:Nn \l__writing_selected_scope_tl {global}}
+            {japanese}{\tl_set:Nn \l__writing_selected_scope_tl {global}}
+            {korean}{\tl_set:Nn \l__writing_selected_scope_tl {global}}
+          }
+      }
     \cs_if_exist:NT \l__writing_force_global_bool
       {
         \bool_if:NT \l__writing_force_global_bool
