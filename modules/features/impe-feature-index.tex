@@ -24,6 +24,9 @@
 % Keep the style beside the job (no additional installed xindy search path).
 \newwrite\NextIndexStyleFile
 \immediate\openout\NextIndexStyleFile=\jobname-impe.xdy
+% hyperref 2026 wraps native |see / |seealso in hyperxindexformat.
+% xindy needs the native cross-reference class declared explicitly.
+\immediate\write\NextIndexStyleFile{(define-crossref-class "hyperxindexformat" :unverified)}
 \immediate\write\NextIndexStyleFile{(define-attributes ("NextIndexLocation"))}
 \immediate\write\NextIndexStyleFile{(define-location-class "impe-occurrence" ("arabic-numbers" :sep "." "arabic-numbers") :var)}
 \immediate\write\NextIndexStyleFile{(markup-locref :class "impe-occurrence" :open "\@backslashchar NextIndexLocation\@charlb" :close "\@charrb")}
