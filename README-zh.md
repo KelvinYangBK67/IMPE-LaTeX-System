@@ -46,9 +46,10 @@ full 與 core release。`_zh` 類別已轉為相容入口；新文件推薦
 ```tex
 \UseWriting{[shanggu]chinese}
 \DeclareWriting{han-note}{[shanggu]chinese}
-...
+\begin{document}
 \Font{han-note}{漢字}
 \Writing{[tiro]devanagari}{संस्कृतम्}
+\end{document}
 ```
 
 其中 \DeclareWriting 僅保存設定，不立即改變全域字體；

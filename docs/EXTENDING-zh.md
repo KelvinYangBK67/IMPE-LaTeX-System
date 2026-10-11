@@ -50,3 +50,12 @@ target 進行測試。
 以及必要的手冊或 showcase。開發期間可使用本機聚焦探針，並保留為本地暫存檔。
 發佈前執行 `tests/run_regressions.ps1 -PublicFonts`；測試與 CTAN 封裝使用
 公開字體 fixture。
+
+## Writing Profile 與字體資源（1.0.5）
+
+同一字體用於多種文字時，應把字體資源與 Unicode Writing Profile
+分開登錄，再以 \UseWriting／\DeclareWriting／\Font／\Writing
+測試綁定，不改動舊 \UseFont preset 與專用局部命令的既有語義。
+實作位於 core/fonts/impe-fonts-usewriting.tex 及其字體備援／樣式模組；
+新增資源時不得附帶啟用非 CJK 的通用逐字缺字備援。
+詳見 [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md)。

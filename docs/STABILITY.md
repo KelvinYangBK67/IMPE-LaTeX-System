@@ -42,3 +42,16 @@ support status of `next*` requires an explicit statement.
 New documents should use `\\documentclass[lang=zh]{impebook}` (likewise
 for `impeart`, `impereport` and `impebeamer`) instead of `*_zh`.
 The `*_zh` entries remain fully supported compatibility aliases in 1.x.
+
+## Writing and fonts (1.0.5)
+
+New documents may use \UseWriting, \DeclareWriting, \Font and \Writing
+to keep Unicode Writing Profiles distinct from typeface resources.
+\UseFont, \UseFonts, their original IDs, family-specific local commands,
+and existing class/font routing remain part of the supported 1.x contract.
+Automatic missing-glyph fallback is intentionally limited to CJK and xeCJK.
+The full syntax is in [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md).
+
+This internal source version does **not** constitute a refreshed manual/showcase
+publication. Their sources and tracked PDFs are deliberately deferred; formal
+release bundles require that documentation milestone to be completed.

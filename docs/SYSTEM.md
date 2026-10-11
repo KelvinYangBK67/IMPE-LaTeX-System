@@ -173,3 +173,12 @@ The CTAN id names the archive; `\ProvidesPackage{impe}`, class names, runtime
 file prefixes, and the `tex/latex/impe/` installation namespace retain the
 canonical IMPE names. The version comes
 from the repository `VERSION` file.
+
+## Writing/font registries in 1.0.5
+
+Unicode block data, curated Writing Profiles, font resource packs, and
+backward-compatible presets are distinct registries. For global CJK bindings
+the active Writing Profile is recorded independently of the resource identity;
+xeCJK handles glyph-level fallback with the 2×2×2 face matrix.
+These mechanisms do not replace the legacy XeTeX interchar ownership arbiter.
+See [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md).

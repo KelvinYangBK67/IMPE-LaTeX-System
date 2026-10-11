@@ -40,3 +40,14 @@ CTAN `impe-framework` 發佈、新手冊、模板、示例與一般受維護來�
 新文件建議採用 `\\documentclass[lang=zh]{impebook}`（`impeart`、
 `impereport`、`impebeamer` 同理），而非 `*_zh`。
 原有 `*_zh` 入口在 1.x 中繼續作為受支援的相容別名。
+
+## Writing 與字體（1.0.5）
+
+新文件可使用 \UseWriting、\DeclareWriting、\Font、\Writing
+將 Unicode Writing Profile 與字體資源分開管理。
+\UseFont、\UseFonts、全部原有家族 ID、專用局部命令與既有路由
+仍屬 IMPE 1.x 受支援介面。自動缺字備援刻意僅支援 CJK／xeCJK；
+完整語法見 [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md)。
+
+內部原始碼版本 **不代表** 三語手冊與 Showcase 已同步發佈。
+這些原始碼、追蹤中的 PDF 與正式封裝均待日後公開發佈階段更新。

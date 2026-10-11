@@ -49,9 +49,10 @@ select a pack explicitly:
 ```tex
 \UseWriting{[shanggu]chinese}
 \DeclareWriting{han-note}{[shanggu]chinese}
-...
+\begin{document}
 \Font{han-note}{漢字}
 \Writing{[tiro]devanagari}{संस्कृतम्}
+\end{document}
 ```
 
 The configuration in \DeclareWriting is stored without activating a font;

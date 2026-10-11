@@ -162,3 +162,11 @@ class 加上明確的 `\UseTemplateSet`。
 
 CTAN id 用於命名封裝；`\ProvidesPackage{impe}`、class 名稱、執行檔前綴與
 `tex/latex/impe/` 安裝 namespace 沿用 IMPE 標準名稱。版本號取自倉庫根目錄的 `VERSION`。
+
+## 1.0.5 Writing／字體分層
+
+Unicode 區段資料、人工維護的 Writing Profile、字體資源包及與舊版
+相容的 preset 分開登錄。全域 CJK 綁定會獨立保存 Writing Profile，
+字形缺漏由 xeCJK 及 2×2×2 字體面矩陣處理。
+本機制不取代舊有 XeTeX interchar 全域區段路由仲裁。
+詳見 [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md)。

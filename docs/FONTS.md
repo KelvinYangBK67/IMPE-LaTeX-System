@@ -2,6 +2,47 @@
 
 [繁體中文](FONTS-zh.md)
 
+## 1.0.5: Writing Profiles and font resources
+
+The recommended simple interface is still \UseFont{preset} (including all
+historical IDs). The advanced interface separates a **Unicode Writing Profile**
+(script-specific routing and renderer behavior) from a **font resource/pack**
+(the actual typefaces and available faces). A font-pack override does not
+change the Writing Profile. The release provides 69 curated profiles,
+85 resource aliases, and all 59 original preset IDs.
+
+```tex
+\UseWriting{[shanggu]chinese}
+\DeclareWriting{han-note}{[shanggu,stylemap=full,italic=zhuque]chinese}
+\begin{document}
+\Font{han-note}{漢字}
+\Writing{[tiro]devanagari}{संस्कृतम्}
+\end{document}
+```
+
+\UseWriting{[pack,options]profile} activates a global writing/font binding;
+\DeclareWriting{name}{config} only saves the configuration. \Font{name}[overrides]{text}
+and \Writing{config}{text} force one local font/renderer throughout the supplied
+text and need no earlier \UseWriting or \UseFont call.
+Use \UseFont{preset}[local|global] to retain the existing preset loading model.
+The existing shorthand commands (\SA, \JP, \MOv, etc.) remain supported.
+
+**Only CJK** participates in automatic glyph-miss fallback. The xeCJK backend
+checks a missing character in explicitly available faces according to the
+Serif/Sans × Regular/Bold × Upright/Italic (2×2×2) Style Matrix. It first
+tries the active font resource's ranked faces, then registered fonts with the
+same Writing Profile, then other CJK profiles. A face that exists but
+does not contain the character does not block further fallback. Registration
+during the document updates the chain; candidate-font cache changes do not
+silently retain an old selection. Non-CJK automatic missing-glyph fallback
+is deliberately out of scope. New overlapping Unicode-profile arbitration
+is also not yet implemented.
+
+For syntax, complete option and alias lists, and caveats, see
+[Writing and font selection (1.0.5)](USEWRITING-1.0.5.md).
+The canonical manual/showcase sources and PDFs will be updated only when
+preparing a formal public release.
+
 ## Structure
 
 ```text
@@ -557,23 +598,22 @@ The canonical public font audit is
 `manual/showcase/impe-showcase.tex`. Focused automated checks live under
 `tests/`.
 
-## Generic local selection (1.0.2)
+## Local font selection and face resolution (1.0.5)
 
-`\UseFont{id}[local|global]` keeps its existing activation meaning. Use
-`\Font{id}{content}` to typeset a local span through the registered family's
-public command. For example, `\Font{hindi}{हिन्दी}` is equivalent to `\HI{हिन्दी}`.
-The local declaration is loaded on demand, using the same registry errors as
-`\UseFont{id}[local]` for unknown IDs or families lacking local mode. Load
-families requiring additional packages with `\UseFont` in the preamble.
-Existing family commands remain supported. Series/shape, local override of
-Unicode routing, direction, CJK spacing and script processing are shared.
-This release uses the registered-family API for font selection.
+The original \UseFont{id}[local|global] activation model and legacy
+local family commands remain available. Since 1.0.5, \Font{id}[overrides]{text}
+also accepts named \DeclareWriting declarations and built-in resources,
+and it performs a forced local selection without requiring a prior preamble
+activation. The related anonymous form is \Writing{configuration}{text}.
+For example \Font{hindi}{हिन्दी} remains compatible with \HI{हिन्दी}.
+Old family-specific shortcuts keep their extra optional arguments, such as
+\MOv[0pt]{...}; no script-specific renderer is substituted for an unrelated
+writing profile.
 
-Each face resolves independently: first the configured bundled file, then the
-registered filename/name through fontspec (TeX Live or system lookup), then the
-existing strict error or soft fallback. Bundled files always win. A core install
-can therefore use installed fonts directly. `\SetCatalogFontRoot` selects a
-separate library when needed.
+Individual font files resolve from bundled files first, then fontspec/TeX Live
+or system lookup. The registered strict/soft missing-file modes are distinct
+from xeCJK CJK *missing-glyph* substitution, whose face matrix is described
+above. \SetCatalogFontRoot selects a separate font library.
 
 ## Egyptian and Khitan Small Script (1.0.3 internal)
 
@@ -588,7 +628,6 @@ detection. Legacy linear \KHS{...}, explicit \KHSstack{...} and
 The XSR renderer needs a readable real TTF/OTF file, resolved by the IMPE
 font registry. On non-full installations, supply the matching file under
 the font mirror configured by \SetCatalogFontRoot{...}. Font family name
-lookup alone is not sufficient for the XSR Python renderer. XSR 0.10
-supports shell escape or preprocessing; shell mode on TeX Live 2024+ supports `-output-directory` through
-`TEXMF_OUTPUT_DIRECTORY` (XSR 0.10 maintenance fix); earlier engines need
-that environment variable set explicitly or the preprocess workflow.
+lookup alone is not sufficient for the XSR Python renderer. The bundled XSR 1.0 supports shell escape or preprocessing. TeX Live 2024+
+supports `-output-directory` through `TEXMF_OUTPUT_DIRECTORY`; older engines
+may require the environment variable explicitly or preprocessing.
