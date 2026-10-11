@@ -20,11 +20,28 @@
 \tl_new:N \l__writing_fallback_candidate_path_tl
 \tl_new:N \l__writing_fallback_warning_key_tl
 \tl_new:N \l__writing_fallback_selected_font_tl
+\tl_new:N \l__writing_effective_profile_tl
+\tl_new:N \l__writing_fallback_signature_tl
 
 \cs_generate_variant:Nn \prop_if_in:NnF { NVF }
 \cs_generate_variant:Nn \seq_gput_right:Nn { NV }
 \cs_generate_variant:Nn \prop_gput:Nnn { NVV, NVn }
 \cs_generate_variant:Nn \prop_get:NnNTF { NVNTF }
+
+% Keep the actual Writing Profile independent of the pack used to draw it.
+% Legacy declarations have no explicit profile: they use the old id mapping.
+\cs_new_protected:Npn \__writing_fallback_effective_profile:
+  {
+    \tl_set:NV \l__writing_effective_profile_tl
+      \l__font_decl_writing_profile_tl
+    \tl_if_blank:VT \l__writing_effective_profile_tl
+      {
+        \prop_get:NVNTF \g__writing_legacy_profile_prop
+          \l__font_decl_family_id_tl \l__writing_effective_profile_tl
+          { }
+          { \tl_set:Nn \l__writing_effective_profile_tl {basic} }
+      }
+  }
 
 % Save the font resources, not merely their Unicode routing claims. A local
 % override is not registered as a new globally available font.
@@ -56,23 +73,18 @@
                 \tl_set:Nx \l_tmpa_tl { __fontrm_\l__font_name_tl }
                 \exp_args:NV \seq_if_in:NnF \g__writing_cjk_family_seq \l_tmpa_tl
                   { \seq_gput_right:NV \g__writing_cjk_family_seq \l_tmpa_tl }
-                \prop_get:NVNTF \g__writing_legacy_profile_prop
-                  \l__font_decl_family_id_tl \l_tmpb_tl
-                  { }
-                  { \tl_set:Nn \l_tmpb_tl {basic} }
+                \__writing_fallback_effective_profile:
                 \prop_gput:NVV \g__writing_cjk_family_profile_prop
-                  \l_tmpa_tl \l_tmpb_tl
+                  \l_tmpa_tl \l__writing_effective_profile_tl
                 \bool_if:NT \g__writing_fallback_started_bool
                   { \__writing_fallback_refresh: }
               }
           }
         \str_if_eq:VnT \l__font_scope_tl {global}
           {
-            \prop_get:NVNTF \g__writing_legacy_profile_prop
-              \l__font_decl_family_id_tl \l_tmpa_tl
-              { }
-              { \tl_set:Nn \l_tmpa_tl {basic} }
-            \exp_args:NV \__writing_pool_register_active:n \l_tmpa_tl
+            \__writing_fallback_effective_profile:
+            \exp_args:NV \__writing_pool_register_active:n
+              \l__writing_effective_profile_tl
           }
       }
   }
@@ -212,21 +224,33 @@
       { \tl_set:Nn \l__writing_fallback_target_profile_tl {chinese} }
     \__writing_fallback_collect:n {#1}
     \__writing_fallback_system_fonts:
-    % xeCJK appends /FallBack subfamilies instead of resetting them.
-    % Installing the same chain repeatedly creates an unbounded subfamily
-    % cascade. Register each primary family exactly once.
-    \prop_if_in:NnF \g__writing_fallback_configured_prop {#1}
+    % A repeated identical chain does nothing. On a real pool change, xeCJK
+    % redeclares each named /FallBack tier; the candidate list only grows
+    % after registrations, so previously created deeper tiers cannot become
+    % stale. Avoid repeated no-op definitions and infinite append cascades.
+    \tl_set:Nx \l__writing_fallback_signature_tl
+      { \clist_use:Nn \l__writing_fallback_candidates_clist {,} }
+    \clist_if_empty:NF \l__writing_fallback_candidates_clist
       {
-        \clist_if_empty:NF \l__writing_fallback_candidates_clist
+        \prop_get:NnNTF \g__writing_fallback_configured_prop {#1} \l_tmpa_tl
           {
-            \use:x
-              {
-                \exp_not:N \setCJKfallbackfamilyfont {\exp_not:n {#1}}
-                  { \clist_use:Nn \l__writing_fallback_candidates_clist {,} }
-              }
-            \prop_gput:Nnn \g__writing_fallback_configured_prop {#1} {installed}
+            \str_if_eq:eeF
+              {\l_tmpa_tl} {\l__writing_fallback_signature_tl}
+              { \__writing_fallback_install_family:n {#1} }
           }
+          { \__writing_fallback_install_family:n {#1} }
       }
+  }
+
+\cs_new_protected:Npn \__writing_fallback_install_family:n #1
+  {
+    \use:x
+      {
+        \exp_not:N \setCJKfallbackfamilyfont {\exp_not:n {#1}}
+          { \clist_use:Nn \l__writing_fallback_candidates_clist {,} }
+      }
+    \prop_gput:NnV \g__writing_fallback_configured_prop {#1}
+      \l__writing_fallback_signature_tl
   }
 
 \cs_new_protected:Npn \__writing_fallback_refresh:
