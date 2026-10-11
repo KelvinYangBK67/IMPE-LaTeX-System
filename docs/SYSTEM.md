@@ -122,13 +122,23 @@ family's registered behavior. `\UseLocalFont(s)`, `\UseGlobalFont(s)`, `globalfo
 | `impeart_zh` | `zh_doc` | `cmu,shanggu` | Chinese |
 | `impebook` | `en_book` | `cmu` | English |
 | `impebook_zh` | `zh_book` | `cmu,shanggu` | Chinese |
-| `impereport` | `en_doc` | `cmu` | English |
-| `impereport_zh` | `zh_doc` | `cmu,shanggu` | Chinese |
+| `impereport` | `en_report` | `cmu` | English |
+| `impereport_zh` | `zh_report` | `cmu,shanggu` | Chinese |
 | `impebeamer` | `beamer` | `cmu` | English |
-| `impebeamer_zh` | `beamer` | `cmu,shanggu` | Chinese |
+| `impebeamer_zh` | `beamer_zh` | `cmu,shanggu` | Chinese |
 
 Defaults are applied when the wrapper loads `impe`. Use a standard class and
 an explicit `\UseTemplateSet` to select every component manually.
+
+## Layout and legacy snapshot (1.0.6)
+
+The canonical layout defaults are book: ISO B5; article/report: distinct A4
+geometries; and Beamer: clean 16:9. Each class selects the appropriate
+`lang=en` or `lang=zh` typography. A single preamble `\UseLegacyLayout`
+restores the class/language-specific 1.0.5 layout (including Beamer Madrid
+and 4:3 if no explicit aspect ratio is given). Native paper overrides use
+`\geometry{...}` and native page-style overrides use `fancyhdr`; both
+are already loaded by canonical paper layouts. See [Layouts](LAYOUTS.md).
 
 ## Title and Header State
 

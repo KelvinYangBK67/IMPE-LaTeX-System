@@ -11,12 +11,12 @@
 - `manual/` 存放手冊與標準 showcase
 - `docs/` 存放技術參考文件
 
-開發期間的臨時探針可留在本地；`templates/` 收錄公開的起始文件。
+開發期間的臨時探針可留在本地；`templates/` 收錄公開的起始文件。IMPE 1.0.6 預設 Book 為 ISO B5、Article／Report 為 A4、Beamer 為 16:9；如需 1.0.5 舊排版可加 `\UseLegacyLayout`。
 
 這些模板刻意採用「安裝後使用」的寫法：
 
 - 直接使用標準入口 `impeart`、`impebook`、`impebeamer` 及其 `_zh` 對應類
-- 英文與中文各自使用獨立的 wrapper class 入口
+- 新文件推薦在標準 Class 使用 `lang=en`／`lang=zh`；既有 `_zh` wrapper 繼續相容
 - 目標場景是 IMPE LaTeX System 已安裝到 `texmf` 之後直接起稿
 - 倉庫的回歸與 smoke coverage 應放在 `tests/`
 
