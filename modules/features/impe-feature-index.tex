@@ -5,10 +5,18 @@
 \fi
 \def\NextFeatureIndexLoaded{1}
 
-\RequirePackage[xindy]{imakeidx}
+% A user may already have configured imakeidx; do not clash with or replace it.
+\makeatletter
+\@ifpackageloaded{imakeidx}{}{\RequirePackage[xindy]{imakeidx}}
+\makeatother
 \UseFeature{hyperlinks}
 
 \providecommand{\IndexTitle}{}
+% Precise locations are available only for the default index that IMPE
+% initializes with its xindy location style. Existing native makeindex
+% declarations always take precedence.
+\newif\ifNextIndexPrecise
+\NextIndexPrecisefalse
 \makeatletter
 % xindy receives an opaque occurrence ordinal, never the visible page label.
 % The custom location class also covers native \index occurrences without a
@@ -28,30 +36,38 @@
 % Grouping prevents the synthetic index label from replacing the most recent
 % section/equation/figure reference context for a later user \label.
 \newcommand{\NextIndexWriteOccurrenceTo}[2]{%
-  \begingroup
-    \NextHyperlinksCreateOccurrenceTarget\NextIndexTarget
-    \edef\NextIndexOrdinal{0.\the\NextHyperDestinationSequence}%
-    \edef\@currentHref{\NextIndexTarget}%
-    \label{impe-index-\NextIndexOrdinal}%
-    \imki@wrindexentry{#1}{#2|NextIndexLocation}{\NextIndexOrdinal}%
-  \endgroup
+  \ifNextIndexPrecise
+    \begingroup
+      \NextHyperlinksCreateOccurrenceTarget\NextIndexTarget
+      \edef\NextIndexOrdinal{0.\the\NextHyperDestinationSequence}%
+      \edef\@currentHref{\NextIndexTarget}%
+      \label{impe-index-\NextIndexOrdinal}%
+      \imki@wrindexentry{#1}{#2|NextIndexLocation}{\NextIndexOrdinal}%
+    \endgroup
+  \else
+    % A pre-existing native default index need not use IMPE's .xdy style.
+    \NextIndexNativeIndex[#1]{#2}%
+  \fi
 }
 \newcommand{\NextIndexWriteOccurrence}[1]{%
   \NextIndexWriteOccurrenceTo{\jobname}{#1}%
 }
-\ifx\IndexTitle\@empty
-  \makeindex[intoc,options=-M \jobname-impe]
-\else
-  \makeindex[title={\IndexTitle}, intoc,options=-M \jobname-impe]
-\fi
+\@ifundefined{\jobname @idxfile}{%
+  \ifx\IndexTitle\@empty
+    \makeindex[intoc,program=xindy,options=-M \jobname-impe]%
+  \else
+    \makeindex[title={\IndexTitle},intoc,program=xindy,options=-M \jobname-impe]%
+  \fi
+  \NextIndexPrecisetrue
+}{%
+  \PackageInfo{feature-index}{Using the user's existing default index configuration}%
+}
 \makeatother
 
-% Native \index: keep the imakeidx public syntax and index grammar.  For the
-% default index, an ordinary entry (including sort@display and nested ! keys)
-% gets an occurrence-specific destination, just like \Term.
-% Explicit |... encapsulations, index ranges/cross-references, and additional
-% named indexes retain their native handling until the Index integration (#20)
-% establishes an unambiguous formatting/processing contract.
+% Adapter only: ordinary entries in the IMPE-initialized default xindy index
+% acquire precise occurrence locations. Leave the imakeidx grammar untouched:
+% explicit |... encapsulations, see/seealso, ranges and named indexes are sent
+% unchanged to native imakeidx. This is deliberately not an index parser.
 \makeatletter
 \newcommand{\NextIndexNativeWrite}[1]{%
   \@bsphack
@@ -73,7 +89,11 @@
   \let\NextIndexNativeIndex\index
   \RenewDocumentCommand{\index}{o m}{%
     \IfNoValueTF{#1}
-      {\NextIndexNativeDispatch{#2}}
+      {\ifNextIndexPrecise
+         \NextIndexNativeDispatch{#2}%
+       \else
+         \NextIndexNativeIndex{#2}%
+       \fi}
       {\NextIndexNativeIndex[#1]{#2}}%
   }%
 }
@@ -86,123 +106,6 @@
   }
 }
 
-\DeclareRobustCommand{\NextIndexCjkDescription}[1]{（#1）}
-\DeclareRobustCommand{\NextIndexWesternDescription}[1]{%
-  \nobreakspace(#1)%
-}
-\DeclareRobustCommand{\NextIndexBareDescription}[1]{%
-  \nobreakspace#1%
-}
 
-\ExplSyntaxOn
-
-\prop_new:N \g__next_index_seen_prop
-\tl_new:N \l__next_index_parentheses_tl
-\tl_new:N \l__next_index_description_tl
-\tl_new:N \l__next_index_display_tl
-\tl_new:N \l__next_index_sort_tl
-\tl_new:N \l__next_index_key_tl
-
-\keys_define:nn { next/index/term }
-  {
-    sort .tl_set:N = \l__next_index_sort_tl,
-    key .tl_set:N = \l__next_index_key_tl,
-    parentheses .choice:,
-    parentheses / auto .code:n =
-      { \tl_set:Nn \l__next_index_parentheses_tl { auto } },
-    parentheses / cjk .code:n =
-      { \tl_set:Nn \l__next_index_parentheses_tl { cjk } },
-    parentheses / western .code:n =
-      { \tl_set:Nn \l__next_index_parentheses_tl { western } },
-    parentheses / none .code:n =
-      { \tl_set:Nn \l__next_index_parentheses_tl { none } },
-    parentheses .value_required:n = true,
-    parens .meta:n = { parentheses = #1 },
-  }
-
-\cs_new_protected:Npn \__next_index_resolve_parentheses:
-  {
-    \str_if_eq:VnT \l__next_index_parentheses_tl { auto }
-      {
-        \tl_set:Nn \l__next_index_parentheses_tl { western }
-        \cs_if_exist:NT \NextSystemUiTag
-          {
-            \str_if_eq:eeT { \NextSystemUiTag } { zh }
-              { \tl_set:Nn \l__next_index_parentheses_tl { cjk } }
-          }
-      }
-  }
-
-\cs_new_protected:Npn \__next_index_set_description:n #1
-  {
-    \tl_clear:N \l__next_index_description_tl
-    \tl_if_blank:nF {#1}
-      {
-        \str_case:Vn \l__next_index_parentheses_tl
-          {
-            { cjk }
-              {
-                \tl_set:Nn \l__next_index_description_tl
-                  { \NextIndexCjkDescription{#1} }
-              }
-            { western }
-              {
-                \tl_set:Nn \l__next_index_description_tl
-                  { \NextIndexWesternDescription{#1} }
-              }
-            { none }
-              {
-                \tl_set:Nn \l__next_index_description_tl
-                  { \NextIndexBareDescription{#1} }
-              }
-          }
-      }
-  }
-
-\cs_new_protected:Npn \__next_index_emit_term:nnnn #1#2#3#4
-  {
-    \textbf{#3}#4\unskip\nobreak\hspace{0pt}
-    \prop_if_in:NnF \g__next_index_seen_prop {#1}
-      {
-        \prop_gput:Nnn \g__next_index_seen_prop {#1} { indexed }
-        \NextIndexWriteOccurrence{#2@#3#4}
-      }
-  }
-\cs_generate_variant:Nn \__next_index_emit_term:nnnn { VVVV }
-
-\NewDocumentCommand{\Term}{ O{} m o g g }
-  {
-    \group_begin:
-      \tl_set:Nn \l__next_index_parentheses_tl { auto }
-      \tl_set:Nn \l__next_index_display_tl {#2}
-      \tl_set:Nn \l__next_index_sort_tl {#2}
-      \tl_set:Nn \l__next_index_key_tl {#2}
-      \tl_clear:N \l__next_index_description_tl
-      \IfNoValueTF{#5}
-        {
-          \IfNoValueTF{#3}
-            {
-              % Also accept the recently introduced braced optional form.
-              \IfNoValueF{#4}
-                { \tl_set:Nn \l__next_index_description_tl {#4} }
-            }
-            { \tl_set:Nn \l__next_index_description_tl {#3} }
-        }
-        {
-          % Legacy form: \Term{key}{display}{description}
-          \tl_set:Nn \l__next_index_display_tl {#4}
-          \tl_set:Nn \l__next_index_description_tl {#5}
-        }
-      \keys_set:nn { next/index/term } {#1}
-      \__next_index_resolve_parentheses:
-      \exp_args:NV \__next_index_set_description:n
-        \l__next_index_description_tl
-      \__next_index_emit_term:VVVV
-        \l__next_index_key_tl
-        \l__next_index_sort_tl
-        \l__next_index_display_tl
-        \l__next_index_description_tl
-    \group_end:
-  }
-
-\ExplSyntaxOff
+% The historical Term interface is isolated from the recommended native stack.
+\input{\FeatureModuleRoot impe-feature-index-legacy.tex}
