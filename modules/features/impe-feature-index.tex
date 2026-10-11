@@ -23,6 +23,7 @@
 % formatting encapsulator.  This preserves the original sort/display grammar.
 % Keep the style beside the job (no additional installed xindy search path).
 \newwrite\NextIndexStyleFile
+\newcommand{\NextIndexWriteStyle}{%
 \immediate\openout\NextIndexStyleFile=\jobname-impe.xdy
 % hyperref 2026 wraps native |see / |seealso in hyperxindexformat.
 % xindy needs the native cross-reference class declared explicitly.
@@ -32,6 +33,7 @@
 \immediate\write\NextIndexStyleFile{(markup-locref :class "impe-occurrence" :open "\@backslashchar NextIndexLocation\@charlb" :close "\@charrb")}
 \immediate\write\NextIndexStyleFile{(markup-locref :attr "NextIndexLocation" :open "\@backslashchar NextIndexLocation\@charlb" :close "\@charrb")}
 \immediate\closeout\NextIndexStyleFile
+}
 \DeclareRobustCommand{\NextIndexLocation}[1]{%
   \hyperref[impe-index-#1]{\pageref*{impe-index-#1}}%
 }
@@ -56,6 +58,7 @@
   \NextIndexWriteOccurrenceTo{\jobname}{#1}%
 }
 \@ifundefined{\jobname @idxfile}{%
+  \NextIndexWriteStyle
   \ifx\IndexTitle\@empty
     \makeindex[intoc,program=xindy,options=-M \jobname-impe]%
   \else
