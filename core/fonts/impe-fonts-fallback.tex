@@ -10,6 +10,7 @@
 \prop_new:N \g__writing_cjk_family_profile_prop
 \prop_new:N \g__writing_fallback_warning_prop
 \bool_new:N \g__writing_fallback_started_bool
+\bool_new:N \l__writing_has_global_chinese_bool
 \clist_new:N \l__writing_fallback_candidates_clist
 \tl_new:N \l__writing_fallback_target_profile_tl
 \tl_new:N \l__writing_fallback_target_name_tl
@@ -136,9 +137,28 @@
   {
     % TeX fonts are the final fallback; probe availability rather than
     % assuming that Windows-only SimSun or optional Shanggu is installed.
-    \IfFileExists{FandolSong-Regular.otf}
-      { \clist_put_right:Nn \l__writing_fallback_candidates_clist
-          {FandolSong-Regular.otf} } { }
+    \bool_set_false:N \l__writing_has_global_chinese_bool
+    \seq_map_inline:Nn \g__writing_pool_order_seq
+      {
+        \prop_get:NnN \g__writing_pool_profile_prop {##1} \l_tmpa_tl
+        \str_case:Vn \l_tmpa_tl
+          {
+            {chinese}{\bool_set_true:N \l__writing_has_global_chinese_bool}
+            {han}{\bool_set_true:N \l__writing_has_global_chinese_bool}
+          }
+      }
+    % Tangut uses the existing global Chinese chain when present.
+    % Only without one should a TeX-provided Chinese font be considered.
+    \bool_if:nT
+      {
+        ! \str_if_eq_p:Vn \l__writing_fallback_target_profile_tl {tangut}
+        || ! \l__writing_has_global_chinese_bool
+      }
+      {
+        \IfFileExists{FandolSong-Regular.otf}
+          { \clist_put_right:Nn \l__writing_fallback_candidates_clist
+              {FandolSong-Regular.otf} } { }
+      }
     \IfFileExists{lmroman10-regular.otf}
       { \clist_put_right:Nn \l__writing_fallback_candidates_clist
           {lmroman10-regular.otf} } { }
