@@ -262,14 +262,14 @@ See \textcite{doe2026} for a narrative citation, or use
 \SetCitationBiblatexOptions{backend=biber,style=numeric}
 ```
 
-### \`index\`（原生優先）
+### `index`（原生優先）
 
-**推薦直接使用 imakeidx 原生** \`\index\`、\`\makeindex\` 和
-\`\printindex\`。啟用 \`index\` 會準備 \`imakeidx\`、\`xindy\`
-以及 \`hyperlinks\`，不再另造術語索引語法，也不預設載入
-\`glossaries-extra\`。
+**推薦直接使用 imakeidx 原生** `\index`、`\makeindex` 和
+`\printindex`。啟用 `index` 會準備 `imakeidx`、`xindy`
+以及 `hyperlinks`，不再另造術語索引語法，也不預設載入
+`glossaries-extra`。
 
-\`\`\`tex
+```tex
 \UseFeature{index}
 ...
 佛教\index{佛教}
@@ -277,41 +277,41 @@ See \textcite{doe2026} for a narrative citation, or use
 \index{Buddhism@佛教}
 \index{佛教|see{印度宗教}}
 \printindex
-\`\`\`
+```
 
-IMPE 自行建立的預設索引，對普通 \`\index\` 項目（包括
-\`sort@display\` 和 \`!\` 層級）提供逐次出現位置的 PDF 錨點：
+IMPE 自行建立的預設索引，對普通 `\index` 項目（包括
+`sort@display` 和 `!` 層級）提供逐次出現位置的 PDF 錨點：
 即使頁碼重複，或同一頁有兩次標記，也能區分具體座標。
-\`<job>-impe.xdy\` 僅負責將內部唯一序號對應至正確頁碼和
+`<job>-impe.xdy` 僅負責將內部唯一序號對應至正確頁碼和
 超連結；排序、分類、排印等仍交由 xindy／imakeidx。
 
-原生 \`\index\` 的 \`|...\` 格式封裝、\`see\`／\`seealso\`、
+原生 `\index` 的 `|...` 格式封裝、`see`／`seealso`、
 範圍索引及具名索引**原樣交給原生套件**，不由 IMPE 擅自解釋。
 這些情況沿用原生超連結規則；IMPE 的精確詞項位置保證限於其
 預設索引的普通項目。多索引直接使用：
 
-\`\`\`tex
+```tex
 \UseFeature{index}
 \makeindex[name=people,title={People},program=xindy]
 ...
 \index[people]{Müller, Anna}
 \printindex[people]
-\`\`\`
+```
 
-若用戶已自行載入 \`imakeidx\` 並建立預設索引，IMPE 不覆寫其
-\`\makeindex\` 設定；索引位置及超連結仍由該原生設定負責。
+若用戶已自行載入 `imakeidx` 並建立預設索引，IMPE 不覆寫其
+`\makeindex` 設定；索引位置及超連結仍由該原生設定負責。
 IMPE 建立的預設索引需在輸出目錄執行：
 
-\`\`\`sh
+```sh
 texindy -L english -C utf8 -M <job>-impe <job>.idx
-\`\`\`
+```
 
-然後再執行兩遍 XeLaTeX。具名索引依其 \`\makeindex\` 宣告自行
-編譯；既有 MakeIndex 預設則使用 \`makeindex <job>.idx\`。
+然後再執行兩遍 XeLaTeX。具名索引依其 `\makeindex` 宣告自行
+編譯；既有 MakeIndex 預設則使用 `makeindex <job>.idx`。
 
 術語註冊、描述、首見形式等直接使用可獨立載入的
-\`glossaries-extra\` 原生 API；是否同步索引，由用戶按其原生
-設定決定。原有 \`\Term\` 全部形式、\`\IndexTitle\`、
+`glossaries-extra` 原生 API；是否同步索引，由用戶按其原生
+設定決定。原有 `\Term` 全部形式、`\IndexTitle`、
 粗體呈現、首次索引語義繼續保留，但**僅作 1.x 相容接口**，
 不再推薦新文件使用。
 
