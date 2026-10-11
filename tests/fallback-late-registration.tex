@@ -1,0 +1,10 @@
+% A new global font after first glyph use must enter the existing xeCJK chain.
+\documentclass{article}
+\usepackage{impe}
+\begin{document}
+\Writing{[file=lmroman10-regular.otf]chinese}{漢}
+\par
+\UseWriting{[file=FandolHei-Regular.otf]chinese}
+\Writing{[file=lmroman10-regular.otf]chinese}{字}
+\typeout{IMPE-TEST-FALLBACK-LATE-REGISTRATION-PASS}
+\end{document}
