@@ -152,6 +152,7 @@ try {
         "usewriting-local-first-use",
         "fallback-native",
         "fallback-tangut-system",
+        "fallback-precedence",
         "local-font-override",
         "same-family-shaping",
         "routing-scalability",
@@ -218,6 +219,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Native xeCJK fallback PDF regression failed.' }
     & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-tangut-system.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'Tangut punctuation system fallback PDF regression failed.' }
+    & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-precedence.pdf') FandolHei
+    if ($LASTEXITCODE -ne 0) { throw 'Same-profile fallback precedence PDF regression failed.' }
     # Verify that actual glyph substitution emits an actionable warning,
     # and repeated occurrences of the same substitution are deduplicated.
     $nativeFallbackLog = Get-Content -LiteralPath (Join-Path $BuildRoot 'fallback-native.log') -Raw
@@ -225,6 +228,11 @@ try {
     if ($nativeFallbackWarnings -ne 4 -or
         $nativeFallbackLog -notmatch 'FandolSong-Regular\.otf') {
         throw "Native xeCJK fallback warning regression: expected 4 distinct-source deduplicated Fandol warnings, got $nativeFallbackWarnings."
+    }
+    $precedenceFallbackLog = Get-Content -LiteralPath (Join-Path $BuildRoot 'fallback-precedence.log') -Raw
+    if ($precedenceFallbackLog -notmatch 'Glyph fallback for' -or
+        $precedenceFallbackLog -notmatch 'FandolHei-Regular\.otf') {
+        throw 'CJK fallback must use the same-profile FandolHei ahead of cross-profile FandolSong.'
     }
     $tangutFallbackLog = Get-Content -LiteralPath (Join-Path $BuildRoot 'fallback-tangut-system.log') -Raw
     if ([regex]::Matches($tangutFallbackLog, 'Glyph fallback for').Count -ne 1 -or
