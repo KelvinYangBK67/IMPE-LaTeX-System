@@ -189,6 +189,16 @@ try {
         "lang-option-zh",
         "lang-legacy-zh",
         "layout-geometry-switch",
+        "layout-publication-book-en",
+        "layout-publication-book-zh",
+        "layout-publication-article-en",
+        "layout-publication-article-zh",
+        "layout-publication-report-en",
+        "layout-publication-report-zh",
+        "layout-publication-beamer",
+        "layout-publication-beamer-43",
+        "layout-publication-native-geometry",
+        "layout-publication-explicit-fontsize",
         "citations-preloaded",
         "beamer-hyperlinks"
     )
@@ -302,7 +312,7 @@ finally {
     $env:TEXINPUTS = $oldTexInputs
 }
 
-foreach ($name in @("feature-api-compat", "citations-preloaded", "beamer-hyperlinks", "layout-config", "lang-option-zh", "lang-legacy-zh", "layout-geometry-switch")) {
+foreach ($name in @("feature-api-compat", "citations-preloaded", "beamer-hyperlinks", "layout-config", "lang-option-zh", "lang-legacy-zh", "layout-geometry-switch", "layout-publication-book-en", "layout-publication-book-zh", "layout-publication-article-en", "layout-publication-article-zh", "layout-publication-report-en", "layout-publication-report-zh", "layout-publication-beamer", "layout-publication-beamer-43", "layout-publication-native-geometry", "layout-publication-explicit-fontsize")) {
     $log = Get-Content -LiteralPath (Join-Path $BuildRoot "$name.log") -Raw
     $marker = "IMPE-TEST-$($name.ToUpperInvariant())-PASS"
     if ($log -notmatch [regex]::Escape($marker)) {

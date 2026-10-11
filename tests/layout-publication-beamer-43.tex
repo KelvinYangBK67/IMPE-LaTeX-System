@@ -1,0 +1,11 @@
+% A native class option must defeat the IMPE 16:9 default.
+\documentclass[aspectratio=43]{impebeamer}
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{128mm}
+\IMPECheckDim{\paperheight}{96mm}
+\begin{document}
+\begin{frame}{Heading}
+Slide body.
+\end{frame}
+\typeout{IMPE-TEST-LAYOUT-PUBLICATION-BEAMER-43-PASS}
+\end{document}

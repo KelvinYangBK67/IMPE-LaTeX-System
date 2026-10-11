@@ -1,0 +1,9 @@
+% Publication layout dimension assertions.
+\newcommand{\IMPECheckDim}[2]{%
+  \ifdim#1<\dimexpr#2-0.8mm\relax
+    \PackageError{layout-test}{Dimension smaller than expected #2}{}%
+  \fi
+  \ifdim#1>\dimexpr#2+0.8mm\relax
+    \PackageError{layout-test}{Dimension larger than expected #2}{}%
+  \fi
+}

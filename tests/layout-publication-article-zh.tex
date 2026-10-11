@@ -1,0 +1,13 @@
+% Check A4 article defaults.
+\documentclass[lang=zh]{impeart}
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{210mm}
+\IMPECheckDim{\paperheight}{297mm}
+\IMPECheckDim{\textwidth}{152mm}
+\IMPECheckDim{\textheight}{237mm}
+\begin{document}
+\IMPECheckDim{\baselineskip}{17.5pt}
+\section{Example}
+Example paragraph.
+\typeout{IMPE-TEST-LAYOUT-PUBLICATION-ARTICLE-ZH-PASS}
+\end{document}
