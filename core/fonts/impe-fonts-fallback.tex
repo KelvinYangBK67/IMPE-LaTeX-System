@@ -87,6 +87,21 @@
 
 \cs_new_protected:Npn \__writing_fallback_candidate:n #1
   {
+    % xeCJK can only manage CJK-shaped fallback families. Other scripts
+    % are still tracked by the global pool for their own renderers.
+    \prop_get:NnN \g__writing_pool_profile_prop {#1}
+      \l__writing_fallback_candidate_profile_tl
+    \bool_set_false:N \l_tmpa_bool
+    \str_case:Vn \l__writing_fallback_candidate_profile_tl
+      {
+        {han}{\bool_set_true:N \l_tmpa_bool}
+        {chinese}{\bool_set_true:N \l_tmpa_bool}
+        {japanese}{\bool_set_true:N \l_tmpa_bool}
+        {korean}{\bool_set_true:N \l_tmpa_bool}
+        {tangut}{\bool_set_true:N \l_tmpa_bool}
+      }
+    \bool_if:NT \l_tmpa_bool
+      {
     \prop_get:NnN \g__writing_pool_font_prop {#1}
       \l__writing_fallback_candidate_font_tl
     \prop_get:NnN \g__writing_pool_path_prop {#1}
@@ -106,6 +121,7 @@
               }
             \clist_put_right:NV \l__writing_fallback_candidates_clist \l_tmpa_tl
           }
+      }
       }
   }
 
