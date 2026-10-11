@@ -72,10 +72,10 @@ CJK 缺字備援採用 xeCJK 的 2×2×2 字體面矩陣；非 CJK 不作通用�
 
 ## Index 原生索引（1.0.7）
 
-使用 `\\UseFeature{index}` 後，推薦直接使用 `imakeidx` 的
-`\\index`、`\\makeindex`、`\\printindex`。IMPE 預設索引
+使用 `\UseFeature{index}` 後，推薦直接使用 `imakeidx` 的
+`\index`、`\makeindex`、`\printindex`。IMPE 預設索引
 的普通詞項可精確跳轉對應位置；格式封裝、交叉參照及具名索引
-繼續保留原生行為。舊有 `\\Term` 只作相容介面。
+繼續保留原生行為。舊有 `\Term` 只作相容介面。
 詳見 [Feature 參考](docs/FEATURES-zh.md#index原生優先)。
 
 ## 支援矩陣

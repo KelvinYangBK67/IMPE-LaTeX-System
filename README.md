@@ -78,11 +78,11 @@ See [1.0.5 Writing API](docs/USEWRITING-1.0.5.md).
 
 ## Index (native-first since 1.0.7)
 
-Enable `\\UseFeature{index}` and use the native `imakeidx` commands
-`\\index`, `\\makeindex`, and `\\printindex`. IMPE's default index
+Enable `\UseFeature{index}` and use the native `imakeidx` commands
+`\index`, `\makeindex`, and `\printindex`. IMPE's default index
 integrates ordinary occurrences with its unique PDF hyperlink targets;
 advanced encapsulations, cross-references and named indexes retain their
-native interfaces. The historical `\\Term` shortcut is compatibility-only.
+native interfaces. The historical `\Term` shortcut is compatibility-only.
 See [Feature reference](docs/FEATURES.md#index-native-first).
 
 ## Support Matrix
