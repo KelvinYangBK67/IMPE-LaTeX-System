@@ -76,7 +76,7 @@ CJK missing glyphs use xeCJK's 2×2×2 face-priority fallback; non-CJK
 automatic missing-glyph substitution is intentionally excluded.
 See [1.0.5 Writing API](docs/USEWRITING-1.0.5.md).
 
-## Index (native-first since 1.0.8)
+## Index (native-first since 1.0.7)
 
 Enable `\UseFeature{index}` and use the native `imakeidx` commands
 `\index`, `\makeindex`, and `\printindex`. IMPE's default index

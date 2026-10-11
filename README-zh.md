@@ -70,7 +70,7 @@ Beamer 預設簡潔學術主題與 16:9 畫布。中英文正文、頁眉、
 CJK 缺字備援採用 xeCJK 的 2×2×2 字體面矩陣；非 CJK 不作通用逐字缺字替換。
 詳見 [1.0.5 Writing API](docs/USEWRITING-1.0.5.md)。
 
-## Index 原生索引（1.0.8）
+## Index 原生索引（1.0.7）
 
 使用 `\UseFeature{index}` 後，推薦直接使用 `imakeidx` 的
 `\index`、`\makeindex`、`\printindex`。IMPE 預設索引
