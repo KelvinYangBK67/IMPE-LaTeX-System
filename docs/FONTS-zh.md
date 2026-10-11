@@ -2,7 +2,7 @@
 
 [English](FONTS.md)
 
-## Writing Profile 與字體資源（1.0.5 引入，1.0.7 繼續使用）
+## Writing Profile 與字體資源（1.0.5 引入，1.0.8 繼續使用）
 
 簡單選擇既有 preset 仍推薦 \UseFont{preset}（包含全部舊版 ID）。
 進階介面將 **Unicode Writing Profile**（文字路由及 Renderer 行為）與
@@ -541,7 +541,7 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 標準公開字體稽核位於 `manual/showcase/impe-showcase.tex`；聚焦的自動檢查則位於
 `tests/`。
 
-## 局部字體與字體面解析（1.0.5 API，1.0.7 繼續支援）
+## 局部字體與字體面解析（1.0.5 API，1.0.8 繼續支援）
 
 \UseFont{id}[local|global] 的既有載入／啟用模型與家族捷徑完整保留。
 1.0.5 的 \Font{名稱}[覆寫]{內容} 不僅支援舊家族，亦可使用
@@ -564,6 +564,6 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 \KHSstackblock{...} 及顯式 XSR 入口。
 
 XSR 須讀取實際字體檔案。非 full 安裝應以 \SetCatalogFontRoot{...}
-設定字體鏡像，不能只依賴作業系統中的字體名稱。目前內附 XSR 1.0；TeX Live 2024+ 的 shell 模式可透過
+設定字體鏡像，不能只依賴作業系統中的字體名稱。目前內附 XSR 1.1；TeX Live 2024+ 的 shell 模式可透過
 `TEXMF_OUTPUT_DIRECTORY` 支援 `-output-directory`；舊版引擎則可能需
 明確設定環境變數或採用預處理。
