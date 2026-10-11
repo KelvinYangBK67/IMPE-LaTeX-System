@@ -153,6 +153,7 @@ try {
         "fallback-native",
         "fallback-tangut-system",
         "fallback-precedence",
+        "style-matrix",
         "fallback-profile-identity",
         "fallback-late-registration",
         "local-font-override",
