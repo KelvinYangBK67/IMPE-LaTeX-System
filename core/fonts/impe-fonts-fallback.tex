@@ -9,6 +9,7 @@
 \seq_new:N \g__writing_cjk_family_seq
 \prop_new:N \g__writing_cjk_family_profile_prop
 \prop_new:N \g__writing_fallback_warning_prop
+\prop_new:N \g__writing_fallback_configured_prop
 \bool_new:N \g__writing_fallback_started_bool
 \bool_new:N \l__writing_has_global_chinese_bool
 \clist_new:N \l__writing_fallback_candidates_clist
@@ -174,12 +175,19 @@
       { \tl_set:Nn \l__writing_fallback_target_profile_tl {chinese} }
     \__writing_fallback_collect:n {#1}
     \__writing_fallback_system_fonts:
-    \clist_if_empty:NF \l__writing_fallback_candidates_clist
+    % xeCJK appends /FallBack subfamilies instead of resetting them.
+    % Installing the same chain repeatedly creates an unbounded subfamily
+    % cascade. Register each primary family exactly once.
+    \prop_if_in:NnF \g__writing_fallback_configured_prop {#1}
       {
-        \use:x
+        \clist_if_empty:NF \l__writing_fallback_candidates_clist
           {
-            \exp_not:N \setCJKfallbackfamilyfont {\exp_not:n {#1}}
-              { \clist_use:Nn \l__writing_fallback_candidates_clist {,} }
+            \use:x
+              {
+                \exp_not:N \setCJKfallbackfamilyfont {\exp_not:n {#1}}
+                  { \clist_use:Nn \l__writing_fallback_candidates_clist {,} }
+              }
+            \prop_gput:Nnn \g__writing_fallback_configured_prop {#1} {installed}
           }
       }
   }
