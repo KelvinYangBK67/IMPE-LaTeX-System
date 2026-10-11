@@ -10,6 +10,10 @@
 \prop_new:N \g__writing_cjk_family_profile_prop
 \prop_new:N \g__writing_fallback_warning_prop
 \prop_new:N \g__writing_fallback_configured_prop
+% Once a (family, coordinate, registry generation) chain is installed,
+% repeated misses must not rebuild potentially hundreds of font candidates.
+\prop_new:N \g__writing_fallback_active_request_prop
+\int_new:N \g__writing_fallback_registry_revision_int
 % Preserve only the explicitly available faces, not the face substitutions already
 % calculated at declaration time. A missing glyph needs a new matrix walk.
 \prop_new:N \g__writing_face_font_prop
@@ -66,6 +70,7 @@
 % original fields. Do not use resolved BoldFont/ItalicFont fallbacks here.
 \cs_new_protected:Npn \__writing_fallback_store_faces:
   {
+    \int_gincr:N \g__writing_fallback_registry_revision_int
     \prop_map_inline:Nn \l__font_matrix_face_prop
       {
         \tl_set:Nx \l__writing_fallback_face_key_tl
@@ -450,6 +455,29 @@
           }
           { \__writing_fallback_install_family:n {#1} }
       }
+    \prop_gput:Nnx \g__writing_fallback_active_request_prop {#1}
+      {
+        \int_use:N \l__writing_fallback_coordinate_int /
+        \int_use:N \g__writing_fallback_registry_revision_int
+      }
+  }
+
+% The xeCJK fallback entry runs once per missing glyph. Compute a chain
+% only when its requested style or the registered resources have changed.
+\cs_new_protected:Npn \__writing_fallback_prepare_family:n #1
+  {
+    \__writing_fallback_coordinate:n {#1}
+    \tl_set:Nx \l_tmpa_tl
+      {
+        \int_use:N \l__writing_fallback_coordinate_int /
+        \int_use:N \g__writing_fallback_registry_revision_int
+      }
+    \prop_get:NnNTF \g__writing_fallback_active_request_prop {#1} \l_tmpb_tl
+      {
+        \str_if_eq:eeF {\l_tmpa_tl}{\l_tmpb_tl}
+          { \__writing_fallback_refresh_family:n {#1} }
+      }
+      { \__writing_fallback_refresh_family:n {#1} }
   }
 
 \cs_new_protected:Npn \__writing_fallback_install_family:n #1
@@ -511,7 +539,7 @@
           {
             % ##2 is xeCJK's registered family (rm/sf/private family).
             % ##1 is its current NFSS font and is not a registry key.
-            \__writing_fallback_refresh_family:n {##2}
+            \__writing_fallback_prepare_family:n {##2}
             \__writing_base_xecjk_fallback_loop:nnNN
               {##1}{##2}##3##4
           }
