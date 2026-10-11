@@ -1,0 +1,37 @@
+% Exhaustive coordinate ordering is shared across regular face resolution.
+\documentclass{article}
+\usepackage{impe}
+\ExplSyntaxOn
+\__font_reset_state:
+\tl_set:Nn \l__font_regular_tl {REG}
+\tl_set:Nn \l__font_sans_bold_tl {SB}
+\tl_set:Nn \l__font_sans_italic_tl {SI}
+\tl_set:Nn \l__font_bolditalic_tl {SBI}
+\__font_resolve_style_fallbacks:
+\str_if_eq:VnF \l__font_resolved_sans_bolditalic_tl {SB}
+  {\PackageError{impe-test}{SansBoldItalic must choose SansBold over SansItalic and SerifBoldItalic}{}}
+\str_if_eq:VnF \l__font_resolved_bolditalic_tl {SBI}
+  {\PackageError{impe-test}{SerifBoldItalic lost its exact face}{}}
+\tl_clear:N \l__font_sans_bold_tl
+\__font_resolve_style_fallbacks:
+\str_if_eq:VnF \l__font_resolved_sans_bolditalic_tl {SI}
+  {\PackageError{impe-test}{SansBoldItalic must choose SansItalic next}{}}
+\tl_clear:N \l__font_sans_italic_tl
+\__font_resolve_style_fallbacks:
+\str_if_eq:VnF \l__font_resolved_sans_bolditalic_tl {SBI}
+  {\PackageError{impe-test}{SansBoldItalic must choose SerifBoldItalic next}{}}
+\tl_clear:N \l__font_bolditalic_tl
+\tl_set:Nn \l__font_italic_tl {IT}
+\__font_resolve_style_fallbacks:
+\str_if_eq:VnF \l__font_resolved_bold_tl {REG}
+  {\PackageError{impe-test}{SerifBold must not upgrade to Italic}{}}
+\str_if_eq:VnF \l__font_resolved_sans_tl {REG}
+  {\PackageError{impe-test}{SansRegular must not upgrade to Italic}{}}
+\tl_set:Nn \l__font_bold_tl {BD}
+\__font_resolve_style_fallbacks:
+\str_if_eq:VnF \l__font_resolved_bolditalic_tl {BD}
+  {\PackageError{impe-test}{SerifBoldItalic must preserve Bold before Italic}{}}
+\ExplSyntaxOff
+\begin{document}
+\typeout{IMPE-TEST-STYLE-MATRIX-PASS}
+\end{document}
