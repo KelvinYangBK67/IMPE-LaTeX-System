@@ -59,6 +59,8 @@
                   { \tl_set:Nn \l_tmpb_tl {basic} }
                 \prop_gput:NVV \g__writing_cjk_family_profile_prop
                   \l_tmpa_tl \l_tmpb_tl
+                \bool_if:NT \g__writing_fallback_started_bool
+                  { \__writing_fallback_refresh: }
               }
           }
         \str_if_eq:VnT \l__font_scope_tl {global}

@@ -505,7 +505,7 @@
         \cs_if_exist:cT { __font_force_cjk_#2: }
           {
             \cs_if_exist:NT \xeCJKsetup
-              { \xeCJKsetup { AutoFallBack = false } }
+              { \xeCJKsetup { AutoFallBack = true } }
             \use:c { __font_force_cjk_#2: }
           }
         \bool_set_false:N \l__font_reapply_style_bool
