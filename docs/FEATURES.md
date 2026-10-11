@@ -256,45 +256,64 @@ Override them before loading the feature if a document needs another style:
 \SetCitationBiblatexOptions{backend=biber,style=numeric}
 ```
 
-### `index`
+### \`index\` (native-first)
 
-Loads `imakeidx` with `xindy` support and creates an index included in the table
-of contents.
+The recommended indexing API is **imakeidx's native** \`\index\`,
+\`\makeindex\`, and \`\printindex\`. The feature loads \`imakeidx\` (with
+\`xindy\` for its own default index) and \`hyperlinks\`. It does **not** create
+an IMPE-specific indexing language or load \`glossaries-extra\`.
 
-Public pieces:
-
-- `\IndexTitle`
-  Optional index-title override. Define it before loading the feature; otherwise
-  the localized standard `\indexname` is used.
-- `\Term[options]{display}[description]`
-  Prints a bold term and adds its first occurrence to the index. The
-  square-bracketed `description` is optional. By default, `display` is also the dictionary-sort
-  value and duplicate-detection key. Use the optional `sort=...` or `key=...`
-  settings to customize those values. Parentheses default to the document UI:
-  full-width for Chinese and western parentheses for English. Use
-  `parentheses=cjk`, `parentheses=western`, or `parentheses=none` to override
-  an individual term. The printed index page number links back to
-  the indexed occurrence. The legacy `\Term{key}{display}{description}` form remains
-  supported.
-- `\printindex`
-  Standard index printing command from `imakeidx`.
-
-Example:
-
-```tex
-\UseTemplateSet{
-  features = {hyperlinks,index}
-}
-
-\Term{Manuscript}
-\Term{Wikipedia}[維基百科]
-\Term[parentheses=cjk]{孔子}[Confucius]
-\Term[sort=Riemann]{Riemann hypothesis}
-
+\`\`\`tex
+\UseFeature{index}
+...
+Buddhism\index{Buddhism}
+Mahayana\index{Buddhism!Mahayana}
+Dharma\index{dharma@Dharma}
+\index{Buddhism|see{religion}}
 \printindex
-```
+\`\`\`
 
-Index generation normally needs an index pass in addition to the LaTeX runs.
+For the default index initialized by IMPE, ordinary native entries, including
+\`sort@display\` and \`!\` hierarchy, receive an occurrence-level PDF
+destination shared with the \`hyperlinks\` feature. Repeated page labels and
+multiple marks on the same page remain distinct. Put \`\index\` next to the
+word to be targeted. The small generated \`<job>-impe.xdy\` file only maps
+opaque occurrences back to real page labels; **sorting, grouping, printing,
+cross-references, and formats stay with xindy and imakeidx**.
+
+Native index grammar is never reinterpreted: explicit \`|...\` formatting,
+\`|see\`, \`|seealso\`, range delimiters, and named indexes pass unchanged
+to imakeidx. Their links follow the chosen native backend; IMPE's exact
+occurrence-target guarantee applies only to ordinary entries in its default
+index. For multiple indexes, use native declarations and printing:
+
+\`\`\`tex
+\UseFeature{index}
+\makeindex[name=people,title={People},program=xindy]
+...
+\index[people]{Müller, Anna}
+\printindex[people]
+\`\`\`
+
+If the document already loaded \`imakeidx\` and declared its own default
+\`\makeindex\`, IMPE respects that configuration rather than redefining it.
+Its native location and link handling remain in charge. Index files generally
+need an external indexer pass; for the IMPE-created default index use
+
+\`\`\`sh
+texindy -L english -C utf8 -M <job>-impe <job>.idx
+\`\`\`
+
+then run XeLaTeX twice. Named indexes use the indexer's native command
+matching their \`\makeindex\` settings. Pre-existing MakeIndex defaults use
+\`makeindex <job>.idx\`.
+
+For term registration, descriptions and first-use behavior, use the separate
+native \`glossaries-extra\` package directly (and its documented indexing
+integration if desired); it is not automatically loaded by this feature.
+Historical \`\Term\` forms, \`\IndexTitle\`, their original formatting,
+and first-occurrence semantics remain available **only for 1.x source
+compatibility**. They are not the recommended authoring API.
 
 ### `tables`
 
@@ -500,17 +519,3 @@ The optional metadata does not create a hidden PDF text layer, and
 trim only clips the rendered TeX box, not the original source image.
 
 
-### Native index occurrence links (1.0.4 development)
-
-The default native `\\index{...}` command now allocates an occurrence-specific
-PDF destination using the same sequence as IMPE-managed links. Plain entries,
-`sort@display`, and `!` subentries use the generated
-`<job>-impe.xdy` style and retain the normal printed page number. Compile
-the index with `texindy -L english -C utf8 -M <job>-impe <job>.idx`
-and rerun XeLaTeX twice. The precise link position is where `\\index` is
-written: place it immediately before the indexed term.
-
-Advanced `|...` encapsulations (including ranges and cross-references) and
-additional named indexes currently keep their native imakeidx behavior rather
-than being silently reinterpreted. These paths remain part of the full
-Index integration tracked in #20. The legacy `\\Term` interface still works.
