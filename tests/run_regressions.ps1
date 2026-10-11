@@ -247,7 +247,7 @@ try {
                     else {
                         & texindy -L english -C utf8 -M index-native-multiple-impe index-native-multiple.idx
                         if ($LASTEXITCODE -ne 0) { throw 'Native default xindy regression failed.' }
-                        & texindy -L english -C utf8 index-native-multiple-people.idx
+                        & texindy -L english -C utf8 people.idx
                         if ($LASTEXITCODE -ne 0) { throw 'Native named xindy regression failed.' }
                     }
                 }
