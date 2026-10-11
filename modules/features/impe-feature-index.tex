@@ -87,15 +87,15 @@
 \ExplSyntaxOff
 \AtBeginDocument{%
   \let\NextIndexNativeIndex\index
-  \RenewDocumentCommand{\index}{o m}{%
-    \IfNoValueTF{#1}
-      {\ifNextIndexPrecise
-         \NextIndexNativeDispatch{#2}%
-       \else
-         \NextIndexNativeIndex{#2}%
-       \fi}
-      {\NextIndexNativeIndex[#1]{#2}}%
-  }%
+  % If the user already made the default index, leave \index fully native:
+  % even a transparent xparse wrapper could change its argument handling.
+  \ifNextIndexPrecise
+    \RenewDocumentCommand{\index}{o m}{%
+      \IfNoValueTF{#1}
+        {\NextIndexNativeDispatch{#2}}
+        {\NextIndexNativeIndex[#1]{#2}}%
+    }%
+  \fi
 }
 
 \indexsetup{
