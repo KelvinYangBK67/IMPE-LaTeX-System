@@ -282,5 +282,6 @@ to execute through the old loader under the shared preset dispatcher.
 
 Tests: `tests/fallback-native.tex`, `tests/fallback-precedence.tex`,
 `tests/fallback-profile-identity.tex`, `tests/fallback-late-registration.tex`,
-`tests/style-matrix.tex`, and PDF-span inspection through
-`tests/check_fallback_late.py`.
+`tests/style-matrix.tex`, `tests/fallback-cjk-glyph-matrix.tex`, and
+PDF-span verification through `tests/check_fallback_late.py` and
+`tests/check_fallback_cjk_matrix.py`.
