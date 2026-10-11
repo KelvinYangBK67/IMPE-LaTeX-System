@@ -137,6 +137,14 @@
         \tl_set:NV \l__font_resolved_mono_bold_path_tl \l__font_resolved_mono_path_tl }
       { \tl_set:NV \l__font_resolved_mono_bold_tl \l__font_mono_bold_tl
         \tl_set:NV \l__font_resolved_mono_bold_path_tl \l__font_mono_bold_path_tl }
+    \tl_if_blank:VT \l__font_resolved_mono_path_tl
+      { \tl_set:NV \l__font_resolved_mono_path_tl \l__font_path_tl }
+    \tl_if_blank:VT \l__font_resolved_mono_bold_path_tl
+      { \tl_set:NV \l__font_resolved_mono_bold_path_tl \l__font_path_tl }
+    \str_if_eq:VnT \l__font_resolved_mono_path_tl {__impe_none__}
+      { \tl_clear:N \l__font_resolved_mono_path_tl }
+    \str_if_eq:VnT \l__font_resolved_mono_bold_path_tl {__impe_none__}
+      { \tl_clear:N \l__font_resolved_mono_bold_path_tl }
   }
 
 \ExplSyntaxOff
