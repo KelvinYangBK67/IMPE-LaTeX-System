@@ -6,6 +6,7 @@
 \def\IMPEZhTag{zh}
 \newif\ifIMPEClassLangSeen
 \newif\ifIMPEClassDirectionSeen
+\newif\ifIMPEClassAspectSeen
 \newcommand{\IMPEClassChooseLanguage}[1]{%
   \ifIMPEClassLangSeen
     \ClassError{\@currname}{Duplicate lang class option}{Specify lang only once.}%
@@ -33,8 +34,20 @@
 \DeclareOption{direction=horizontal-rtl}{\IMPEClassChooseDirection{horizontal-rtl}}
 \DeclareOption{direction=vertical-ltr}{\IMPEClassChooseDirection{vertical-ltr}}
 \DeclareOption{direction=vertical-rtl}{\IMPEClassChooseDirection{vertical-rtl}}
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{\IMPEClassBase}}
+% Forward unrecognized options to the base class. Track an explicit Beamer
+% aspectratio so the IMPE 16:9 default never defeats the author's choice.
+\newcommand{\IMPEClassForwardOption}[1]{%
+  \in@{aspectratio=}{#1}%
+  \ifin@\IMPEClassAspectSeentrue\fi
+  \PassOptionsToClass{#1}{\IMPEClassBase}%
+}
+\DeclareOption*{\expandafter\IMPEClassForwardOption\expandafter{\CurrentOption}}
 \ProcessOptions*\relax
+\ifx\IMPEClassBase\IMPEClassBeamerTag
+  \ifIMPEClassAspectSeen\else
+    \PassOptionsToClass{aspectratio=169}{beamer}%
+  \fi
+\fi
 \edef\NextSystemUiTag{\IMPEClassLang}
 \ifx\IMPEClassLang\IMPEZhTag
   \edef\NextDefaultLayout{\IMPEClassLayoutZh}

@@ -3,7 +3,7 @@
 \def\IMPEClassBase{beamer}
 \def\IMPEClassBeamerTag{beamer}
 \def\IMPEClassLayoutEn{beamer}
-\def\IMPEClassLayoutZh{beamer}
+\def\IMPEClassLayoutZh{beamer_zh}
 \input{impe-class-options.tex}
 \LoadClass{beamer}
 \RequirePackage{impe}
