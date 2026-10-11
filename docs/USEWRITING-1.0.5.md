@@ -250,7 +250,7 @@ to execute through the old loader under the shared preset dispatcher.
 
 - A successfully loaded global font enters the reusable fallback pool under
   its **explicit Writing Profile**, not under a profile inferred from its font
-  resource. Legacy `UseFont` declarations preserve their old profile mapping.
+  resource. Legacy `\UseFont` declarations preserve their old profile mapping.
 - For CJK text, IMPE delegates actual missing-glyph substitution to **xeCJK**.
   Candidates of the same Writing Profile precede candidates from other CJK
   profiles. Tangut punctuation can use a loaded Chinese resource or an
