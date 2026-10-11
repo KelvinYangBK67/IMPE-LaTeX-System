@@ -1,0 +1,10 @@
+% XeCJK glyph fallback integration: primary Latin Modern has no Han glyphs.
+% System TeX distributions supply Fandol; fallback must select its Chinese
+% glyphs rather than pass an absolute font file name to NFSS.
+\documentclass{article}
+\usepackage{impe}
+\UseWriting{[file=FandolSong-Regular.otf]chinese}
+\begin{document}
+\Writing{[file=lmroman10-regular.otf]chinese}{漢字。}
+\typeout{IMPE-TEST-FALLBACK-NATIVE-PASS}
+\end{document}

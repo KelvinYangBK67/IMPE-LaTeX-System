@@ -108,10 +108,30 @@
       \l__writing_fallback_candidate_path_tl
     \tl_if_blank:VF \l__writing_fallback_candidate_font_tl
       {
+        % Once the core loader resolves a bundled face, regular contains an
+        % absolute filename and path is empty. xeCJK cannot consume that
+        % absolute filename as a family name (TU//home/... NFSS failures).
+        % Split into the officially supported [Path=directory]{basename}.
         \tl_if_blank:VTF \l__writing_fallback_candidate_path_tl
           {
-            \clist_put_right:NV \l__writing_fallback_candidates_clist
-              \l__writing_fallback_candidate_font_tl
+            \tl_if_in:VnTF \l__writing_fallback_candidate_font_tl {/}
+              {
+                \tl_set:NV \l_tmpa_tl \l__writing_fallback_candidate_font_tl
+                \tl_set:NV \l_tmpb_tl \l__writing_fallback_candidate_font_tl
+                \regex_replace_once:nnN { [^/]+ \Z } {} \l_tmpa_tl
+                \regex_replace_once:nnN { \A .*/ } {} \l_tmpb_tl
+                \tl_set:Nx \l_tmpc_tl
+                  {
+                    [Path={\exp_not:V \l_tmpa_tl}]
+                    {\exp_not:V \l_tmpb_tl}
+                  }
+                \clist_put_right:NV \l__writing_fallback_candidates_clist
+                  \l_tmpc_tl
+              }
+              {
+                \clist_put_right:NV \l__writing_fallback_candidates_clist
+                  \l__writing_fallback_candidate_font_tl
+              }
           }
           {
             \tl_set:Nx \l_tmpa_tl
@@ -254,8 +274,12 @@
       }
   }
 
-% Registry collection stays active. Installation is withheld until the
-% xeCJK family/path routing regression is resolved; do not install a broken
-% fallback chain in every document.
-\AtBeginDocument { }
+% Install all preamble-known fonts exactly once; later local declarations
+% receive their own family fallback on demand.
+\AtBeginDocument
+  {
+    \bool_gset_true:N \g__writing_fallback_started_bool
+    \__writing_fallback_refresh:
+    \__writing_fallback_install_warning_hook:
+  }
 \ExplSyntaxOff
