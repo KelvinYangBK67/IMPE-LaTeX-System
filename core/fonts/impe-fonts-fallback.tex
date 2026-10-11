@@ -134,18 +134,12 @@
   {
     % TeX fonts are the final fallback; probe availability rather than
     % assuming that Windows-only SimSun or optional Shanggu is installed.
-    \IfFontExistsTF{FandolSong-Regular.otf}
+    \IfFileExists{FandolSong-Regular.otf}
       { \clist_put_right:Nn \l__writing_fallback_candidates_clist
           {FandolSong-Regular.otf} } { }
-    \IfFontExistsTF{Noto Serif CJK SC}
+    \IfFileExists{lmroman10-regular.otf}
       { \clist_put_right:Nn \l__writing_fallback_candidates_clist
-          {Noto Serif CJK SC} } { }
-    \IfFontExistsTF{SimSun}
-      { \clist_put_right:Nn \l__writing_fallback_candidates_clist
-          {SimSun} } { }
-    \IfFontExistsTF{Latin Modern Roman}
-      { \clist_put_right:Nn \l__writing_fallback_candidates_clist
-          {Latin Modern Roman} } { }
+          {lmroman10-regular.otf} } { }
   }
 
 \cs_new_protected:Npn \__writing_fallback_refresh_family:n #1
@@ -183,15 +177,17 @@
 % Emit a concise warning only when xeCJK has found an actual substitute.
 \cs_new_protected:Npn \__writing_fallback_report:nnn #1#2#3
   {
+    % xeCJK can pass a protected symbol token, not necessarily a literal
+    % character. Do not use character-code arithmetic on that argument.
     \tl_set:Nx \l__writing_fallback_warning_key_tl
-      {\tl_to_str:n {#1}/\tl_to_str:n {#2}/\int_to_Hex:n {`#3}}
+      { \tl_to_str:n {#1} / \tl_to_str:n {#2} / \tl_to_str:n {#3} }
     \prop_if_in:NVF \g__writing_fallback_warning_prop
       \l__writing_fallback_warning_key_tl
       {
         \prop_gput:NVn \g__writing_fallback_warning_prop
           \l__writing_fallback_warning_key_tl {notified}
         \PackageWarning{impe-fonts}
-          {Glyph~U+\int_to_Hex:n {`#3}~fallback:~#1~->~#2}
+          {Glyph~fallback:~#1~->~#2~(\tl_to_str:n {#3})}
       }
   }
 
