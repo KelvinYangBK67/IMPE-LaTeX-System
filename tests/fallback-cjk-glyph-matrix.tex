@@ -8,5 +8,20 @@
 % Coordinate 6 (Sans Bold) must win over 5 (Sans Italic) and 3 (Serif BI).
 \Writing{[file=FandolFang-Regular.otf,sansbolditalic={file=lmroman10-regular.otf},sansbold={file=FandolHei-Regular.otf},sansitalic={file=FandolSong-Regular.otf},bolditalic={file=FandolFang-Regular.otf}]chinese}
   {{\sffamily\bfseries\itshape 漢}}
+
+\par
+% Without coordinate 6, coordinate 5 wins over serif 3.
+\Writing{[file=FandolFang-Regular.otf,sansbolditalic={file=lmroman10-regular.otf},sansitalic={file=FandolSong-Regular.otf},bolditalic={file=FandolFang-Regular.otf}]chinese}
+  {{\sffamily\bfseries\itshape 字}}
+\par
+% Without 6 or 5, coordinate 3 precedes 4, 2, 1, and 0.
+\Writing{[file=FandolSong-Regular.otf,sansbolditalic={file=lmroman10-regular.otf},bolditalic={file=FandolFang-Regular.otf}]chinese}
+  {{\sffamily\bfseries\itshape 中}}
+\par
+% The same CJK family switches from upright to bolditalic and back.
+% Re-creating the family chain must also invalidate xeCJK's previous font
+% selection cache. Global Fang supplies regular while local bold supplies Hei.
+\Writing{[file=lmroman10-regular.otf,bolditalic={file=lmroman10-regular.otf},bold={file=FandolHei-Regular.otf}]chinese}
+  {文{\bfseries\itshape 國}學}
 \typeout{IMPE-TEST-FALLBACK-CJK-GLYPH-MATRIX-PASS}
 \end{document}
