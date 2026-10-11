@@ -1,0 +1,166 @@
+% IMPE 1.0.5 development: new public entry, legacy API remains usable.
+\documentclass{article}
+\usepackage{impe}
+
+% One required argument; commas inside [...] are not profile separators.
+\UseWriting{[font=lmroman10-regular.otf]latin}
+\UseWriting{[file=lmroman10-regular.otf]latin}
+\UseWriting{[shanggu, stylemap=full, italic=zhuque]chinese}
+\ExplSyntaxOn
+\typeout{IMPE-TEST-FULL-ITALIC:\tl_to_str:V \l__font_resolved_italic_tl}
+\tl_if_in:VnF \l__font_resolved_italic_tl {ZhuqueFangsong-Regular.ttf}
+  {\PackageError{impe-test}{Full~style~override~was~not~applied}{}}
+\ExplSyntaxOff
+\UseWriting{[shanggu, stylemap=full, italic=zhuque]chinese, mongolian}
+% Without full, the unrelated Zhuque italic is deliberately absent.
+\UseWriting{[shanggu]chinese}
+\ExplSyntaxOn
+\str_if_eq:eeF {\tl_use:N \l__font_resolved_italic_tl} {\tl_use:N \l__font_regular_tl}
+  {\PackageError{impe-test}{Native~stylemap~must~fall~back~to~normal}{}}
+\ExplSyntaxOff
+% Empty pack uses the existing per-profile default; native faces include
+% the declared same-series Shanggu bold and sans families.
+\UseWriting{[stylemap=native]chinese}
+\ExplSyntaxOn
+\tl_if_blank:VTF \l__font_bold_tl
+  {\PackageError{impe-test}{Native~Shanggu~bold~missing}{}}
+  {}
+\tl_if_blank:VTF \l__font_sans_tl
+  {\PackageError{impe-test}{Native~Shanggu~sans~missing}{}}
+  {}
+\ExplSyntaxOff
+% A non-default pack changes the resource, not the profile's shaping policy.
+\UseWriting{[gentium]arabic}
+\ExplSyntaxOn
+\str_if_eq:VnF \l__font_script_tl {Arabic}
+  {\PackageError{impe-test}{Arabic~profile~lost~its~script}{}}
+\str_if_eq:VnF \l__font_inline_behavior_tl {rtl}
+  {\PackageError{impe-test}{Arabic~profile~lost~RTL}{}}
+\tl_if_in:VnF \l__font_regular_tl {GentiumPlus-Regular.ttf}
+  {\PackageError{impe-test}{Gentium~pack~resource~missing}{}}
+\ExplSyntaxOff
+\UseWriting{[writing=horizontal]mongolian}
+\ExplSyntaxOn
+\tl_if_blank:VF \l__font_layout_tl
+  {\PackageError{impe-test}{Explicit~horizontal~writing~was~ignored}{}}
+\typeout{IMPE-TEST-MONGOL-FEATURES:\tl_to_str:V \l__font_features_tl}
+\tl_set:Nx \l_tmpa_tl {\tl_to_str:V \l__font_features_tl}
+\exp_args:NV \str_if_in:nnF \l_tmpa_tl {script=mong}
+  {\PackageError{impe-test}{Mongolian~shaping~was~lost}{}}
+\ExplSyntaxOff
+% Third-party legacy family registrations also become usable via new selector.
+% Registration itself and old commands must remain unchanged.
+\FontRegisterFamily{
+  id=writing_custom,defaultmode=local,
+  local={command=WCU,name=writing_custom_local,
+    regular=lmroman10-regular.otf,bold=lmroman10-bold.otf}
+}
+\UseFont{writing_custom}[local]
+\UseFont{writing_custom}
+\ExplSyntaxOn
+\prop_if_in:NnF \g__writing_legacy_profile_prop {writing_custom}
+  {\PackageError{impe-test}{Late~legacy~preset~missing}{}}
+\prop_if_in:NnT \g__writing_profile_pack_prop {writing_custom}
+  {\PackageError{impe-test}{Font~preset~must~not~be~a~Unicode~profile}{}}
+\ExplSyntaxOff
+% Curated profiles are Unicode sets, not historical font IDs.
+\UseWriting{japanese}
+\ExplSyntaxOn
+\prop_get:NnNTF \g__writing_active_coverage_prop {japanese} \l_tmpa_tl
+  {
+    \tl_if_in:VnF \l_tmpa_tl {CJKUnifiedIdeographs}
+      {\PackageError{impe-test}{Japanese~Unicode~profile~lost~Han}{}}
+    \tl_if_in:VnF \l_tmpa_tl {Hiragana}
+      {\PackageError{impe-test}{Japanese~Unicode~profile~lost~Kana}{}}
+  }
+  {\PackageError{impe-test}{Japanese~Unicode~profile~missing}{}}
+\ExplSyntaxOff
+\UseWriting{[font=lmroman10-regular.otf]jurchen}
+\ExplSyntaxOn
+\prop_get:NnNTF \g__writing_active_coverage_prop {jurchen} \l_tmpa_tl
+  { \tl_if_in:VnF \l_tmpa_tl {JurchenRadicals}
+      {\PackageError{impe-test}{Unicode~18.0~Jurchen~radicals~missing}{}} }
+  {\PackageError{impe-test}{Jurchen~profile~missing}{}}
+\ExplSyntaxOff
+% A system font alias is not mistaken for a profile or a positional pack.
+\UseWriting{[aref]arabic}
+\ExplSyntaxOn
+\tl_if_in:VnF \l__font_resolved_bold_tl {ArefRuqaa-Bold.ttf}
+  {\PackageError{impe-test}{Aref~native~bold~face~missing}{}}
+\ExplSyntaxOff
+\UseWriting{[naskh]arabic}
+\UseWriting{[writing=horizontal]mongolian}
+% The old registry and its public controls remain available in the same file.
+\UseFont{cmu}[global]
+\UseFont{gentium}[local]
+% New API must not overwrite an already active legacy \GEN command.
+\ExplSyntaxOn
+\tl_new:N \g__test_legacy_gen_tl
+\tl_gset:Nx \g__test_legacy_gen_tl {\cs_meaning:c {GEN}}
+\ExplSyntaxOff
+\UseWriting{[gentium]basic}
+\ExplSyntaxOn
+\str_if_eq:eeF {\cs_meaning:c {GEN}} {\tl_use:N \g__test_legacy_gen_tl}
+  {\PackageError{impe-test}{Legacy~GEN~was~overwritten}{}}
+\ExplSyntaxOff
+% Old presets and new aliases coexist through the same public UseFont.
+% Sanskrit is deliberately an old preset name, NOT a Unicode profile.
+\UseFont{sanskrit}
+\UseFont{basic}
+\UseFont{tiro}
+% Existing local shortcuts remain callable and act as Font aliases,
+% including the vertical optional-argument form.
+\UseFont{mongolian}[local]
+\ExplSyntaxOn
+\cs_if_exist:cF {__writing_raw_MO}
+  {\PackageError{impe-test}{Legacy~MO~alias~was~not~registered}{}}
+% The optional MOv builder is absent when its font is unavailable and
+% the legacy loader installs a generic fallback. Test this suffix below
+% with a known present TeX Live font.
+\ExplSyntaxOff
+% The declaration only records a local configuration: no prior UseWriting
+% or UseFont call is necessary before Font/Writing typesetting.
+\DeclareWriting{test-local-roman}{file=lmroman10-regular.otf}
+\DeclareWriting{test-local-roman-series}{file=lmroman10-regular.otf,bold=normal}
+\DeclareWriting{test-local-devanagari}{[tiro]devanagari}
+\DeclareWriting{test-local-mongolian}{[file=lmroman10-regular.otf,writing=vertical]mongolian}
+\FontRegisterFamily{
+  id=writing_vertical_demo,defaultmode=local,
+  local={command=VDE,name=writing_vertical_demo_local,
+    regular=lmroman10-regular.otf,layout=vertical}
+}
+\UseFont{writing_vertical_demo}[local]
+\ExplSyntaxOn
+\cs_if_exist:cF {__writing_raw_VDEv}
+  {\PackageError{impe-test}{Vertical~local~alias~was~not~registered}{}}
+\ExplSyntaxOff
+\ExplSyntaxOn
+\prop_if_in:NnF \g__writing_named_prop {test-local-roman}
+  {\PackageError{impe-test}{Named~font~declaration~missing}{}}
+\ExplSyntaxOff
+\begin{document}
+\Font{test-local-roman}{Regular~Latin.}
+\Font{test-local-roman}{Cached~Latin.}
+\Font{test-local-roman}{Outer \Font{test-local-devanagari}{संस्कृतम्} restored.}
+\Writing{file={lmroman10-regular.otf}, bold=normal}{Braced file and face option.}
+\Writing{[tiro]}{Direct pack with no profile.}
+\Font{sanskrit}[stylemap=full]{संस्कृतम्}
+\Writing{file=lmroman10-regular.otf}{Inline~file~font.}
+\Font{test-local-roman-series}{Series~font.}
+\Font{shanggu}[stylemap=full]{漢字}
+\Font{test-local-devanagari}{संस्कृतम्}
+\Font{sanskrit}{संस्कृतम्}
+\Font{tiro}{संस्कृतम्}
+\Writing{[tiro]devanagari}{संस्कृतम्}
+\MO{ᠮᠣᠩᠭᠣᠯ}
+\VDEv[0pt]{Vertical demonstration}
+\Font{test-local-mongolian}{ᠮᠣᠩᠭᠣᠯ}
+\Font{writing_vertical_demo}[writing=vertical]{Vertical demonstration}
+\Writing{[shanggu]chinese}{漢字 Latin}
+\ExplSyntaxOn
+\int_compare:nNnF {\prop_count:N \g__writing_local_cache_prop} > {4}
+  {\PackageError{impe-test}{Local~font~cache~was~not~populated}{}}
+\ExplSyntaxOff
+\typeout{IMPE-TEST-LOCAL-WRITING-PASS}
+\typeout{IMPE-TEST-USEWRITING-PASS}
+\end{document}

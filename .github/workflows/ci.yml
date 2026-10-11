@@ -34,6 +34,9 @@ jobs:
         shell: pwsh
         run: python -m pip install PyMuPDF
 
+      - name: Audit Unicode 18.0 writing registry
+        run: python tests/check_writing_registry.py
+
       - name: Run public regression suite
         shell: pwsh
         run: ./tests/run_regressions.ps1 -PublicFonts
@@ -92,6 +95,21 @@ jobs:
               $log -notmatch '(?s)IMPE-AUTO-KHITAN-BEGIN.*XSR-LAYOUT script=khitan.*IMPE-AUTO-KHITAN-END' -or
               $log -notmatch 'XSR-INLINE') {
             throw 'XSR integration markers missing.'
+          }
+
+      - name: Verify XSR activation via UseWriting
+        shell: pwsh
+        run: |
+          $root = (Get-Location).Path.Replace([char]92, [char]47)
+          $sep = [IO.Path]::PathSeparator
+          $env:TEXINPUTS = "$root/tests/xsr-fixtures//$sep$root/vendor/xsr/tex//$sep$root/package//$sep$root//$sep"
+          & xelatex -shell-escape -interaction=nonstopmode -halt-on-error tests/usewriting-xsr.tex
+          if ($LASTEXITCODE -ne 0) { throw 'UseWriting XSR activation compile failed.' }
+          $log = Get-Content usewriting-xsr.log -Raw
+          if ($log -notmatch 'IMPE-TEST-USEWRITING-XSR-PASS' -or
+              $log -notmatch 'XSR-LAYOUT.*script=egyptian' -or
+              $log -notmatch 'XSR-LAYOUT.*script=khitan') {
+            throw 'UseWriting XSR renderer markers missing.'
           }
 
       - name: Verify isolated glyphs feature

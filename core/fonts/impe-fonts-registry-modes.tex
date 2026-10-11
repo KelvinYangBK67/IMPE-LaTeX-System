@@ -151,6 +151,10 @@
     \tl_if_blank:VTF \l__font_family_global_tl
       { }
       { \prop_put:NVV \g__font_family_global_prop \l__font_family_id_tl \l__font_family_global_tl }
+    % Optional new writing API receives late custom family registrations.
+    % With no new API installed, this is a no-op.
+    \cs_if_exist:NT \__writing_legacy_registered:
+      { \__writing_legacy_registered: }
   }
 
 \cs_new_protected:Npn \__font_family_use_declaration:nnn #1#2#3
@@ -161,7 +165,11 @@
         \tl_set:Nx \l_tmpb_tl { scope = #2, familyid = #1, \exp_not:n {#3} }
         \exp_args:NV \FontDeclare \l_tmpb_tl
         \str_if_eq:nnT {#2} {local}
-          { \prop_put:NnV \g__font_family_command_prop {#1} \l__font_command_tl }
+          {
+            \prop_put:NnV \g__font_family_command_prop {#1} \l__font_command_tl
+            \cs_if_exist:NT \__writing_wrap_legacy_local:n
+              { \__writing_wrap_legacy_local:n {#1} }
+          }
         \prop_put:Nnn \g__font_family_loaded_prop { #1 / #2 } { loaded }
       }
   }
@@ -332,7 +340,6 @@
               }
           }
         \__font_family_use_auto_global:n {#1}
-        \__font_family_apply_auto_companions:n {#1}
         \tl_if_blank:VT \l__font_family_owned_unicode_blocks_tl
           {
             \str_if_eq:VnF \l_tmpa_tl { global }
@@ -421,9 +428,15 @@
 
 \NewDocumentCommand{\UseFont}{m O{}}
   {
-    \tl_if_blank:nTF {#2}
-      { \__font_family_use_default:n {#1} }
-      { \__font_family_use_loader:nn {#1} {#2} }
+    % Legacy fallback works before the new writing engine has been loaded.
+    % Thereafter both public APIs dispatch through its single preset entry.
+    \cs_if_exist:NTF \__writing_legacy_preset:nn
+      { \__writing_legacy_preset:nn {#1} {#2} }
+      {
+        \tl_if_blank:nTF {#2}
+          { \__font_family_use_default:n {#1} }
+          { \__font_family_use_loader:nn {#1} {#2} }
+      }
   }
 
 \NewDocumentCommand{\UseFonts}{m O{}}

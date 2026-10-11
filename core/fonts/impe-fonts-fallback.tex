@@ -1,0 +1,261 @@
+% IMPE font fallback registry. Every successfully loaded global font participates.
+% xeCJK is the CJK glyph-level backend; renderer-specific fallback handlers
+% can query the same ordered pool without changing their writing profile.
+\ExplSyntaxOn
+\seq_new:N \g__writing_pool_order_seq
+\prop_new:N \g__writing_pool_profile_prop
+\prop_new:N \g__writing_pool_font_prop
+\prop_new:N \g__writing_pool_path_prop
+\seq_new:N \g__writing_cjk_family_seq
+\prop_new:N \g__writing_cjk_family_profile_prop
+\prop_new:N \g__writing_fallback_warning_prop
+\prop_new:N \g__writing_fallback_configured_prop
+\bool_new:N \g__writing_fallback_started_bool
+\bool_new:N \l__writing_has_global_chinese_bool
+\clist_new:N \l__writing_fallback_candidates_clist
+\tl_new:N \l__writing_fallback_target_profile_tl
+\tl_new:N \l__writing_fallback_target_name_tl
+\tl_new:N \l__writing_fallback_candidate_profile_tl
+\tl_new:N \l__writing_fallback_candidate_font_tl
+\tl_new:N \l__writing_fallback_candidate_path_tl
+\tl_new:N \l__writing_fallback_warning_key_tl
+
+\cs_generate_variant:Nn \prop_if_in:NnF { NVF }
+\cs_generate_variant:Nn \seq_gput_right:Nn { NV }
+\cs_generate_variant:Nn \prop_gput:Nnn { NVV, NVn }
+\cs_generate_variant:Nn \prop_get:NnNTF { NVNTF }
+
+% Save the font resources, not merely their Unicode routing claims. A local
+% override is not registered as a new globally available font.
+\cs_new_protected:Npn \__writing_pool_register_active:n #1
+  {
+    \bool_if:NF \l__font_use_latex_fallback_bool
+      {
+        \tl_if_blank:VF \l__font_name_tl
+          {
+            \prop_if_in:NVF \g__writing_pool_profile_prop \l__font_name_tl
+              { \seq_gput_right:NV \g__writing_pool_order_seq \l__font_name_tl }
+            \prop_gput:NVn \g__writing_pool_profile_prop \l__font_name_tl {#1}
+            \prop_gput:NVV \g__writing_pool_font_prop \l__font_name_tl \l__font_regular_tl
+            \prop_gput:NVV \g__writing_pool_path_prop \l__font_name_tl \l__font_path_tl
+            \bool_if:NT \g__writing_fallback_started_bool
+              { \__writing_fallback_refresh: }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__writing_fallback_register_current:
+  {
+    \bool_if:NF \l__font_use_latex_fallback_bool
+      {
+        \str_if_eq:VnT \l__font_script_class_tl {cjk}
+          {
+            \tl_if_blank:VF \l__font_name_tl
+              {
+                \tl_set:Nx \l_tmpa_tl { __fontrm_\l__font_name_tl }
+                \exp_args:NV \seq_if_in:NnF \g__writing_cjk_family_seq \l_tmpa_tl
+                  { \seq_gput_right:NV \g__writing_cjk_family_seq \l_tmpa_tl }
+                \prop_get:NVNTF \g__writing_legacy_profile_prop
+                  \l__font_decl_family_id_tl \l_tmpb_tl
+                  { }
+                  { \tl_set:Nn \l_tmpb_tl {basic} }
+                \prop_gput:NVV \g__writing_cjk_family_profile_prop
+                  \l_tmpa_tl \l_tmpb_tl
+                \bool_if:NT \g__writing_fallback_started_bool
+                  { \__writing_fallback_refresh: }
+              }
+          }
+        \str_if_eq:VnT \l__font_scope_tl {global}
+          {
+            \prop_get:NVNTF \g__writing_legacy_profile_prop
+              \l__font_decl_family_id_tl \l_tmpa_tl
+              { }
+              { \tl_set:Nn \l_tmpa_tl {basic} }
+            \exp_args:NV \__writing_pool_register_active:n \l_tmpa_tl
+          }
+      }
+  }
+
+% Intercept the single final declaration backend used by both old and new
+% public API paths, rather than maintaining a separate font loader.
+\cs_new_eq:NN \__writing_base_apply_declaration: \__font_apply_declaration:
+\cs_set_protected:Npn \__font_apply_declaration:
+  {
+    \__writing_base_apply_declaration:
+    \__writing_fallback_register_current:
+  }
+
+\cs_new_protected:Npn \__writing_fallback_candidate:n #1
+  {
+    % xeCJK can only manage CJK-shaped fallback families. Other scripts
+    % are still tracked by the global pool for their own renderers.
+    \prop_get:NnN \g__writing_pool_profile_prop {#1}
+      \l__writing_fallback_candidate_profile_tl
+    \bool_set_false:N \l_tmpa_bool
+    \str_case:Vn \l__writing_fallback_candidate_profile_tl
+      {
+        {han}{\bool_set_true:N \l_tmpa_bool}
+        {chinese}{\bool_set_true:N \l_tmpa_bool}
+        {japanese}{\bool_set_true:N \l_tmpa_bool}
+        {korean}{\bool_set_true:N \l_tmpa_bool}
+        {tangut}{\bool_set_true:N \l_tmpa_bool}
+      }
+    \bool_if:NT \l_tmpa_bool
+      {
+    \prop_get:NnN \g__writing_pool_font_prop {#1}
+      \l__writing_fallback_candidate_font_tl
+    \prop_get:NnN \g__writing_pool_path_prop {#1}
+      \l__writing_fallback_candidate_path_tl
+    \tl_if_blank:VF \l__writing_fallback_candidate_font_tl
+      {
+        \tl_if_blank:VTF \l__writing_fallback_candidate_path_tl
+          {
+            \clist_put_right:NV \l__writing_fallback_candidates_clist
+              \l__writing_fallback_candidate_font_tl
+          }
+          {
+            \tl_set:Nx \l_tmpa_tl
+              {
+                [Path={\exp_not:V \l__writing_fallback_candidate_path_tl}]
+                {\exp_not:V \l__writing_fallback_candidate_font_tl}
+              }
+            \clist_put_right:NV \l__writing_fallback_candidates_clist \l_tmpa_tl
+          }
+      }
+      }
+  }
+
+\cs_new_protected:Npn \__writing_fallback_collect:n #1
+  {
+    \seq_map_inline:Nn \g__writing_pool_order_seq
+      {
+        \str_if_eq:eeF {##1} {\tl_use:N \l__writing_fallback_target_name_tl}
+          {
+            \prop_get:NnN \g__writing_pool_profile_prop {##1}
+              \l__writing_fallback_candidate_profile_tl
+            \str_if_eq:VVT
+              \l__writing_fallback_candidate_profile_tl
+              \l__writing_fallback_target_profile_tl
+              { \__writing_fallback_candidate:n {##1} }
+          }
+      }
+    \seq_map_inline:Nn \g__writing_pool_order_seq
+      {
+        \prop_get:NnN \g__writing_pool_profile_prop {##1}
+          \l__writing_fallback_candidate_profile_tl
+        \str_if_eq:VVF
+          \l__writing_fallback_candidate_profile_tl
+          \l__writing_fallback_target_profile_tl
+          { \__writing_fallback_candidate:n {##1} }
+      }
+  }
+
+\cs_new_protected:Npn \__writing_fallback_system_fonts:
+  {
+    % TeX fonts are the final fallback; probe availability rather than
+    % assuming that Windows-only SimSun or optional Shanggu is installed.
+    \bool_set_false:N \l__writing_has_global_chinese_bool
+    \seq_map_inline:Nn \g__writing_pool_order_seq
+      {
+        \prop_get:NnN \g__writing_pool_profile_prop {##1} \l_tmpa_tl
+        \str_case:Vn \l_tmpa_tl
+          {
+            {chinese}{\bool_set_true:N \l__writing_has_global_chinese_bool}
+            {han}{\bool_set_true:N \l__writing_has_global_chinese_bool}
+          }
+      }
+    % Tangut uses the existing global Chinese chain when present.
+    % Only without one should a TeX-provided Chinese font be considered.
+    \bool_if:nT
+      {
+        ! \str_if_eq_p:Vn \l__writing_fallback_target_profile_tl {tangut}
+        || ! \l__writing_has_global_chinese_bool
+      }
+      {
+        \IfFileExists{FandolSong-Regular.otf}
+          { \clist_put_right:Nn \l__writing_fallback_candidates_clist
+              {FandolSong-Regular.otf} } { }
+      }
+    \IfFileExists{lmroman10-regular.otf}
+      { \clist_put_right:Nn \l__writing_fallback_candidates_clist
+          {lmroman10-regular.otf} } { }
+  }
+
+\cs_new_protected:Npn \__writing_fallback_refresh_family:n #1
+  {
+    \clist_clear:N \l__writing_fallback_candidates_clist
+    \tl_set:Nn \l__writing_fallback_target_name_tl {#1}
+    \tl_replace_once:Nnn \l__writing_fallback_target_name_tl {__fontrm_} {}
+    \prop_get:NnNTF \g__writing_cjk_family_profile_prop {#1}
+      \l__writing_fallback_target_profile_tl { }
+      { \tl_set:Nn \l__writing_fallback_target_profile_tl {chinese} }
+    \__writing_fallback_collect:n {#1}
+    \__writing_fallback_system_fonts:
+    % xeCJK appends /FallBack subfamilies instead of resetting them.
+    % Installing the same chain repeatedly creates an unbounded subfamily
+    % cascade. Register each primary family exactly once.
+    \prop_if_in:NnF \g__writing_fallback_configured_prop {#1}
+      {
+        \clist_if_empty:NF \l__writing_fallback_candidates_clist
+          {
+            \use:x
+              {
+                \exp_not:N \setCJKfallbackfamilyfont {\exp_not:n {#1}}
+                  { \clist_use:Nn \l__writing_fallback_candidates_clist {,} }
+              }
+            \prop_gput:Nnn \g__writing_fallback_configured_prop {#1} {installed}
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__writing_fallback_refresh:
+  {
+    \cs_if_exist:NT \setCJKfallbackfamilyfont
+      {
+        \xeCJKsetup{AutoFallBack=true}
+        \seq_map_inline:Nn \g__writing_cjk_family_seq
+          { \__writing_fallback_refresh_family:n {##1} }
+        \cs_if_exist:NT \CJKrmdefault
+          { \exp_args:No \__writing_fallback_refresh_family:n \CJKrmdefault }
+      }
+  }
+
+% Emit a concise warning only when xeCJK has found an actual substitute.
+\cs_new_protected:Npn \__writing_fallback_report:nnn #1#2#3
+  {
+    % xeCJK can pass a protected symbol token, not necessarily a literal
+    % character. Do not use character-code arithmetic on that argument.
+    \tl_set:Nx \l__writing_fallback_warning_key_tl
+      { \tl_to_str:n {#1} / \tl_to_str:n {#2} / \tl_to_str:n {#3} }
+    \prop_if_in:NVF \g__writing_fallback_warning_prop
+      \l__writing_fallback_warning_key_tl
+      {
+        \prop_gput:NVn \g__writing_fallback_warning_prop
+          \l__writing_fallback_warning_key_tl {notified}
+        \PackageWarning{impe-fonts}
+          {Glyph~fallback:~#1~->~#2~(\tl_to_str:n {#3})}
+      }
+  }
+
+\cs_new_protected:Npn \__writing_fallback_install_warning_hook:
+  {
+    \cs_if_exist:NT \__xeCJK_fallback_loop_aux:nnnNN
+      {
+        \cs_new_eq:NN
+          \__writing_base_xecjk_fallback_loop_aux:nnnNN
+          \__xeCJK_fallback_loop_aux:nnnNN
+        \cs_set_protected:Npn \__xeCJK_fallback_loop_aux:nnnNN ##1##2##3##4##5
+          {
+            \xeCJK_glyph_if_exist:NT ##5
+              { \__writing_fallback_report:nnn {##2} {##1} {##5} }
+            \__writing_base_xecjk_fallback_loop_aux:nnnNN
+              {##1}{##2}{##3}##4##5
+          }
+      }
+  }
+
+% Registry collection stays active. Installation is withheld until the
+% xeCJK family/path routing regression is resolved; do not install a broken
+% fallback chain in every document.
+\AtBeginDocument { }
+\ExplSyntaxOff

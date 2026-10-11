@@ -148,6 +148,8 @@ try {
         "canonical-entry",
         "legacy-entry",
         "font-mode-aliases",
+        "usewriting-api",
+        "usewriting-local-first-use",
         "local-font-override",
         "same-family-shaping",
         "routing-scalability",
@@ -191,6 +193,11 @@ try {
         }
     }
     $layoutNegativeTests = @{
+        'usewriting-negative-source' = 'Conflicting font resource selectors'
+        'usewriting-negative-generic-vertical' = 'Vertical writing requires a profile'
+        'usewriting-negative-local-multiple' = 'Local writing requires one binding'
+        'usewriting-negative-global-vertical' = 'Global vertical writing is unsupported'
+        'usewriting-negative-duplicate-name' = 'already exists'
         'layout-negative-duplicate' = 'Duplicate document parameter'
         'layout-negative-duplicate-scope' = 'Duplicate local parameter'
         'layout-negative-local-page' = 'is not local'

@@ -1,5 +1,7 @@
 % Font declaration interface and routing logic.
 % This layer owns the declaration entry points and public builders.
+% Rotated local writing requires graphicx even when no drawing module is loaded.
+\RequirePackage{graphicx}
 
 \ExplSyntaxOn
 
@@ -53,6 +55,8 @@
 \bool_new:N \l__font_reapply_style_bool
 \bool_new:N \l__font_local_override_bool
 \bool_new:N \g__font_cjk_main_declared_bool
+\int_new:N \g__font_cjk_main_priority_int
+\int_new:N \l__font_cjk_candidate_priority_int
 \seq_new:N \g__font_loaded_special_modules_seq
 \seq_new:N \g__font_range_global_blocks_seq
 \prop_new:N \g__font_range_global_name_prop
@@ -493,7 +497,17 @@
         \use:c { __font_space_policy_#2: }
         \use:c { __font_map_sf_#2: }
         \use:c { __font_map_tt_#2: }
+        % New forced local CJK bindings also set the Roman font to the same
+        % resource. xeCJK's Roman/CJK split must not leak a global font.
+        \cs_if_exist:cT { __font_force_roman_#2: }
+          { \use:c { __font_force_roman_#2: } }
         \use:c { __fontrm_#2 }
+        \cs_if_exist:cT { __font_force_cjk_#2: }
+          {
+            \cs_if_exist:NT \xeCJKsetup
+              { \xeCJKsetup { AutoFallBack = true } }
+            \use:c { __font_force_cjk_#2: }
+          }
         \bool_set_false:N \l__font_reapply_style_bool
         \str_if_eq:eeF { \use:c { f@series } } { \mddefault }
           {
@@ -579,9 +593,20 @@
 
 \cs_new_protected:Npn \__font_vertical_use_base:n #1
   {
+    % Rotation typesets word boxes through the same forced-local routing
+    % guard as horizontal local commands. Global range hooks must not enter.
+    \bool_set_true:N \l__font_local_override_bool
     \use:c { __font_space_policy_\l__font_vertical_base_name_tl : }
     \use:c { __font_map_sf_\l__font_vertical_base_name_tl : }
     \use:c { __font_map_tt_\l__font_vertical_base_name_tl : }
+    \cs_if_exist:cT { __font_force_roman_\l__font_vertical_base_name_tl : }
+      { \use:c { __font_force_roman_\l__font_vertical_base_name_tl : } }
+    \cs_if_exist:cT { __font_force_cjk_\l__font_vertical_base_name_tl : }
+      {
+        \cs_if_exist:NT \xeCJKsetup
+          { \xeCJKsetup { AutoFallBack = false } }
+        \use:c { __font_force_cjk_\l__font_vertical_base_name_tl : }
+      }
     \str_case:VnF \l__font_vertical_style_family_tl
       {
         { sans } { \use:c { __fontsf_\l__font_vertical_base_name_tl } }
@@ -741,12 +766,12 @@
           \tl_set:Nn \l__font_vertical_rotation_origin_tl {#5}
           \__font_vertical_prepare_argument:n {##2}
           \leavevmode
-          {
+          \raisebox{##1}{\hbox{
             \tl_use:N \l__font_vertical_style_setup_tl
             \str_if_eq:VnTF \l__font_vertical_flow_tl { rtl }
               { \exp_args:NV \__font_vertical_emit_words_reverse:n \l__font_vertical_content_tl }
               { \exp_args:NV \__font_vertical_emit_words_forward:n \l__font_vertical_content_tl }
-          }
+          }}
         }
       }
   }
@@ -829,20 +854,45 @@
     \__font_build_main_options:
     \__font_build_sans_options:
     \__font_build_mono_options:
+    % When a CJK binding is first requested inside the document, xeCJK
+    % cannot be loaded at runtime. Pure local rendering needs no automatic
+    % CJK routing, so use fontspec directly if xeCJK was not preloaded.
+    \cs_if_exist:NT \l__writing_local_call_bool
+      {
+        \bool_if:NT \l__writing_local_call_bool
+          {
+            \cs_if_exist:NF \newCJKfontfamily
+              {
+                \str_if_eq:VnT \l__font_script_class_tl {cjk}
+                  { \tl_set:Nn \l__font_script_class_tl {latin} }
+              }
+          }
+      }
     \str_if_eq:VnTF \l__font_script_class_tl { cjk }
       {
         \cs_if_exist:NF \newCJKfontfamily
           { \RequirePackage{xeCJK} }
+        % Legacy local setup may initialize the document's CJK main font.
+        % A new forced-local binding must never do so.
         \bool_if:NF \g__font_cjk_main_declared_bool
           {
-            \use:x
+            \bool_set_true:N \l_tmpa_bool
+            \cs_if_exist:NT \l__writing_local_call_bool
               {
-                \exp_not:N \setCJKmainfont
-                [ \tl_use:N \l__font_main_options_tl ]
-                { \l__font_regular_tl }
+                \bool_if:NT \l__writing_local_call_bool
+                  { \bool_set_false:N \l_tmpa_bool }
               }
-            \__font_apply_cjk_fallback_family:n { \CJKrmdefault }
-            \bool_gset_true:N \g__font_cjk_main_declared_bool
+            \bool_if:NT \l_tmpa_bool
+              {
+                \use:x
+                  {
+                    \exp_not:N \setCJKmainfont
+                    [ \tl_use:N \l__font_main_options_tl ]
+                    { \l__font_regular_tl }
+                  }
+                \__font_apply_cjk_fallback_family:n { \CJKrmdefault }
+                \bool_gset_true:N \g__font_cjk_main_declared_bool
+              }
           }
         \use:x
           {
@@ -851,6 +901,25 @@
             \exp_not:c { __fontrm_\l__font_name_tl }
             [ \tl_use:N \l__font_main_options_tl ]
             { \l__font_regular_tl }
+          }
+        \cs_if_exist:NT \l__writing_local_call_bool
+          {
+            \bool_if:NT \l__writing_local_call_bool
+              {
+                \use:x
+                  {
+                    \exp_not:N \newfontfamily
+                    \exp_not:c { __fontlatin_\l__font_name_tl }
+                    [ \tl_use:N \l__font_main_options_tl ]
+                    { \l__font_regular_tl }
+                  }
+                \use:x
+                  {
+                    \exp_not:N \cs_set_protected:cpn
+                      { __font_force_roman_\l__font_name_tl : }
+                      { \exp_not:c { __fontlatin_\l__font_name_tl } }
+                  }
+              }
           }
         \__font_apply_cjk_fallback_family:n { __fontrm_\l__font_name_tl }
         \use:x
@@ -894,6 +963,37 @@
           }
       }
 
+    % An anonymous local font without a Profile must still control CJK
+    % characters if xeCJK is active. Give xeCJK the same selected font
+    % rather than letting its global CJK family override the local one.
+    \cs_if_exist:NT \l__writing_local_call_bool
+      {
+        \bool_if:NT \l__writing_local_call_bool
+          {
+            \str_if_eq:VnF \l__font_script_class_tl {cjk}
+              {
+                \cs_if_exist:NT \newCJKfontfamily
+                  {
+                    \__font_build_main_options:
+                    \use:x
+                      {
+                        \exp_not:N \newCJKfontfamily
+                        [ { __fontcjk_\l__font_name_tl } ]
+                        \exp_not:c { __fontcjk_\l__font_name_tl }
+                        [ \tl_use:N \l__font_main_options_tl ]
+                        { \l__font_regular_tl }
+                      }
+                    \use:x
+                      {
+                        \exp_not:N \cs_set_protected:cpn
+                          { __font_force_cjk_\l__font_name_tl : }
+                          { \exp_not:c { __fontcjk_\l__font_name_tl } }
+                      }
+                  }
+              }
+          }
+      }
+
     \exp_args:NV \__font_define_behavior_hooks:n \l__font_name_tl
     \exp_args:NVV \__font_define_public_command:nn
       \l__font_command_tl
@@ -907,11 +1007,33 @@
     \__font_build_mono_options:
     \str_if_eq:VnTF \l__font_script_class_tl { cjk }
       {
-        \cs_if_exist:NF \setCJKmainfont
-          { \RequirePackage{xeCJK} }
-        \use:x
+        % Chinese > Japanese > Korean, irrespective of declaration order.
+        \int_zero:N \l__font_cjk_candidate_priority_int
+        \cs_if_exist:NT \g__writing_legacy_profile_prop
           {
-            \exp_not:N \setCJKmainfont
+            \prop_get:NVNT \g__writing_legacy_profile_prop
+              \l__font_decl_family_id_tl \l_tmpa_tl
+              {
+                \str_case:Vn \l_tmpa_tl
+                  {
+                    {chinese}{\int_set:Nn \l__font_cjk_candidate_priority_int {3}}
+                    {han}{\int_set:Nn \l__font_cjk_candidate_priority_int {3}}
+                    {japanese}{\int_set:Nn \l__font_cjk_candidate_priority_int {2}}
+                    {korean}{\int_set:Nn \l__font_cjk_candidate_priority_int {1}}
+                  }
+              }
+          }
+        \int_compare:nNnF
+          {\l__font_cjk_candidate_priority_int} <
+          {\g__font_cjk_main_priority_int}
+          {
+            \int_gset_eq:NN \g__font_cjk_main_priority_int
+              \l__font_cjk_candidate_priority_int
+            \cs_if_exist:NF \setCJKmainfont
+              { \RequirePackage{xeCJK} }
+            \use:x
+              {
+                \exp_not:N \setCJKmainfont
             [ \tl_use:N \l__font_main_options_tl ]
             { \l__font_regular_tl }
           }
@@ -928,7 +1050,8 @@
             [ \tl_use:N \l__font_mono_options_tl ]
             { \l__font_resolved_mono_tl }
           }
-        \bool_gset_true:N \g__font_cjk_main_declared_bool
+            \bool_gset_true:N \g__font_cjk_main_declared_bool
+          }
       }
       {
         \use:x
