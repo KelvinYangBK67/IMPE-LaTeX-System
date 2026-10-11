@@ -33,7 +33,7 @@ if (-not (Test-Path -LiteralPath $ShowcaseSourceForRelease)) {
 }
 if ($RunFormalReleaseChecks) {
     $showcaseReleaseSource = Get-Content -LiteralPath $ShowcaseSourceForRelease -Raw -Encoding UTF8
-    if (-not $showcaseReleaseSource.Contains("\\date{v$Version}")) {
+    if (-not $showcaseReleaseSource.Contains("\date{v$Version}")) {
         Write-Warning "Release packaging checks deferred: showcase/manual publication has not yet been synchronized with internal VERSION $Version. The release builder will still reject a version-mismatched showcase."
         $RunFormalReleaseChecks = $false
     }
