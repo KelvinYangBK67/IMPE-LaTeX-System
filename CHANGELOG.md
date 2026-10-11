@@ -6,6 +6,24 @@ All notable versioned changes to IMPE LaTeX System are documented in this file.
 
 For changes since the latest versioned repository state, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
+## [1.0.8] - 2026-10-11
+
+Internal source snapshot for Unicode extraction integrity (#12). No GitHub Release
+or tag is created by this preparation; manuals, Showcase and tracked PDFs remain
+deferred until formal publication.
+
+### PDF text extraction
+* Update the pinned bundled XSR runtime to 1.1. Egyptian quadrats and Khitan
+  clusters carry their original Unicode source, including EHFC, KHSF, variation
+  selectors and separators, as atomic PDF \`/ActualText\` spans.
+* Keep TeX's native \`ToUnicode\` behavior for ordinary multilingual text.
+  Add actual PDF extraction checks for Latin, Greek, Cyrillic, Han and Thai
+  using publicly available TeX Live fonts.
+* Do not intercept math, tables, indexing, user-defined commands or arbitrary
+  artwork; no new public API and no invisible duplicate text layer.
+* Preserve XSR geometry and existing IMPE 1.x interfaces; record reader-specific
+  \`/ActualText\` limitations instead of promising universal copy behavior.
+
 ## [1.0.7] - 2026-10-11
 
 Internal source snapshot for the native-first Index refactor (#20, PR #26). This is a source-version milestone only: no GitHub Release, CTAN publication or bundled release archives. The manuals, Showcase and their tracked PDFs remain deferred to the next public publication pass.

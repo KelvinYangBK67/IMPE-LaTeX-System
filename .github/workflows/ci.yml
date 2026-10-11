@@ -41,6 +41,17 @@ jobs:
         shell: pwsh
         run: ./tests/run_regressions.ps1 -PublicFonts
 
+      - name: Verify native multilingual ToUnicode in generated PDF
+        shell: pwsh
+        run: |
+          $root = (Get-Location).Path.Replace([char]92, [char]47)
+          $sep = [IO.Path]::PathSeparator
+          $env:TEXINPUTS = "$root/package//$sep$root//$sep"
+          & xelatex -interaction=nonstopmode -halt-on-error -output-directory=tests/build tests/unicode-text-extraction.tex
+          if ($LASTEXITCODE -ne 0) { throw 'Unicode text fixture failed.' }
+          & python tests/check_unicode_extraction.py tests/build/unicode-text-extraction.pdf ordinary
+          if ($LASTEXITCODE -ne 0) { throw 'Unicode text extraction failed.' }
+
   xsr-integration:
     name: Bundled XSR integration (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -96,6 +107,12 @@ jobs:
               $log -notmatch 'XSR-INLINE') {
             throw 'XSR integration markers missing.'
           }
+
+      - name: Verify XSR Unicode text extraction
+        shell: pwsh
+        run: |
+          & python tests/check_unicode_extraction.py xsr-integration.pdf xsr
+          if ($LASTEXITCODE -ne 0) { throw 'XSR Unicode extraction failed.' }
 
       - name: Verify XSR activation via UseWriting
         shell: pwsh

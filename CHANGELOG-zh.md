@@ -6,6 +6,23 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 最新版本化倉庫狀態之後的變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
+## [1.0.8] - 2026-10-11
+
+本版為 #12 的 Unicode PDF 文字提取可靠性整理，屬內部原始碼快照。
+不建立 Tag、GitHub Release 或正式封裝；三語手冊、Showcase 和已追蹤 PDF
+繼續留待正式發佈時更新。
+
+### Unicode 文字提取
+* 升級隨附 XSR 至 1.1；埃及聖書文 quadrat 和契丹小字 cluster
+  以 PDF \`/ActualText\` 保存輸入的 Unicode 序列，包括 EHFC、
+  KHSF、變體選擇符及分隔字符。
+* 普通多文種文字保持 XeLaTeX 原生 \`ToUnicode\` 輸出，
+  補充拉丁文、希臘文、西里爾文、漢字、泰文的實際 PDF 提取測試。
+* 不處理數學公式、表格、索引、自訂巨集或任意圖像的源碼線性化；
+  不新增公開 API，也不添加不可見文字疊層。
+* 保持 XSR 排版尺寸與 IMPE 1.x 既有介面相容；對不同 PDF
+  閱讀器的 \`/ActualText\` 相容差異作明確說明。
+
 ## [1.0.7] - 2026-10-11
 
 本版為 #20／PR #26 的 Index 原生化整理，僅為內部原始碼版本，不建立 GitHub Release、CTAN 發佈或正式封裝。三語手冊、Showcase 及追蹤 PDF 繼續留待正式發佈時更新。
