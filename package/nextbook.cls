@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextbook}[2026/10/11 v1.0.5 Compatibility alias for impebook]
+\ProvidesClass{nextbook}[2026/10/11 v1.0.6 Compatibility alias for impebook]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{impebook}}
