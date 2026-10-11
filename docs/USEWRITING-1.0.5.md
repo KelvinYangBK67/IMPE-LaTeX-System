@@ -244,3 +244,36 @@ The new `\\UseWriting` entry is not a stand-in for inline text commands:
 existing `\\MOv`, `\\IMPEEgyptianText`, etc. remain applicable.
 All legacy `\\UseFont` IDs, scopes and script-specific rendering continue
 to execute through the old loader under the shared preset dispatcher.
+
+
+## Native CJK glyph fallback (draft)
+
+- A successfully loaded global font enters the reusable fallback pool under
+  its **explicit Writing Profile**, not under a profile inferred from its font
+  resource. Legacy `UseFont` declarations preserve their old profile mapping.
+- For CJK text, IMPE delegates actual missing-glyph substitution to **xeCJK**.
+  Candidates of the same Writing Profile precede candidates from other CJK
+  profiles. Tangut punctuation can use a loaded Chinese resource or an
+  available TeX-provided Fandol font.
+- When a font is globally registered after `\\begin{document}`, the CJK
+  resource pool and previously installed xeCJK fallback families are refreshed.
+  A generation-based cache check prevents xeCJK from continuing to use stale
+  already-resolved fallback fonts. Redundant refreshes of identical candidate
+  lists are skipped.
+- The log emits a de-duplicated `Glyph fallback for ... to ...` warning after
+  actual xeCJK substitution. Repeated identical substitutions from the same
+  source do not generate repeated IMPE warnings.
+- The **2×2×2 Style Matrix** is implemented and tested for **missing face
+  declarations**. A separate glyph-coverage-aware walk of all eight face
+  coordinates is not yet integrated; the currently working xeCJK fallback
+  searches whole-font candidates. It must not be represented as completed.
+- General non-CJK missing-glyph substitution is **not yet implemented**. XeTeX
+  does not provide xeCJK's glyph-miss callback for other renderers, and
+  splitting text into independent characters would break Indic and Arabic
+  shaping. This requires renderer-aware run/cluster handling before enabling
+  by default.
+
+Tests: `tests/fallback-native.tex`, `tests/fallback-precedence.tex`,
+`tests/fallback-profile-identity.tex`, `tests/fallback-late-registration.tex`,
+`tests/style-matrix.tex`, and PDF-span inspection through
+`tests/check_fallback_late.py`.
