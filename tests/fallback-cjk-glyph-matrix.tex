@@ -1,0 +1,12 @@
+% A CJK face can exist yet lack an individual Han glyph. The next
+% usable face must follow the *glyph-level* 2x2x2 rank, not the pool default.
+\documentclass{article}
+\usepackage{impe}
+\UseWriting{[file=FandolFang-Regular.otf]chinese}
+\begin{document}
+% Requested coordinate 7 (Sans Bold Italic) exists but has no Han glyph.
+% Coordinate 6 (Sans Bold) must win over 5 (Sans Italic) and 3 (Serif BI).
+\Writing{[file=FandolFang-Regular.otf,sansbolditalic={file=lmroman10-regular.otf},sansbold={file=FandolHei-Regular.otf},sansitalic={file=FandolSong-Regular.otf},bolditalic={file=FandolFang-Regular.otf}]chinese}
+  {{\sffamily\bfseries\itshape 漢}}
+\typeout{IMPE-TEST-FALLBACK-CJK-GLYPH-MATRIX-PASS}
+\end{document}
