@@ -151,6 +151,7 @@ try {
         "usewriting-api",
         "usewriting-local-first-use",
         "fallback-native",
+        "fallback-tangut-system",
         "local-font-override",
         "same-family-shaping",
         "routing-scalability",
@@ -215,6 +216,8 @@ try {
     }
     & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-native.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'Native xeCJK fallback PDF regression failed.' }
+    & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-tangut-system.pdf')
+    if ($LASTEXITCODE -ne 0) { throw 'Tangut punctuation system fallback PDF regression failed.' }
     & python (Join-Path $TestRoot 'check_index_links.py') (Join-Path $BuildRoot 'hyperlink-anchors.pdf')
     if ($LASTEXITCODE -ne 0) {
         foreach ($suffix in @('idx', 'ind')) {
