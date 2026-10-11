@@ -1,6 +1,6 @@
-# IMPE writing and font selection (1.0.5 development)
+# IMPE writing and font selection (1.0.5)
 
-Development specification for draft PR #23. No version tag or release is created.
+Reference for the 1.0.5 internal source snapshot (merged PR #23). Manuals and showcase are deliberately deferred until formal publication.
 New public interfaces are `\UseWriting`, `\DeclareWriting`, and `\Writing`.
 The existing `\Font` is redesigned as a forced-local preset selector.
 `\UseFont` retains its original `[local|global]` mode and historic presets;
@@ -246,7 +246,7 @@ All legacy `\\UseFont` IDs, scopes and script-specific rendering continue
 to execute through the old loader under the shared preset dispatcher.
 
 
-## Native CJK glyph fallback (draft)
+## Native CJK glyph fallback (1.0.5)
 
 - A successfully loaded global font enters the reusable fallback pool under
   its **explicit Writing Profile**, not under a profile inferred from its font

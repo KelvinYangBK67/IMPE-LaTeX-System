@@ -6,6 +6,23 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 最新版本化倉庫狀態之後的變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
+## [1.0.5] - 2026-10-11
+
+字體／Writing 架構的內部原始碼版本，已合併 PR #23；尚非正式對外發佈。三語手冊與標準 Showcase 的 TeX 原始碼、追蹤中的 PDF 均刻意保留上一版，待正式發佈時一併修訂與重建。
+
+### 新增
+* 將 Unicode 18.0.0 的 353 個區段、69 個人工維護的 Writing Profile、85 個具名資源／字體包別名，以及全部 59 個舊版家族 preset 分離管理。覆寫字體不再意外改動 Writing Profile。
+* 新增 \UseWriting{[字體包,選項]Profile}、\DeclareWriting{名稱}{設定}、\Font{名稱}[覆寫]{文字} 及 \Writing{設定}{文字}。既有 \UseFont mode、局部捷徑、直排與 XSR 渲染器繼續相容。
+* 以 xeCJK 原生逐字缺字檢測支援僅限 CJK 的 2×2×2（Serif/Sans × Regular/Bold × Upright/Italic）樣式矩陣，優先尋找目前字體包的其他面，再尋找同 Profile 與其他 CJK Profile；支援正文後續註冊、快取更新與去重警告。
+
+### 相容性及界限
+* 維持 IMPE 1.x 公開介面、舊家族及顯式局部覆寫優先級。非 CJK 文字不提供通用缺字自動備援。
+* 不另行實作重疊 Unicode 區段的全域仲裁；全文件真正直排仍另列後續事項。
+
+### 驗證及後續
+* Linux／Windows 的 XeLaTeX 回歸、XSR 整合及 PDF 實際字體檢查已覆蓋缺字矩陣、同段樣式切換和延後註冊。
+* 三語手冊、Showcase、追蹤中的 PDF 及正式發佈封裝驗證延後辦理；本次只整理原始碼版本，不自行打 Tag 或建立 GitHub Release。
+
 ## [1.0.4] - 2026-10-09
 
 Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容；本次不建立 Tag 或 GitHub Release。
