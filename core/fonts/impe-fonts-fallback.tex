@@ -1,6 +1,6 @@
-% IMPE font fallback registry. Every successfully loaded global font participates.
-% xeCJK is the CJK glyph-level backend; renderer-specific fallback handlers
-% can query the same ordered pool without changing their writing profile.
+% IMPE CJK glyph fallback. Only xeCJK performs automatic substitution.
+% Other scripts retain their existing renderer/fontspec behavior; they do not
+% receive a generic codepoint-by-codepoint missing-glyph replacement.
 \ExplSyntaxOn
 \seq_new:N \g__writing_pool_order_seq
 \prop_new:N \g__writing_pool_profile_prop
@@ -162,6 +162,9 @@
         {japanese}{\bool_set_true:N \l_tmpa_bool}
         {korean}{\bool_set_true:N \l_tmpa_bool}
         {tangut}{\bool_set_true:N \l_tmpa_bool}
+        {kana}{\bool_set_true:N \l_tmpa_bool}
+        {hangul}{\bool_set_true:N \l_tmpa_bool}
+        {bopomofo}{\bool_set_true:N \l_tmpa_bool}
       }
     \bool_if:NT \l_tmpa_bool
       {
@@ -416,6 +419,9 @@
                     {japanese}{\__writing_fallback_add_source:n {##1}}
                     {korean}{\__writing_fallback_add_source:n {##1}}
                     {tangut}{\__writing_fallback_add_source:n {##1}}
+                    {kana}{\__writing_fallback_add_source:n {##1}}
+                    {hangul}{\__writing_fallback_add_source:n {##1}}
+                    {bopomofo}{\__writing_fallback_add_source:n {##1}}
                   }
               }
           }
