@@ -1000,6 +1000,16 @@
                   { !\tl_if_blank_p:V \l__writing_file_tl }
                   { \tl_set:Nn \l__font_fallback_mode_tl {strict} }
                 \__font_apply_declaration:
+                % A global UseWriting request contributes to the automatic
+                % fallback pool even for a legacy local-only resource.
+                \bool_if:NF \l__writing_local_call_bool
+                  {
+                    \cs_if_exist:NT \__writing_pool_register_active:n
+                      {
+                        \exp_args:NV \__writing_pool_register_active:n
+                          \l__writing_profile_tl
+                      }
+                  }
                 \bool_if:NT \l__writing_local_call_bool
                   {
                     \tl_gset:NV \g__writing_last_local_command_tl \l__font_command_tl
