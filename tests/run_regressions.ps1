@@ -218,6 +218,19 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Native xeCJK fallback PDF regression failed.' }
     & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-tangut-system.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'Tangut punctuation system fallback PDF regression failed.' }
+    # Verify that actual glyph substitution emits an actionable warning,
+    # and repeated occurrences of the same substitution are deduplicated.
+    $nativeFallbackLog = Get-Content -LiteralPath (Join-Path $BuildRoot 'fallback-native.log') -Raw
+    $nativeFallbackWarnings = [regex]::Matches($nativeFallbackLog, 'Glyph fallback for').Count
+    if ($nativeFallbackWarnings -ne 3 -or
+        $nativeFallbackLog -notmatch 'FandolSong-Regular\.otf') {
+        throw "Native xeCJK fallback warning regression: expected 3 deduplicated Fandol warnings, got $nativeFallbackWarnings."
+    }
+    $tangutFallbackLog = Get-Content -LiteralPath (Join-Path $BuildRoot 'fallback-tangut-system.log') -Raw
+    if ([regex]::Matches($tangutFallbackLog, 'Glyph fallback for').Count -ne 1 -or
+        $tangutFallbackLog -notmatch 'FandolSong-Regular\.otf') {
+        throw 'Tangut system punctuation fallback must warn exactly once with its actual replacement font.'
+    }
     & python (Join-Path $TestRoot 'check_index_links.py') (Join-Path $BuildRoot 'hyperlink-anchors.pdf')
     if ($LASTEXITCODE -ne 0) {
         foreach ($suffix in @('idx', 'ind')) {
