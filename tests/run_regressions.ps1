@@ -153,6 +153,8 @@ try {
         "fallback-native",
         "fallback-tangut-system",
         "fallback-precedence",
+        "fallback-profile-identity",
+        "fallback-late-registration",
         "local-font-override",
         "same-family-shaping",
         "routing-scalability",
@@ -219,6 +221,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Native xeCJK fallback PDF regression failed.' }
     & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-tangut-system.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'Tangut punctuation system fallback PDF regression failed.' }
+    & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-late-registration.pdf') FandolHei
+    if ($LASTEXITCODE -ne 0) { throw 'Late global font must enter existing CJK fallback chain.' }
     & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-precedence.pdf') FandolHei
     if ($LASTEXITCODE -ne 0) { throw 'Same-profile fallback precedence PDF regression failed.' }
     # Verify that actual glyph substitution emits an actionable warning,
