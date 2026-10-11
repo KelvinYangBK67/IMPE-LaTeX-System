@@ -1004,6 +1004,18 @@
       \l__font_name_tl
   }
 
+% The public xeCJK setters are preamble-only. For a later global registration,
+% use the same underlying xeCJK family machinery and clear its current cache.
+\cs_new_protected:Npn \__font_set_cjk_global_family:Nnnn #1#2#3#4
+  {
+    \bool_if:NTF \g__writing_fallback_started_bool
+      {
+        \xeCJK_set_family:enn {#2} {#3} {#4}
+        \cs_undefine:c { \__xeCJK_font_csname:n {#2} }
+      }
+      { #1 [#3] {#4} }
+  }
+
 \cs_new_protected:Npn \__font_define_global_binding:
   {
     \__font_build_main_options:
@@ -1039,21 +1051,27 @@
               { \RequirePackage{xeCJK} }
             \use:x
               {
+                \exp_not:N \__font_set_cjk_global_family:Nnnn
                 \exp_not:N \setCJKmainfont
-            [ \tl_use:N \l__font_main_options_tl ]
-            { \l__font_regular_tl }
+                { \exp_not:N \CJKrmdefault }
+                { \tl_use:N \l__font_main_options_tl }
+                { \l__font_regular_tl }
           }
         \__font_apply_cjk_fallback_family:n { \CJKrmdefault }
         \use:x
           {
+            \exp_not:N \__font_set_cjk_global_family:Nnnn
             \exp_not:N \setCJKsansfont
-            [ \tl_use:N \l__font_sans_options_tl ]
+            { \exp_not:N \CJKsfdefault }
+            { \tl_use:N \l__font_sans_options_tl }
             { \l__font_resolved_sans_tl }
           }
         \use:x
           {
+            \exp_not:N \__font_set_cjk_global_family:Nnnn
             \exp_not:N \setCJKmonofont
-            [ \tl_use:N \l__font_mono_options_tl ]
+            { \exp_not:N \CJKttdefault }
+            { \tl_use:N \l__font_mono_options_tl }
             { \l__font_resolved_mono_tl }
           }
             \bool_gset_true:N \g__font_cjk_main_declared_bool
