@@ -5,9 +5,9 @@
 IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
 multilingual typesetting, and optional document features.
 
-Current source version: `1.0.6` (2026-10-11; internal snapshot, not a formal publication). See [CHANGELOG.md](CHANGELOG.md).
+Current source version: `1.0.7` (2026-10-11; internal snapshot, not a formal publication). See [CHANGELOG.md](CHANGELOG.md).
 
-**Documentation status:** the English, German and Traditional Chinese manuals and the canonical showcase (TeX sources and PDFs) intentionally remain at the prior published edition. Consult the updated [writing/font API reference](docs/USEWRITING-1.0.5.md) and [font reference](docs/FONTS.md) for the 1.0.5 writing API, still supported in 1.0.6. The manuals, showcase, PDF rebuild and distributable archives will be synchronized before any formal release.
+**Documentation status:** the English, German and Traditional Chinese manuals and the canonical showcase (TeX sources and PDFs) intentionally remain at the prior published edition. Consult the updated [writing/font API reference](docs/USEWRITING-1.0.5.md) and [font reference](docs/FONTS.md) for the 1.0.5 writing API, still supported in 1.0.7. The manuals, showcase, PDF rebuild and distributable archives will be synchronized before any formal release.
 
 ## Quick Start
 
@@ -55,7 +55,7 @@ Paper classes already load `geometry` and `fancyhdr`; for advanced control
 use native `\geometry{...}` and `\fancyhead{...}` after the defaults.
 See [Layouts](docs/LAYOUTS.md) and [stability policy](docs/STABILITY.md).
 
-## Writing and font selection (introduced in 1.0.5; retained in 1.0.6)
+## Writing and font selection (introduced in 1.0.5; retained in 1.0.7)
 
 The recommended quick interface for existing registered font presets remains
 \UseFont{preset}. For a separate Unicode Writing Profile and font resource,
@@ -75,6 +75,15 @@ The configuration in \DeclareWriting is stored without activating a font;
 CJK missing glyphs use xeCJK's 2×2×2 face-priority fallback; non-CJK
 automatic missing-glyph substitution is intentionally excluded.
 See [1.0.5 Writing API](docs/USEWRITING-1.0.5.md).
+
+## Index (native-first since 1.0.7)
+
+Enable `\\UseFeature{index}` and use the native `imakeidx` commands
+`\\index`, `\\makeindex`, and `\\printindex`. IMPE's default index
+integrates ordinary occurrences with its unique PDF hyperlink targets;
+advanced encapsulations, cross-references and named indexes retain their
+native interfaces. The historical `\\Term` shortcut is compatibility-only.
+See [Feature reference](docs/FEATURES.md#index-native-first).
 
 ## Support Matrix
 

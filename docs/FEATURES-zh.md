@@ -23,7 +23,7 @@ index 會載入 hyperlinks。`\Term` 依 key 記錄首次出現；不同 key 可
 允許 shell 執行時，imakeidx 會自動傳入相同模組選項。
 一般自訂 `\index` 封裝仍由 imakeidx/hyperref 處理；上述位置機制用於 `\Term`。
 
-## Feature 介面原則（1.0.4 確立，1.0.6 繼續適用）
+## Feature 介面原則（1.0.4 確立，1.0.7 繼續適用）
 
 Feature 可以只負責**按功能載入成熟套件**，不必重新定義原生 LaTeX
 語法。新文件使用 `tables`、`image`、`drawing` 準備相關套件後，

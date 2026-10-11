@@ -1,4 +1,4 @@
-# Layouts（IMPE 1.0.6）
+# Layouts（IMPE 1.0.7）
 
 [English](LAYOUTS.md)
 
@@ -121,4 +121,4 @@ Component ID 保留。若需要沿用 A4 舊版版心及文字間距，可選
 `modules/features/impe-feature-headers.tex`、
 `core/layout/impe-layout-config.tex`。
 
-**1.0.6 內部原始碼快照不重建三語手冊、Showcase 或出版用 PDF**，待正式發佈時同步。
+**1.0.7 內部原始碼快照不重建三語手冊、Showcase 或出版用 PDF**，待正式發佈時同步。

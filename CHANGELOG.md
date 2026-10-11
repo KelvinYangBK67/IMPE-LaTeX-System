@@ -6,6 +6,21 @@ All notable versioned changes to IMPE LaTeX System are documented in this file.
 
 For changes since the latest versioned repository state, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
+## [1.0.7] - 2026-10-11
+
+Internal source snapshot for the native-first Index refactor (#20, PR #26). This is a source-version milestone only: no GitHub Release, CTAN publication or bundled release archives. The manuals, Showcase and their tracked PDFs remain deferred to the next public publication pass.
+
+### Native indexing and interoperability
+* Recommend the established `imakeidx` public interfaces: `\\index`, `\\makeindex`, and `\\printindex`, with `xindy` for IMPE's default index. Do not invent or expand an IMPE-specific term/index language.
+* Preserve precise occurrence-level PDF destinations for ordinary entries in the IMPE-created default index, including duplicate page labels and multiple occurrences on one physical page. The adapter shares the document-wide Hyperlinks destination allocator.
+* Delegate advanced `|...` encapsulations, index ranges, `see`/`seealso` cross-references and named indexes to native `imakeidx` syntax and indexing backends; these retain native hyperlink behavior rather than a universal occurrence-level guarantee.
+* Respect already-loaded `imakeidx` and an existing user-declared default index, including its native indexing command and backend. Keep `glossaries-extra` separate and optional.
+
+### Compatibility and verification
+* Move the existing `\\Term` implementation into a compatibility-only module, retaining all historical syntax, formatting and first-occurrence indexing behavior. Retain `\\IndexTitle`.
+* Add preloaded MakeIndex, named `xindy` indexes and generated PDF index link regressions; full Linux/Windows CI passes, including XSR and CJK cases.
+* Synchronize VERSION, all canonical and compatibility class/package metadata, bilingual changelogs, READMEs and maintained technical docs. Do not modify manuals or Showcase sources/PDFs. Tagging is left to the maintainer.
+
 ## [1.0.6] - 2026-10-11
 
 Internal source snapshot for the publication-first Layout redesign (#22, PR #25). This is a versioned source milestone, not a formal CTAN/GitHub distribution. The English, German and Traditional Chinese manuals and canonical Showcase (TeX and tracked PDFs) remain at their previously published editions pending a future publication pass.
