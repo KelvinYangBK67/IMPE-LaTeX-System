@@ -1,0 +1,12 @@
+% A document-owned imakeidx/MakeIndex configuration must remain native.
+\documentclass{impeart}
+\usepackage{imakeidx}
+\makeindex
+\UseFeature{index}
+\begin{document}
+Preconfigured\index{Preconfigured} index.
+\Term{Legacy} remains usable and writes to the native index.
+\clearpage
+\printindex
+\typeout{IMPE-TEST-INDEX-NATIVE-PRELOADED-PASS}
+\end{document}

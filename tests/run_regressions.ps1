@@ -180,6 +180,8 @@ try {
         "routing-scalability",
         "thai-linebreaking",
         "hyperlink-anchors",
+        "index-native-preloaded",
+        "index-native-multiple",
         "font-sources-api",
         "font-bundled-priority",
         "drawing",
@@ -214,7 +216,7 @@ try {
     )
 
     foreach ($name in $tests) {
-        $passes = if ($name -eq "hyperlink-anchors") { 3 } elseif ($name -eq "feature-api-compat") { 2 } else { 1 }
+        $passes = if ($name -in @("hyperlink-anchors", "index-native-preloaded", "index-native-multiple")) { 3 } elseif ($name -eq "feature-api-compat") { 2 } else { 1 }
         foreach ($pass in 1..$passes) {
             Write-Host "Running $name (pass $pass of $passes)..."
             $texInput = "tests/$name.tex"
@@ -232,6 +234,22 @@ try {
                 try {
                     & texindy -L english -C utf8 -M hyperlink-anchors-impe hyperlink-anchors.idx
                     if ($LASTEXITCODE -ne 0) { throw 'texindy occurrence regression failed.' }
+                }
+                finally { Pop-Location }
+            }
+            if ($pass -eq 1 -and $name -in @('index-native-preloaded', 'index-native-multiple')) {
+                Push-Location $BuildRoot
+                try {
+                    if ($name -eq 'index-native-preloaded') {
+                        & makeindex index-native-preloaded.idx
+                        if ($LASTEXITCODE -ne 0) { throw 'Preloaded native makeindex regression failed.' }
+                    }
+                    else {
+                        & texindy -L english -C utf8 -M index-native-multiple-impe index-native-multiple.idx
+                        if ($LASTEXITCODE -ne 0) { throw 'Native default xindy regression failed.' }
+                        & texindy -L english -C utf8 people.idx
+                        if ($LASTEXITCODE -ne 0) { throw 'Native named xindy regression failed.' }
+                    }
                 }
                 finally { Pop-Location }
             }
@@ -287,6 +305,8 @@ try {
         $tangutFallbackLog -notmatch 'FandolSong-Regular\.otf') {
         throw 'Tangut system punctuation fallback must warn exactly once with its actual replacement font.'
     }
+    & python (Join-Path $TestRoot 'check_native_index.py') (Join-Path $BuildRoot 'index-native-preloaded.pdf') (Join-Path $BuildRoot 'index-native-multiple.pdf')
+    if ($LASTEXITCODE -ne 0) { throw 'Native index interoperability PDF regression failed.' }
     & python (Join-Path $TestRoot 'check_index_links.py') (Join-Path $BuildRoot 'hyperlink-anchors.pdf')
     if ($LASTEXITCODE -ne 0) {
         foreach ($suffix in @('idx', 'ind')) {

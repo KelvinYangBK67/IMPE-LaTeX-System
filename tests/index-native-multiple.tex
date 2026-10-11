@@ -1,0 +1,15 @@
+% Native multiple indexes, explicit encapsulation and glossary-free usage.
+\documentclass{impeart}
+\UseFeature{index}
+\makeindex[name=people,title={People},program=xindy]
+\begin{document}
+NativeMain\index{NativeMain}, hierarchical\index{NativeMain!Hierarchy},
+and display\index{NativeSort@NativeDisplay}.
+\index{NativeMain|seealso{NativeDisplay}}
+NativeBold\index{NativeBold|textbf}.
+\index[people]{Muller, Anna} Anna Muller.
+\clearpage
+\printindex
+\printindex[people]
+\typeout{IMPE-TEST-INDEX-NATIVE-MULTIPLE-PASS}
+\end{document}

@@ -262,43 +262,58 @@ See \textcite{doe2026} for a narrative citation, or use
 \SetCitationBiblatexOptions{backend=biber,style=numeric}
 ```
 
-### `index`
+### `index`（原生優先）
 
-載入帶 `xindy` 支援的 `imakeidx`，並建立會出現在目錄中的索引。
-
-公開項目：
-
-- `\IndexTitle`
-  可選索引標題覆寫。若要覆寫，請在載入 feature 前定義；否則使用經過
-  UI 本地化的標準 `\indexname`。
-- `\Term[options]{display}[description]`
-  印出粗體術語，並把第一次出現的位置加入索引；方括號中的
-  `description` 可完全省略。
-  預設直接以 `display` 作為字典排序值與去重依據；可使用
-  可選的 `sort=...` 或 `key=...`。括號預設跟隨文件 UI：中文使用全形括號，
-  英文使用西文括號。單一術語可用 `parentheses=cjk`、
-  `parentheses=western` 或 `parentheses=none` 覆寫。索引頁碼會連回
-  正文中所記錄的術語位置。舊有
-  `\Term{key}{display}{description}` 三參數形式仍受支援。
-- `\printindex`
-  來自 `imakeidx` 的標準索引輸出命令。
-
-例：
+**推薦直接使用 imakeidx 原生** `\index`、`\makeindex` 和
+`\printindex`。啟用 `index` 會準備 `imakeidx`、`xindy`
+以及 `hyperlinks`，不再另造術語索引語法，也不預設載入
+`glossaries-extra`。
 
 ```tex
-\UseTemplateSet{
-  features = {hyperlinks,index}
-}
-
-\Term{Manuscript}
-\Term{Wikipedia}[維基百科]
-\Term[parentheses=cjk]{孔子}[Confucius]
-\Term[sort=Riemann]{Riemann hypothesis}
-
+\UseFeature{index}
+...
+佛教\index{佛教}
+大乘\index{佛教!大乘}
+\index{Buddhism@佛教}
+\index{佛教|see{印度宗教}}
 \printindex
 ```
 
-生成索引通常需要在 LaTeX 編譯之外再跑一次 index pass。
+IMPE 自行建立的預設索引，對普通 `\index` 項目（包括
+`sort@display` 和 `!` 層級）提供逐次出現位置的 PDF 錨點：
+即使頁碼重複，或同一頁有兩次標記，也能區分具體座標。
+`<job>-impe.xdy` 僅負責將內部唯一序號對應至正確頁碼和
+超連結；排序、分類、排印等仍交由 xindy／imakeidx。
+
+原生 `\index` 的 `|...` 格式封裝、`see`／`seealso`、
+範圍索引及具名索引**原樣交給原生套件**，不由 IMPE 擅自解釋。
+這些情況沿用原生超連結規則；IMPE 的精確詞項位置保證限於其
+預設索引的普通項目。多索引直接使用：
+
+```tex
+\UseFeature{index}
+\makeindex[name=people,title={People},program=xindy]
+...
+\index[people]{Müller, Anna}
+\printindex[people]
+```
+
+若用戶已自行載入 `imakeidx` 並建立預設索引，IMPE 不覆寫其
+`\makeindex` 設定；索引位置及超連結仍由該原生設定負責。
+IMPE 建立的預設索引需在輸出目錄執行：
+
+```sh
+texindy -L english -C utf8 -M <job>-impe <job>.idx
+```
+
+然後再執行兩遍 XeLaTeX。具名索引依其 `\makeindex` 宣告自行
+編譯；既有 MakeIndex 預設則使用 `makeindex <job>.idx`。
+
+術語註冊、描述、首見形式等直接使用可獨立載入的
+`glossaries-extra` 原生 API；是否同步索引，由用戶按其原生
+設定決定。原有 `\Term` 全部形式、`\IndexTitle`、
+粗體呈現、首次索引語義繼續保留，但**僅作 1.x 相容接口**，
+不再推薦新文件使用。
 
 ### `tables`
 
@@ -464,15 +479,3 @@ glyphs 是獨立可選 feature，與埃及及契丹字體分開。
 元資料不增加 PDF 隱形文字層，裁切只影響 TeX 排版盒。
 
 
-### 原生索引 occurrence 連結（1.0.4 開發）
-
-預設索引的原生 `\\index{...}` 現在會使用 IMPE 的全局流水號，
-在每一次標記所在位置建立專屬 PDF 錨點。普通詞條、`sort@display`
-與 `!` 子詞條使用產生的 `<job>-impe.xdy` 樣式；索引中仍顯示正常頁碼。
-請執行 `texindy -L english -C utf8 -M <job>-impe <job>.idx`，
-再編譯 XeLaTeX 兩次。錨點的位置就是 `\\index` 所在位置；
-若要跳轉到詞首，應把命令放在詞首之前。
-
-包含 `|...` 的格式封裝、範圍、交叉參照及具名多索引目前維持
-`imakeidx` 的原生處理，不擅自改變其語義；完整整合另見 #20。
-舊版 `\\Term` 介面繼續保留。
