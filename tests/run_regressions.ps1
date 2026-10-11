@@ -150,6 +150,7 @@ try {
         "font-mode-aliases",
         "usewriting-api",
         "usewriting-local-first-use",
+        "fallback-native",
         "local-font-override",
         "same-family-shaping",
         "routing-scalability",
@@ -212,6 +213,8 @@ try {
             throw "Layout negative regression did not reject $name correctly (exit $LASTEXITCODE)."
         }
     }
+    & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-native.pdf')
+    if ($LASTEXITCODE -ne 0) { throw 'Native xeCJK fallback PDF regression failed.' }
     & python (Join-Path $TestRoot 'check_index_links.py') (Join-Path $BuildRoot 'hyperlink-anchors.pdf')
     if ($LASTEXITCODE -ne 0) {
         foreach ($suffix in @('idx', 'ind')) {
