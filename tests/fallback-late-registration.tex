@@ -6,18 +6,6 @@
 \Writing{[file=lmroman10-regular.otf]chinese}{漢}
 \par
 \UseWriting{[file=FandolHei-Regular.otf]chinese}
-\ExplSyntaxOn
-\prop_map_inline:Nn \g__writing_pool_profile_prop
-  { \typeout{IMPE-DEBUG-POOL-PROFILE:#1=#2} }
-\prop_map_inline:Nn \g__writing_pool_font_prop
-  { \typeout{IMPE-DEBUG-POOL-FONT:#1=#2} }
-\prop_map_inline:Nn \g__writing_fallback_configured_prop
-  { \typeout{IMPE-DEBUG-FALLBACK-FAMILY:#1=#2} }
-\prop_map_inline:Nn \g__writing_fallback_family_revision_prop
-  { \typeout{IMPE-DEBUG-FAMILY-REV:#1=#2} }
-\prop_map_inline:Nn \g__writing_fallback_cache_revision_prop
-  { \typeout{IMPE-DEBUG-CACHE-REV:#1=#2} }
-\ExplSyntaxOff
 \Writing{[file=lmroman10-regular.otf]chinese}{字}
 \typeout{IMPE-TEST-FALLBACK-LATE-REGISTRATION-PASS}
 \end{document}
