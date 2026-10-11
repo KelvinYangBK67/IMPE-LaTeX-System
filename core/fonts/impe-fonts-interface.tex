@@ -764,12 +764,12 @@
           \tl_set:Nn \l__font_vertical_rotation_origin_tl {#5}
           \__font_vertical_prepare_argument:n {##2}
           \leavevmode
-          {
+          \raisebox{##1}{\hbox{
             \tl_use:N \l__font_vertical_style_setup_tl
             \str_if_eq:VnTF \l__font_vertical_flow_tl { rtl }
               { \exp_args:NV \__font_vertical_emit_words_reverse:n \l__font_vertical_content_tl }
               { \exp_args:NV \__font_vertical_emit_words_forward:n \l__font_vertical_content_tl }
-          }
+          }}
         }
       }
   }

@@ -38,6 +38,9 @@
 \tl_new:N \l__writing_font_tl
 \tl_new:N \l__writing_file_tl
 \tl_new:N \l__writing_writing_tl
+\tl_new:N \l__writing_offset_tl
+\tl_new:N \l__writing_face_font_tl
+\tl_new:N \l__writing_face_file_tl
 \tl_new:N \l__writing_native_tl
 \tl_new:N \l__writing_selected_scope_tl
 \tl_new:N \l__writing_effective_name_tl
@@ -410,12 +413,20 @@
     \PackageError{impe-writing}{#1}{#2}
   }
 
+\keys_define:nn {impe/writing/face}
+  {
+    font .tl_set:N = \l__writing_face_font_tl,
+    file .tl_set:N = \l__writing_face_file_tl,
+    unknown .code:n =
+      { \__writing_error:nn {Invalid~face~resource~option} {Use~font=...~or~file=....} },
+  }
 \keys_define:nn {impe/writing}
   {
     stylemap .tl_set:N = \l__writing_stylemap_tl,
     font .tl_set:N = \l__writing_font_tl,
     file .tl_set:N = \l__writing_file_tl,
     writing .tl_set:N = \l__writing_writing_tl,
+    offset .tl_set:N = \l__writing_offset_tl,
     bold .code:n = { \prop_put:Nnn \l__writing_overrides_prop {bold} {#1} },
     italic .code:n = { \prop_put:Nnn \l__writing_overrides_prop {italic} {#1} },
     bolditalic .code:n = { \prop_put:Nnn \l__writing_overrides_prop {bolditalic} {#1} },
@@ -435,6 +446,7 @@
     \tl_clear:N \l__writing_font_tl
     \tl_clear:N \l__writing_file_tl
     \tl_clear:N \l__writing_writing_tl
+    \tl_clear:N \l__writing_offset_tl
     \tl_clear:N \l__writing_stylemap_tl
     \prop_clear:N \l__writing_overrides_prop
     \bool_set_true:N \l__writing_valid_bool
@@ -675,19 +687,42 @@
 
 \cs_new_protected:Npn \__writing_assign_style:nn #1#2
   {
-    \str_if_eq:nnTF {#2} {normal}
+    \tl_if_in:nnTF {#2} {=}
       {
-        \tl_set_eq:NN \l_tmpa_tl \l__font_regular_tl
-        \tl_set_eq:NN \l_tmpb_tl \l__font_path_tl
+        % A face may be an inline resource: bold={file={My-Bold.ttf}}.
+        \tl_clear:N \l__writing_face_font_tl
+        \tl_clear:N \l__writing_face_file_tl
+        \keys_set:nn {impe/writing/face} {#2}
+        \bool_lazy_and:nnT
+          { !\tl_if_blank_p:V \l__writing_face_font_tl }
+          { !\tl_if_blank_p:V \l__writing_face_file_tl }
+          {
+            \__writing_error:nn {Conflicting~face~resource~selectors}
+              {Use~only~one~of~font=...~or~file=...~per~face.}
+          }
+        \tl_clear:N \l_tmpa_tl
+        \tl_clear:N \l_tmpb_tl
+        \tl_if_blank:VTF \l__writing_face_file_tl
+          { \tl_set:NV \l_tmpa_tl \l__writing_face_font_tl }
+          { \tl_set:NV \l_tmpa_tl \l__writing_face_file_tl }
+        \tl_if_blank:VT \l_tmpa_tl
+          { \__writing_error:nn {Missing~face~font} {Supply~font=...~or~file=....} }
       }
       {
-        \prop_get:NnNTF \g__writing_style_font_prop {#2} \l_tmpa_tl
-          { \prop_get:NnN \g__writing_style_path_prop {#2} \l_tmpb_tl }
+        \str_if_eq:nnTF {#2} {normal}
           {
-            \__writing_error:nn {Unknown~style~alias~'#2'}
-              {Use~normal~or~a~registered~style~alias.}
             \tl_set_eq:NN \l_tmpa_tl \l__font_regular_tl
             \tl_set_eq:NN \l_tmpb_tl \l__font_path_tl
+          }
+          {
+            \prop_get:NnNTF \g__writing_style_font_prop {#2} \l_tmpa_tl
+              { \prop_get:NnN \g__writing_style_path_prop {#2} \l_tmpb_tl }
+              {
+                \__writing_error:nn {Unknown~style~alias~'#2'}
+                  {Use~normal,~a~registered~alias,~or~{file=...}/{font=...}.}
+                \tl_set_eq:NN \l_tmpa_tl \l__font_regular_tl
+                \tl_set_eq:NN \l_tmpb_tl \l__font_path_tl
+              }
           }
       }
     \str_case:nn {#1}
