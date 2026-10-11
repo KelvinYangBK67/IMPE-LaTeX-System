@@ -248,6 +248,7 @@
     % Use the actual font, not the internal /FallBack tier identifier.
     \tl_set:Nx \l__writing_fallback_selected_font_tl { \fontname\font }
     \regex_replace_once:nnN { \] .* \Z } { } \l__writing_fallback_selected_font_tl
+    \regex_replace_once:nnN { \A .* \[ } { } \l__writing_fallback_selected_font_tl
     \regex_replace_once:nnN { \A .* / } { } \l__writing_fallback_selected_font_tl
     \tl_set:Nx \l__writing_fallback_warning_key_tl
       {
@@ -260,9 +261,8 @@
         \prop_gput:NVn \g__writing_fallback_warning_prop
           \l__writing_fallback_warning_key_tl {notified}
         \PackageWarning{impe-fonts}
-          {Glyph~fallback~for~'\tl_to_str:n {#3}':~
-           \tl_to_str:n {#2}~->~
-           \tl_use:N \l__writing_fallback_selected_font_tl}
+          {Glyph~fallback~for~'\tl_to_str:n {#3}'~
+           to~\tl_use:N \l__writing_fallback_selected_font_tl}
       }
   }
 
