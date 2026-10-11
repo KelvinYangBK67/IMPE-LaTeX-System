@@ -1049,6 +1049,11 @@
               \l__font_cjk_candidate_priority_int
             \cs_if_exist:NF \setCJKmainfont
               { \RequirePackage{xeCJK} }
+            \__writing_fallback_effective_profile:
+            \prop_gput:NnV \g__writing_cjk_family_owner_prop {rm}
+              \l__font_name_tl
+            \prop_gput:NnV \g__writing_cjk_family_profile_prop {rm}
+              \l__writing_effective_profile_tl
             \use:x
               {
                 \exp_not:N \__font_set_cjk_global_family:Nnnn
@@ -1058,6 +1063,15 @@
                 { \l__font_regular_tl }
           }
         \__font_apply_cjk_fallback_family:n { \CJKrmdefault }
+        \__writing_fallback_effective_profile:
+        \prop_gput:NnV \g__writing_cjk_family_owner_prop {sf}
+          \l__font_name_tl
+        \prop_gput:NnV \g__writing_cjk_family_profile_prop {sf}
+          \l__writing_effective_profile_tl
+        \prop_gput:NnV \g__writing_cjk_family_owner_prop {tt}
+          \l__font_name_tl
+        \prop_gput:NnV \g__writing_cjk_family_profile_prop {tt}
+          \l__writing_effective_profile_tl
         \use:x
           {
             \exp_not:N \__font_set_cjk_global_family:Nnnn
