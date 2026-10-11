@@ -5,9 +5,9 @@
 IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
 文件功能。
 
-目前原始碼版本：`1.0.6`（2026-10-11；內部版本，尚非正式發佈）。詳見 [CHANGELOG-zh.md](CHANGELOG-zh.md)。
+目前原始碼版本：`1.0.7`（2026-10-11；內部版本，尚非正式發佈）。詳見 [CHANGELOG-zh.md](CHANGELOG-zh.md)。
 
-**文件狀態：**英文、德文、繁體中文手冊及 Showcase 的 TeX 原始碼和 PDF 暫時保留上一版，待正式發佈前再同步修訂。1.0.5 引入、1.0.6 持續支援的字體介面請參閱 [Writing API 參考](docs/USEWRITING-1.0.5.md) 與 [字體參考](docs/FONTS-zh.md)；正式封裝及 PDF 重建亦留待日後處理。
+**文件狀態：**英文、德文、繁體中文手冊及 Showcase 的 TeX 原始碼和 PDF 暫時保留上一版，待正式發佈前再同步修訂。1.0.5 引入、1.0.7 持續支援的字體介面請參閱 [Writing API 參考](docs/USEWRITING-1.0.5.md) 與 [字體參考](docs/FONTS-zh.md)；正式封裝及 PDF 重建亦留待日後處理。
 
 ## 快速開始
 
@@ -52,7 +52,7 @@ Beamer 預設簡潔學術主題與 16:9 畫布。中英文正文、頁眉、
 直接透過 `\geometry{...}`、`\fancyhead` 等原生命令覆寫。
 詳見 [Layouts](docs/LAYOUTS-zh.md) 及 [相容性政策](docs/STABILITY-zh.md)。
 
-## Writing 與字體選擇（1.0.5 引入，1.0.6 繼續支援）
+## Writing 與字體選擇（1.0.5 引入，1.0.7 繼續支援）
 
 既有字體 preset 仍推薦使用 \UseFont{preset}；需要把字體資源與 Unicode Writing Profile 分開指定時，則使用：
 
@@ -69,6 +69,14 @@ Beamer 預設簡潔學術主題與 16:9 畫布。中英文正文、頁眉、
 \Font 與 \Writing 都只在所包圍的文字內強制選擇字體。
 CJK 缺字備援採用 xeCJK 的 2×2×2 字體面矩陣；非 CJK 不作通用逐字缺字替換。
 詳見 [1.0.5 Writing API](docs/USEWRITING-1.0.5.md)。
+
+## Index 原生索引（1.0.7）
+
+使用 `\UseFeature{index}` 後，推薦直接使用 `imakeidx` 的
+`\index`、`\makeindex`、`\printindex`。IMPE 預設索引
+的普通詞項可精確跳轉對應位置；格式封裝、交叉參照及具名索引
+繼續保留原生行為。舊有 `\Term` 只作相容介面。
+詳見 [Feature 參考](docs/FEATURES-zh.md#index原生優先)。
 
 ## 支援矩陣
 

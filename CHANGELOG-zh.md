@@ -6,6 +6,21 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 最新版本化倉庫狀態之後的變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
+## [1.0.7] - 2026-10-11
+
+本版為 #20／PR #26 的 Index 原生化整理，僅為內部原始碼版本，不建立 GitHub Release、CTAN 發佈或正式封裝。三語手冊、Showcase 及追蹤 PDF 繼續留待正式發佈時更新。
+
+### 原生索引及套件整合
+* 推薦使用 `imakeidx` 原生 `\index`、`\makeindex`、`\printindex`，IMPE 自行建立的預設索引繼續以 `xindy` 編譯；不再擴充 IMPE 專用索引／術語語法。
+* 預設索引普通詞項保留逐次出現精確 PDF 錨點，共用 Hyperlinks 全文件唯一目的地分配器，能區分重複頁碼及同頁多個位置。
+* `|...` 格式封裝、範圍、`see`／`seealso` 交叉參照及具名索引直接沿用原生 `imakeidx` 的語義與後端超連結，不承諾這些高級情況一律有 IMPE 逐詞座標定位。
+* 尊重提前載入的 `imakeidx` 與既有使用者預設索引，保留其原生命令及編譯後端；`glossaries-extra` 為獨立、可選套件。
+
+### 相容性與驗證
+* `\Term` 移入僅相容模組，保留原先的所有語法、粗體格式和首次出現索引行為；`\IndexTitle` 繼續可用。
+* 新增提前載入 MakeIndex、多個具名 `xindy` 索引及實際 PDF 索引連結測試；Linux／Windows 六項 CI 均通過，包含 XSR 與 CJK。
+* 同步 VERSION、全部標準及舊版 Class／Package 版本資訊、中英文 Changelog、README 與技術文件。不修改手冊／Showcase 的源碼及 PDF；Tag 由維護者自行建立。
+
 ## [1.0.6] - 2026-10-11
 
 本版為 #22／PR #25 的出版級 Layout 重構原始碼快照，尚非正式 CTAN／GitHub 發佈。英文、德文、繁體中文手冊及標準 Showcase 的 TeX 原始碼與追蹤中的 PDF 均繼續沿用上一公開版本，留待正式發佈時同步更新。

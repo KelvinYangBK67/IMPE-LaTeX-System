@@ -1,4 +1,4 @@
-# Layouts — IMPE 1.0.6
+# Layouts — IMPE 1.0.7
 
 [繁體中文](LAYOUTS-zh.md)
 
