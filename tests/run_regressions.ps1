@@ -222,9 +222,9 @@ try {
     # and repeated occurrences of the same substitution are deduplicated.
     $nativeFallbackLog = Get-Content -LiteralPath (Join-Path $BuildRoot 'fallback-native.log') -Raw
     $nativeFallbackWarnings = [regex]::Matches($nativeFallbackLog, 'Glyph fallback for').Count
-    if ($nativeFallbackWarnings -ne 3 -or
+    if ($nativeFallbackWarnings -ne 4 -or
         $nativeFallbackLog -notmatch 'FandolSong-Regular\.otf') {
-        throw "Native xeCJK fallback warning regression: expected 3 deduplicated Fandol warnings, got $nativeFallbackWarnings."
+        throw "Native xeCJK fallback warning regression: expected 4 distinct-source deduplicated Fandol warnings, got $nativeFallbackWarnings."
     }
     $tangutFallbackLog = Get-Content -LiteralPath (Join-Path $BuildRoot 'fallback-tangut-system.log') -Raw
     if ([regex]::Matches($tangutFallbackLog, 'Glyph fallback for').Count -ne 1 -or

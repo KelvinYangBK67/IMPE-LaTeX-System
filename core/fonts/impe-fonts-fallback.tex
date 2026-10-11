@@ -252,8 +252,8 @@
     \regex_replace_once:nnN { \A .* / } { } \l__writing_fallback_selected_font_tl
     \tl_set:Nx \l__writing_fallback_warning_key_tl
       {
-        \tl_to_str:n {#2} / \tl_to_str:n {#3} /
-        \tl_to_str:V \l__writing_fallback_selected_font_tl
+        \tl_to_str:n {#1} / \tl_to_str:n {#2} /
+        \tl_to_str:n {#3} / \tl_to_str:V \l__writing_fallback_selected_font_tl
       }
     \prop_if_in:NVF \g__writing_fallback_warning_prop
       \l__writing_fallback_warning_key_tl
