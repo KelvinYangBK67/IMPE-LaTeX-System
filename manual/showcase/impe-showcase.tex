@@ -104,8 +104,9 @@ showcase is intentionally broader than the focused regression fixtures under
 The following typeface atlas pairs concise script specimens with eight
 corresponding text styles. Repeated specimens make differences between
 typefaces directly comparable; where a face is not supplied, the registered
-family's normal fallback applies. The matrix continues across landscape
-pages as needed.
+family's normal fallback applies. Egyptian format controls and Khitan clusters
+use their native two-dimensional layouts; Inner Asian samples use vertical
+writing. The matrix continues across landscape pages as needed.
 
 \afterpage{%
 \begin{landscape}
@@ -195,7 +196,7 @@ Sans bold italic \\
 
 \StyleCategory{Ancient Near Eastern scripts}
 \StyleRow{Cuneiform}{\CU}{𒁾𒊬}
-\StyleRow{Egyptian Hieroglyphs}{\EG}{𓂋 𓈖 𓆎𓅓𓏏𓊖}
+\StyleRow{Egyptian Hieroglyphs}{\EG}{𓂋𓐰𓈖 𓆎𓐱𓅓𓐰𓏏𓊖}
 
 \StyleCategory{East Asian scripts and Han families}
 \StyleRow{Bopomofo}{\ZY}{ㄅㄆㄇㄈ}
@@ -209,10 +210,10 @@ Sans bold italic \\
 \StyleRow{Tangut}{\TG}{𗼇𘝞}
 
 \StyleCategory{Inner Asian scripts}
-\StyleRow{Khitan Small Script}{\KHS}{𘲇 𘰺𘱹𘰻}
-\StyleRow{Mongolian}{\MO}{ᠮᠣᠩᠭᠣᠯ}
-\StyleRow{Mongolian Baiti}{\MOb}{ᠮᠣᠩᠭᠣᠯ}
-\StyleRow{Manchu}{\MC}{ᠮᠠᠨᠵᡠ}
+\StyleRow{Khitan Small Script}{\KHS}{𘲇 𘰺𘱹𘰻 𘮦𖿤𘲲}
+\StyleRow{Mongolian}{\MOv}{ᠮᠣᠩᠭᠣᠯ}
+\StyleRow{Mongolian Baiti}{\MObv}{ᠮᠣᠩᠭᠣᠯ}
+\StyleRow{Manchu}{\MCv}{ᠮᠠᠨᠵᡠ}
 \StyleRow{Old Turkic}{\OT}{𐱅𐰇𐰼𐰜}
 \StyleRow{Old Uyghur}{\UY}{𐽳𐽶𐽲𐽳𐽾}
 
@@ -487,6 +488,16 @@ ordinary document width:
 
 \TI{བོད་ཡིག་ནི་བོད་ཀྱི་སྐད་ཡིག་འབྲི་བའི་ཡི་གེའི་མ་ལག་ཅིག་ཡིན་ཞིང་། ཚིག་དང་ཚིག་གི་བར་ལ་ཚེག་གིས་མཚམས་འབྱེད་པ་དང་། ཡི་གེ་མང་པོ་ཞིག་མགོ་ཅན་དང་འདོགས་ཅན་དུ་སྦྱར་ནས་ཚེག་བར་གཅིག་གི་ནང་དུ་སྤུངས་ཏེ་འབྲི་དགོས།དཔེར་ན་བསྒྲུབས་པ་དང་། བརྒྱུད་པ། བསྟན་པ། རྒྱལ་ཁབ། དབྱངས་ཅན་ལྟ་བུའི་ཚིག་ནང་དུ་ཡི་གེ་མང་པོ་སྦྱར་ཡོད་པས། ཡིག་གཟུགས་ཀྱི་སྤུངས་སྟངས་དང་ཚེག་བར་གྱི་བར་ཐག་གཉིས་ཀ་ཡང་དག་པར་སྟོན་དགོས། ཚིག་ཕྲེང་རིང་པོ་ཞིག་ཤོག་ངོས་ཀྱི་ཞེང་ཚད་ལས་བརྒལ་བའི་སྐབས་སུ། ཚེག་གི་རྗེས་སུ་རང་བཞིན་གྱིས་ཕྲེང་བ་གསར་པར་འགྲོ་ཐུབ་པ་དང་། སྔ་ཕྱིའི་ཡི་གེའི་སྤུངས་སྟངས་དང་ཚིག་གི་གོ་རིམ་མི་འཁྲུག་པ་གལ་ཆེ། དེའི་ཕྱིར་ཚིག་ཕྲེང་རིང་པོ་འདིས་བོད་ཡིག་གི་གཟུགས་སྦྱོར་དང་། ཚེག་བར། ཕྲེང་བར། ཤད་དང་ཉིས་ཤད་ཀྱི་གནས་སྟངས། དེ་བཞིན་དུ་ཕྲེང་བ་བརྗེ་བའི་སྐབས་ཀྱི་སྤྱིའི་སྒྲིག་སྟངས་བཅས་ལ་ཚོད་ལྟ་བྱེད་ཐུབ།།}
 
+\subsection{Egyptian Hieroglyphic Composition}
+
+Egyptian Hieroglyph Format Controls arrange signs within a quadrat.
+The following specimen combines vertical and horizontal joining directly
+in its Unicode source, with XSR preserving the two-dimensional placement:
+
+\begin{center}
+  {\Large \EG{𓂋𓐰𓈖 𓆎𓐱𓅓𓐰𓏏𓊖}}
+\end{center}
+
 \subsection{Brahmi, Kharoshthi, and Thai}
 
 Brahmi is provided through two local families. The redistributable Noto
@@ -514,16 +525,20 @@ Thai &
   \TH{ภาษาไทย กำ กิ กี้ เก้า} \\
 \end{TableBookX}
 
-\subsection{Khitan Small Script: current linear fallback}
+\subsection{Khitan Small Script}
 
-Khitan Small Script is exposed through IMPE's public font interface and shown
-through its current linear rendering path. The
-following specimen is taken from the Khitan Small Script epitaph of Xiao
-Hudujin and is deliberately long enough to exercise the present linear
-fallback across continuous text, cluster boundaries, spacing, and paragraph
-line breaking.
+Khitan Small Script is composed as two-dimensional clusters from the original
+Unicode sequence. The local \texttt{\textbackslash KHS} command uses XSR by
+default. Both ordinary paired clusters and a Type B cluster marked with
+U+16FE4 are shown below.
 
-\KHS{𘲇 𘰺𘱹𘰻 𘱿𘱤 𘱚𘮒𘲦 𘯣𘰴 𘲤𘭂𘮢𘲫𘲦 𘰺𘱄𘱯𘱸 𘬥𘲜𘰭 𘲜𘬚 𘭃𘱚𘱸 𘭞𘱄𘮽𘰕 𘲽𘭽𘭢 𘲽𘲑 𘰲 𘲅𘯺𘬐 𘲽𘱚𘲦 𘲚𘰥 𘮯𘮠 𘰷𘯀 𘱚𘱕 𘮧𘯶𘮱𘱄𘲫 𘬜𘭪𘲚𘱪 𘭩 𘱚𘱛 𘰭𘲚 𘮵𘯺𘲑 𘲽𘰥𘱦 𘮽𘯛 𘬜𘰆 𘰷𘱤 𘲽𘱦 𘭃𘭽𘲽 𘱤𘰣 𘱛𘳑𘰕 𘲽𘰥𘱸𘲦 𘰺𘱄𘭽𘱸 𘮽𘰣 𘭔𘱄𘱯𘱦 𘲚𘰥𘲐 𘰺𘭸𘰷 𘮦𖿤𘲲 𘰕𘲆𘮒 𘲵𘯺𘬾𘯺 𘬥𘰣𘱮 𘯤 𘲜𘰣𘱤 𘯥 𘯥𘲆𘬷 𘲲𘰓𘰽 𘮧𘬜𘱄 𘰣𘭺 𘮧𘲚 𘲽𘱦 𘯥 𘭃𘭺 𘮽𘲓𘱦 𘰣 𘬘𘭞}
+\begin{center}
+\KHS{𘲇 𘰺𘱹𘰻 𘱿𘱤 𘱚𘮒𘲦}
+
+\medskip
+
+\KHS{𘮦𖿤𘲲 𘰕𘲆𘮒 𘲵𘯺𘬾𘯺}
+\end{center}
 
 
 % ==========================================================================
