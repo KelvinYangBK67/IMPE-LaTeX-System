@@ -1,60 +1,14 @@
 % !TeX program = xelatex
 %
-% IMPE LaTeX System
-% Canonical Showcase
-%
-% Intended location:
-%   manual/showcase/impe-showcase.tex
-%
-% Suggested build:
-%
-%   xelatex -shell-escape impe-showcase.tex
-%   biber impe-showcase
-%   xelatex -shell-escape impe-showcase.tex
-%   xelatex -shell-escape impe-showcase.tex
-%
-% Font declarations are intentionally completed in the preamble.  Most script
-% families are loaded through explicit local interfaces; automatic Unicode-
-% range routing is enabled for a small representative set. This keeps the
-% automatic routing table compact while keeping representative routing
-% regressions visible. Explicit local commands take precedence over these
-% automatic owners in v1.x.
-%
-% The first style matrix is deferred to the following landscape page so that
-% the surrounding portrait text may continue normally.  This relies on the
-% tables feature loading afterpage.
-%
-% Mathematical font selection uses the IMPE default, and typewriter text is
-% reset to Latin Modern Mono.
-%
-% The showcase covers the implemented script routes, including Khitan Small
-% Script through its current linear fallback. Egyptian Hieroglyphs are reserved
-% for future coverage.
-
-\begin{filecontents*}[overwrite]{references.bib}
-@book{knuth1984texbook,
-  author    = {Donald E. Knuth},
-  title     = {The TeXbook},
-  date      = {1984},
-  publisher = {Addison-Wesley}
-}
-\end{filecontents*}
+% IMPE LaTeX System — Canonical Showcase (v1.1.0)
+% Build with scripts/build_showcase.ps1 from the repository root.
 
 \documentclass[11pt,twoside]{impeart}
 
-\UseCitationStyle{APA}
-
 \HeaderTitle{IMPE Canonical Showcase}
-\HeaderStyle{running}
-
-% IMPORTANT:
-% Keep registration argument blocks contiguous.
 
 \UseTemplateSet{
-  fonts = {
-    libertinus,
-    shanggu
-  },
+  fonts = {libertinus,shanggu},
   features = {
     math,
     tables,
@@ -69,69 +23,29 @@
 
 \setmonofont{Latin Modern Mono}
 
-% Explicit local interfaces; automatic Unicode ownership is declared separately.
-\UseFont{noto}[local]
-\UseFont{times}[local]
-\UseFont{gentium}[local]
-\UseFont{charis}[local]
-\UseFont{anatolian}[local]
-\UseFont{bopomofo}[local]
-\UseFont{cuneiform}[local]
-\UseFont{italic}[local]
-\UseFont{hungarian}[local]
-\UseFont{runic}[local]
-\UseFont{hindi}[local]
-\UseFont{sanskrit}[local]
-\UseFont{devanagari}[local]
-\UseFont{brahmi}[local]
-\UseFont{tibetan}[local]
-\UseFont{arabic}[local]
-\UseFont{urdu}[local]
-\UseFont{aramaic}[local]
-\UseFont{nabataean}[local]
-\UseFont{hebrew}[local]
-\UseFont{syriac}[local]
-\UseFont{syriac_eastern}[local]
-\UseFont{kharosthi}[local]
-\UseFont{pahlavi_parthian}[local]
-\UseFont{pahlavi_inscriptional}[local]
-\UseFont{pahlavi_psalter}[local]
-\UseFont{avestan}[local]
-\UseFont{manichaean}[local]
-\UseFont{phoenician}[local]
-\UseFont{samaritan}[local]
-\UseFont{sogdian}[local]
-\UseFont{sogdian_old}[local]
-\UseFont{chinese_simplified}[local]
-\UseFont{chinese_traditional}[local]
-\UseFont{japanese}[local]
-\UseFont{wenjin}[local]
-\UseFont{korean}[local]
-\UseFont{tangut}[local]
-\UseFont{khitan_small}[local]
-\UseFont{mongolian}[local]
-\UseFont{mongolian_baiti}[local]
-\UseFont{manchu}[local]
-\UseFont{segoe}[local]
-\UseFont{thai}[local]
-\UseFont{turkic}[local]
-\UseFont{uyghur}[local]
-\UseFont{vietnamese_quocngu}[local]
-\UseFont{vietnamese_hannom}[local]
+% Local families used by the current specimens and style matrix.
+\UseFonts{
+  noto, times, gentium, charis, anatolian,
+  bopomofo, cuneiform, italic, hungarian, runic,
+  hindi, sanskrit, devanagari, brahmi, tibetan,
+  arabic, urdu, aramaic, nabataean, hebrew,
+  syriac, syriac_eastern, kharosthi, pahlavi_parthian, pahlavi_inscriptional,
+  pahlavi_psalter, avestan, manichaean, phoenician, samaritan,
+  sogdian, sogdian_old, chinese_simplified, chinese_traditional, japanese,
+  wenjin, korean, tangut, khitan_small, mongolian,
+  mongolian_baiti, manchu, segoe, thai, turkic,
+  uyghur, vietnamese_quocngu, vietnamese_hannom
+}[local]
 
-% Minimal automatic Unicode-range regression set.
-\UseFont{armenian}
-\UseFont{georgian}
-\UseFont{coptic}
-\UseFont{glagolitic}
-\UseFont{tamil}
+% Automatic Unicode-range routing for the current mixed-script specimen.
+\UseFonts{armenian,georgian,coptic,glagolitic,tamil}
 
 \addbibresource{references.bib}
 
 \hypersetup{
-  pdftitle  = {IMPE LaTeX System — Canonical Showcase},
-  pdfauthor = {IMPE LaTeX System v1.0.4},
-  pdfsubject = {Canonical multilingual and feature showcase}
+  pdftitle   = {IMPE LaTeX System — Canonical Showcase},
+  pdfauthor  = {Kelvin Yang},
+  pdfsubject = {Multilingual and scholarly typesetting}
 }
 
 \setcounter{tocdepth}{2}
@@ -161,9 +75,9 @@
 }
 
 \title{IMPE \LaTeX~System}
-\subtitle{Canonical Multilingual and Feature Showcase}
+\subtitle{Canonical Typesetting Showcase}
 \author{Kelvin Yang}
-\date{v1.0.4}
+\date{v1.1.0}
 
 \begin{document}
 
