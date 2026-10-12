@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impereport}[2026/10/11 v1.0.7 IMPE class for report]
+\ProvidesClass{impereport}[2026/10/11 v1.0.8 IMPE class for report]
 \def\IMPEClassBase{report}
 \def\IMPEClassBeamerTag{beamer}
 \def\IMPEClassLayoutEn{en_report}

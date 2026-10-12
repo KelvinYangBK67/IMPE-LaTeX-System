@@ -2,7 +2,7 @@
 
 [繁體中文](FEATURES-zh.md)
 
-## Feature API policy (established in 1.0.4; current in 1.0.7)
+## Feature API policy (established in 1.0.4; current in 1.0.8)
 
 A feature may be a **curated package stack** rather than a new language for
 existing LaTeX constructs. New documents should use the native environments

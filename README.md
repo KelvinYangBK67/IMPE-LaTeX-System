@@ -5,9 +5,9 @@
 IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
 multilingual typesetting, and optional document features.
 
-Current source version: `1.0.7` (2026-10-11; internal snapshot, not a formal publication). See [CHANGELOG.md](CHANGELOG.md).
+Current source version: `1.0.8` (2026-10-11; internal snapshot, not a formal publication). See [CHANGELOG.md](CHANGELOG.md).
 
-**Documentation status:** the English, German and Traditional Chinese manuals and the canonical showcase (TeX sources and PDFs) intentionally remain at the prior published edition. Consult the updated [writing/font API reference](docs/USEWRITING-1.0.5.md) and [font reference](docs/FONTS.md) for the 1.0.5 writing API, still supported in 1.0.7. The manuals, showcase, PDF rebuild and distributable archives will be synchronized before any formal release.
+**Documentation status:** the English, German and Traditional Chinese manuals and the canonical showcase (TeX sources and PDFs) intentionally remain at the prior published edition. Consult the updated [writing/font API reference](docs/USEWRITING-1.0.5.md) and [font reference](docs/FONTS.md) for the 1.0.5 writing API, still supported in 1.0.8. The manuals, showcase, PDF rebuild and distributable archives will be synchronized before any formal release.
 
 ## Quick Start
 
@@ -55,7 +55,7 @@ Paper classes already load `geometry` and `fancyhdr`; for advanced control
 use native `\geometry{...}` and `\fancyhead{...}` after the defaults.
 See [Layouts](docs/LAYOUTS.md) and [stability policy](docs/STABILITY.md).
 
-## Writing and font selection (introduced in 1.0.5; retained in 1.0.7)
+## Writing and font selection (introduced in 1.0.5; retained in 1.0.8)
 
 The recommended quick interface for existing registered font presets remains
 \UseFont{preset}. For a separate Unicode Writing Profile and font resource,
@@ -93,7 +93,7 @@ See [Feature reference](docs/FEATURES.md#index-native-first).
 | XeLaTeX | Supported and used by manuals, showcase, and general regressions |
 | LuaLaTeX | Legacy externalized backend removed |
 | Unicode-range global routing | XeLaTeX |
-| Optional XSR integration | Bundled XSR 1.0, Python and XeLaTeX shell-escape/preprocess |
+| Optional XSR integration | Bundled XSR 1.1, Python and XeLaTeX shell-escape/preprocess |
 | TeX Live | 2026 tested |
 | Windows | CI tested |
 | Linux | CI tested |

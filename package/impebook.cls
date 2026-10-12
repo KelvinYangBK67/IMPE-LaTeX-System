@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{impebook}[2026/10/11 v1.0.7 IMPE class for book]
+\ProvidesClass{impebook}[2026/10/11 v1.0.8 IMPE class for book]
 \def\IMPEClassBase{book}
 \def\IMPEClassBeamerTag{beamer}
 \def\IMPEClassLayoutEn{en_book}

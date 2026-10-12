@@ -1,6 +1,6 @@
-# IMPE 內附 XSR 1.0：本地驗收清單
+# IMPE 內附 XSR 1.1：本地驗收清單
 
-狀態：IMPE 已整合內附 XSR 1.0；目前 1.0.4 原始碼不建立 Git Tag。
+狀態：IMPE 已整合內附 XSR 1.1；目前 1.0.8 原始碼不建立 Git Tag。
 這份清單專門驗證 GitHub CI 無法替使用者確認的本地安裝環境。
 CI 綠燈不代表已在使用者自己的電腦上完成本地安裝驗證。
 
@@ -29,7 +29,7 @@ CI 綠燈不代表已在使用者自己的電腦上完成本地安裝驗證。
 
 預期：來源校驗通過；兩個 kpsewhich 路徑均指向同一份新安裝的
 TEXMF（其中 xsr-core.sty 位於 tex/latex/impe/xsr/）；XSR Python
-版本為 1.0，路徑位於專用 xsr-venv，不是全域 site-packages。
+版本為 1.1，路徑位於專用 xsr-venv，不是全域 site-packages。
 自定義 -TexmfRoot 時請相應替換以上路徑。
 
 同時檢查安裝器生成的
@@ -107,3 +107,14 @@ tests/fixtures/xsr-square.svg 按原來相對路徑複製到隔離目錄；
 還要先確認 \SetCatalogFontRoot 所指定的 Egyptian/Khitan
 字體檔確實存在。舊日誌的字體警告表示「沒有完成該字體的驗證」，
 不應當視為自動渲染測試通過。
+
+## H. PDF Unicode 提取驗證（1.0.8）
+
+使用 PyMuPDF 或 Poppler 實際複製／提取 PDF，確認契丹小字
+U+16FE4、埃及聖書文格式控制符及其他補充平面字符仍保持原始序列。
+文字層採用原子排版單位的 `/ActualText`，不覆蓋普通文字
+的原生 `ToUnicode`；各閱讀器對 `/ActualText` 支援可能不同。
+
+CI 的 `tests/unicode-text-extraction.tex` 另外驗證 TeX Live
+提供的拉丁、希臘、西里爾、漢字與泰文字型的 PDF 提取結果。
+這些檢查不能替所有外部字型作完整保證。

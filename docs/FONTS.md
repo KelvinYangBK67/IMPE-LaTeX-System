@@ -2,7 +2,7 @@
 
 [繁體中文](FONTS-zh.md)
 
-## Writing Profiles and font resources (introduced in 1.0.5; current in 1.0.7)
+## Writing Profiles and font resources (introduced in 1.0.5; current in 1.0.8)
 
 The recommended simple interface is still \UseFont{preset} (including all
 historical IDs). The advanced interface separates a **Unicode Writing Profile**
@@ -598,7 +598,7 @@ The canonical public font audit is
 `manual/showcase/impe-showcase.tex`. Focused automated checks live under
 `tests/`.
 
-## Local font selection and face resolution (1.0.5 API, still supported in 1.0.7)
+## Local font selection and face resolution (1.0.5 API, still supported in 1.0.8)
 
 The original \UseFont{id}[local|global] activation model and legacy
 local family commands remain available. Since 1.0.5, \Font{id}[overrides]{text}
@@ -628,6 +628,6 @@ detection. Legacy linear \KHS{...}, explicit \KHSstack{...} and
 The XSR renderer needs a readable real TTF/OTF file, resolved by the IMPE
 font registry. On non-full installations, supply the matching file under
 the font mirror configured by \SetCatalogFontRoot{...}. Font family name
-lookup alone is not sufficient for the XSR Python renderer. The bundled XSR 1.0 supports shell escape or preprocessing. TeX Live 2024+
+lookup alone is not sufficient for the XSR Python renderer. The bundled XSR 1.1 supports shell escape or preprocessing. TeX Live 2024+
 supports `-output-directory` through `TEXMF_OUTPUT_DIRECTORY`; older engines
 may require the environment variable explicitly or preprocessing.

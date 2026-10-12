@@ -1,0 +1,13 @@
+% Verify native PDF ToUnicode under the IMPE class without re-encoding text.
+\documentclass{impeart}
+\usepackage{fontspec}
+\newfontfamily\impeuniCMU{cmunrm.otf}
+\newfontfamily\impeuniHan{FandolSong-Regular.otf}
+\newfontfamily\impeuniThai{Garuda.otf}[Script=Thai]
+\pagestyle{empty}
+\begin{document}
+\noindent
+{\impeuniCMU Latin café, αβ, Привет.}
+{\impeuniHan 漢字中文。}
+{\impeuniThai ภาษาไทย}
+\end{document}
