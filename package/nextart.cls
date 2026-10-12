@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextart}[2026/10/11 v1.0.8 Compatibility alias for impeart]
+\ProvidesClass{nextart}[2026/10/12 v1.1.0 Compatibility alias for impeart]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{impeart}}
