@@ -5,9 +5,9 @@
 IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
 multilingual typesetting, and optional document features.
 
-Current source version: `1.0.8` (2026-10-11; internal snapshot, not a formal publication). See [CHANGELOG.md](CHANGELOG.md).
+Current source version: `1.1.0` (2026-10-12; remote-closure candidate, **not yet publicly released**). See [CHANGELOG.md](CHANGELOG.md).
 
-**Documentation status:** the English, German and Traditional Chinese manuals and the canonical showcase (TeX sources and PDFs) intentionally remain at the prior published edition. Consult the updated [writing/font API reference](docs/USEWRITING-1.0.5.md) and [font reference](docs/FONTS.md) for the 1.0.5 writing API, still supported in 1.0.8. The manuals, showcase, PDF rebuild and distributable archives will be synchronized before any formal release.
+**Documentation status:** the English, German and Traditional Chinese manuals and the canonical showcase (TeX sources and PDFs) intentionally remain at the prior published edition. Consult the updated [writing/font API reference](docs/USEWRITING-1.0.5.md) and [font reference](docs/FONTS.md) for the 1.0.5 writing API, still supported in 1.1.0. The manuals, showcase, PDF rebuild and distributable archives will be synchronized before any formal release.
 
 ## Quick Start
 
@@ -112,7 +112,7 @@ install.bat
 ```
 
 The installer writes to the user TEXMF tree under `tex/latex/impe/`. The full
-archive includes redistributable local fonts; the core archive contains the
+archive includes locally available, explicitly approved redistributable fonts; the core archive contains the
 runtime. Catalog faces use TeX Live/system lookup after the bundled-file check.
 Installed resolvable fonts work directly; configure a
 separate library with `impe.local.tex` or `\SetCatalogFontRoot{...}`.
@@ -198,9 +198,10 @@ For CI-safe public font fixtures:
 tests\run_regressions.ps1 -PublicFonts
 ```
 
-The suite covers canonical and legacy entry points, font routing, manual
-builds, deterministic CTAN packaging, archive contents, and installer
-migration. Local font binaries live under `assets/fonts/`; the distribution
+The suite covers canonical and legacy entry points, font routing, starter
+template compilation, manual builds, and installer migration. Deterministic
+CTAN packaging and archive checks run only once the Showcase is synchronized
+with the current version; the formal release builder remains strict. Local font binaries live under `assets/fonts/`; the distribution
 policy is in [assets/README.md](assets/README.md).
 
 ## Maintainer
@@ -215,10 +216,10 @@ MIT License. See [LICENSE](LICENSE).
 Since 1.0.3: `fonts={egyptian,khitan_small}` activates Unicode-aware
 Noto-backed composition; `features={glyphs}` independently enables image glyphs.
 
-### Bundled XSR 1.0
+### Bundled XSR 1.1
 
 The ordinary IMPE source checkout, core archive and full archive all include
-a pinned XSR 1.0 TeX/Python runtime under vendor/xsr. No additional checkout,
+a pinned XSR 1.1 TeX/Python runtime under vendor/xsr. No additional checkout,
 submodule, or independent user-managed XSR installation is needed.
 The IMPE installer copies XSR TeX packages to user TEXMF, creates an isolated
 Python environment under ~/texmf/scripts/impe/xsr-venv (or the configured
@@ -237,5 +238,5 @@ not include Noto fonts.
 
 CTAN is a source archive. TeX Live does not execute pip on package installation,
 so a CTAN-only TeX installation is not automatically a complete Python runtime.
-Use the IMPE core/full installer for the fully managed setup. XSR is pinned at 1.0
+Use the IMPE core/full installer for the fully managed setup. XSR is pinned at 1.1
 and is independently developed upstream.
