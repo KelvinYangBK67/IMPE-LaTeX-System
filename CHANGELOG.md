@@ -6,6 +6,16 @@ All notable versioned changes to IMPE LaTeX System are documented in this file.
 
 For changes since the latest versioned repository state, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
+## [1.1.0] - 2026-10-12
+
+Release preparation (remote closure). This entry records the source/API freeze candidate; the public release is **not yet published**. The three language manuals, Showcase sources and tracked PDFs will be rebuilt and reviewed during local publication closure before tagging.
+
+* Keep the 1.0.5 Writing Profiles and style matrix, 1.0.6 publication layouts and legacy override, 1.0.7 native-first indexing, and 1.0.8 XSR 1.1 Unicode extraction as the supported 1.1.0 baseline.
+* Add regression coverage for footnote/minipage handling and all six public starter templates.
+* Require an explicit reviewed font allowlist for public full archives; unapproved binaries are excluded by default.
+* Add an isolated Showcase build-and-compare gate to the release pipeline. The existing publication check remains deferred until the Showcase/manual sources and PDFs are synchronized.
+* Harmonize current technical Markdown with the implementation and remove a stale direction-version error message.
+
 ## [1.0.8] - 2026-10-11
 
 Internal source snapshot for Unicode extraction integrity (#12). No GitHub Release
