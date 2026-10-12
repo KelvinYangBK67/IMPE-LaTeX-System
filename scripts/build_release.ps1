@@ -443,23 +443,36 @@ function New-ReleasePackage {
     }
 
     if ($Flavor -eq "full") {
-        $ExcludedFiles = @(
-            "assets/fonts/tangut/Tangut N4694 V3.10.ttf",
-            "assets/fonts/tangut/new Tangut Std V2.008.ttf",
-            "assets/fonts/mongolian/mnglwhiteotf.ttf",
-            "assets/fonts/mongolian/mnglwritingotf.ttf",
-            "assets/fonts/mongolian/mngltitleotf.ttf",
-            "assets/fonts/mongolian/mnglartotf.ttf",
-            "assets/fonts/mongolian_baiti/monbaiti.ttf",
-            "assets/fonts/segoe/seguihis.ttf"
-        )
-
-        foreach ($relativePath in $ExcludedFiles) {
-            $target = Join-Path $StageRoot $relativePath
-            if (Test-Path $target) {
-                Remove-Item -Force $target
+        # Fail closed: unknown/unreviewed font files cannot enter a public ZIP.
+        $Manifest = Join-Path $RepoRoot "font_licenses/approved-public-fonts.txt"
+        if (-not (Test-Path -LiteralPath $Manifest)) { throw "Font approval manifest is missing: $Manifest" }
+        $AllowedFonts = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::Ordinal)
+        $ManifestLines = Get-Content -LiteralPath $Manifest -Encoding UTF8
+        foreach ($line in $ManifestLines) {
+            $relative = $line.Trim()
+            if (-not $relative -or $relative.StartsWith("#")) { continue }
+            if ($relative -notmatch '^assets/fonts/(?:[a-zA-Z0-9_.-]+/)*[^/\\*?]+[.](?:ttf|otf|ttc|woff2?)$' -or $relative.Contains("..")) {
+                throw "Invalid public font approval path (exact path only): $relative"
+            }
+            if (-not $AllowedFonts.Add($relative)) { throw "Duplicate public font approval: $relative" }
+        }
+        if ($AllowedFonts.Count -eq 0) { throw "No fonts approved for public full distribution." }
+        $FontRoot = Join-Path $StageRoot "assets/fonts"
+        $Kept = 0
+        $Excluded = 0
+        foreach ($fontFile in @(Get-ChildItem -LiteralPath $FontRoot -Recurse -File)) {
+            if ($fontFile.Extension.ToLowerInvariant() -notin @(".ttf", ".otf", ".ttc", ".woff", ".woff2")) { continue }
+            $relative = $fontFile.FullName.Substring($StageRoot.Length).TrimStart([char[]](92,47)).Replace([char]92,[char]47)
+            if ($AllowedFonts.Contains($relative)) {
+                $Kept++
+            }
+            else {
+                Remove-Item -LiteralPath $fontFile.FullName -Force
+                $Excluded++
             }
         }
+        if ($Kept -eq 0) { throw "No approved local fonts found; public full archive cannot be built." }
+        Write-Host "  Public fonts approved: $Kept; excluded pending license review: $Excluded"
     }
 
     if ($Note) {
@@ -582,6 +595,12 @@ if (-not $showcaseSourceText.Contains("\date{v$Version}")) {
 if ((Get-Item -LiteralPath $ShowcasePdf).Length -eq 0) {
     throw "Canonical showcase PDF is empty."
 }
+
+# The showcase is part of every public archive and every manual appendix.
+# Rebuild it independently from source and require the tracked PDF to match.
+$ShowcaseVerificationDir = Join-Path $OutputRoot ".showcase-verification"
+& (Join-Path $ScriptRoot "build_showcase.ps1") -OutputRoot $ShowcaseVerificationDir -VerifyTracked
+if ($LASTEXITCODE -ne 0) { throw "Canonical showcase source/PDF verification failed." }
 
 $ManualBuildPrimary = Join-Path $OutputRoot ".manual-primary"
 $ManualBuildSecondary = Join-Path $OutputRoot ".manual-secondary"
