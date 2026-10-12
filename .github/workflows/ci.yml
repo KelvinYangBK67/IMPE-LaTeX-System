@@ -123,6 +123,7 @@ jobs:
               $log -notmatch 'XSR-LAYOUT.*script=egyptian' -or
               $log -notmatch '(?s)IMPE-AUTO-EGYPTIAN-BEGIN.*XSR-LAYOUT script=egyptian.*IMPE-AUTO-EGYPTIAN-END' -or
               $log -notmatch '(?s)IMPE-AUTO-KHITAN-BEGIN.*XSR-LAYOUT script=khitan.*IMPE-AUTO-KHITAN-END' -or
+              $log -notmatch '(?s)IMPE-KHS-DEFAULT-BEGIN.*XSR-LAYOUT script=khitan.*IMPE-KHS-DEFAULT-END' -or
               $log -notmatch 'XSR-INLINE') {
             throw 'XSR integration markers missing.'
           }
