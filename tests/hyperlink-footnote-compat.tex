@@ -1,0 +1,22 @@
+% !TeX program = xelatex
+% Native footnote counters and minipage behavior must survive IMPE hyperlinks.
+\documentclass{impeart}
+\UseFeature{hyperlinks}
+\title{Footnote compatibility}
+\author{IMPE}
+\begin{document}
+\maketitle
+\section{Normal notes}
+Outside\footnote{Normal footnote text.}
+Explicit\footnote[7]{Explicit-number note.}
+\begin{minipage}{0.75\linewidth}
+Inside a minipage\footnote{Minipage-local footnote.}
+Second minipage note\footnote{Second minipage-local footnote.}
+\end{minipage}
+\par
+Separate marker\footnotemark{} and subsequent text.
+\footnotetext{Footnote text for separate marker.}
+\section{After minipage}
+Later\footnote{Note after minipage.}
+\typeout{IMPE-TEST-FOOTNOTE-COMPAT-PASS}
+\end{document}
