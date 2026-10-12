@@ -2,7 +2,7 @@
 
 [繁體中文](FONTS-zh.md)
 
-## Writing Profiles and font resources (introduced in 1.0.5; current in 1.0.8)
+## Writing Profiles and font resources (introduced in 1.0.5; current in 1.1.0)
 
 The recommended simple interface is still \UseFont{preset} (including all
 historical IDs). The advanced interface separates a **Unicode Writing Profile**
@@ -40,7 +40,7 @@ is also not yet implemented.
 
 For syntax, complete option and alias lists, and caveats, see
 [Writing and font selection (1.0.5)](USEWRITING-1.0.5.md).
-The canonical manual/showcase sources and PDFs will be updated only when
+The canonical manual/showcase sources and PDFs remain a separate local publication task; they will be updated when
 preparing a formal public release.
 
 ## Structure
@@ -598,7 +598,7 @@ The canonical public font audit is
 `manual/showcase/impe-showcase.tex`. Focused automated checks live under
 `tests/`.
 
-## Local font selection and face resolution (1.0.5 API, still supported in 1.0.8)
+## Local font selection and face resolution (1.0.5 API, still supported in 1.1.0)
 
 The original \UseFont{id}[local|global] activation model and legacy
 local family commands remain available. Since 1.0.5, \Font{id}[overrides]{text}
