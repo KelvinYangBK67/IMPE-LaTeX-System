@@ -5,9 +5,9 @@
 IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
 文件功能。
 
-目前原始碼版本：`1.0.8`（2026-10-11；內部版本，尚非正式發佈）。詳見 [CHANGELOG-zh.md](CHANGELOG-zh.md)。
+目前原始碼版本：`1.1.0`（2026-10-12；遠端收口候選版，**尚未正式發佈**）。詳見 [CHANGELOG-zh.md](CHANGELOG-zh.md)。
 
-**文件狀態：**英文、德文、繁體中文手冊及 Showcase 的 TeX 原始碼和 PDF 暫時保留上一版，待正式發佈前再同步修訂。1.0.5 引入、1.0.8 持續支援的字體介面請參閱 [Writing API 參考](docs/USEWRITING-1.0.5.md) 與 [字體參考](docs/FONTS-zh.md)；正式封裝及 PDF 重建亦留待日後處理。
+**文件狀態：**英文、德文、繁體中文手冊及 Showcase 的 TeX 原始碼和 PDF 暫時保留上一版，待正式發佈前再同步修訂。1.0.5 引入、1.1.0 持續支援的字體介面請參閱 [Writing API 參考](docs/USEWRITING-1.0.5.md) 與 [字體參考](docs/FONTS-zh.md)；正式封裝及 PDF 重建亦留待日後處理。
 
 ## 快速開始
 
@@ -104,7 +104,7 @@ catalog-first 原則。
 install.bat
 ```
 
-安裝器會寫入使用者 TEXMF 樹的 `tex/latex/impe/`。full 封裝包含允許再分發的
+安裝器會寫入使用者 TEXMF 樹的 `tex/latex/impe/`。full 封裝僅包含明確核准且允許再分發的
 本地字體；core 封裝提供執行環境。隨附檔案查找後會查找 TeX Live／系統字體，
 已可解析的字體可直接使用。若要使用其他字體庫，請設定
 `impe.local.tex` 或 `\SetCatalogFontRoot{...}`。
@@ -120,7 +120,8 @@ checkout 內的文件可直接載入 `package/impe-system.tex`：
 ## 字體資源
 
 CTAN 封裝提供標準執行環境與公開文件。部分多語手冊與 showcase 原始碼若要完整重現，
-可能需要本機設定字體；發佈內已附預先建置的文件 PDF。`font_licenses/` 下的第三方
+可能需要本機設定字體；發佈內已附預先建置的文件 PDF。`font_licenses/approved-public-fonts.txt` 列出 full 包核准的字體；
+最終收錄清單須於本地完成授權稽覈。`font_licenses/` 下的第三方
 記錄屬於原始碼倉庫及適用時的 full 封裝。CTAN 封裝提供原始碼與文件資源。
 
 ## 文件
@@ -201,7 +202,7 @@ MIT License。詳見 [LICENSE](LICENSE)。
 自 1.0.3 起：`fonts={egyptian,khitan_small}` 啟用 Noto Unicode 自動組字；
 `features={glyphs}` 獨立啟用行內圖片字形。
 
-### 內附 XSR 1.0
+### 內附 XSR 1.1
 
 IMPE 普通 Git checkout、core 與 full 發行包均內附 vendor/xsr 固定快照，
 **不需要另行 clone XSR 或處理 submodule**。IMPE 安裝器會把 XSR 的 TeX
@@ -219,4 +220,4 @@ core 仍不附帶 Noto 字體二進位檔。
 
 CTAN／TeX Live 不會在安裝時自動執行 pip。CTAN 封裝包含 XSR 來源，
 但完整的一站式安裝應使用 IMPE core／full 安裝器。
-XSR 上游繼續獨立開發，IMPE 封裝目前固定其 1.0 來源。
+XSR 上游繼續獨立開發，IMPE 封裝目前固定其 1.1 來源。
