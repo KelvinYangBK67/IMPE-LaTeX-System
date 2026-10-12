@@ -4,8 +4,10 @@ The Git repository tracks source files; local font binaries live under `assets/f
 
 `assets/fonts/` is the expected local font-library location used by
 `scripts/build_release.ps1` when it constructs the full distribution. Public
-full packages include font resources with confirmed redistribution terms. The
-release builder filters fonts with unresolved or restricted terms.
+full packages include only exact font paths listed in
+`font_licenses/approved-public-fonts.txt` after redistribution review.
+Unlisted fonts are excluded from the public archive, regardless of the local
+library contents. The local library remains unchanged.
 
 The core distribution and the CTAN-oriented `impe-framework.zip` contain the
 runtime and documentation. Fontspec resolves installed fonts directly; users
