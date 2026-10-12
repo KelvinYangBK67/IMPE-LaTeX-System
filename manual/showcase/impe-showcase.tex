@@ -25,11 +25,11 @@
 
 % Local families used by the current specimens and style matrix.
 \UseFonts{
-  noto, times, gentium, charis, anatolian,
+  noto, times, gentium, charis, mlmodern, anatolian,
   bopomofo, cuneiform, italic, hungarian, runic,
   hindi, sanskrit, devanagari, brahmi, tibetan,
   arabic, urdu, aramaic, nabataean, hebrew,
-  syriac, syriac_eastern, kharosthi, pahlavi_parthian, pahlavi_inscriptional,
+  syriac, syriac_eastern, kharosthi, egyptian, pahlavi_parthian, pahlavi_inscriptional,
   pahlavi_psalter, avestan, manichaean, phoenician, samaritan,
   sogdian, sogdian_old, chinese_simplified, chinese_traditional, japanese,
   wenjin, korean, tangut, khitan_small, mongolian,
@@ -62,15 +62,14 @@
   #1{\textsf{\textbf{\textit{#2}}}}%
 }
 
-\newcommand{\StyleRow}[4]{%
+\newcommand{\StyleRow}[3]{%
   #1 &
-  \texttt{\textbackslash#2} &
-  \ShowcaseStyles{#3}{#4} \\
+  \ShowcaseStyles{#2}{#3} \\
 }
 
 \newcommand{\StyleCategory}[1]{%
   \midrule
-  \multicolumn{10}{l}{\textbf{#1}}\\
+  \multicolumn{9}{l}{\textbf{#1}}\\
   \midrule
 }
 
@@ -102,24 +101,26 @@ showcase is intentionally broader than the focused regression fixtures under
 \section{Local Font Families and Styles}
 % ==========================================================================
 
-This section presents IMPE's explicit local font commands and compares their
-available serif, bold, italic, and sans-serif styles. The complete font-family
-matrix appears on the following landscape page. Where a requested face is
-unavailable, IMPE follows the family's configured fallback automatically.
+The following typeface atlas pairs concise script specimens with eight
+corresponding text styles. Repeated specimens make differences between
+typefaces directly comparable; where a face is not supplied, the registered
+family's normal fallback applies. The matrix continues across landscape
+pages as needed.
 
 \afterpage{%
 \begin{landscape}
+\small
+\setlength{\tabcolsep}{4pt}
 
-\begin{TableLong}{
+\begin{longtable}{
   @{}
-  P{2.55cm}
-  M{1.25cm}
-  *{8}{M{1.80cm}}
+  P{2.80cm}
+  *{8}{M{2.20cm}}
   @{}
 }
+\caption{Typeface specimens in eight styles.}\label{tab:typeface-atlas}\\
 \toprule
-Family &
-Command &
+Typeface &
 Regular &
 Bold &
 Italic &
@@ -127,14 +128,12 @@ Bold italic &
 Sans &
 Sans bold &
 Sans italic &
-Sans bold italic
-\\
+Sans bold italic \\
 \midrule
 \endfirsthead
 
 \toprule
-Family &
-Command &
+Typeface &
 Regular &
 Bold &
 Italic &
@@ -142,87 +141,90 @@ Bold italic &
 Sans &
 Sans bold &
 Sans italic &
-Sans bold italic
-\\
+Sans bold italic \\
 \midrule
 \endhead
 
-\StyleCategory{Latin and general-purpose families}
-\StyleRow{Noto}{NOT}{\NOT}{Abg fi fl}
-\StyleRow{Times}{TIM}{\TIM}{Abg fi fl}
-\StyleRow{Gentium Plus}{GEN}{\GEN}{Ārya ṛ ṃ ḥ}
-\StyleRow{Charis SIL}{CHA}{\CHA}{Ārya ṛ ṃ ḥ}
-\StyleRow{Libertinus}{LIB}{\LIB}{Abg fi fl}
+\StyleCategory{Latin typefaces}
+\StyleRow{CMU Serif}{\Writing{[cmu]latin}}{Latina}
+\StyleRow{Noto}{\NOT}{Latina}
+\StyleRow{Times}{\TIM}{Latina}
+\StyleRow{Gentium Plus}{\GEN}{Latina}
+\StyleRow{Charis SIL}{\CHA}{Latina}
+\StyleRow{Libertinus}{\LIB}{Latina}
+\StyleRow{MLModern}{\MLM}{Latina}
 
-\StyleCategory{European and ancient alphabetic scripts}
-\StyleRow{Carian}{CA}{\CA}{𐊠𐊺𐊪}
-\StyleRow{Coptic}{CO}{\CO}{ⲛⲟⲩⲧⲉ}
-\StyleRow{Bopomofo}{ZY}{\ZY}{ㄓㄨˋ ㄧㄣ}
-\StyleRow{Cuneiform}{CU}{\CU}{𒀭𒂗𒆠}
-\StyleRow{Glagolitic}{GL}{\GL}{ⰀⰁⰂ}
-\StyleRow{Old Italic}{OI}{\OI}{𐌀𐌁𐌂}
-\StyleRow{Old Hungarian}{OH}{\OH}{𐲀𐲁𐲂}
-\StyleRow{Runic}{RU}{\RU}{ᚠᚢᚦ}
+\StyleCategory{European and Caucasian scripts}
+\StyleRow{Carian}{\CA}{𐊨𐊣𐊠𐊦𐊹𐊸}
+\StyleRow{Coptic}{\CO}{ⲛⲟⲩⲧⲉ}
+\StyleRow{Glagolitic}{\GL}{ⰳⰾⰰⰳⱁⰾ}
+\StyleRow{Old Italic}{\OI}{𐌌𐌉 𐌔𐌖𐌈𐌉}
+\StyleRow{Old Hungarian}{\OH}{𐳢𐳛𐳮𐳁𐳤}
+\StyleRow{Runic}{\RU}{ᚠᚢᚦᚨᚱᚲ}
+\StyleRow{Armenian}{\HY}{հայերեն}
+\StyleRow{Georgian}{\KA}{ქართული}
 
-\StyleCategory{South and Central Asian scripts}
-\StyleRow{Armenian}{HY}{\HY}{Հայերեն}
-\StyleRow{Hindi}{HI}{\HI}{हिन्दी}
-\StyleRow{Sanskrit}{SA}{\SA}{संस्कृतम्}
-\StyleRow{Devanagari}{DEV}{\DEV}{देवनागरी}
-\StyleRow{Tamil}{TA}{\TA}{தமிழ்}
-\StyleRow{Brahmi}{BR}{\BR}{𑀩𑁆𑀭𑀸𑀳𑁆𑀫𑀻}
-\StyleRow{Georgian}{KA}{\KA}{ქართული}
-\StyleRow{Tibetan}{TI}{\TI}{བསྒྲུབས་}
+\StyleCategory{South Asian and Tibetan scripts}
+\StyleRow{Devanagari · Hindi}{\HI}{देवनागरी}
+\StyleRow{Devanagari · Sanskrit}{\SA}{देवनागरी}
+\StyleRow{Devanagari}{\DEV}{देवनागरी}
+\StyleRow{Tamil}{\TA}{தமிழ்}
+\StyleRow{Brahmi}{\BR}{𑀥𑀫𑁆𑀫}
+\StyleRow{Brahmi · Segoe}{\SEG}{𑀥𑀫𑁆𑀫}
+\StyleRow{Kharoshthi}{\KH}{𐨢𐨿𐨪𐨨}
+\StyleRow{Tibetan}{\TI}{བོད་ཡིག}
+\StyleRow{Thai}{\TH}{ภาษาไทย}
 
-\StyleCategory{RTL and West Asian scripts}
-\StyleRow{Arabic}{AR}{\AR}{العربية}
-\StyleRow{Urdu}{UR}{\UR}{اُردُو}
-\StyleRow{Imperial Aramaic}{IA}{\IA}{𐡀𐡓𐡌}
-\StyleRow{Nabataean}{NB}{\NB}{𐢌𐢁𐢈}
-\StyleRow{Hebrew}{HE}{\HE}{שלום}
-\StyleRow{Syriac}{SY}{\SY}{ܫܠܡܐ}
-\StyleRow{Eastern Syriac}{SYE}{\SYE}{ܫܠܡܐ}
-\StyleRow{Kharoshthi}{KH}{\KH}{𐨐𐨿𐨪𐨆}
+\StyleCategory{West Asian and Iranian scripts}
+\StyleRow{Arabic}{\AR}{العربية}
+\StyleRow{Arabic · Nastaliq}{\UR}{نستعلیق}
+\StyleRow{Imperial Aramaic}{\IA}{𐡀𐡓𐡌𐡉𐡀}
+\StyleRow{Nabataean}{\NB}{𐢕𐢃𐢋𐢈}
+\StyleRow{Hebrew}{\HE}{עברית}
+\StyleRow{Syriac}{\SY}{ܣܘܪܝܝܐ}
+\StyleRow{Syriac · Eastern}{\SYE}{ܣܘܪܝܝܐ}
+\StyleRow{Inscriptional Parthian}{\PAR}{𐭃𐭐𐭉𐭅𐭓}
+\StyleRow{Inscriptional Pahlavi}{\PAH}{𐭣𐭯𐭩𐭥𐭥}
+\StyleRow{Psalter Pahlavi}{\PSP}{𐮃𐮎𐮈𐮅𐮅}
+\StyleRow{Avestan}{\AV}{𐬀𐬴𐬆𐬨}
+\StyleRow{Manichaean}{\MA}{𐫖𐫀𐫗𐫏}
+\StyleRow{Phoenician}{\PH}{𐤁𐤏𐤋}
+\StyleRow{Samaritan}{\SM}{ࠔࠋࠅࠌ}
+\StyleRow{Sogdian}{\SG}{𐼼𐼴𐼶𐼹𐼷𐼸}
+\StyleRow{Old Sogdian}{\SGO}{𐼑𐼇𐼄𐼌𐼊𐼋}
 
-\StyleCategory{Iranian and other historical scripts}
-\StyleRow{Inscriptional Parthian}{PAR}{\PAR}{𐭐𐭓𐭕}
-\StyleRow{Inscriptional Pahlavi}{PAH}{\PAH}{𐭯𐭠𐭧}
-\StyleRow{Psalter Pahlavi}{PSP}{\PSP}{𐮈𐮎}
-\StyleRow{Avestan}{AV}{\AV}{𐬀𐬬𐬆𐬯}
-\StyleRow{Manichaean}{MA}{\MA}{𐫀𐫁𐫂}
-\StyleRow{Phoenician}{PH}{\PH}{𐤀𐤁𐤂}
-\StyleRow{Samaritan}{SM}{\SM}{ࠔࠌࠅࠌ}
-\StyleRow{Sogdian}{SG}{\SG}{𐼰𐼱𐼲}
-\StyleRow{Old Sogdian}{SGO}{\SGO}{𐼀𐼁𐼂}
+\StyleCategory{Ancient Near Eastern scripts}
+\StyleRow{Cuneiform}{\CU}{𒁾𒊬}
+\StyleRow{Egyptian Hieroglyphs}{\EG}{𓂋 𓈖 𓆎𓅓𓏏𓊖}
 
-\StyleCategory{CJK and East Asian families}
-\StyleRow{Noto SC}{SC}{\SC}{汉字骨直}
-\StyleRow{Noto TC}{TC}{\TC}{漢字骨直}
-\StyleRow{Japanese}{JP}{\JP}{日本語漢字}
-\StyleRow{WenJin}{WJ}{\WJ}{中國𠀀𰀀}
-\StyleRow{Korean}{KR}{\KR}{한국어漢字}
-\StyleRow{Tangut}{TG}{\TG}{𗼇𘝞𗫂}
+\StyleCategory{East Asian scripts and Han families}
+\StyleRow{Bopomofo}{\ZY}{ㄅㄆㄇㄈ}
+\StyleRow{Han · Simplified}{\SC}{汉字}
+\StyleRow{Han · Traditional}{\TC}{漢字}
+\StyleRow{Han · Hiragana · Katakana}{\JP}{漢字かなカナ}
+\StyleRow{Han · WenJin}{\WJ}{漢字}
+\StyleRow{Han · Shanggu}{\Writing{[shanggu]chinese}}{漢字}
+\StyleRow{Han · Sim}{\Writing{[simsun]chinese}}{汉字}
+\StyleRow{Hangul · Han}{\KR}{한글漢字}
+\StyleRow{Tangut}{\TG}{𗼇𘝞}
 
-\StyleCategory{Mongolian-family and other Asian scripts}
-\StyleRow{Khitan Small Script (linear)}{KHS}{\KHS}{𘬜𘭢𘮒}
-\StyleRow{Mongolian}{MO}{\MO}{ᠮᠣᠩᠭᠣᠯ}
-\StyleRow{Mongolian Baiti}{MOb}{\MOb}{ᠮᠣᠩᠭᠣᠯ}
-\StyleRow{Manchu}{MC}{\MC}{ᠮᠠᠨᠵᡠ}
-\StyleRow{Segoe Historic}{SEG}{\SEG}{𑀩𑁆𑀭𑀸𑀳𑁆𑀫𑀻}
-\StyleRow{Thai}{TH}{\TH}{ภาษาไทย}
-\StyleRow{Old Turkic}{OT}{\OT}{𐱅𐰇𐰼𐰚}
-\StyleRow{Old Uyghur}{UY}{\UY}{𐽳𐽶𐽲𐽳𐽾}
+\StyleCategory{Inner Asian scripts}
+\StyleRow{Khitan Small Script}{\KHS}{𘲇 𘰺𘱹𘰻}
+\StyleRow{Mongolian}{\MO}{ᠮᠣᠩᠭᠣᠯ}
+\StyleRow{Mongolian Baiti}{\MOb}{ᠮᠣᠩᠭᠣᠯ}
+\StyleRow{Manchu}{\MC}{ᠮᠠᠨᠵᡠ}
+\StyleRow{Old Turkic}{\OT}{𐱅𐰇𐰼𐰜}
+\StyleRow{Old Uyghur}{\UY}{𐽳𐽶𐽲𐽳𐽾}
 
-\StyleCategory{Vietnamese}
-\StyleRow{Quốc Ngữ}{VI}{\VI}{Tiếng Việt}
-\StyleRow{Hán-Nôm}{HN}{\HN}{𡨸喃𠊛𡗶}
+\StyleCategory{Vietnamese writing traditions}
+\StyleRow{Latin · Quốc Ngữ}{\VI}{Quốc ngữ}
+\StyleRow{Han · Chữ Nôm}{\HN}{𡨸喃}
 
 \bottomrule
-\end{TableLong}
+\end{longtable}
 
 \end{landscape}
 }
-
 
 % ==========================================================================
 \section{Multilingual Routing and Mixed-Script Composition}
