@@ -169,6 +169,9 @@ scripts/          build and install tooling
 tests/            regression suite
 ```
 
+The remaining source/PDF, local font-licensing and archive gates are tracked in
+[the 1.1.0 local publication checklist](docs/RELEASE-1.1.0-LOCAL.md).
+
 ## Release Packages
 
 `scripts\build_release.bat` generates:
