@@ -65,6 +65,13 @@ If users need `monbaiti.ttf`, they should obtain it themselves from:
 https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti
 If users need `seguihis.ttf`, they should obtain it themselves from:
 https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
+The public `full` release package uses the exact-path allowlist in
+[`approved-public-fonts.txt`](approved-public-fonts.txt). Only files
+explicitly listed there are included in public archives; all others are
+excluded until the local maintainer confirms each license and redistributable
+artifact. The initial allowlist contains only the two individually documented
+IPA/MIT font files. Review locally before publishing any full archive.
+
 The public `full` release package contains fonts with confirmed redistribution terms.
 
 This directory can be extended later for other third-party fonts whose licenses require inclusion of the full text or additional notices.
