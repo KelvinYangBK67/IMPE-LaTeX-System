@@ -70,7 +70,17 @@ https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
 之後如果還有其他第三方字體需要附上完整授權或額外再分發聲明，也可以繼續放在這個目錄中。
 
 公開 `full` 發行包改用 [`approved-public-fonts.txt`](approved-public-fonts.txt)
-的**逐檔核准清單**，未列出的字體一律不進入正式 ZIP。目前僅預先列入
-授權已個別記錄的 I.Ming（IPA）及 NomNaTong（MIT）；其餘字體須於
-本地完成授權確認，再將核准路徑加入清單。此規則與本地字體庫能否供私人
+的**逐檔核准清單**，未列出的字體一律不進入正式 ZIP。1.1.0 本地稽核後
+核准 131 個精確路徑（121 個 OFL、8 個 Meltho、IPA 與 MIT 各 1 個），
+仍排除 17 個檔案，詳見 [AUDIT-1.1.0.md](AUDIT-1.1.0.md)。替換字體後須重新核對。
+此規則與本地字體庫能否供私人
 編譯使用是兩回事。
+
+## 1.1.0 授權附件
+
+- [FONT-NOTICES.md](FONT-NOTICES.md)：逐檔 SHA-256、內嵌版權、授權及保留字體名稱聲明。
+- [OFL-1.1.txt](OFL-1.1.txt)：共用 SIL OFL 1.1 全文。
+- [NotoSansEgyptianHieroglyphs-OFL.txt](NotoSansEgyptianHieroglyphs-OFL.txt)：與本地 2.002 版本相符的 Egyptian 官方版權及授權全文。
+- 既有 Meltho 授權涵蓋 `syriac` 與 `syriac_eastern` 兩目錄的 8 個未修改字體檔案。
+
+發佈腳本在篩選字體前，會將本目錄完整複製至 Full 包。字體須連同這些聲明分發，不能用專案 MIT 授權取代。
