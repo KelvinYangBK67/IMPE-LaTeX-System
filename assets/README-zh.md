@@ -11,3 +11,6 @@ core 套件與 CTAN 導向的 `impe-framework.zip` 提供執行環境與文件�
 
 本地字體二進位檔請存放於 `assets/fonts/`。授權與來源說明見 `font_licenses/` 與
 `docs/FONTS-zh.md`。
+
+公開 full 封裝僅收錄 `font_licenses/approved-public-fonts.txt` 明確核准的
+逐檔字體路徑，未核准者不進公開 ZIP；本地字體庫不受影響。
