@@ -37,3 +37,7 @@ Each template includes:
 - a realistic body skeleton
 - sample headings and text blocks
 - basic table / figure or slide examples where appropriate
+
+The six public starter documents are compiled as smoke tests by
+`tests/run_regressions.ps1`. The Chinese starters use canonical
+`lang=zh` class options rather than the retained `*_zh` compatibility aliases.
