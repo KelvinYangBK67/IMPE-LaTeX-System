@@ -1,0 +1,47 @@
+% Optional local-font regression: never download or redistribute WenJin.
+\documentclass{article}
+\usepackage{impe}
+\newif\ifWenJinAvailable
+\WenJinAvailabletrue
+\IfFileExists{\CatalogFontRoot/wenjin/WenJinMinchoP0-Regular.ttf}{}{\WenJinAvailablefalse}
+\IfFileExists{\CatalogFontRoot/wenjin/WenJinMinchoP2-Regular.ttf}{}{\WenJinAvailablefalse}
+\IfFileExists{\CatalogFontRoot/wenjin/WenJinMinchoP3-Regular.ttf}{}{\WenJinAvailablefalse}
+\ifWenJinAvailable
+  \UseWriting{[file=FandolSong-Regular.otf]chinese}
+  \UseFont{wenjin}
+\fi
+\newcommand\WenJinSample{漢𠀀𰀀}
+\ExplSyntaxOn
+\int_new:N \g__wenjin_test_revision_int
+\NewDocumentCommand\WenJinRepeatTest{}
+  {
+    \int_gset_eq:NN \g__wenjin_test_revision_int
+      \g__writing_fallback_revision_int
+    % Long mixed-plane paragraph followed by repeated local family calls.
+    \WJ{\prg_replicate:nn {40}{\WenJinSample}}
+    \par
+    \prg_replicate:nn {10}{\WJ{\WenJinSample}}
+    \int_compare:nNnF {\g__wenjin_test_revision_int} =
+      {\g__writing_fallback_revision_int}
+      {\PackageError{impe-test}{Repeated WenJin text rebuilt fallback chains}{}}
+    \typeout{IMPE-TEST-WENJIN-STABLE-CHAIN-PASS}
+  }
+\ExplSyntaxOff
+\begin{document}
+\ifWenJinAvailable
+  \WJ{\WenJinSample}\WJ{\WenJinSample}\par
+  \WenJinRepeatTest\par
+  % All eight style coordinates exercise option commas in generated chains.
+  \WJ{\WenJinSample}\par
+  \WJ{\itshape\WenJinSample}\par
+  \WJ{\bfseries\WenJinSample}\par
+  \WJ{\bfseries\itshape\WenJinSample}\par
+  \WJ{\sffamily\WenJinSample}\par
+  \WJ{\sffamily\itshape\WenJinSample}\par
+  \WJ{\sffamily\bfseries\WenJinSample}\par
+  \WJ{\sffamily\bfseries\itshape\WenJinSample}
+  \typeout{IMPE-TEST-FALLBACK-WENJIN-PASS}
+\else
+  \typeout{IMPE-TEST-FALLBACK-WENJIN-SKIP: local P0/P2/P3 fonts unavailable}
+\fi
+\end{document}

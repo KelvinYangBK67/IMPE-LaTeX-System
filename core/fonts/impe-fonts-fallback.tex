@@ -18,6 +18,7 @@
 % calculated at declaration time. A missing glyph needs a new matrix walk.
 \prop_new:N \g__writing_face_font_prop
 \prop_new:N \g__writing_face_path_prop
+\prop_new:N \g__writing_face_fallback_prop
 \prop_new:N \g__writing_cjk_family_owner_prop
 % xeCJK caches the NFSS font selected for a fallback tier, independently of
 % its mutable family declaration. Only invalidate a cache after its owning
@@ -71,6 +72,10 @@
 \cs_new_protected:Npn \__writing_fallback_store_faces:
   {
     \int_gincr:N \g__writing_fallback_registry_revision_int
+    % Keep the resource's explicit plane fallbacks when the generic matrix
+    % replaces its xeCJK chain. Freeze the font root at declaration time.
+    \prop_gput:NVx \g__writing_face_fallback_prop \l__font_name_tl
+      { \l__font_cjk_fallback_tl }
     \prop_map_inline:Nn \l__font_matrix_face_prop
       {
         \tl_set:Nx \l__writing_fallback_face_key_tl
@@ -379,6 +384,11 @@
   {
     \exp_args:NV \clist_map_inline:nn \l__writing_fallback_matrix_order_tl
       { \__writing_fallback_add_face:nn {#1}{##1} }
+    \prop_get:NnNT \g__writing_face_fallback_prop {#1} \l_tmpa_tl
+      {
+        \exp_args:NV \clist_map_inline:nn \l_tmpa_tl
+          { \clist_put_right:Nn \l__writing_fallback_candidates_clist {##1} }
+      }
   }
 
 \cs_new_protected:Npn \__writing_fallback_collect_matrix:
@@ -449,8 +459,8 @@
     % redeclares each named /FallBack tier; the candidate list only grows
     % after registrations, so previously created deeper tiers cannot become
     % stale. Avoid repeated no-op definitions and infinite append cascades.
-    \tl_set:Nx \l__writing_fallback_signature_tl
-      { \clist_use:Nn \l__writing_fallback_candidates_clist {,} }
+    \tl_set:NV \l__writing_fallback_signature_tl
+      \l__writing_fallback_candidates_clist
     \clist_if_empty:NF \l__writing_fallback_candidates_clist
       {
         \prop_get:NnNTF \g__writing_fallback_configured_prop {#1} \l_tmpa_tl
@@ -491,7 +501,9 @@
     \use:x
       {
         \exp_not:N \setCJKfallbackfamilyfont {\exp_not:n {#1}}
-          { \clist_use:Nn \l__writing_fallback_candidates_clist {,} }
+          % clist_use removes item braces: option commas (Path,BoldFont)
+          % would then be parsed by xeCJK as separate font candidates.
+          { \exp_not:V \l__writing_fallback_candidates_clist }
       }
     \prop_gput:NnV \g__writing_fallback_configured_prop {#1}
       \l__writing_fallback_signature_tl
