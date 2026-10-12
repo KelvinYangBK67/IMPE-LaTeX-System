@@ -1,8 +1,8 @@
-# Unreleased Changelog
+# Unreleased changes
 
-No unversioned changes have been recorded after the 1.0.8 internal source snapshot.
-See [CHANGELOG.md](CHANGELOG.md) and [CHANGELOG-zh.md](CHANGELOG-zh.md).
+No changes beyond the 1.1.0 remote-closure preparation have been recorded.
 
-The English, German and Traditional Chinese manuals, canonical Showcase,
-tracked PDFs and formal publication packaging remain deferred until public release.
-No GitHub Release, archive or tag is created as part of this internal preparation.
+The 1.1.0 source is a **pre-publication candidate**. Local closure remains responsible
+for the English, German and Traditional Chinese manuals, canonical Showcase,
+tracked PDFs, local font-license review and final full/core/CTAN release validation.
+Do not create v1.1.0 until those publication checks succeed.

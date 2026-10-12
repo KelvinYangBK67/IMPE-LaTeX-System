@@ -2,7 +2,7 @@
 
 [繁體中文](FEATURES-zh.md)
 
-## Feature API policy (established in 1.0.4; current in 1.0.8)
+## Feature API policy (established in 1.0.4; current in 1.1.0)
 
 A feature may be a **curated package stack** rather than a new language for
 existing LaTeX constructs. New documents should use the native environments
@@ -499,7 +499,10 @@ texindy -L english -C utf8 -M <job>-impe <job>.idx
 Then rerun XeLaTeX twice. imakeidx's automatic invocation includes the same
 module option when shell execution is enabled. Ordinary custom `\index`
 encapsulations remain under imakeidx/hyperref control; the occurrence mechanism
-above is used by IMPE's `\Term` helper.
+above is used by legacy `\Term` and by ordinary native `\index`
+entries in the IMPE-created default index. Named indices, explicit `|...`
+encapsulations, and pre-existing user index setups retain native behavior.
+See [Index (native-first)](#index-native-first) for the current contract.
 
 ## Inline image glyphs (1.0.3)
 

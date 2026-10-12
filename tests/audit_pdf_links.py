@@ -26,4 +26,6 @@ for path in sys.argv[1:]:
             )
     if path.endswith("hyperlink-anchors.pdf"):
         assert internal > 0, f"{path}: no internal links were checked"
+    if path.endswith("hyperlink-footnote-compat.pdf"):
+        assert internal >= 6, f"{path}: too few internal footnote links ({internal})"
     print(f"IMPE-TEST-PDF-LINK-AUDIT-PASS: {path}: {internal} internal GoTo links")

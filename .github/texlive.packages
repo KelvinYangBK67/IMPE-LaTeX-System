@@ -6,6 +6,7 @@ xetex
 adjustbox
 beamer
 biblatex
+biblatex-apa
 bidi
 booktabs
 catchfile

@@ -68,3 +68,9 @@ https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
 公開 `full` release 套件收錄已確認可再分發的字體。
 
 之後如果還有其他第三方字體需要附上完整授權或額外再分發聲明，也可以繼續放在這個目錄中。
+
+公開 `full` 發行包改用 [`approved-public-fonts.txt`](approved-public-fonts.txt)
+的**逐檔核准清單**，未列出的字體一律不進入正式 ZIP。目前僅預先列入
+授權已個別記錄的 I.Ming（IPA）及 NomNaTong（MIT）；其餘字體須於
+本地完成授權確認，再將核准路徑加入清單。此規則與本地字體庫能否供私人
+編譯使用是兩回事。

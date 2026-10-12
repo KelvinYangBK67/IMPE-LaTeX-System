@@ -1,0 +1,6 @@
+# IMPE public full-distribution font allowlist.
+# One exact, repository-relative assets/fonts/... path per line; no wildcards.
+# Each entry requires a verified redistributable license and matching notices.
+# Extend this list only after local license review. All other font binaries are excluded.
+assets/fonts/bopomofo/I.Ming-8.10.ttf
+assets/fonts/vietnamese_hannom/NomNaTong-Regular.ttf

@@ -21,9 +21,11 @@ index 會載入 hyperlinks。`\Term` 依 key 記錄首次出現；不同 key 可
 手動索引步驟請在輸出目錄執行
 `texindy -L english -C utf8 -M <job>-impe <job>.idx`，再執行兩次 XeLaTeX。
 允許 shell 執行時，imakeidx 會自動傳入相同模組選項。
-一般自訂 `\index` 封裝仍由 imakeidx/hyperref 處理；上述位置機制用於 `\Term`。
+上述精確位置機制也用於 **IMPE 自行建立的預設索引** 之普通原生 `\index` 項目；
+舊 `\Term` 只作相容用途。其他索引、明確 `|...` 封裝、具名索引及使用者既有
+索引配置保留 imakeidx/hyperref 的原生規則。詳見下方「`index`（原生優先）」。
 
-## Feature 介面原則（1.0.4 確立，1.0.8 繼續適用）
+## Feature 介面原則（1.0.4 確立，1.1.0 繼續適用）
 
 Feature 可以只負責**按功能載入成熟套件**，不必重新定義原生 LaTeX
 語法。新文件使用 `tables`、`image`、`drawing` 準備相關套件後，

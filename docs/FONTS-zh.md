@@ -2,7 +2,7 @@
 
 [English](FONTS.md)
 
-## Writing Profile 與字體資源（1.0.5 引入，1.0.8 繼續使用）
+## Writing Profile 與字體資源（1.0.5 引入，1.1.0 繼續使用）
 
 簡單選擇既有 preset 仍推薦 \UseFont{preset}（包含全部舊版 ID）。
 進階介面將 **Unicode Writing Profile**（文字路由及 Renderer 行為）與
@@ -34,7 +34,7 @@ Upright/Italic 的 2×2×2 矩陣按逐字字形覆蓋選擇：
 非 CJK 文字不提供通用缺字自動備援，重疊 Unicode Profile 的全域仲裁亦未實作。
 
 完整選項、別名及限制見 [1.0.5 Writing API](USEWRITING-1.0.5.md)。
-三語手冊與 Showcase 的原始碼及 PDF 暫時維持先前版本，正式公開發佈時再同步。
+三語手冊與 Showcase 的原始碼及 PDF 暫時維持先前版本，留待本地出版收口後再正式發佈。
 
 ## 結構
 
@@ -541,7 +541,7 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 標準公開字體稽核位於 `manual/showcase/impe-showcase.tex`；聚焦的自動檢查則位於
 `tests/`。
 
-## 局部字體與字體面解析（1.0.5 API，1.0.8 繼續支援）
+## 局部字體與字體面解析（1.0.5 API，1.1.0 繼續支援）
 
 \UseFont{id}[local|global] 的既有載入／啟用模型與家族捷徑完整保留。
 1.0.5 的 \Font{名稱}[覆寫]{內容} 不僅支援舊家族，亦可使用

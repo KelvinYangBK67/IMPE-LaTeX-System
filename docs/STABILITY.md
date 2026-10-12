@@ -66,6 +66,7 @@ class and the selected `lang=en`/`lang=zh` default. Later native LaTeX
 overrides take precedence; external font/package versions and byte-for-byte
 historical output are not pinned. The 1.0.6 defaults and exact dimensions
 are documented in [LAYOUTS.md](LAYOUTS.md).
-This internal source version does **not** constitute a refreshed manual/showcase
-publication. Their sources and tracked PDFs are deliberately deferred; formal
-release bundles require that documentation milestone to be completed.
+The 1.1.0 remote-closure candidate does **not** yet constitute public
+publication. Manuals, Showcase sources/PDFs and final archive validation
+remain a separate local release gate. Do not tag or publish v1.1.0
+until the tracked documents have been rebuilt and verified.

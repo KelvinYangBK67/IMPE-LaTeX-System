@@ -37,6 +37,21 @@ jobs:
       - name: Audit Unicode 18.0 writing registry
         run: python tests/check_writing_registry.py
 
+      - name: Validate release-tool syntax and public font allowlist
+        shell: pwsh
+        run: |
+          foreach ($path in @('scripts/build_release.ps1', 'scripts/build_showcase.ps1')) {
+            $tokens = $null
+            $parseErrors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $path).Path, [ref]$tokens, [ref]$parseErrors)
+            if ($parseErrors.Count -gt 0) { throw "PowerShell syntax errors in $path : $($parseErrors -join '; ')" }
+          }
+          $manifest = Get-Content font_licenses/approved-public-fonts.txt
+          $approved = @($manifest | Where-Object { $_.Trim() -and -not $_.Trim().StartsWith('#') })
+          if ($approved.Count -lt 1 -or @($approved | Sort-Object -Unique).Count -ne $approved.Count) {
+            throw 'Public font manifest is missing approvals or contains duplicate paths.'
+          }
+
       - name: Run public regression suite
         shell: pwsh
         run: ./tests/run_regressions.ps1 -PublicFonts
