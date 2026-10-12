@@ -1,6 +1,9 @@
 # IMPE writing and font selection (1.0.5)
 
-Reference for the 1.0.5 internal source snapshot (merged PR #23). Manuals and showcase are deliberately deferred until formal publication.
+Historical API introduction from 1.0.5 (merged PR #23), maintained as the
+reference for the Writing API supported in 1.1.0. The 1.1.0 manual and Showcase
+revision is reserved for local publication closure. The filename preserves the
+version in which the API was introduced; it is not an obsolete API.
 New public interfaces are `\UseWriting`, `\DeclareWriting`, and `\Writing`.
 The existing `\Font` is redesigned as a forced-local preset selector.
 `\UseFont` retains its original `[local|global]` mode and historic presets;
