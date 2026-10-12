@@ -1,6 +1,8 @@
 param(
     [string]$OutputRoot,
-    [switch]$VerifyTracked
+    [switch]$VerifyTracked,
+    [ValidateRange(1, 3600)][int]$TimeoutSeconds = 180,
+    [string]$SourceFile
 )
 
 $ErrorActionPreference = "Stop"
@@ -8,7 +10,9 @@ $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $ScriptRoot
 $Version = (Get-Content -LiteralPath (Join-Path $RepoRoot "VERSION") -Raw).Trim()
 $SourceDir = Join-Path $RepoRoot "manual/showcase"
-$SourceFile = Join-Path $SourceDir "impe-showcase.tex"
+if (-not $SourceFile) { $SourceFile = Join-Path $SourceDir "impe-showcase.tex" }
+$SourceFile = (Resolve-Path -LiteralPath $SourceFile).Path
+$SourceDir = Split-Path -Parent $SourceFile
 $TrackedPdf = Join-Path $SourceDir "impe-showcase.pdf"
 $SourceText = Get-Content -LiteralPath $SourceFile -Raw -Encoding UTF8
 if (-not $SourceText.Contains("\date{v$Version}")) {
@@ -28,6 +32,12 @@ $BuildRoot = Join-Path ([IO.Path]::GetTempPath()) "impe-showcase-$Version-build"
 $WorkDir = Join-Path $BuildRoot "work"
 $TexOutputDir = Join-Path $BuildRoot "out"
 if (Test-Path -LiteralPath $BuildRoot) {
+    $resolvedBuildRoot = (Resolve-Path -LiteralPath $BuildRoot).Path
+    $tempPrefix = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd([char[]](92,47)) + [IO.Path]::DirectorySeparatorChar
+    if (-not $resolvedBuildRoot.StartsWith($tempPrefix, [StringComparison]::OrdinalIgnoreCase) -or
+        (Split-Path -Leaf $resolvedBuildRoot) -ne "impe-showcase-$Version-build") {
+        throw "Unsafe showcase staging directory: $resolvedBuildRoot"
+    }
     Remove-Item -LiteralPath $BuildRoot -Recurse -Force
 }
 New-Item -ItemType Directory -Force -Path $WorkDir, $TexOutputDir | Out-Null
@@ -49,19 +59,32 @@ $previousEpoch = $env:SOURCE_DATE_EPOCH
 $previousForceSourceDate = $env:FORCE_SOURCE_DATE
 if (-not $env:SOURCE_DATE_EPOCH) { $env:SOURCE_DATE_EPOCH = "1790035200" }
 $env:FORCE_SOURCE_DATE = "1"
-$env:TEXINPUTS = "$portableWork//$sep$portableRepo/package//$sep$portableRepo//$sep$previousTexInputs"
+# Explicit core/catalog paths resolve from the repository root. Recursing the
+# entire repository also finds stale showcase .toc/.bbl files outside staging.
+$env:TEXINPUTS = "$portableWork//$sep$portableRepo/package//$sep$portableRepo/$sep$previousTexInputs"
 $env:BIBINPUTS = "$portableWork//$sep$previousBibInputs"
 try {
     Push-Location $WorkDir
     try {
         foreach ($pass in @(1, 2, 3)) {
-            & xelatex -shell-escape -interaction=nonstopmode -halt-on-error "-output-directory=$TexOutputDir" impe-showcase.tex
+            & python (Join-Path $ScriptRoot 'run_bounded_command.py') `
+                --timeout $TimeoutSeconds --log (Join-Path $OutputRoot "xelatex-pass-$pass.log") -- `
+                xelatex -no-pdf -shell-escape -interaction=nonstopmode -halt-on-error "-output-directory=$TexOutputDir" impe-showcase.tex
             if ($LASTEXITCODE -ne 0) { throw "Showcase XeLaTeX pass $pass failed." }
             if ($pass -eq 1) {
-                & biber "--input-directory=$TexOutputDir" "--output-directory=$TexOutputDir" impe-showcase
+                & python (Join-Path $ScriptRoot 'run_bounded_command.py') `
+                    --timeout $TimeoutSeconds --log (Join-Path $OutputRoot 'biber.log') -- `
+                    biber "--input-directory=$TexOutputDir" "--output-directory=$TexOutputDir" impe-showcase
                 if ($LASTEXITCODE -ne 0) { throw "Showcase Biber pass failed." }
             }
         }
+        # Use a complete file rather than the Windows XeTeX/cmd stdin stream.
+        # This also provides a separate conversion deadline and diagnostic log.
+        & python (Join-Path $ScriptRoot 'run_bounded_command.py') `
+            --timeout $TimeoutSeconds --log (Join-Path $OutputRoot 'xdvipdfmx.log') -- `
+            xdvipdfmx -vv -o (Join-Path $TexOutputDir 'impe-showcase.pdf') `
+            (Join-Path $TexOutputDir 'impe-showcase.xdv')
+        if ($LASTEXITCODE -ne 0) { throw 'Showcase XDV-to-PDF conversion failed or timed out.' }
     }
     finally { Pop-Location }
 }
@@ -76,6 +99,11 @@ $ResultPdf = Join-Path $TexOutputDir "impe-showcase.pdf"
 if (-not (Test-Path -LiteralPath $ResultPdf)) {
     throw "Showcase build did not produce a PDF."
 }
+& python (Join-Path $ScriptRoot 'run_bounded_command.py') `
+    --timeout $TimeoutSeconds --log (Join-Path $OutputRoot 'pdf-validation.log') -- `
+    python (Join-Path $RepoRoot 'tests/check_showcase_pdf.py') $ResultPdf `
+    (Join-Path $TexOutputDir 'impe-showcase.log')
+if ($LASTEXITCODE -ne 0) { throw 'Showcase PDF completeness validation failed.' }
 $OutputPdf = Join-Path $OutputRoot "impe-showcase.pdf"
 Copy-Item -LiteralPath $ResultPdf -Destination $OutputPdf -Force
 if ($VerifyTracked) {
