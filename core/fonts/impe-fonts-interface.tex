@@ -592,6 +592,7 @@
 \dim_new:N \l__font_vertical_embed_bottom_padding_dim
 \dim_new:N \l__font_vertical_embed_height_dim
 \dim_new:N \l__font_vertical_embed_depth_dim
+\dim_new:N \l__font_vertical_shift_dim
 \box_new:N \l__font_vertical_embed_box
 \box_new:N \l__font_vertical_source_box
 
@@ -644,7 +645,7 @@
             \allowbreak
           }
         \bool_set_false:N \l__font_vertical_first_word_bool
-        \__font_vertical_embed_word:nn { 0pt } {#1}
+        \__font_vertical_embed_word:nn { \l__font_vertical_shift_dim } {#1}
       }
   }
 
@@ -660,7 +661,8 @@
   {
     \bool_set_true:N \l__font_vertical_first_word_bool
     \regex_split:nnN { \s+ } {#1} \l_tmpa_seq
-    \seq_map_inline_reverse:Nn \l_tmpa_seq
+    \seq_reverse:N \l_tmpa_seq
+    \seq_map_inline:Nn \l_tmpa_seq
       { \__font_vertical_emit_word:n {##1} }
   }
 
@@ -769,13 +771,14 @@
           \tl_set:Nn \l__font_vertical_rotation_angle_tl {#4}
           \tl_set:Nn \l__font_vertical_rotation_origin_tl {#5}
           \__font_vertical_prepare_argument:n {##2}
+          \dim_set:Nn \l__font_vertical_shift_dim {##1}
           \leavevmode
-          \raisebox{##1}{\hbox{
-            \tl_use:N \l__font_vertical_style_setup_tl
-            \str_if_eq:VnTF \l__font_vertical_flow_tl { rtl }
-              { \exp_args:NV \__font_vertical_emit_words_reverse:n \l__font_vertical_content_tl }
-              { \exp_args:NV \__font_vertical_emit_words_forward:n \l__font_vertical_content_tl }
-          }}
+          % Emit individual rotated word boxes into the surrounding paragraph.
+          % An enclosing hbox hides all inter-word break opportunities.
+          \tl_use:N \l__font_vertical_style_setup_tl
+          \str_if_eq:VnTF \l__font_vertical_flow_tl { rtl }
+            { \exp_args:NV \__font_vertical_emit_words_reverse:n \l__font_vertical_content_tl }
+            { \exp_args:NV \__font_vertical_emit_words_forward:n \l__font_vertical_content_tl }
         }
       }
   }
@@ -809,9 +812,9 @@
     \dim_compare:nNnT { \l__font_vertical_embed_depth_dim } < { 0pt }
       { \dim_zero:N \l__font_vertical_embed_depth_dim }
     \leavevmode
-    \raisebox{\l__font_vertical_embed_top_correction_dim}
-      [\l__font_vertical_embed_height_dim]
-      [\l__font_vertical_embed_depth_dim]
+    \raisebox{\dim_eval:n {\l__font_vertical_embed_top_correction_dim + #1}}
+      [\dim_eval:n {\l__font_vertical_embed_height_dim + #1}]
+      [\dim_eval:n {\l__font_vertical_embed_depth_dim - #1}]
       {
         \box_use:N \l__font_vertical_embed_box
       }

@@ -176,6 +176,7 @@ try {
         "fallback-late-registration",
         "fallback-cjk-glyph-matrix",
         "fallback-wenjin",
+        "vertical-wrapping",
         "local-font-override",
         "same-family-shaping",
         "routing-scalability",
@@ -302,6 +303,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'CJK missing glyph did not honor SansBoldItalic matrix precedence.' }
     & python (Join-Path $TestRoot 'check_fallback_wenjin.py') (Join-Path $BuildRoot 'fallback-wenjin.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'WenJin fallback PDF check failed.' }
+    & python (Join-Path $TestRoot 'check_vertical_wrapping.py') (Join-Path $BuildRoot 'vertical-wrapping.pdf')
+    if ($LASTEXITCODE -ne 0) { throw 'Inline vertical wrapping PDF check failed.' }
     & python (Join-Path $TestRoot 'check_fallback_late.py') (Join-Path $BuildRoot 'fallback-late-registration.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'The glyph-level PDF span did not switch from Song to Hei after late registration.' }
     & python (Join-Path $TestRoot 'check_fallback_native.py') (Join-Path $BuildRoot 'fallback-precedence.pdf') FandolHei

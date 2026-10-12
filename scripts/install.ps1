@@ -279,7 +279,8 @@ Write-Host "  Package:     $InstallFlavor"
 
 if ($HasBundledAssets) {
     Write-Host "  Bundled font library: present"
-    Write-Host "  Note: public full releases exclude the two unresolved Tangut fonts"
+    Write-Host "  Note: public Full releases contain only fonts approved for redistribution."
+    Write-Host "  Local installs may include other fonts obtained by the user; public-release filtering does not apply to local installation."
 }
 else {
     Write-Host "  Bundled font library: not present"

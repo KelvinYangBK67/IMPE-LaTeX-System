@@ -1,0 +1,44 @@
+% Local native fonts are optional; public TeX-font probes always run.
+\documentclass{article}
+\usepackage{impe}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\FontRegisterFamily{id=verticalprobe,defaultmode=local,local={command=VP,name=verticalprobe,regular=lmroman10-regular.otf,layout=vertical,verticalstrategy=ltr,verticalrotation=90}}
+\UseFont{verticalprobe}
+\newif\ifNativeVertical
+\NativeVerticaltrue
+\IfFileExists{\CatalogFontRoot/mongolian/mnglwhiteotf.ttf}{}{\NativeVerticalfalse}
+\IfFileExists{\CatalogFontRoot/manchu/Ab-Xy.ttf}{}{\NativeVerticalfalse}
+\IfFileExists{\CatalogFontRoot/uyghur/NotoSerifOldUyghur-Regular.ttf}{}{\NativeVerticalfalse}
+\ifNativeVertical\UseFonts{mongolian,manchu,uyghur}\fi
+\ExplSyntaxOn
+% Zero-size horizontal PDF markers locate each indivisible word box.
+\int_new:N \g__vertical_test_word_int
+\cs_new_eq:NN \__vertical_test_embed:nn \__font_vertical_embed_word:nn
+\cs_set_protected:Npn \__font_vertical_embed_word:nn #1#2
+  {
+    \int_gincr:N \g__vertical_test_word_int
+    \hbox_to_zero:n{\smash{\normalfont\tiny V\int_use:N\g__vertical_test_word_int}\hss}
+    \__vertical_test_embed:nn {#1}{#2}
+    \typeout{VERTICAL-WORD-\int_use:N\g__vertical_test_word_int :
+      \dim_to_decimal:n{\box_wd:N\l__font_vertical_embed_box}}
+  }
+\NewDocumentCommand\VerticalRTL{}
+  {\__font_define_vertical_public_command:nnnnn {VPv}{verticalprobe}{rtl}{90}{c}}
+\ExplSyntaxOff
+\begin{document}
+
+\ifNativeVertical
+\noindent MOv 1\par\noindent\begingroup\raggedright \MOv[2pt]{ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠃ ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ ᠴᠢᠭᠯᠡᠯ ᠢᠶᠡᠷ ᠪᠢᠴᠢᠭᠳᠡᠨ᠎ᠡ᠂ ᠦᠭᠡ ᠪᠦᠷᠢ ᠨᠢ ᠬᠣᠭᠣᠷᠣᠨᠳᠣᠭ᠎ᠠ ᠵᠠᠢ ᠲᠠᠢ ᠪᠠᠢᠳᠠᠭ᠃ ᠤᠷᠲᠤ ᠦᠭᠡ ᠪᠣᠯᠣᠨ ᠣᠯᠠᠨ ᠦᠭᠡ ᠨᠢ ᠨᠢᠭᠡ ᠮᠥᠷ ᠲᠦ ᠪᠠᠭᠲᠠᠬᠤ ᠦᠭᠡᠢ ᠦᠶ᠎ᠡ ᠳᠦ ᠳᠠᠷᠠᠭᠠᠴᠢ ᠶᠢᠨ ᠮᠥᠷ ᠲᠦ ᠰᠢᠯᠵᠢᠨ᠎ᠡ᠃ ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠃ ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ ᠴᠢᠭᠯᠡᠯ ᠢᠶᠡᠷ ᠪᠢᠴᠢᠭᠳᠡᠨ᠎ᠡ᠂ ᠦᠭᠡ ᠪᠦᠷᠢ ᠨᠢ ᠬᠣᠭᠣᠷᠣᠨᠳᠣᠭ᠎ᠠ ᠵᠠᠢ ᠲᠠᠢ ᠪᠠᠢᠳᠠᠭ᠃ ᠤᠷᠲᠤ ᠦᠭᠡ ᠪᠣᠯᠣᠨ ᠣᠯᠠᠨ ᠦᠭᠡ ᠨᠢ ᠨᠢᠭᠡ ᠮᠥᠷ ᠲᠦ ᠪᠠᠭᠲᠠᠬᠤ ᠦᠭᠡᠢ ᠦᠶ᠎ᠡ ᠳᠦ ᠳᠠᠷᠠᠭᠠᠴᠢ ᠶᠢᠨ ᠮᠥᠷ ᠲᠦ ᠰᠢᠯᠵᠢᠨ᠎ᠡ᠃}\par Horizontal restored.\par\endgroup\newpage
+\noindent MOv 0.47\par\noindent\begin{minipage}{0.47\linewidth}\raggedright \MOv{ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠃ ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ ᠴᠢᠭᠯᠡᠯ ᠢᠶᠡᠷ ᠪᠢᠴᠢᠭᠳᠡᠨ᠎ᠡ᠂ ᠦᠭᠡ ᠪᠦᠷᠢ ᠨᠢ ᠬᠣᠭᠣᠷᠣᠨᠳᠣᠭ᠎ᠠ ᠵᠠᠢ ᠲᠠᠢ ᠪᠠᠢᠳᠠᠭ᠃ ᠤᠷᠲᠤ ᠦᠭᠡ ᠪᠣᠯᠣᠨ ᠣᠯᠠᠨ ᠦᠭᠡ ᠨᠢ ᠨᠢᠭᠡ ᠮᠥᠷ ᠲᠦ ᠪᠠᠭᠲᠠᠬᠤ ᠦᠭᠡᠢ ᠦᠶ᠎ᠡ ᠳᠦ ᠳᠠᠷᠠᠭᠠᠴᠢ ᠶᠢᠨ ᠮᠥᠷ ᠲᠦ ᠰᠢᠯᠵᠢᠨ᠎ᠡ᠃ ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠃ ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ ᠴᠢᠭᠯᠡᠯ ᠢᠶᠡᠷ ᠪᠢᠴᠢᠭᠳᠡᠨ᠎ᠡ᠂ ᠦᠭᠡ ᠪᠦᠷᠢ ᠨᠢ ᠬᠣᠭᠣᠷᠣᠨᠳᠣᠭ᠎ᠠ ᠵᠠᠢ ᠲᠠᠢ ᠪᠠᠢᠳᠠᠭ᠃ ᠤᠷᠲᠤ ᠦᠭᠡ ᠪᠣᠯᠣᠨ ᠣᠯᠠᠨ ᠦᠭᠡ ᠨᠢ ᠨᠢᠭᠡ ᠮᠥᠷ ᠲᠦ ᠪᠠᠭᠲᠠᠬᠤ ᠦᠭᠡᠢ ᠦᠶ᠎ᠡ ᠳᠦ ᠳᠠᠷᠠᠭᠠᠴᠢ ᠶᠢᠨ ᠮᠥᠷ ᠲᠦ ᠰᠢᠯᠵᠢᠨ᠎ᠡ᠃}\par Horizontal restored.\end{minipage}\newpage
+\noindent MCv 1\par\noindent\begingroup\raggedright \MCv[2pt]{ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᠮᠠᠨᠵᡠ ᠪᡳᡨᡥᡝ ‍ᡳ ᠠᡵᠠᠮᠪᡳ᠃ ᠪᡳ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᡩᡝ ᠯᠣᠨᡤᡤᠣ ᡤᡳᠰᡠᠨ ᠪᡝ ᠠᡵᠠᠮᠪᡳ᠂ ᡨᡝᡵᡝᠴᡳ ᡤᡳᠰᡠᠨ ᡨᠠᡨᠠᠮᡝ ᡤᡝᠨᡝᠮᠪᡳ᠃ ᡝᡵᡝ ᡳᠴᡳ ᠠᠮᠪᠠ ᠪᡳᡨᡥᡝ ᠪᡝ ᠠᡵᠠᡥᠠ ᠮᠠᠩᡤᡳ ᠮᡠᡵᡠ ᠪᡝ ᡥᡝᠴᡝᡥᡝ᠂ ᡤᡳᠰᡠᠨ ᠪᡝ ᠨᠠᡩᠠᠨ ᠪᠠ ᡩᡝ ᡶᠠᡵᠠᡥᠠ ᠪᡝ ᡳᠯᡝᡨᡠᠯᡝᠮᠪᡳ᠃ ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᠮᠠᠨᠵᡠ ᠪᡳᡨᡥᡝ ‍ᡳ ᠠᡵᠠᠮᠪᡳ᠃ ᠪᡳ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᡩᡝ ᠯᠣᠨᡤᡤᠣ ᡤᡳᠰᡠᠨ ᠪᡝ ᠠᡵᠠᠮᠪᡳ᠂ ᡨᡝᡵᡝᠴᡳ ᡤᡳᠰᡠᠨ ᡨᠠᡨᠠᠮᡝ ᡤᡝᠨᡝᠮᠪᡳ᠃ ᡝᡵᡝ ᡳᠴᡳ ᠠᠮᠪᠠ ᠪᡳᡨᡥᡝ ᠪᡝ ᠠᡵᠠᡥᠠ ᠮᠠᠩᡤᡳ ᠮᡠᡵᡠ ᠪᡝ ᡥᡝᠴᡝᡥᡝ᠂ ᡤᡳᠰᡠᠨ ᠪᡝ ᠨᠠᡩᠠᠨ ᠪᠠ ᡩᡝ ᡶᠠᡵᠠᡥᠠ ᠪᡝ ᡳᠯᡝᡨᡠᠯᡝᠮᠪᡳ᠃}\par Horizontal restored.\par\endgroup\newpage
+\noindent MCv 0.47\par\noindent\begin{minipage}{0.47\linewidth}\raggedright \MCv{ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᠮᠠᠨᠵᡠ ᠪᡳᡨᡥᡝ ‍ᡳ ᠠᡵᠠᠮᠪᡳ᠃ ᠪᡳ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᡩᡝ ᠯᠣᠨᡤᡤᠣ ᡤᡳᠰᡠᠨ ᠪᡝ ᠠᡵᠠᠮᠪᡳ᠂ ᡨᡝᡵᡝᠴᡳ ᡤᡳᠰᡠᠨ ᡨᠠᡨᠠᠮᡝ ᡤᡝᠨᡝᠮᠪᡳ᠃ ᡝᡵᡝ ᡳᠴᡳ ᠠᠮᠪᠠ ᠪᡳᡨᡥᡝ ᠪᡝ ᠠᡵᠠᡥᠠ ᠮᠠᠩᡤᡳ ᠮᡠᡵᡠ ᠪᡝ ᡥᡝᠴᡝᡥᡝ᠂ ᡤᡳᠰᡠᠨ ᠪᡝ ᠨᠠᡩᠠᠨ ᠪᠠ ᡩᡝ ᡶᠠᡵᠠᡥᠠ ᠪᡝ ᡳᠯᡝᡨᡠᠯᡝᠮᠪᡳ᠃ ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᠮᠠᠨᠵᡠ ᠪᡳᡨᡥᡝ ‍ᡳ ᠠᡵᠠᠮᠪᡳ᠃ ᠪᡳ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᡩᡝ ᠯᠣᠨᡤᡤᠣ ᡤᡳᠰᡠᠨ ᠪᡝ ᠠᡵᠠᠮᠪᡳ᠂ ᡨᡝᡵᡝᠴᡳ ᡤᡳᠰᡠᠨ ᡨᠠᡨᠠᠮᡝ ᡤᡝᠨᡝᠮᠪᡳ᠃ ᡝᡵᡝ ᡳᠴᡳ ᠠᠮᠪᠠ ᠪᡳᡨᡥᡝ ᠪᡝ ᠠᡵᠠᡥᠠ ᠮᠠᠩᡤᡳ ᠮᡠᡵᡠ ᠪᡝ ᡥᡝᠴᡝᡥᡝ᠂ ᡤᡳᠰᡠᠨ ᠪᡝ ᠨᠠᡩᠠᠨ ᠪᠠ ᡩᡝ ᡶᠠᡵᠠᡥᠠ ᠪᡝ ᡳᠯᡝᡨᡠᠯᡝᠮᠪᡳ᠃}\par Horizontal restored.\end{minipage}\newpage
+\noindent UYv 1\par\noindent\begingroup\raggedright \UYv[2pt]{𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶}\par Horizontal restored.\par\endgroup\newpage
+\noindent UYv 0.47\par\noindent\begin{minipage}{0.47\linewidth}\raggedright \UYv{𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶}\par Horizontal restored.\end{minipage}\newpage
+\else\typeout{IMPE-TEST-VERTICAL-NATIVE-SKIP: local fonts unavailable}\fi
+LTR-0\par\VPv{ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL.}\par Horizontal restored.\newpage
+LTR-2\par\VPv[2pt]{ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL.}\par Horizontal restored.\newpage
+RTL-0\par\VerticalRTL\VPv{ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL.}\par Horizontal restored.\newpage
+RTL-2\par\VPv[2pt]{ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL. ABC  DEFG HI, JKL.}\par Horizontal restored.
+\typeout{IMPE-TEST-VERTICAL-WRAPPING-PASS}
+\end{document}
