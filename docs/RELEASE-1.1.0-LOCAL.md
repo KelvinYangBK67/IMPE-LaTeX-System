@@ -19,7 +19,7 @@ or create a GitHub Release until every applicable release gate succeeds.
    `scripts/build_showcase.ps1 -OutputRoot dist/showcase` to produce a copy
    without modifying the canonical source directory.
 4. Synchronize English, German and Traditional Chinese manuals, including
-   obsolete XSR 0.10, `texlua` external-PDF and `\\UseFeature{xsr}` explanations.
+   obsolete XSR 0.10, `texlua` external-PDF and `\UseFeature{xsr}` explanations.
    Review Appendix B's hard-coded landscape pages when the Showcase changes.
 5. Rebuild/inspect the three tracked manual PDFs using
    `scripts/build_manual.ps1`. Inspect pagination, links, fonts, book margins,
