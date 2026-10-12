@@ -258,6 +258,15 @@ try {
             }
         }
     }
+    # The native NFSS local mapper previously recursed forever on textsf.
+    # Include XDV-to-PDF conversion inside the deadline, not merely TeX success.
+    & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') `
+        --timeout 30 --log (Join-Path $BuildRoot 'mlmodern-styles-command.log') -- `
+        $xelatex.Source -interaction=nonstopmode -halt-on-error `
+        "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex'
+    if ($LASTEXITCODE -ne 0) { throw 'MLModern end-to-end PDF build failed or timed out.' }
+    & python (Join-Path $TestRoot 'check_mlmodern_styles.py') (Join-Path $BuildRoot 'mlmodern-styles.pdf')
+    if ($LASTEXITCODE -ne 0) { throw 'MLModern PDF used incorrect faces.' }
     # Compile public starter templates against the latest canonical entries.
     foreach ($template in @(
         "article_en", "article_zh", "book_en", "book_zh",
