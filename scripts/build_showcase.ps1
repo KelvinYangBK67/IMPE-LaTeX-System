@@ -45,6 +45,10 @@ $portableRepo = $RepoRoot.Replace([char]92, [char]47)
 $portableWork = $WorkDir.Replace([char]92, [char]47)
 $previousTexInputs = $env:TEXINPUTS
 $previousBibInputs = $env:BIBINPUTS
+$previousEpoch = $env:SOURCE_DATE_EPOCH
+$previousForceSourceDate = $env:FORCE_SOURCE_DATE
+if (-not $env:SOURCE_DATE_EPOCH) { $env:SOURCE_DATE_EPOCH = "1790035200" }
+$env:FORCE_SOURCE_DATE = "1"
 $env:TEXINPUTS = "$portableWork//$sep$portableRepo/package//$sep$portableRepo//$sep$previousTexInputs"
 $env:BIBINPUTS = "$portableWork//$sep$previousBibInputs"
 try {
@@ -64,6 +68,8 @@ try {
 finally {
     $env:TEXINPUTS = $previousTexInputs
     $env:BIBINPUTS = $previousBibInputs
+    $env:SOURCE_DATE_EPOCH = $previousEpoch
+    $env:FORCE_SOURCE_DATE = $previousForceSourceDate
 }
 
 $ResultPdf = Join-Path $TexOutputDir "impe-showcase.pdf"
