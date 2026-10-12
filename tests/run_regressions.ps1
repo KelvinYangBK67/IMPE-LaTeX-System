@@ -334,7 +334,7 @@ try {
         }
         throw 'PDF index link semantics failed.'
     }
-    & python (Join-Path $TestRoot 'audit_pdf_links.py')  (Join-Path $BuildRoot 'hyperlink-anchors.pdf')  (Join-Path $BuildRoot 'feature-api-compat.pdf')  (Join-Path $BuildRoot 'beamer-hyperlinks.pdf')
+    & python (Join-Path $TestRoot 'audit_pdf_links.py')  (Join-Path $BuildRoot 'hyperlink-anchors.pdf')  (Join-Path $BuildRoot 'feature-api-compat.pdf')  (Join-Path $BuildRoot 'beamer-hyperlinks.pdf')  (Join-Path $BuildRoot 'hyperlink-footnote-compat.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'PDF internal link integrity audit failed.' }
     & $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" tests/font-unknown.tex | Out-Null
     if ($LASTEXITCODE -eq 0 -or
