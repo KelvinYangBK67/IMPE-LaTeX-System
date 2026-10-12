@@ -212,7 +212,8 @@ try {
         "layout-legacy-native-override",
         "layout-legacy-alias-zh",
         "citations-preloaded",
-        "beamer-hyperlinks"
+        "beamer-hyperlinks",
+        "hyperlink-footnote-compat"
     )
 
     foreach ($name in $tests) {
@@ -255,6 +256,21 @@ try {
             }
         }
     }
+    # Compile public starter templates against the latest canonical entries.
+    foreach ($template in @(
+        "article_en", "article_zh", "book_en", "book_zh",
+        "beamer_en", "beamer_zh"
+    )) {
+        $templateFile = "templates/$template/main.tex"
+        Write-Host "Running starter-template smoke test: $template"
+        & $xelatex.Source -interaction=nonstopmode -halt-on-error `
+            "-jobname=template-$template" "-output-directory=$BuildRoot" `
+            $templateFile | Out-Host
+        if ($LASTEXITCODE -ne 0) {
+            throw "Starter template did not compile: $template"
+        }
+    }
+
     $layoutNegativeTests = @{
         'usewriting-negative-source' = 'Conflicting font resource selectors'
         'usewriting-negative-generic-vertical' = 'Vertical writing requires a profile'
