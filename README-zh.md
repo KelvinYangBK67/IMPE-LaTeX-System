@@ -158,6 +158,9 @@ scripts/          建置與安裝工具
 tests/            回歸測試
 ```
 
+其餘三語手冊、Showcase、字體授權及正式封裝驗收見
+[1.1.0 本地出版收口清單](docs/RELEASE-1.1.0-LOCAL.md)。
+
 ## 發佈封裝
 
 `scripts\build_release.bat` 會生成：
