@@ -26,6 +26,7 @@
   \subimport{../features/}{impe-features-system.tex}
 \fi
 
+\typeout{IMPE-MLM-CHECKPOINT entered-system-core}
 \ExplSyntaxOn
 
 \bool_new:N \g__nextsystem_installed_bool
@@ -289,6 +290,8 @@
 
 \ExplSyntaxOn
 
+\typeout{IMPE-MLM-CHECKPOINT before-class-defaults}
 \__nextsystem_apply_class_defaults:
+\typeout{IMPE-MLM-CHECKPOINT after-class-defaults}
 
 \ExplSyntaxOff
