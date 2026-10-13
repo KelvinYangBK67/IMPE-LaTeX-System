@@ -1,10 +1,10 @@
 {
   "upstream": "KelvinYangBK67/xetex-stack-renderer",
-  "commit": "30520437e87c9f98301f7ae7e0c200711541edc9",
-  "version": "1.1",
+  "commit": "1de7f672830786d1d2a1bea6d05e9e15173352cb",
+  "version": "1.2",
   "git_blobs": {
     "LICENSE": "c53cd491510552734fdd3eeb35f474fedcbe5873",
-    "README.md": "0140385d5666ffaf5029d2e6050cdf59705a47bf",
+    "README.md": "487448232a82f1425685f10728b56ff2819edb70",
     "pyproject.toml": "f941026b84ede95989783454c251cc23f7009764",
     "scripts/fetch_khitan.py": "5985b1594ccbabd65ba94abaa5cf832bb70012af",
     "scripts/fetch_noto.py": "379f54acb8cd57dc192284237ccf6d5173c95ee8",
@@ -48,8 +48,8 @@
     "tex/xsr-inline.sty": "a166902fd75469c943e73ad295b6f09ed094a450",
     "tex/xsr-khitan.sty": "4aa922bb6b51380cf59d88901b285175e60bb325",
     "tex/xsr-vector.sty": "c33dc8ef9d0954f377c2841ad9d360c2a8155737",
-    "VERSION": "9459d4ba2a0d3cc475f89ed03a13a1517c04798e",
-    "tex/xsr-version.tex": "de26429e89b3f1161475c69bebbc30e49e9e22b8",
+    "VERSION": "5625e59da8873d8077c1fb0feb605078b34b640e",
+    "tex/xsr-version.tex": "eef8712587704b3c5490d8bef8ee493618335af7",
     "src/xsr/copy_text.py": "e767e6649a1883277ec230a46d01e9ae8d6d0351"
   }
 }
