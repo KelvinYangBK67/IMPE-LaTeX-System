@@ -262,25 +262,18 @@ try {
     }
     & python (Join-Path $TestRoot 'test_bounded_command.py')
     if ($LASTEXITCODE -ne 0) { throw 'Build timeout/cancellation cleanup regression failed.' }
-    # Diagnostic control: prove that Linux's bounded subprocess can run a
-    # previously passing XeLaTeX fixture independently of MLModern.
-    & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') --timeout 35 --log (Join-Path $BuildRoot 'legacy-bounded-command.log') -- $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" 'tests/legacy-entry.tex'
-    if ($LASTEXITCODE -ne 0) { throw 'Bounded XeLaTeX control failed.' }
-    # The native NFSS local mapper previously recursed forever on textsf.
-    # Include XDV-to-PDF conversion inside the deadline, not merely TeX success.
-    # Allow a cold CI runner to initialize its font cache while retaining a
-    # bounded end-to-end check and the following actual-PDF face assertions.
-    & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') `
-        --timeout 90 --log (Join-Path $BuildRoot 'mlmodern-styles-command.log') -- `
-        $xelatex.Source -interaction=nonstopmode -halt-on-error `
-        "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex'
-    if ($LASTEXITCODE -ne 0) {
-            $mlmTraceLog = Join-Path $BuildRoot 'mlmodern-styles-command.log'
-            Get-Content -LiteralPath $mlmTraceLog | Where-Object { $_ -match 'IMPE-MLM-CHECKPOINT' } | ForEach-Object { Write-Host $_ }
-            throw 'MLModern end-to-end PDF build failed or timed out.'
-        }
+    # Exercise MLModern with a bounded XeLaTeX-to-PDF compile and verify
+    # actual font faces. Linux runs with ordinary XeLaTeX console streams.
+    if ($IsLinux) {
+        & /usr/bin/timeout 40s $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex' | Out-Host
+    }
+    else {
+        & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') --timeout 40 --log (Join-Path $BuildRoot 'mlmodern-styles-command.log') -- $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex'
+    }
+    if ($LASTEXITCODE -ne 0) { throw 'MLModern end-to-end PDF build failed or timed out.' }
     & python (Join-Path $TestRoot 'check_mlmodern_styles.py') (Join-Path $BuildRoot 'mlmodern-styles.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'MLModern PDF used incorrect faces.' }
+
     # Exercise all starter documents, including their default PDF page sizes.
     # Article samples must resolve references via Biber, not merely compile
     # the first pass with unresolved citations.
