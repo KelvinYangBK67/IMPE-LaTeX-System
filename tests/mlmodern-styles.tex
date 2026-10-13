@@ -7,7 +7,9 @@
 \tl_set:Nx \g__test_mlm_rm_tl {\rmdefault}
 \tl_set:Nx \g__test_mlm_sf_tl {\sfdefault}
 \tl_set:Nx \g__test_mlm_tt_tl {\ttdefault}
+\typeout{IMPE-MLM-CHECKPOINT before-usefont}
 \UseFont{mlmodern}
+\typeout{IMPE-MLM-CHECKPOINT after-usefont}
 \ExplSyntaxOn
 \str_if_eq:eeF {\rmdefault}{\g__test_mlm_rm_tl}
   {\PackageError{impe-test}{MLModern changed the document Roman default}{}}
@@ -17,14 +19,17 @@
   {\PackageError{impe-test}{MLModern changed the document mono default}{}}
 \ExplSyntaxOff
 \begin{document}
+\typeout{IMPE-MLM-CHECKPOINT before-roman}
 \MLM{Roman}\par
 \MLM{\textbf{Bold}}\par
 \MLM{\textit{Italic}}\par
 \MLM{\textbf{\textit{BoldItalic}}}\par
+\typeout{IMPE-MLM-CHECKPOINT before-sans}
 \MLM{\textsf{Sans}}\par
 \MLM{\textsf{\textbf{SansBold}}}\par
 \MLM{\textsf{\textit{SansItalic}}}\par
 \MLM{\textsf{\textbf{\textit{SansBoldItalic}}}}\par
+\typeout{IMPE-MLM-CHECKPOINT before-mono}
 \MLM{\texttt{Mono}}\par
 Restored horizontal text.
 \typeout{IMPE-TEST-MLMODERN-STYLES-PASS}
