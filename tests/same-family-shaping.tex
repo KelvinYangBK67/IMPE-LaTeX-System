@@ -23,5 +23,25 @@
 
 \begin{document}
 Automatic Old Hangul: ꥠᅡퟋ〮
+
+% Under the explicit \KR local face, xeCJK must NOT run per-character
+% interchar code between precomposed LV + archaic T, L+V+T, and U+302E.
+% The glyphs are intentionally not interpreted by this public-font fixture
+% (the font is a Latin Modern placeholder); the routing invariant is real.
+\XeTeXinterchartokenstate=1\relax
+\KR{%
+  \ifnum\XeTeXinterchartokenstate=0\relax
+    \typeout{IMPE-TEST-HANGUL-CLUSTER-LOCAL-PASS}%
+  \else
+    \errmessage{Hangul local cluster shaping is split by xeCJK}%
+  \fi
+  듀ᇰ 듀ᇰ 셔ᇰ 셔ᇰ 호ᇙ 호ᇙ 셔ᇰ〮
+  \textbf{셔ᇰ〮}
+}
+\ifnum\XeTeXinterchartokenstate=1\relax
+  \typeout{IMPE-TEST-HANGUL-CLUSTER-SCOPED-PASS}%
+\else
+  \errmessage{Hangul local leaked the XeTeX interchar state}%
+\fi
 \typeout{IMPE-TEST-SAME-FAMILY-SHAPING-PASS}
 \end{document}
