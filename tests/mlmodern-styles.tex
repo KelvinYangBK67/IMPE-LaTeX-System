@@ -1,6 +1,6 @@
 \documentclass{article}
 \newwrite\MLMtrace
-\newcommand\MLMstage[1]{\immediate\openout\MLMtrace=tests/build/mlmodern-stage.txt\immediate\write\MLMtrace{#1}\immediate\closeout\MLMtrace}
+\newcommand\MLMstage[1]{\immediate\openout\MLMtrace=mlmodern-stage.txt\immediate\write\MLMtrace{#1}\immediate\closeout\MLMtrace}
 \MLMstage{before-impe-package}
 \usepackage{impe}
 \MLMstage{after-impe-package}
