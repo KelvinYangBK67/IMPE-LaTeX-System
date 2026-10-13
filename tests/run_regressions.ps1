@@ -270,7 +270,11 @@ try {
         --timeout 90 --log (Join-Path $BuildRoot 'mlmodern-styles-command.log') -- `
         $xelatex.Source -interaction=nonstopmode -halt-on-error `
         "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex'
-    if ($LASTEXITCODE -ne 0) { throw 'MLModern end-to-end PDF build failed or timed out.' }
+    if ($LASTEXITCODE -ne 0) {
+            $mlmTraceLog = Join-Path $BuildRoot 'mlmodern-styles-command.log'
+            Get-Content -LiteralPath $mlmTraceLog | Where-Object { $_ -match 'IMPE-MLM-CHECKPOINT' } | ForEach-Object { Write-Host $_ }
+            throw 'MLModern end-to-end PDF build failed or timed out.'
+        }
     & python (Join-Path $TestRoot 'check_mlmodern_styles.py') (Join-Path $BuildRoot 'mlmodern-styles.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'MLModern PDF used incorrect faces.' }
     # Exercise all starter documents, including their default PDF page sizes.
