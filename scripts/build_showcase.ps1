@@ -53,7 +53,18 @@ $FontRoot = (Join-Path $RepoRoot "assets/fonts").Replace([char]92, [char]47)
 $sep = [IO.Path]::PathSeparator
 $portableRepo = $RepoRoot.Replace([char]92, [char]47)
 $portableWork = $WorkDir.Replace([char]92, [char]47)
+$VendorXsrRoot = Join-Path $RepoRoot "vendor/xsr"
+$VendorXsrTex = Join-Path $VendorXsrRoot "tex"
+$VendorXsrPython = Join-Path $VendorXsrRoot "src"
+$VendorKhitanSty = Join-Path $VendorXsrTex "xsr-khitan.sty"
+if (-not (Test-Path -LiteralPath $VendorKhitanSty) -or
+    -not (Test-Path -LiteralPath (Join-Path $VendorXsrPython "xsr/renderer.py"))) {
+    throw "Showcase requires the bundled vendor/xsr TeX and Python runtime."
+}
+$portableVendorTex = $VendorXsrTex.Replace([char]92, [char]47)
+$portableVendorPython = $VendorXsrPython.Replace([char]92, [char]47)
 $previousTexInputs = $env:TEXINPUTS
+$previousPythonPath = $env:PYTHONPATH
 $previousBibInputs = $env:BIBINPUTS
 $previousEpoch = $env:SOURCE_DATE_EPOCH
 $previousForceSourceDate = $env:FORCE_SOURCE_DATE
@@ -61,9 +72,23 @@ if (-not $env:SOURCE_DATE_EPOCH) { $env:SOURCE_DATE_EPOCH = "1790035200" }
 $env:FORCE_SOURCE_DATE = "1"
 # Explicit core/catalog paths resolve from the repository root. Recursing the
 # entire repository also finds stale showcase .toc/.bbl files outside staging.
-$env:TEXINPUTS = "$portableWork//$sep$portableRepo/package//$sep$portableRepo/$sep$previousTexInputs"
+# The XSR runtime MUST precede the user's previously installed TeX package;
+# IMPE source checkout is otherwise capable of accidentally loading an older
+# user TEXMF copy even when vendor/xsr has been updated.
+$env:TEXINPUTS = "$portableWork//$sep$portableRepo/package//$sep$portableVendorTex//$sep$portableRepo/$sep$previousTexInputs"
+# XSR's TeX bridge can use an installed IMPE private Python, but its imported
+# renderer implementation must be the matching vendored source for this build.
+$env:PYTHONPATH = "$portableVendorPython$sep$previousPythonPath"
 $env:BIBINPUTS = "$portableWork//$sep$previousBibInputs"
 try {
+    $xsrResolved = @(& kpsewhich xsr-khitan.sty)
+    if ($LASTEXITCODE -ne 0 -or $xsrResolved.Count -ne 1 -or
+        [IO.Path]::GetFullPath($xsrResolved[0]) -ne [IO.Path]::GetFullPath($VendorKhitanSty)) {
+        throw "Showcase XSR resolution failed: expected $VendorKhitanSty; got $($xsrResolved -join ', ')."
+    }
+    Write-Host "Showcase XSR TeX source: $($xsrResolved[0])"
+    Write-Host "Showcase XSR vendored version: $((Get-Content -LiteralPath (Join-Path $VendorXsrRoot 'VERSION') -Raw).Trim())"
+
     Push-Location $WorkDir
     try {
         foreach ($pass in @(1, 2, 3)) {
@@ -90,6 +115,7 @@ try {
 }
 finally {
     $env:TEXINPUTS = $previousTexInputs
+    $env:PYTHONPATH = $previousPythonPath
     $env:BIBINPUTS = $previousBibInputs
     $env:SOURCE_DATE_EPOCH = $previousEpoch
     $env:FORCE_SOURCE_DATE = $previousForceSourceDate
