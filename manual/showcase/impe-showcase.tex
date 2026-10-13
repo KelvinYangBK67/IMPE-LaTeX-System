@@ -196,7 +196,7 @@ Sans bold italic \\
 
 \StyleCategory{Ancient Near Eastern scripts}
 \StyleRow{Cuneiform}{\CU}{𒁾𒊬}
-\StyleRow{Egyptian Hieroglyphs}{\EG}{𓂋𓐰𓈖 𓆎𓐱𓅓𓐰𓏏𓊖}
+\StyleRow{Egyptian Hieroglyphs}{\EG}{𓆓𓐳𓂧𓇋𓐰𓈖𓌞𓅱𓀀𓇋𓈎𓐰𓂋𓐰𓏛}
 
 \StyleCategory{East Asian scripts and Han families}
 \StyleRow{Bopomofo}{\ZY}{ㄅㄆㄇㄈ}
@@ -478,17 +478,18 @@ than a critical edition.
 \section{Complex Shaping and Stacked Sequences}
 % ==========================================================================
 
-\Term[sort=OpenType shaping]{OpenType shaping}
-[generic complex shaping] is tested here through explicit local families.
-This deliberately separates shaping from Unicode-range ownership: if a local
-specimen is wrong, the failure belongs to the selected family or shaping path
-through the selected local family and shaping path. Khitan Small Script is
-recorded through its current linear fallback form.
+Two kinds of composition meet on these pages. Devanagari, Tibetan,
+Brahmi, Kharoshthi, and Thai rely on the shaping of ordinary Unicode text
+by the selected OpenType fonts. Egyptian Hieroglyphs and Khitan Small
+Script instead use XSR to arrange signs into two-dimensional units while
+preserving their original Unicode sequences.
+\index{OpenType shaping}\index{Two-dimensional composition}
 
 \subsection{Devanagari}
 
-The Sanskrit local family exercises conjuncts, virama behavior, pre-base and
-post-base vowel signs, and longer clusters through explicit local selection.
+Devanagari makes conjunct consonants, vowel signs, and the virama visible
+in the shapes of its syllables. The Sanskrit family sets the following
+forms with the same typeface used in the verse below.
 
 \begin{TableBookX}
   {L L}
@@ -507,60 +508,50 @@ saṃskṛtam & \SA{संस्कृतम्} \\
 oṃ & \SA{ॐ} \\
 \end{TableBookX}
 
-A longer local specimen:
+The opening of the \emph{Bhagavadgītā} (1.1):
 
 \begin{ExampleBlock}
-\SA{धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।
-संस्कृतवाक्यानि देवनागर्या लिखितानि सन्ति।}
+\SA{धृतराष्ट्र उवाच।
+धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।
+मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥}
 \end{ExampleBlock}
 
 \subsection{Tibetan}
 
-Tibetan provides a visible example of generic vertical stacking inside one
-local shaping run.
+Tibetan syllables can contain stacked consonants within a single
+\emph{tsheg}-delimited unit. The short forms below are followed by a
+connected passage from the traditional Four Immeasurables prayer.
 
 \begin{TableBookX}
   {L L}
-  {Tibetan stack specimens}
+  {Tibetan consonant-stack specimens}
   {tab:tibetan-shaping}
-Type & Specimen \\
+Transliteration & Specimen \\
 \midrule
-stack & \TI{བསྒྲུབས་} \\
-stack & \TI{བརྒྱུད་} \\
-stack & \TI{བསྟན་} \\
-stack & \TI{རྒྱལ་} \\
-stack & \TI{དབྱངས་} \\
+bsgrubs & \TI{བསྒྲུབས་} \\
+brgyud & \TI{བརྒྱུད་} \\
+bstan & \TI{བསྟན་} \\
+rgyal & \TI{རྒྱལ་} \\
+dbyangs & \TI{དབྱངས་} \\
 \end{TableBookX}
 
-A longer local paragraph exercises Tibetan shaping and line breaking under
-ordinary document width:
-
-\TI{བོད་ཡིག་ནི་བོད་ཀྱི་སྐད་ཡིག་འབྲི་བའི་ཡི་གེའི་མ་ལག་ཅིག་ཡིན་ཞིང་། ཚིག་དང་ཚིག་གི་བར་ལ་ཚེག་གིས་མཚམས་འབྱེད་པ་དང་། ཡི་གེ་མང་པོ་ཞིག་མགོ་ཅན་དང་འདོགས་ཅན་དུ་སྦྱར་ནས་ཚེག་བར་གཅིག་གི་ནང་དུ་སྤུངས་ཏེ་འབྲི་དགོས།དཔེར་ན་བསྒྲུབས་པ་དང་། བརྒྱུད་པ། བསྟན་པ། རྒྱལ་ཁབ། དབྱངས་ཅན་ལྟ་བུའི་ཚིག་ནང་དུ་ཡི་གེ་མང་པོ་སྦྱར་ཡོད་པས། ཡིག་གཟུགས་ཀྱི་སྤུངས་སྟངས་དང་ཚེག་བར་གྱི་བར་ཐག་གཉིས་ཀ་ཡང་དག་པར་སྟོན་དགོས། ཚིག་ཕྲེང་རིང་པོ་ཞིག་ཤོག་ངོས་ཀྱི་ཞེང་ཚད་ལས་བརྒལ་བའི་སྐབས་སུ། ཚེག་གི་རྗེས་སུ་རང་བཞིན་གྱིས་ཕྲེང་བ་གསར་པར་འགྲོ་ཐུབ་པ་དང་། སྔ་ཕྱིའི་ཡི་གེའི་སྤུངས་སྟངས་དང་ཚིག་གི་གོ་རིམ་མི་འཁྲུག་པ་གལ་ཆེ། དེའི་ཕྱིར་ཚིག་ཕྲེང་རིང་པོ་འདིས་བོད་ཡིག་གི་གཟུགས་སྦྱོར་དང་། ཚེག་བར། ཕྲེང་བར། ཤད་དང་ཉིས་ཤད་ཀྱི་གནས་སྟངས། དེ་བཞིན་དུ་ཕྲེང་བ་བརྗེ་བའི་སྐབས་ཀྱི་སྤྱིའི་སྒྲིག་སྟངས་བཅས་ལ་ཚོད་ལྟ་བྱེད་ཐུབ།།}
-
-\subsection{Egyptian Hieroglyphic Composition}
-
-Egyptian Hieroglyph Format Controls arrange signs within a quadrat.
-The following specimen combines vertical and horizontal joining directly
-in its Unicode source, with XSR preserving the two-dimensional placement:
-
-\begin{center}
-  {\Large \EG{𓂋𓐰𓈖 𓆎𓐱𓅓𓐰𓏏𓊖}}
-\end{center}
+\TI{སེམས་ཅན་ཐམས་ཅད་བདེ་བ་དང་བདེ་བའི་རྒྱུ་དང་ལྡན་པར་གྱུར་ཅིག །
+སེམས་ཅན་ཐམས་ཅད་སྡུག་བསྔལ་དང་སྡུག་བསྔལ་གྱི་རྒྱུ་དང་བྲལ་བར་གྱུར་ཅིག །
+སེམས་ཅན་ཐམས་ཅད་སྡུག་བསྔལ་མེད་པའི་བདེ་བ་དང་མི་འབྲལ་བར་གྱུར་ཅིག །
+སེམས་ཅན་ཐམས་ཅད་ཉེ་རིང་ཆགས་སྡང་དང་བྲལ་བའི་བཏང་སྙོམ་ལ་གནས་པར་གྱུར་ཅིག །}
 
 \subsection{Brahmi, Kharoshthi, and Thai}
 
-Brahmi is provided through two local families. The redistributable Noto
-family provides broad Brahmi coverage, but in the current IMPE/\XeTeX~setup
-its current shaping produces linear forms for some conjunct sequences.
-Segoe UI Historic is therefore exposed through \texttt{\textbackslash SEG}
-as an alternative reference family and produces the intended stacking in
-these cases. Because Segoe UI Historic is a Microsoft Windows font, its font
-binary remains a user-supplied local resource; the local command works when
-the font is supplied or already installed.
+The Brahmi example is set in Noto Sans Brahmi and Segoe UI Historic to
+compare the treatment of a conjunct-bearing sequence. The latter is a
+user-supplied Microsoft typeface; the two families can have different
+shaping coverage. Kharoshthi joins consonants and vowel marks in
+right-to-left order, while Thai combines tone and vowel marks with
+dictionary-based line-breaking opportunities.
 
 \begin{TableBookX}
   {L L}
-  {Additional generic-shaping specimens}
+  {Indic and Thai shaping specimens}
   {tab:generic-shaping}
 Script / family & Specimen \\
 \midrule
@@ -574,18 +565,50 @@ Thai &
   \TH{ภาษาไทย กำ กิ กี้ เก้า} \\
 \end{TableBookX}
 
+\noindent
+\TH{ในห้องสมุดเก่า หนังสือแต่ละเล่มเก็บเรื่องราวของผู้คนต่างยุคสมัยไว้ และผู้อ่านแต่ละคนอาจค้นพบความหมายใหม่ในหน้าเดียวกัน}
+
+\subsection{Egyptian Hieroglyphic Composition}
+
+The opening of the \emph{Tale of the Shipwrecked Sailor} supplies an
+attested sequence of Egyptian quadrats, not an invented arrangement.
+The first three numbered lines below follow Bob Richmond's horizontal
+UMdC transcription, adapted from JSesh exemplars with reference to
+James P. Allen's edition. Editorial colour and line markup have been
+omitted; the original EHFC joining and insertion characters remain.
+\index{Egyptian Hieroglyph Format Controls}
+
+\noindent\textit{Line 1}\par
+\noindent{\large\EG{𓆓𓐳𓂧𓇋𓐰𓈖𓌞𓅱𓀀𓇋𓈎𓐰𓂋𓐰𓏛𓅱𓍒𓄿𓏜}}\par
+\medskip
+\noindent\textit{Line 2}\par
+\noindent{\large\EG{𓄣𓐱𓏤𓐰𓎡𓄂𓐰𓂝𓀀𓅓𓂝𓐰𓎡𓄖𓐰𓂻𓈖𓐰𓈖𓐰𓏥}}\par
+\medskip
+\noindent\textit{Line 3}\par
+\noindent{\large\EG{𓄚𓐰𓈖𓏌𓅱𓉐𓊏𓐰𓊪𓂡𓐍𓐰𓂋𓊪𓐱𓏲𓐰𓆱}}\par
+
+\smallskip
+\noindent
+Source: \href{https://github.com/HieroglyphsEverywhere/UMdC/blob/master/Samples/ShipwreckedSailorHorizontal.umdc}
+{ShipwreckedSailorHorizontal.umdc}. The extant manuscript is in
+hieratic script; this is a modern hieroglyphic transcription.
+
 \subsection{Khitan Small Script}
 
-Khitan Small Script is composed as two-dimensional clusters from the original
-Unicode sequence. The local \texttt{\textbackslash KHS} command uses XSR by
-default. Both ordinary paired clusters and a Type B cluster marked with
-U+16FE4 are shown below.
+XSR composes Khitan Small Script characters into two-dimensional
+clusters directly from their Unicode source. Ordinary clusters and
+the Type B form marked by U+16FE4 can be compared without an
+intermediate linear rendering.
+\index{Khitan Small Script}
 
 \begin{center}
+\textbf{Ordinary clusters}\par
+\smallskip
 \KHS{𘲇 𘰺𘱹𘰻 𘱿𘱤 𘱚𘮒𘲦}
 
 \medskip
-
+\textbf{Type B and additional clusters}\par
+\smallskip
 \KHS{𘮦𖿤𘲲 𘰕𘲆𘮒 𘲵𘯺𘬾𘯺}
 \end{center}
 
