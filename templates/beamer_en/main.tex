@@ -1,70 +1,41 @@
 % !TeX program = xelatex
-\documentclass[aspectratio=169]{impebeamer}
+\documentclass{impebeamer} % IMPE defaults to 16:9.
 
 \UseTemplateSet{
   features = {tables,image}
 }
 
-\title{English Beamer Template}
-\subtitle{A concise subtitle below the main title}
+\title{Presentation Title}
 \author{Author Name}
 \date{\today}
 
 \begin{document}
-
 \begin{frame}
   \titlepage
 \end{frame}
 
-\begin{frame}{Outline}
-  \tableofcontents
-\end{frame}
-
-\section{Background}
-
-\begin{frame}{Background}
+\section{Question}
+\begin{frame}{Research Question}
   \begin{itemize}
-    \item Use this slide to introduce the topic and motivation.
-    \item The structure is suitable for conference talks, class presentations,
-          or research updates.
-    \item Replace the placeholder text directly with real content.
+    \item What is the central problem?
+    \item Which sources are being compared?
   \end{itemize}
 \end{frame}
 
-\section{Research Questions}
-
-\begin{frame}{Research Questions}
-  \begin{enumerate}
-    \item What is the main object of study?
-    \item How has previous work approached it?
-    \item What does this presentation add?
-  \end{enumerate}
-\end{frame}
-
-\section{Material Example}
-
-\begin{frame}{Table Example}
+\section{Evidence}
+\begin{frame}{Sample Comparison}
   \begin{tabular}{ll}
-    Item & Description \\
-    \hline
-    Sources & Text samples \\
-    Method & Analysis and comparison \\
-    Result & Working observation \\
+    \toprule
+    Source & Observation \\
+    \midrule
+    A & First reading \\
+    B & Second reading \\
+    \bottomrule
   \end{tabular}
 \end{frame}
 
-\begin{frame}{Figure Placeholder}
-  \centering
-  \rule{0.75\linewidth}{0.35\linewidth}
-\end{frame}
-
 \section{Conclusion}
-
 \begin{frame}{Conclusion}
-  \begin{itemize}
-    \item This practical presentation starter includes reusable slide structure.
-    \item Add sections, citations, figures, and final takeaways as needed.
-  \end{itemize}
+  State the principal result and its significance.
 \end{frame}
-
 \end{document}
