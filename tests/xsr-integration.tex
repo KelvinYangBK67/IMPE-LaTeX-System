@@ -26,6 +26,13 @@ Stacked alias: \KHSstack{𘬁𘬂𘬃}.
 \par
 Stacked block: \KHSstackblock{𘬁𘬂 𘬁𘬂 𘬁𘬂}
 \par
+% Start a centered paragraph in vertical TeX mode: the first XSR/ActualText
+% atomic cluster must not escape to the left margin outside the paragraph.
+\typeout{IMPE-KHS-CENTER-BEGIN}
+\begin{center}
+\KHS{𘬁𘬂 𘬁𖿤𘬂}
+\end{center}
+\typeout{IMPE-KHS-CENTER-END}
 Glyph: \IMPEGlyph{test-sign}; scaled: \IMPEGlyph[scale=1.2,raise=1pt]{test-sign};
 trimmed: \IMPEGlyph[trim={1pt 1pt 1pt 1pt}]{test-sign}.
 \par
