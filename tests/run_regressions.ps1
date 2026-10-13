@@ -26,7 +26,9 @@ $ReleaseDateTeX = $ReleaseDateIso.Replace('-', '/')
 # but do not generate falsely versioned public ZIP/PDF assets from an older
 # showcase edition. The actual release builder retains its strict version
 # gate, and release checks resume automatically after documentation catches up.
-$RunFormalReleaseChecks = -not $SkipRelease
+# Public-font fixtures intentionally lack the private font library needed for
+# canonical Showcase/archive builds. CI must validate runtime/templates only.
+$RunFormalReleaseChecks = -not $SkipRelease -and -not $PublicFonts
 $ShowcaseSourceForRelease = Join-Path $RepoRoot 'manual/showcase/impe-showcase.tex'
 if (-not (Test-Path -LiteralPath $ShowcaseSourceForRelease)) {
     throw "Required canonical showcase source is missing: $ShowcaseSourceForRelease"
