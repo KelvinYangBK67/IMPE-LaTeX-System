@@ -258,6 +258,8 @@ try {
             }
         }
     }
+    & python (Join-Path $TestRoot 'test_bounded_command.py')
+    if ($LASTEXITCODE -ne 0) { throw 'Build timeout/cancellation cleanup regression failed.' }
     # The native NFSS local mapper previously recursed forever on textsf.
     # Include XDV-to-PDF conversion inside the deadline, not merely TeX success.
     & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') `
