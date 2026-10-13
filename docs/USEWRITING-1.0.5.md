@@ -1,9 +1,8 @@
 # IMPE writing and font selection (1.0.5)
 
-Historical API introduction from 1.0.5 (merged PR #23), maintained as the
-reference for the Writing API supported in 1.1.0. The 1.1.0 manual and Showcase
-revision is reserved for local publication closure. The filename preserves the
-version in which the API was introduced; it is not an obsolete API.
+Introduced in 1.0.5 and supported in IMPE 1.1.0, this API separates
+Unicode Writing Profiles from font resources. The filename records its
+original release.
 New public interfaces are `\UseWriting`, `\DeclareWriting`, and `\Writing`.
 The existing `\Font` is redesigned as a forced-local preset selector.
 `\UseFont` retains its original `[local|global]` mode and historic presets;
@@ -240,8 +239,8 @@ builders, and XSR come from the selected Profile's default declaration;
 font faces and glyph fallback come from the selected Pack or explicit font.
 This first-phase adapter preserves existing local/global binding pathways
 rather than replacing them with a new competing XeTeX interchar router.
-It does **not yet claim complete Unicode auto-binding arbitration** for
-overlapping new profiles.
+Overlapping new Unicode profiles still use the established binding
+and routing rules.
 
 The new `\\UseWriting` entry is not a stand-in for inline text commands:
 existing `\\MOv`, `\\IMPEEgyptianText`, etc. remain applicable.
@@ -279,9 +278,9 @@ to execute through the old loader under the shared preset dispatcher.
 - xeCJK's family chain is rebuilt when the requested serif/sans, weight or
   shape coordinate changes; cache revision checks avoid stale font selection.
   Repeated misses at an unchanged coordinate reuse the installed chain.
-- **No automatic non-CJK missing-glyph fallback** is provided or planned as
-  part of this feature. Non-CJK fonts retain their existing fontspec/renderer
-  behavior; IMPE does not split complex-script text into independent glyphs.
+- **Automatic glyph-miss fallback applies only to CJK.** Other scripts retain
+  their fontspec/renderer behavior, preserving shaping across character
+  sequences.
 
 Tests: `tests/fallback-native.tex`, `tests/fallback-precedence.tex`,
 `tests/fallback-profile-identity.tex`, `tests/fallback-late-registration.tex`,

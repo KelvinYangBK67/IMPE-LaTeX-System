@@ -8,10 +8,9 @@ IMPE supplies high-quality, complete **defaults**, a small set of convenience
 settings, and access to **native LaTeX interfaces** for everything else. It is
 not a replacement for geometry, fancyhdr, setspace or Beamer.
 
-This change intentionally adjusts the appearance of the canonical classes.
-Their names, previous \UseLayout and \LayoutSetup interfaces, and historical
-component IDs remain available. Existing PDFs may repaginate unless the author
-uses `\UseLegacyLayout` to restore the 1.0.5 layout profile.
+The canonical classes have publication-oriented layout defaults. Existing
+\UseLayout and \LayoutSetup commands and historical component IDs remain
+supported; use `\UseLegacyLayout` to restore the 1.0.5 layout parameters.
 
 ## Canonical class defaults
 
@@ -132,4 +131,3 @@ not a promise of byte-for-byte identical PDFs.
 - `core/layout/impe-layout-config.tex`: existing convenience parameters
 - `tests/layout-publication-*.tex`: size, typography and override regressions
 
-The **manuals and showcase** are intentionally not regenerated for this internal source version until a formal publication update.
