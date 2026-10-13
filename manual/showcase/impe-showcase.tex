@@ -52,14 +52,14 @@
 \raggedbottom
 
 \newcommand{\ShowcaseStyles}[2]{%
-  #1{#2} &
-  #1{\textbf{#2}} &
-  #1{\textit{#2}} &
-  #1{\textbf{\textit{#2}}} &
-  #1{\textsf{#2}} &
-  #1{\textsf{\textbf{#2}}} &
-  #1{\textsf{\textit{#2}}} &
-  #1{\textsf{\textbf{\textit{#2}}}}%
+  \leavevmode #1{#2} &
+  \leavevmode #1{\textbf{#2}} &
+  \leavevmode #1{\textit{#2}} &
+  \leavevmode #1{\textbf{\textit{#2}}} &
+  \leavevmode #1{\textsf{#2}} &
+  \leavevmode #1{\textsf{\textbf{#2}}} &
+  \leavevmode #1{\textsf{\textit{#2}}} &
+  \leavevmode #1{\textsf{\textbf{\textit{#2}}}}%
 }
 
 \newcommand{\StyleRow}[3]{%
@@ -210,12 +210,12 @@ Sans bold italic \\
 \StyleRow{Tangut}{\TG}{𗼇𘝞}
 
 \StyleCategory{Inner Asian scripts}
-\StyleRow{Khitan Small Script}{\KHS}{𘲇 𘰺𘱹𘰻 𘮦𖿤𘲲}
+\StyleRow{Khitan Small Script}{\KHS}{𘰺𘱹𘰻 𘮦𖿤𘲲}
 \StyleRow{Mongolian}{\MOv}{ᠮᠣᠩᠭᠣᠯ}
 \StyleRow{Mongolian Baiti}{\MObv}{ᠮᠣᠩᠭᠣᠯ}
 \StyleRow{Manchu}{\MCv}{ᠮᠠᠨᠵᡠ}
 \StyleRow{Old Turkic}{\OT}{𐱅𐰇𐰼𐰜}
-\StyleRow{Old Uyghur}{\UY}{𐽳𐽶𐽲𐽳𐽾}
+\StyleRow{Old Uyghur}{\UYv}{𐽳𐽶𐽲𐽳𐽾}
 
 \StyleCategory{Vietnamese writing traditions}
 \StyleRow{Latin · Quốc Ngữ}{\VI}{Quốc ngữ}
@@ -291,7 +291,7 @@ In a quiet manuscript room, a catalogue entry may be the beginning of a
 much longer story.
 
 \AR{%
-في قاعة المخطوطات رفوف من الخشب الداكن، وعلى الرفوف كتب نُسخت في مدن مختلفة وعصور متباعدة. تحمل بعض الصفحات أسماء ناسخين وقرّاء، وتحفظ الهوامش أسئلة صغيرة تركها أشخاص لا نعرف عن حياتهم إلا القليل. في سجل قديم ورد تاريخ ١٢٥٠ هـ، أما فهرس المكتبة الحديث فيشير إلى المخطوط بالرمز \LR{MS 27}. وحين يقارن الباحث نسختين من الكتاب نفسه يجد أن اختلاف كلمة واحدة قد يكشف طريق النص من مدينة إلى أخرى. لهذا لا تكون القراءة عودة إلى الماضي وحده؛ إنها حوار جديد مع أناس حفظوا الكلمات ونقلوها إلى من جاء بعدهم.
+في قاعة المخطوطات رفوف من الخشب الداكن، وعلى الرفوف كتب نُسخت في مدن مختلفة وعصور متباعدة. تحمل بعض الصفحات أسماء ناسخين وقرّاء، وتحفظ الهوامش أسئلة صغيرة تركها أشخاص لا نعرف عن حياتهم إلا القليل. تُظهر إحدى النسخ آثار التصحيحات التي أضافها ناسخ لاحق، وتروي حواشيها كيف انتقل الكتاب بين أيدي القرّاء. وحين يقارن الباحث نسختين من الكتاب نفسه يجد أن اختلاف كلمة واحدة قد يكشف طريق النص من مدينة إلى أخرى. لهذا لا تكون القراءة عودة إلى الماضي وحده؛ إنها حوار جديد مع أناس حفظوا الكلمات ونقلوها إلى من جاء بعدهم.
 \par
 }
 
@@ -299,9 +299,6 @@ A fully vocalized couplet by al-Mutanabbī offers another typographic
 rhythm, with its vowel marks and joined letterforms:
 
 \AR{أَعَزُّ مَكَانٍ فِي الدُّنَى سَرْجُ سَابِحٍ، وَخَيْرُ جَلِيسٍ فِي الزَّمَانِ كِتَابُ.}
-
-The catalogue calls the volume \AR{كتاب الحكايات القديمة} (MS 27),
-before returning to its Latin annotation.
 
 \subsection{Urdu}
 
@@ -423,22 +420,22 @@ phrase different appearances in vertical setting:
 
 \subsection{Manchu}
 
-A short Manchu passage is set vertically, with its opening sentence shown
-also in the horizontal reference form.
+The same Manchu passage appears in both orientations, allowing direct
+comparison without changing the text.
 
 \noindent
 \begin{minipage}[t]{0.47\linewidth}
 \raggedright
-\textbf{Horizontal excerpt}
+\textbf{Horizontal reference}
 
 \medskip
 
-\MC{ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᠮᠠᠨᠵᡠ ᠪᡳᡨᡥᡝ ‍ᡳ ᠠᡵᠠᠮᠪᡳ᠃}
+\MC{ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᠮᠠᠨᠵᡠ ᠪᡳᡨᡥᡝ ‍ᡳ ᠠᡵᠠᠮᠪᡳ᠃ ᠪᡳ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᡩᡝ ᠯᠣᠨᡤᡤᠣ ᡤᡳᠰᡠᠨ ᠪᡝ ᠠᡵᠠᠮᠪᡳ᠂ ᡨᡝᡵᡝᠴᡳ ᡤᡳᠰᡠᠨ ᡨᠠᡨᠠᠮᡝ ᡤᡝᠨᡝᠮᠪᡳ᠃}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.47\linewidth}
 \raggedright
-\textbf{Vertical passage}
+\textbf{Vertical}
 
 \medskip
 
@@ -540,33 +537,50 @@ dbyangs & \TI{དབྱངས་} \\
 སེམས་ཅན་ཐམས་ཅད་སྡུག་བསྔལ་མེད་པའི་བདེ་བ་དང་མི་འབྲལ་བར་གྱུར་ཅིག །
 སེམས་ཅན་ཐམས་ཅད་ཉེ་རིང་ཆགས་སྡང་དང་བྲལ་བའི་བཏང་སྙོམ་ལ་གནས་པར་གྱུར་ཅིག །}
 
+\medskip
+\noindent\textbf{Sanskrit transcribed in Tibetan letters.}
+The \emph{Heart Sūtra} mantra illustrates Sanskrit consonant stacks,
+long-vowel marks, anusvāra, and the \emph{svāhā} cluster without
+switching away from the Tibetan-script font:
+
+\begin{ExampleBlock}
+\TI{ཏདྱ་ཐཱ། ག་ཏེ་ག་ཏེ་པཱ་ར་ག་ཏེ།
+པཱ་ར་སཾ་ག་ཏེ། བོ་དྷི་སྭཱ་ཧཱ།}
+\end{ExampleBlock}
+
 \subsection{Brahmi, Kharoshthi, and Thai}
 
-The Brahmi example is set in Noto Sans Brahmi and Segoe UI Historic to
-compare the treatment of a conjunct-bearing sequence. The latter is a
-user-supplied Microsoft typeface; the two families can have different
-shaping coverage. Kharoshthi joins consonants and vowel marks in
-right-to-left order, while Thai combines tone and vowel marks with
-dictionary-based line-breaking opportunities.
+The same Sanskrit sentences from the \emph{Taittirīya Upaniṣad}
+(1.11.1: \emph{satyaṃ vada, dharmaṃ cara, svādhyāyān mā pramadaḥ})
+appear in two Brahmi fonts, giving their conjuncts and diacritics a
+direct side-by-side comparison. The Kharoshthi specimen represents
+those same Sanskrit sentences in Kharoshthi characters, in
+right-to-left order. These are illustrative script transcriptions,
+not claims about the script of the surviving Upaniṣad manuscript.
+The Thai passage is continuous contemporary prose, allowing
+word-level line breaking and vowel/tone placement to be inspected
+within a constrained table column.
 
 \begin{TableBookX}
-  {L L}
-  {Indic and Thai shaping specimens}
+  {P{0.26\linewidth} L}
+  {Indic and Thai composition in continuous text}
   {tab:generic-shaping}
 Script / family & Specimen \\
 \midrule
 Brahmi / Noto &
-  \BR{𑀲𑀢𑁆𑀬𑀁 𑀯𑀤, 𑀥𑀭𑁆𑀫𑀁 𑀘𑀭.} \\
+  \BR{𑀲𑀢𑁆𑀬𑀁 𑀯𑀤𑁇 𑀥𑀭𑁆𑀫𑀁 𑀘𑀭𑁇 𑀲𑁆𑀯𑀸𑀥𑁆𑀬𑀸𑀬𑀸𑀦𑁆 𑀫𑀸 𑀧𑁆𑀭𑀫𑀤𑀂𑁇} \\
 Brahmi / Segoe Historic &
-  \SEG{𑀲𑀢𑁆𑀬𑀁 𑀯𑀤, 𑀥𑀭𑁆𑀫𑀁 𑀘𑀭.} \\
+  \SEG{𑀲𑀢𑁆𑀬𑀁 𑀯𑀤𑁇 𑀥𑀭𑁆𑀫𑀁 𑀘𑀭𑁇 𑀲𑁆𑀯𑀸𑀥𑁆𑀬𑀸𑀬𑀸𑀦𑁆 𑀫𑀸 𑀧𑁆𑀭𑀫𑀤𑀂𑁇} \\
 Kharoshthi &
-  \KH{𐨢𐨿𐨪𐨨 𐨐𐨿𐨪𐨨 𐨯𐨿𐨪𐨬 𐨡𐨅𐨬 𐨣𐨨 𐨐𐨁 𐨐𐨂 𐨐𐨅 𐨐𐨆} \\
+  \KH{𐨯𐨟𐨿𐨩𐨎 𐨬𐨡𐩐 𐨢𐨪𐨿𐨨𐨎 𐨕𐨪𐩐 𐨯𐨿𐨬𐨌𐨢𐨿𐨩𐨌𐨩𐨌𐨣𐨿 𐨨𐨌 𐨤𐨿𐨪𐨨𐨡𐨏𐩐\par} \\
 Thai &
-  \TH{ภาษาไทย กำ กิ กี้ เก้า} \\
+  \TH{เมื่อเปิดหนังสือเก่าในห้องสมุด เราอาจพบลายมือของผู้อ่านจากหลายยุคสมัย บางคนขีดเส้นใต้ข้อความที่ชอบ บางคนเขียนคำถามไว้ริมหน้า และบางคนบันทึกวันเวลาที่อ่านจบ เรื่องราวเหล่านี้ทำให้หนังสือเล่มเดียวเป็นเหมือนบทสนทนาที่ดำเนินต่อไปข้ามกาลเวลา} \\
 \end{TableBookX}
 
 \noindent
-\TH{ในห้องสมุดเก่า หนังสือแต่ละเล่มเก็บเรื่องราวของผู้คนต่างยุคสมัยไว้ และผู้อ่านแต่ละคนอาจค้นพบความหมายใหม่ในหน้าเดียวกัน}
+The Segoe UI Historic face is a user-supplied Microsoft font; its
+shaping may differ from the redistributable Noto Sans Brahmi.
+\index{Brahmi}\index{Kharoshthi}\index{Thai line breaking}
 
 \subsection{Egyptian Hieroglyphic Composition}
 
