@@ -271,19 +271,33 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'MLModern end-to-end PDF build failed or timed out.' }
     & python (Join-Path $TestRoot 'check_mlmodern_styles.py') (Join-Path $BuildRoot 'mlmodern-styles.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'MLModern PDF used incorrect faces.' }
-    # Compile public starter templates against the latest canonical entries.
+    # Exercise all starter documents, including their default PDF page sizes.
+    # Article samples must resolve references via Biber, not merely compile
+    # the first pass with unresolved citations.
     foreach ($template in @(
         "article_en", "article_zh", "book_en", "book_zh",
         "beamer_en", "beamer_zh"
     )) {
         $templateFile = "templates/$template/main.tex"
+        $templateJob = "template-$template"
         Write-Host "Running starter-template smoke test: $template"
-        & $xelatex.Source -interaction=nonstopmode -halt-on-error `
-            "-jobname=template-$template" "-output-directory=$BuildRoot" `
-            $templateFile | Out-Host
+        & $xelatex.Source -interaction=nonstopmode -halt-on-error "-jobname=$templateJob" "-output-directory=$BuildRoot" $templateFile | Out-Host
         if ($LASTEXITCODE -ne 0) {
             throw "Starter template did not compile: $template"
         }
+        if ($template -like 'article_*') {
+            # Supply the local bibliography to Biber in the regression output
+            # directory; copied starters can compile from their own folder.
+            Copy-Item -LiteralPath (Join-Path $RepoRoot "templates/$template/references.bib") -Destination (Join-Path $BuildRoot "references.bib") -Force
+            & biber "--input-directory=$BuildRoot" "--output-directory=$BuildRoot" $templateJob | Out-Host
+            if ($LASTEXITCODE -ne 0) { throw "Starter template Biber failed: $template" }
+            foreach ($pass in 1..2) {
+                & $xelatex.Source -interaction=nonstopmode -halt-on-error "-jobname=$templateJob" "-output-directory=$BuildRoot" $templateFile | Out-Host
+                if ($LASTEXITCODE -ne 0) { throw "Starter template post-Biber pass $pass failed: $template" }
+            }
+        }
+        & python (Join-Path $TestRoot 'check_starter_templates.py') $template (Join-Path $BuildRoot "$templateJob.pdf")
+        if ($LASTEXITCODE -ne 0) { throw "Starter template PDF validation failed: $template" }
     }
 
     $layoutNegativeTests = @{
