@@ -5,9 +5,9 @@
 IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
 multilingual typesetting, and optional document features.
 
-Current source version: `1.1.0` (2026-10-12; remote-closure candidate, **not yet publicly released**). See [CHANGELOG.md](CHANGELOG.md).
+Current source version: **1.1.0** (unpublished release candidate). See [CHANGELOG](CHANGELOG.md).
 
-**Documentation status:** the English, German and Traditional Chinese manuals and the canonical showcase (TeX sources and PDFs) intentionally remain at the prior published edition. Consult the updated [writing/font API reference](docs/USEWRITING-1.0.5.md) and [font reference](docs/FONTS.md) for the 1.0.5 writing API, still supported in 1.1.0. The manuals, showcase, PDF rebuild and distributable archives will be synchronized before any formal release.
+The current API is documented here and under [`docs/`](docs/SYSTEM.md). The three-language manuals and Showcase PDFs belong to the pending [1.1.0 publication checklist](docs/RELEASE-1.1.0-LOCAL.md).
 
 ## Quick Start
 
@@ -31,16 +31,14 @@ Hello, IMPE.
 \end{document}
 ```
 
-The primary entry points are `impe.sty`, `impeart`, `impebook`,
-`impereport`, and `impebeamer`. Historical `impe*_zh` and `next*` classes
-remain compatibility wrappers for existing documents and ship in the full
-and core distributions.
-For new Chinese documents, prefer `\documentclass[lang=zh]{impeart}` (and
-analogous `impebook`, `impereport`, `impebeamer`) over the historical `_zh`
-classes. Use `\LayoutSetup{...}` and `LayoutScope` for document-wide and
+The canonical entries are `impe.sty` and the `impeart`, `impebook`,
+`impereport` and `impebeamer` classes. For Chinese documents, set the class
+option `lang=zh`, for example `\documentclass[lang=zh]{impeart}`.
+The historical `impe*_zh` and `next*` classes remain supported compatibility
+entries in the full and core distributions. Use `\LayoutSetup{...}` and `LayoutScope` for document-wide and
 paragraph-local parameters; see [Layouts](docs/LAYOUTS.md).
 
-## Layout defaults (1.0.6)
+## Layout
 
 Book defaults to ISO B5; article and report use distinct A4 layouts;
 Beamer defaults to a clean academic 16:9 theme. English and Chinese body
@@ -76,7 +74,7 @@ CJK missing glyphs use xeCJK's 2×2×2 face-priority fallback; non-CJK
 automatic missing-glyph substitution is intentionally excluded.
 See [1.0.5 Writing API](docs/USEWRITING-1.0.5.md).
 
-## Index (native-first since 1.0.7)
+## Index
 
 Enable `\UseFeature{index}` and use the native `imakeidx` commands
 `\index`, `\makeindex`, and `\printindex`. IMPE's default index
@@ -89,9 +87,8 @@ See [Feature reference](docs/FEATURES.md#index-native-first).
 
 | Area | Support |
 | --- | --- |
-| Primary document engine | XeLaTeX |
-| XeLaTeX | Supported and used by manuals, showcase, and general regressions |
-| LuaLaTeX | Legacy externalized backend removed |
+| Document engine | XeLaTeX |
+| LuaLaTeX | No supported runtime backend |
 | Unicode-range global routing | XeLaTeX |
 | Optional XSR integration | Bundled XSR 1.2, Python and XeLaTeX shell-escape/preprocess |
 | TeX Live | 2026 tested |
@@ -134,6 +131,27 @@ third-party records under `font_licenses/` belong to the source repository and,
 where applicable, the full distribution. The CTAN package contains source and
 documentation resources.
 
+## Egyptian, Khitan and inline image glyphs
+
+`fonts={egyptian,khitan_small}` loads the script-specific XSR renderers;
+`features={glyphs}` enables independently registered inline image glyphs.
+`\KHS{...}` uses native Khitan stacking. IMPE bundles **XSR 1.2** under
+`vendor/xsr/`; the full/core installer installs its Python code and dependencies
+into a private virtual environment.
+
+Python 3.11+, `venv` and `pip` are required for dynamic XSR rendering;
+first installation may need network access. Use `install.bat` or
+`scripts/install.ps1` on Windows, or `sh scripts/install.sh` on Unix.
+For a TeX-only installation, use `-SkipXsrPython` (PowerShell) or
+`IMPE_SKIP_XSR_PYTHON=1` (Unix), then configure a renderer separately if
+needed. Dynamic rendering uses XeLaTeX shell escape or XSR preprocessing;
+ordinary IMPE documents do not start Python.
+
+The core package has no bundled font binaries. XSR needs readable TTF/OTF
+files for its script backends. CTAN distributes source without running
+`pip`; the IMPE installer sets up the private Python environment.
+See [Fonts](docs/FONTS.md) and the [XSR verification checklist](docs/XSR-INSTALL-CHECKLIST-zh.md).
+
 ## Documentation
 
 - [English manual](manual/en/impe-manual-en.pdf) — reference technical edition
@@ -169,9 +187,6 @@ scripts/          build and install tooling
 tests/            regression suite
 ```
 
-The remaining source/PDF, local font-licensing and archive gates are tracked in
-[the 1.1.0 local publication checklist](docs/RELEASE-1.1.0-LOCAL.md).
-
 ## Release Packages
 
 `scripts\build_release.bat` generates:
@@ -201,11 +216,10 @@ For CI-safe public font fixtures:
 tests\run_regressions.ps1 -PublicFonts
 ```
 
-The suite covers canonical and legacy entry points, font routing, starter
-template compilation, manual builds, and installer migration. Deterministic
-CTAN packaging and archive checks run only once the Showcase is synchronized
-with the current version; the formal release builder remains strict. Local font binaries live under `assets/fonts/`; the distribution
-policy is in [assets/README.md](assets/README.md).
+The suite covers canonical and legacy entries, font routing, starter templates,
+manual builds, and installation. Release packaging additionally checks the
+tracked Showcase against a rebuilt copy. See the [local publication checklist](docs/RELEASE-1.1.0-LOCAL.md)
+for final validation and [font-library policy](assets/README.md) for approved binaries.
 
 ## Maintainer
 
@@ -215,31 +229,3 @@ for public contact and support.
 ## License
 
 MIT License. See [LICENSE](LICENSE).
-
-Since 1.0.3: `fonts={egyptian,khitan_small}` activates Unicode-aware
-Noto-backed composition; `features={glyphs}` independently enables image glyphs.
-
-### Bundled XSR 1.2
-
-The ordinary IMPE source checkout, core archive and full archive all include
-a pinned XSR 1.2 TeX/Python runtime under vendor/xsr. No additional checkout,
-submodule, or independent user-managed XSR installation is needed.
-The IMPE installer copies XSR TeX packages to user TEXMF, creates an isolated
-Python environment under ~/texmf/scripts/impe/xsr-venv (or the configured
-TexmfRoot), and installs the bundled Python project and its dependencies.
-It generates impe-xsr-runtime.tex to select the private interpreter when XSR
-is actually loaded. Global Python packages are never overwritten.
-
-Python 3.11+, venv and pip are required; first-time dependency installation
-may need network access. On Windows use .\scripts\install.ps1 or install.bat
-from a release archive; on Unix use sh scripts/install.sh or sh install.sh.
-An intentional TeX-only install can pass -SkipXsrPython on PowerShell or
-set IMPE_SKIP_XSR_PYTHON=1 on Unix, in which case script rendering needs a
-separately configured Python renderer. Ordinary IMPE documents need no Python.
-Dynamic XSR rendering still needs shell-escape, or preprocessing. Core does
-not include Noto fonts.
-
-CTAN is a source archive. TeX Live does not execute pip on package installation,
-so a CTAN-only TeX installation is not automatically a complete Python runtime.
-Use the IMPE core/full installer for the fully managed setup. XSR is pinned at 1.1
-and is independently developed upstream.
