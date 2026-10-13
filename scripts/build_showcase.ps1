@@ -43,6 +43,14 @@ if (Test-Path -LiteralPath $BuildRoot) {
 New-Item -ItemType Directory -Force -Path $WorkDir, $TexOutputDir | Out-Null
 Copy-Item -LiteralPath $SourceFile -Destination (Join-Path $WorkDir "impe-showcase.tex")
 Copy-Item -LiteralPath (Join-Path $SourceDir "references.bib") -Destination (Join-Path $WorkDir "references.bib")
+# The canonical vector figure is bundled and staged under its source path.
+$FigureSource = Join-Path $SourceDir "figures/feature-specimen.pdf"
+if (-not (Test-Path -LiteralPath $FigureSource)) {
+    throw "Showcase vector specimen missing: $FigureSource"
+}
+$FigureWorkDir = Join-Path $WorkDir "figures"
+New-Item -ItemType Directory -Force -Path $FigureWorkDir | Out-Null
+Copy-Item -LiteralPath $FigureSource -Destination (Join-Path $FigureWorkDir "feature-specimen.pdf")
 $FontRoot = (Join-Path $RepoRoot "assets/fonts").Replace([char]92, [char]47)
 [IO.File]::WriteAllText(
     (Join-Path $WorkDir "impe.local.tex"),

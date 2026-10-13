@@ -13,7 +13,6 @@
     math,
     tables,
     image,
-    lists_envs,
     citations,
     index,
     hyperlinks,
@@ -488,10 +487,12 @@ Devanagari makes conjunct consonants, vowel signs, and the virama visible
 in the shapes of its syllables. The Sanskrit family sets the following
 forms with the same typeface used in the verse below.
 
-\begin{TableBookX}
-  {L L}
-  {Devanagari shaping specimens}
-  {tab:deva-shaping}
+\begin{table}[htbp]
+  \centering
+  \caption{Devanagari shaping specimens}
+  \label{tab:deva-shaping}
+  \begin{tabularx}{\linewidth}{@{}LL@{}}
+    \toprule
 Sequence & Specimen \\
 \midrule
 kṣa & \SA{क्ष} \\
@@ -503,7 +504,9 @@ dharma & \SA{धर्म} \\
 dharmakṣetre & \SA{धर्मक्षेत्रे} \\
 saṃskṛtam & \SA{संस्कृतम्} \\
 oṃ & \SA{ॐ} \\
-\end{TableBookX}
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
 The first three verses of the \emph{Bhagavadgītā} (1.1--3)
 give a longer, continuous Sanskrit specimen with conjuncts and vowels.
@@ -524,10 +527,12 @@ Tibetan syllables can contain stacked consonants within a single
 \emph{tsheg}-delimited unit. The short forms below are followed by a
 connected passage from the traditional Four Immeasurables prayer.
 
-\begin{TableBookX}
-  {L L}
-  {Tibetan consonant-stack specimens}
-  {tab:tibetan-shaping}
+\begin{table}[htbp]
+  \centering
+  \caption{Tibetan consonant-stack specimens}
+  \label{tab:tibetan-shaping}
+  \begin{tabularx}{\linewidth}{@{}LL@{}}
+    \toprule
 Transliteration & Specimen \\
 \midrule
 bsgrubs & \TI{བསྒྲུབས་} \\
@@ -535,7 +540,9 @@ brgyud & \TI{བརྒྱུད་} \\
 bstan & \TI{བསྟན་} \\
 rgyal & \TI{རྒྱལ་} \\
 dbyangs & \TI{དབྱངས་} \\
-\end{TableBookX}
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
 \TI{སེམས་ཅན་ཐམས་ཅད་བདེ་བ་དང་བདེ་བའི་རྒྱུ་དང་ལྡན་པར་གྱུར་ཅིག །
 སེམས་ཅན་ཐམས་ཅད་སྡུག་བསྔལ་དང་སྡུག་བསྔལ་གྱི་རྒྱུ་དང་བྲལ་བར་གྱུར་ཅིག །
@@ -777,171 +784,108 @@ Character & Shanggu & Noto SC & Noto TC & Japanese & Korean \\
 \section{Document Features}
 % ==========================================================================
 
-\Term[sort=feature system]{feature system}
-[composable document modules] is demonstrated throughout this PDF, but this
-section gives each major public feature an explicit specimen as well. The
-showcase therefore tests individual modules and their coexistence in a
-realistic document.
+IMPE's feature system\index{Feature system} prepares selected, composable
+LaTeX package stacks. The specimens below use native package interfaces
+rather than the historical convenience wrappers.
 
-% --------------------------------------------------------------------------
 \subsection{Mathematics}
 % --------------------------------------------------------------------------
 
-Mathematical font selection is deliberately left at IMPE's default setting.
-The following single display combines several common mathematical alphabets,
-operators, delimiters, accents, matrices, integrals, sums, limits, radicals,
-and nested scripts as a compact stress specimen.
+The \texttt{math} feature supplies \texttt{amsmath} and
+\texttt{mathtools}. These independent identities test matrices, integrals,
+fractions, accents, cases, scripts, and mathematical alphabets without
+presenting unrelated formulae as a single derivation.
 
-\begingroup
-\small
+For a positive-definite matrix, a Gaussian integral evaluates to
+\[
+A=\begin{pmatrix}
+2&-1&0\\
+-1&2&-1\\
+0&-1&2
+\end{pmatrix},
+\qquad \det A=4,\quad\beta>0,
+\]
 \[
 \begin{aligned}
-\mathcal Z_{\beta,\mu}
-&\coloneqq
-\operatorname{Tr}_{\mathscr H}
-\exp\!\left[
--\beta
-\left(
-\widehat{\mathbf H}
--\mu\widehat{\mathbf N}
-\right)
-\right]
-\\[0.5em]
-&=
-\sum_{n=0}^{\infty}
-\frac{1}{n!}
-\int_{\mathbb R^{3n}}
-\prod_{j=1}^{n}
-\frac{d^3\mathbf p_j}{(2\pi\hbar)^3}
-\,
-\exp\!\left[
--\sum_{j=1}^{n}
-\sqrt{
-m_j^2c^4+c^2\lVert\mathbf p_j\rVert^2
-}
-\right]
-\\[0.7em]
-&\quad\times
-\det
-\begin{pmatrix}
-\displaystyle
-\frac{\partial^2\mathcal L}
-     {\partial q^i\partial q^j}
-&
-\displaystyle
-\nabla_\mu F^{\mu\nu}
-&
-\displaystyle
-\left\langle
-\psi
-\middle|
-\widehat{\mathbf H}
-\middle|
-\phi
-\right\rangle
-\\[0.9em]
-\displaystyle
-\sum_{k=1}^{\infty}\frac{(-1)^{k+1}}{k^2}
-&
-\displaystyle
-\sqrt[3]{1+\sqrt{1+\lambda^2}}
-&
-\displaystyle
-\frac{\mathbb E[X^4]-3\mathbb E[X^2]^2}
-     {\operatorname{Var}(X)^2}
-\\[0.9em]
-\displaystyle
-\oint_{|z|=1}
-\frac{\log(1+z)}{z^{r+1}}\,dz
-&
-\displaystyle
-\prod_{p\in\mathbb P}
-\left(1-p^{-s}\right)^{-1}
-&
-\displaystyle
-\lim_{\varepsilon\to0^+}
-\frac{f(x+\varepsilon)-f(x-\varepsilon)}
-     {2\varepsilon}
-\end{pmatrix}
-\\[1em]
-&\quad+
-\underbrace{
-\widetilde{\mathbf A}^{\,\dagger}{}_{\mu}{}^{\nu}
-\,
-\overline{\mathbf B}_{\nu}{}^{\rho}
-\,
-\widehat{\mathbf C}_{\rho}{}^{\mu}
-}_{\text{accented tensor contraction}}
-+
-\frac{
-\Gamma\!\left(\frac12+i\alpha\right)
-\zeta(2s)
-}{
-\sqrt{2\pi\sigma^2}
-}
-\\[0.8em]
-&\quad+
-\begin{cases}
-\displaystyle
-e^{-1/x^2}\sin(\pi/x),
-& x\ne0,
-\\[0.8em]
-0,
-& x=0,
-\end{cases}
-\\[0.8em]
-&\quad
-\xrightarrow[\alpha\to0]{\beta\to\infty}
-\left(
-\bigoplus_{j=1}^{r}\mathbb C^{\,n_j}
-\right)
-\otimes
-\bigwedge\nolimits^{k}V
-\\[0.8em]
-&\quad
-\Longrightarrow
-\mathbb P
-\left(
-|X-\mathbb E[X]|\ge t
-\right)
-\le
-\frac{\operatorname{Var}(X)}{t^2},
-\qquad
-t>0,
-\\[0.8em]
-&\quad
-\alpha,\beta,\gamma,\delta,\varepsilon,\theta,\vartheta,\lambda,\mu,\nu,
-\xi,\pi,\varpi,\rho,\varrho,\sigma,\phi,\varphi,\chi,\psi,\omega
-\in\mathbb R .
+\mathcal Z(\beta)
+&=\int_{\mathbb R^3}
+  \exp\!\left(-\frac{\beta}{2}\mathbf x^{\mathsf T}A\mathbf x\right)
+  \,\mathrm d^3\mathbf x\\
+&=\left(\frac{2\pi}{\beta}\right)^{3/2}
+  \frac{1}{\sqrt{\det A}}
+ =\frac12\left(\frac{2\pi}{\beta}\right)^{3/2}.
 \end{aligned}
 \]
-\endgroup
+
+For \(k\in\mathbb N_0\), the residue theorem provides a series and a contour
+integral:
+\[
+\begin{aligned}
+f_k(z)
+&=\frac{e^z}{z^{k+1}}
+ =\sum_{n=0}^{\infty}\frac{z^{n-k-1}}{n!},\\
+\frac{1}{2\pi i}\oint_{|z|=1}f_k(z)\,\mathrm dz
+&=\operatorname{Res}_{z=0}f_k(z)=\frac{1}{k!}.
+\end{aligned}
+\]
+For integrable \(f\), its Fourier transform illustrates wide accents:
+\[
+\widehat f(\xi)=\int_{\mathbb R} f(x)e^{-2\pi i x\xi}\,\mathrm dx,
+\qquad
+\overline{\widehat f(\xi)}=\widehat{\overline f}(-\xi).
+\]
+
+A smooth flat function demonstrates a cases environment:
+\[
+g(x)=
+\begin{cases}
+e^{-1/x^2},&x>0,\\
+0,&x\leq0,
+\end{cases}
+\qquad
+g^{(r)}(0)=0\quad(r=0,1,2,\ldots).
+\]
+Chebyshev's inequality and the decomposition of exterior powers supply
+independent examples of further mathematical notation:
+\[
+\underbrace{\mathbb P\!\left(|X-\mathbb E[X]|\geq t\right)}
+_{\text{tail probability}}
+\leq\frac{\operatorname{Var}(X)}{t^2},\qquad t>0.
+\]
+\[
+\bigwedge\nolimits^k(V\oplus W)
+\cong\bigoplus_{p+q=k}
+\left(\bigwedge\nolimits^p V\right)
+\otimes\left(\bigwedge\nolimits^q W\right).
+\]
 
 \subsection{Tables}
 
-Table~\ref{tab:feature-summary} uses the IMPE book-table environment rather
-than a raw \texttt{tabular} wrapper.
+Table~\ref{tab:feature-summary} uses the native \texttt{table},
+\texttt{tabularx}, and \texttt{booktabs} interfaces loaded by the
+\texttt{tables} feature.
+\begin{table}[htbp]
+  \centering
+  \caption{Feature integration summary}
+  \label{tab:feature-summary}
+  \begin{tabularx}{\linewidth}{@{}LCC@{}}
+    \toprule
+    Feature & Public route & Exercised here \\
+    \midrule
+    Mathematics & \texttt{math} & yes \\
+    Tables & \texttt{tables} & yes \\
+    Images & \texttt{image} & yes \\
+    Citations & \texttt{citations} & yes \\
+    Index & \texttt{index} & yes \\
+    Hyperlinks & \texttt{hyperlinks} & yes \\
+    Running headers & \texttt{headers} & yes \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
-\begin{TableBookX}
-  {L C C}
-  {Feature integration summary}
-  {tab:feature-summary}
-Feature & Public route & Exercised here \\
-\midrule
-Mathematics & \texttt{math} & yes \\
-Tables & \texttt{tables} & yes \\
-Images & \texttt{image} & yes \\
-Citations & \texttt{citations} & yes \\
-Index & \texttt{index} & yes \\
-Hyperlinks & \texttt{hyperlinks} & yes \\
-Running headers & \texttt{headers} & yes \\
-List environments & \texttt{lists\_envs} & yes \\
-\end{TableBookX}
+\subsection{Lists and Quoted Examples}
 
-\subsection{Lists and Example Blocks}
-
-A normal list remains ordinary \LaTeX:
-
+Ordinary lists and quotations do not require an IMPE-specific environment:
 \begin{enumerate}
   \item automatic font ownership;
   \item script-specific behavior where required;
@@ -949,45 +893,30 @@ A normal list remains ordinary \LaTeX:
   \item stable public interfaces.
 \end{enumerate}
 
-The IMPE \texttt{ExampleBlock} environment provides a distinct indented
-specimen:
-
-\begin{ExampleBlock}
+The native \texttt{quote} environment supplies an indented specimen:
+\begin{quote}
+\itshape
 A canonical showcase should be readable as a document, useful as a visual
 regression specimen, and representative of the public interface that new
 documents are expected to use.
-\end{ExampleBlock}
+\end{quote}
 
 \subsection{Images}
 
-The image feature is exercised with the standard \TeX~distribution's example
-image when it is available. This keeps the canonical source self-contained
-using a generated illustration in the build.
-
-\IfFileExists{example-image-a.pdf}{%
-  \begin{OneImage}
-    [htbp]
-    [0.55\linewidth]
-    [0.32\textheight]
-    {example-image-a}
-    [Image-feature specimen using the standard \TeX~example image.]
-    [fig:showcase-image]
-  \end{OneImage}
-
-  Figure~\ref{fig:showcase-image} also exercises cross-reference hyperlinks.
-}{%
-  \begin{center}
-    \fbox{%
-      \parbox{0.62\linewidth}{%
-        \centering
-        \vspace{2em}
-        \textbf{Image specimen unavailable}\\[0.5em]
-        \texttt{example-image-a.pdf} was not found in this \TeX~installation.
-        \vspace{2em}
-      }%
-    }
-  \end{center}
-}
+The \texttt{image} feature prepares standard graphics and caption packages.
+The bundled vector image below works without any optional example-image
+files from the user's TeX distribution.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[
+    width=0.68\linewidth,
+    height=0.26\textheight,
+    keepaspectratio
+  ]{figures/feature-specimen.pdf}
+  \caption{Native graphics inclusion using a bundled vector specimen.}
+  \label{fig:showcase-image}
+\end{figure}
+Figure~\ref{fig:showcase-image} also exercises native cross-references.
 
 \subsection{Citations and Bibliography}
 
@@ -1000,12 +929,13 @@ The bibliography is printed near the end of the document.
 
 \subsection{Index Terms}
 
-Several concepts in earlier sections were inserted with the public
-\texttt{\textbackslash Term} interface. For example,
-\Term[sort=canonical showcase]{canonical showcase}
-[release-time specimen] itself is now indexed. The generated index at the end
-of the PDF therefore also exercises indexed terms, optional descriptions, and
-hyperlinks back to their first occurrence.
+Earlier sections use the native \texttt{\textbackslash index} command to
+register concepts at their actual occurrences. The phrase
+\emph{canonical showcase}\index{canonical showcase} is indexed here;
+native interfaces\index{Typesetting!Native interfaces} also provide a
+hierarchical example. IMPE supplies unique occurrence-level destinations
+for its default index, while \texttt{imakeidx} and \texttt{xindy} retain
+their usual indexing syntax.
 
 \subsection{Hyperlinks, Footnotes, and Running Headers}
 
