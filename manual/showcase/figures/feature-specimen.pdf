@@ -1,0 +1,68 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 480 240] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length 746 >>
+stream
+q
+0.98 0.985 0.99 rg
+0 0 480 240 re f
+0.22 0.27 0.34 RG
+1.1 w
+13 13 454 214 re S
+0.13 0.17 0.23 rg
+BT /F1 19 Tf 33 195 Td (Native Graphics) Tj ET
+0.35 0.40 0.46 rg
+BT /F1 10 Tf 34 177 Td (A bundled PDF vector specimen) Tj ET
+0.80 0.84 0.88 RG
+0.75 w
+33 162 m 448 162 l S
+0.35 0.40 0.46 RG
+1 w
+55 49 m 55 139 l 228 139 l S
+55 49 m 228 49 l S
+0.17 0.37 0.52 RG
+2 w
+55 63 m 96 86 l 137 76 l 178 118 l 220 129 l S
+0.17 0.37 0.52 rg
+55 63 5 5 re f
+96 86 5 5 re f
+137 76 5 5 re f
+178 118 5 5 re f
+220 129 5 5 re f
+0.80 0.84 0.88 RG
+1 w
+275 60 152 82 re S
+275 60 m 427 142 l S
+275 142 m 427 60 l S
+351 60 m 351 142 l S
+275 101 m 427 101 l S
+0.35 0.40 0.46 rg
+BT /F1 10 Tf 295 43 Td (Vector shapes) Tj ET
+BT /F1 10 Tf 73 32 Td (Lines and points) Tj ET
+Q
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1107
+%%EOF

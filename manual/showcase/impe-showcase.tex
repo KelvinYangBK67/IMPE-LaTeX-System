@@ -1,65 +1,20 @@
 % !TeX program = xelatex
 %
-% IMPE LaTeX System
-% Canonical Showcase
-%
-% Intended location:
-%   manual/showcase/impe-showcase.tex
-%
-% Suggested build:
-%
-%   xelatex -shell-escape impe-showcase.tex
-%   biber impe-showcase
-%   xelatex -shell-escape impe-showcase.tex
-%   xelatex -shell-escape impe-showcase.tex
-%
-% Font declarations are intentionally completed in the preamble.  Most script
-% families are loaded through explicit local interfaces; automatic Unicode-
-% range routing is enabled for a small representative set. This keeps the
-% automatic routing table compact while keeping representative routing
-% regressions visible. Explicit local commands take precedence over these
-% automatic owners in v1.x.
-%
-% The first style matrix is deferred to the following landscape page so that
-% the surrounding portrait text may continue normally.  This relies on the
-% tables feature loading afterpage.
-%
-% Mathematical font selection uses the IMPE default, and typewriter text is
-% reset to Latin Modern Mono.
-%
-% The showcase covers the implemented script routes, including Khitan Small
-% Script through its current linear fallback. Egyptian Hieroglyphs are reserved
-% for future coverage.
-
-\begin{filecontents*}[overwrite]{references.bib}
-@book{knuth1984texbook,
-  author    = {Donald E. Knuth},
-  title     = {The TeXbook},
-  date      = {1984},
-  publisher = {Addison-Wesley}
-}
-\end{filecontents*}
+% IMPE LaTeX System — Canonical Showcase (v1.1.0)
+% Build with scripts/build_showcase.ps1 from the repository root.
 
 \documentclass[11pt,twoside]{impeart}
 
-\UseCitationStyle{APA}
-
 \HeaderTitle{IMPE Canonical Showcase}
-\HeaderStyle{running}
-
-% IMPORTANT:
-% Keep registration argument blocks contiguous.
 
 \UseTemplateSet{
-  fonts = {
-    libertinus,
-    shanggu
-  },
+  fonts = {libertinus,shanggu},
   features = {
     math,
     tables,
     image,
-    lists_envs,
+    glyphs,
+    drawing,
     citations,
     index,
     hyperlinks,
@@ -69,101 +24,68 @@
 
 \setmonofont{Latin Modern Mono}
 
-% Explicit local interfaces; automatic Unicode ownership is declared separately.
-\UseFont{noto}[local]
-\UseFont{times}[local]
-\UseFont{gentium}[local]
-\UseFont{charis}[local]
-\UseFont{anatolian}[local]
-\UseFont{bopomofo}[local]
-\UseFont{cuneiform}[local]
-\UseFont{italic}[local]
-\UseFont{hungarian}[local]
-\UseFont{runic}[local]
-\UseFont{hindi}[local]
-\UseFont{sanskrit}[local]
-\UseFont{devanagari}[local]
-\UseFont{brahmi}[local]
-\UseFont{tibetan}[local]
-\UseFont{arabic}[local]
-\UseFont{urdu}[local]
-\UseFont{aramaic}[local]
-\UseFont{nabataean}[local]
-\UseFont{hebrew}[local]
-\UseFont{syriac}[local]
-\UseFont{syriac_eastern}[local]
-\UseFont{kharosthi}[local]
-\UseFont{pahlavi_parthian}[local]
-\UseFont{pahlavi_inscriptional}[local]
-\UseFont{pahlavi_psalter}[local]
-\UseFont{avestan}[local]
-\UseFont{manichaean}[local]
-\UseFont{phoenician}[local]
-\UseFont{samaritan}[local]
-\UseFont{sogdian}[local]
-\UseFont{sogdian_old}[local]
-\UseFont{chinese_simplified}[local]
-\UseFont{chinese_traditional}[local]
-\UseFont{japanese}[local]
-\UseFont{wenjin}[local]
-\UseFont{korean}[local]
-\UseFont{tangut}[local]
-\UseFont{khitan_small}[local]
-\UseFont{mongolian}[local]
-\UseFont{mongolian_baiti}[local]
-\UseFont{manchu}[local]
-\UseFont{segoe}[local]
-\UseFont{thai}[local]
-\UseFont{turkic}[local]
-\UseFont{uyghur}[local]
-\UseFont{vietnamese_quocngu}[local]
-\UseFont{vietnamese_hannom}[local]
+% Local families used by the current specimens and style matrix.
+\UseFonts{
+  noto, times, gentium, charis, mlmodern, anatolian,
+  bopomofo, cuneiform, italic, hungarian, runic,
+  hindi, sanskrit, devanagari, brahmi, tibetan,
+  arabic, urdu, aramaic, nabataean, hebrew,
+  syriac, syriac_eastern, kharosthi, egyptian, pahlavi_parthian, pahlavi_inscriptional,
+  pahlavi_psalter, avestan, manichaean, phoenician, samaritan,
+  sogdian, sogdian_old, chinese_simplified, chinese_traditional, japanese,
+  wenjin, korean, tangut, khitan_small, mongolian,
+  mongolian_baiti, manchu, segoe, thai, turkic,
+  uyghur, vietnamese_quocngu, vietnamese_hannom
+}[local]
 
-% Minimal automatic Unicode-range regression set.
-\UseFont{armenian}
-\UseFont{georgian}
-\UseFont{coptic}
-\UseFont{glagolitic}
-\UseFont{tamil}
+% Automatic Unicode-range routing for the current mixed-script specimen.
+\UseFonts{armenian,georgian,coptic,glagolitic,tamil}
+
+% Registration keeps each real manuscript image inside the text flow.
+\IMPEGlyphRegister{chu-target}{glyphs/01_target-main-glyph.png}
+\IMPEGlyphRegister{chu-guodian}{glyphs/02_guodian-yucong4-15_14-glyph.png}
+\IMPEGlyphRegister{chu-shangbo}{glyphs/03_shangbo-caomozhichen-30_16-glyph.png}
+\IMPEGlyphRegister{chu-variant}{glyphs/04_alt-regularized-glyph.png}
+\IMPEGlyphRegister{chu-context}{glyphs/05_context-glyph-before-yi-e.png}
+\IMPEGlyphRegister{chu-yu}{glyphs/06_yu-glyph.png}
 
 \addbibresource{references.bib}
 
 \hypersetup{
-  pdftitle  = {IMPE LaTeX System — Canonical Showcase},
-  pdfauthor = {IMPE LaTeX System v1.0.4},
-  pdfsubject = {Canonical multilingual and feature showcase}
+  pdftitle   = {IMPE LaTeX System — Canonical Showcase},
+  pdfauthor  = {Kelvin Yang},
+  pdfsubject = {Multilingual and scholarly typesetting}
 }
 
 \setcounter{tocdepth}{2}
 \raggedbottom
 
 \newcommand{\ShowcaseStyles}[2]{%
-  #1{#2} &
-  #1{\textbf{#2}} &
-  #1{\textit{#2}} &
-  #1{\textbf{\textit{#2}}} &
-  #1{\textsf{#2}} &
-  #1{\textsf{\textbf{#2}}} &
-  #1{\textsf{\textit{#2}}} &
-  #1{\textsf{\textbf{\textit{#2}}}}%
+  \leavevmode #1{#2} &
+  \leavevmode #1{\textbf{#2}} &
+  \leavevmode #1{\textit{#2}} &
+  \leavevmode #1{\textbf{\textit{#2}}} &
+  \leavevmode #1{\textsf{#2}} &
+  \leavevmode #1{\textsf{\textbf{#2}}} &
+  \leavevmode #1{\textsf{\textit{#2}}} &
+  \leavevmode #1{\textsf{\textbf{\textit{#2}}}}%
 }
 
-\newcommand{\StyleRow}[4]{%
+\newcommand{\StyleRow}[3]{%
   #1 &
-  \texttt{\textbackslash#2} &
-  \ShowcaseStyles{#3}{#4} \\
+  \ShowcaseStyles{#2}{#3} \\
 }
 
 \newcommand{\StyleCategory}[1]{%
   \midrule
-  \multicolumn{10}{l}{\textbf{#1}}\\
+  \multicolumn{9}{l}{\textbf{#1}}\\
   \midrule
 }
 
 \title{IMPE \LaTeX~System}
-\subtitle{Canonical Multilingual and Feature Showcase}
+\subtitle{Canonical Typesetting Showcase}
 \author{Kelvin Yang}
-\date{v1.0.4}
+\date{v1.1.0}
 
 \begin{document}
 
@@ -188,24 +110,27 @@ showcase is intentionally broader than the focused regression fixtures under
 \section{Local Font Families and Styles}
 % ==========================================================================
 
-This section presents IMPE's explicit local font commands and compares their
-available serif, bold, italic, and sans-serif styles. The complete font-family
-matrix appears on the following landscape page. Where a requested face is
-unavailable, IMPE follows the family's configured fallback automatically.
+Table~\ref{tab:typeface-atlas} pairs concise script specimens with eight
+corresponding text styles. Repeated specimens make differences between
+typefaces directly comparable; where a face is not supplied, the registered
+family's normal fallback applies. Egyptian format controls and Khitan clusters
+use their native two-dimensional layouts; Inner Asian samples use vertical
+writing. The matrix continues across landscape pages as needed.
 
 \afterpage{%
 \begin{landscape}
+\small
+\setlength{\tabcolsep}{4pt}
 
-\begin{TableLong}{
+\begin{longtable}{
   @{}
-  P{2.55cm}
-  M{1.25cm}
-  *{8}{M{1.80cm}}
+  P{2.80cm}
+  *{8}{M{2.20cm}}
   @{}
 }
+\caption{Typeface specimens in eight styles.}\label{tab:typeface-atlas}\\
 \toprule
-Family &
-Command &
+Typeface &
 Regular &
 Bold &
 Italic &
@@ -213,14 +138,12 @@ Bold italic &
 Sans &
 Sans bold &
 Sans italic &
-Sans bold italic
-\\
+Sans bold italic \\
 \midrule
 \endfirsthead
 
 \toprule
-Family &
-Command &
+Typeface &
 Regular &
 Bold &
 Italic &
@@ -228,224 +151,245 @@ Bold italic &
 Sans &
 Sans bold &
 Sans italic &
-Sans bold italic
-\\
+Sans bold italic \\
 \midrule
 \endhead
 
-\StyleCategory{Latin and general-purpose families}
-\StyleRow{Noto}{NOT}{\NOT}{Abg fi fl}
-\StyleRow{Times}{TIM}{\TIM}{Abg fi fl}
-\StyleRow{Gentium Plus}{GEN}{\GEN}{Ārya ṛ ṃ ḥ}
-\StyleRow{Charis SIL}{CHA}{\CHA}{Ārya ṛ ṃ ḥ}
-\StyleRow{Libertinus}{LIB}{\LIB}{Abg fi fl}
+\StyleCategory{Latin typefaces}
+\StyleRow{CMU Serif}{\Writing{[cmu]latin}}{Latina}
+\StyleRow{Noto}{\NOT}{Latina}
+\StyleRow{Times}{\TIM}{Latina}
+\StyleRow{Gentium Plus}{\GEN}{Latina}
+\StyleRow{Charis SIL}{\CHA}{Latina}
+\StyleRow{Libertinus}{\LIB}{Latina}
+\StyleRow{MLModern}{\MLM}{Latina}
 
-\StyleCategory{European and ancient alphabetic scripts}
-\StyleRow{Carian}{CA}{\CA}{𐊠𐊺𐊪}
-\StyleRow{Coptic}{CO}{\CO}{ⲛⲟⲩⲧⲉ}
-\StyleRow{Bopomofo}{ZY}{\ZY}{ㄓㄨˋ ㄧㄣ}
-\StyleRow{Cuneiform}{CU}{\CU}{𒀭𒂗𒆠}
-\StyleRow{Glagolitic}{GL}{\GL}{ⰀⰁⰂ}
-\StyleRow{Old Italic}{OI}{\OI}{𐌀𐌁𐌂}
-\StyleRow{Old Hungarian}{OH}{\OH}{𐲀𐲁𐲂}
-\StyleRow{Runic}{RU}{\RU}{ᚠᚢᚦ}
+\StyleCategory{European and Caucasian scripts}
+\StyleRow{Carian}{\CA}{𐊨𐊣𐊠𐊦𐊹𐊸}
+\StyleRow{Coptic}{\CO}{ⲛⲟⲩⲧⲉ}
+\StyleRow{Glagolitic}{\GL}{ⰳⰾⰰⰳⱁⰾ}
+\StyleRow{Old Italic}{\OI}{𐌌𐌉 𐌔𐌖𐌈𐌉}
+\StyleRow{Old Hungarian}{\OH}{𐳢𐳛𐳮𐳁𐳤}
+\StyleRow{Runic}{\RU}{ᚠᚢᚦᚨᚱᚲ}
+\StyleRow{Armenian}{\HY}{հայերեն}
+\StyleRow{Georgian}{\KA}{ქართული}
 
-\StyleCategory{South and Central Asian scripts}
-\StyleRow{Armenian}{HY}{\HY}{Հայերեն}
-\StyleRow{Hindi}{HI}{\HI}{हिन्दी}
-\StyleRow{Sanskrit}{SA}{\SA}{संस्कृतम्}
-\StyleRow{Devanagari}{DEV}{\DEV}{देवनागरी}
-\StyleRow{Tamil}{TA}{\TA}{தமிழ்}
-\StyleRow{Brahmi}{BR}{\BR}{𑀩𑁆𑀭𑀸𑀳𑁆𑀫𑀻}
-\StyleRow{Georgian}{KA}{\KA}{ქართული}
-\StyleRow{Tibetan}{TI}{\TI}{བསྒྲུབས་}
+\StyleCategory{South Asian and Tibetan scripts}
+\StyleRow{Devanagari · Hindi}{\HI}{देवनागरी}
+\StyleRow{Devanagari · Sanskrit}{\SA}{देवनागरी}
+\StyleRow{Devanagari}{\DEV}{देवनागरी}
+\StyleRow{Tamil}{\TA}{தமிழ்}
+\StyleRow{Brahmi}{\BR}{𑀥𑀫𑁆𑀫}
+\StyleRow{Brahmi · Segoe}{\SEG}{𑀥𑀫𑁆𑀫}
+\StyleRow{Kharoshthi}{\KH}{𐨢𐨿𐨪𐨨}
+\StyleRow{Tibetan}{\TI}{བོད་ཡིག}
+\StyleRow{Thai}{\TH}{ภาษาไทย}
 
-\StyleCategory{RTL and West Asian scripts}
-\StyleRow{Arabic}{AR}{\AR}{العربية}
-\StyleRow{Urdu}{UR}{\UR}{اُردُو}
-\StyleRow{Imperial Aramaic}{IA}{\IA}{𐡀𐡓𐡌}
-\StyleRow{Nabataean}{NB}{\NB}{𐢌𐢁𐢈}
-\StyleRow{Hebrew}{HE}{\HE}{שלום}
-\StyleRow{Syriac}{SY}{\SY}{ܫܠܡܐ}
-\StyleRow{Eastern Syriac}{SYE}{\SYE}{ܫܠܡܐ}
-\StyleRow{Kharoshthi}{KH}{\KH}{𐨐𐨿𐨪𐨆}
+\StyleCategory{West Asian and Iranian scripts}
+\StyleRow{Arabic}{\AR}{العربية}
+\StyleRow{Arabic · Nastaliq}{\UR}{نستعلیق}
+\StyleRow{Imperial Aramaic}{\IA}{𐡀𐡓𐡌𐡉𐡀}
+\StyleRow{Nabataean}{\NB}{𐢕𐢃𐢋𐢈}
+\StyleRow{Hebrew}{\HE}{עברית}
+\StyleRow{Syriac}{\SY}{ܣܘܪܝܝܐ}
+\StyleRow{Syriac · Eastern}{\SYE}{ܣܘܪܝܝܐ}
+\StyleRow{Inscriptional Parthian}{\PAR}{𐭃𐭐𐭉𐭅𐭓}
+\StyleRow{Inscriptional Pahlavi}{\PAH}{𐭣𐭯𐭩𐭥𐭥}
+\StyleRow{Psalter Pahlavi}{\PSP}{𐮃𐮎𐮈𐮅𐮅}
+\StyleRow{Avestan}{\AV}{𐬀𐬴𐬆𐬨}
+\StyleRow{Manichaean}{\MA}{𐫖𐫀𐫗𐫏}
+\StyleRow{Phoenician}{\PH}{𐤁𐤏𐤋}
+\StyleRow{Samaritan}{\SM}{ࠔࠋࠅࠌ}
+\StyleRow{Sogdian}{\SG}{𐼼𐼴𐼶𐼹𐼷𐼸}
+\StyleRow{Old Sogdian}{\SGO}{𐼑𐼇𐼄𐼌𐼊𐼋}
 
-\StyleCategory{Iranian and other historical scripts}
-\StyleRow{Inscriptional Parthian}{PAR}{\PAR}{𐭐𐭓𐭕}
-\StyleRow{Inscriptional Pahlavi}{PAH}{\PAH}{𐭯𐭠𐭧}
-\StyleRow{Psalter Pahlavi}{PSP}{\PSP}{𐮈𐮎}
-\StyleRow{Avestan}{AV}{\AV}{𐬀𐬬𐬆𐬯}
-\StyleRow{Manichaean}{MA}{\MA}{𐫀𐫁𐫂}
-\StyleRow{Phoenician}{PH}{\PH}{𐤀𐤁𐤂}
-\StyleRow{Samaritan}{SM}{\SM}{ࠔࠌࠅࠌ}
-\StyleRow{Sogdian}{SG}{\SG}{𐼰𐼱𐼲}
-\StyleRow{Old Sogdian}{SGO}{\SGO}{𐼀𐼁𐼂}
+\StyleCategory{Ancient Near Eastern scripts}
+\StyleRow{Cuneiform}{\CU}{𒁾𒊬}
+\StyleRow{Egyptian Hieroglyphs}{\EG}{𓆓𓐳𓂧𓇋𓐰𓈖𓌞𓅱𓀀𓇋𓈎𓐰𓂋𓐰𓏛}
 
-\StyleCategory{CJK and East Asian families}
-\StyleRow{Noto SC}{SC}{\SC}{汉字骨直}
-\StyleRow{Noto TC}{TC}{\TC}{漢字骨直}
-\StyleRow{Japanese}{JP}{\JP}{日本語漢字}
-\StyleRow{WenJin}{WJ}{\WJ}{中國𠀀𰀀}
-\StyleRow{Korean}{KR}{\KR}{한국어漢字}
-\StyleRow{Tangut}{TG}{\TG}{𗼇𘝞𗫂}
+\StyleCategory{East Asian scripts and Han families}
+\StyleRow{Bopomofo}{\ZY}{ㄅㄆㄇㄈ}
+\StyleRow{Han · Simplified}{\SC}{汉字}
+\StyleRow{Han · Traditional}{\TC}{漢字}
+\StyleRow{Han · Hiragana · Katakana}{\JP}{漢字かなカナ}
+\StyleRow{Han · WenJin}{\WJ}{漢字}
+\StyleRow{Han · Shanggu}{\Writing{[shanggu]chinese}}{漢字}
+\StyleRow{Han · Sim}{\Writing{[simsun]chinese}}{汉字}
+\StyleRow{Hangul · Han}{\KR}{한글漢字}
+\StyleRow{Tangut}{\TG}{𗼇𘝞}
 
-\StyleCategory{Mongolian-family and other Asian scripts}
-\StyleRow{Khitan Small Script (linear)}{KHS}{\KHS}{𘬜𘭢𘮒}
-\StyleRow{Mongolian}{MO}{\MO}{ᠮᠣᠩᠭᠣᠯ}
-\StyleRow{Mongolian Baiti}{MOb}{\MOb}{ᠮᠣᠩᠭᠣᠯ}
-\StyleRow{Manchu}{MC}{\MC}{ᠮᠠᠨᠵᡠ}
-\StyleRow{Segoe Historic}{SEG}{\SEG}{𑀩𑁆𑀭𑀸𑀳𑁆𑀫𑀻}
-\StyleRow{Thai}{TH}{\TH}{ภาษาไทย}
-\StyleRow{Old Turkic}{OT}{\OT}{𐱅𐰇𐰼𐰚}
-\StyleRow{Old Uyghur}{UY}{\UY}{𐽳𐽶𐽲𐽳𐽾}
+\StyleCategory{Inner Asian scripts}
+\StyleRow{Khitan Small Script}{\KHS}{𘰺𘱹𘰻 𘮦𖿤𘲲}
+\StyleRow{Mongolian}{\MOv}{ᠮᠣᠩᠭᠣᠯ}
+\StyleRow{Mongolian Baiti}{\MObv}{ᠮᠣᠩᠭᠣᠯ}
+\StyleRow{Manchu}{\MCv}{ᠮᠠᠨᠵᡠ}
+\StyleRow{Old Turkic}{\OT}{𐱅𐰇𐰼𐰜}
+\StyleRow{Old Uyghur}{\UYv}{𐽳𐽶𐽲𐽳𐽾}
 
-\StyleCategory{Vietnamese}
-\StyleRow{Quốc Ngữ}{VI}{\VI}{Tiếng Việt}
-\StyleRow{Hán-Nôm}{HN}{\HN}{𡨸喃𠊛𡗶}
+\StyleCategory{Vietnamese writing traditions}
+\StyleRow{Latin · Quốc Ngữ}{\VI}{Quốc ngữ}
+\StyleRow{Han · Chữ Nôm}{\HN}{𡨸喃}
 
 \bottomrule
-\end{TableLong}
+\end{longtable}
 
 \end{landscape}
 }
 
-
 % ==========================================================================
-\section{Multilingual Routing and Mixed-Script Composition}
+\section{Multilingual and Mixed-Script Composition}
 % ==========================================================================
 
-\Term[sort=multilingual composition]{Multilingual composition}
-[combined routing and local overrides] is tested here in two deliberately
-different ways. The main specimen is a dense paragraph in which explicit local
-families, right-to-left runs, complex shaping, shared Han choices, and inline
-vertical writing are allowed to interact. A later compact regression enables
-automatic Unicode-range ownership for a small representative set of scripts.
+Written traditions carry voices across languages, centuries, and regions.
+The passages here bring together reflections on books and learning alongside
+short proverbial and scriptural lines, composed in their own writing systems.
 
-\subsection{Mixed-Script Paragraph}
+\subsection{Polyglot Composition}
 
-The following specimen is intentionally one \TeX~paragraph. Each script
-contributes a complete
-sentence or clause. Armenian, Georgian, Coptic, Glagolitic, and Tamil are
-left as raw Unicode to exercise the small automatic-routing set; all other
-script families in the paragraph use explicit local overrides.
+The same page can accommodate many scripts without assigning any single one
+the role of a translation or a transcription. In the following continuous
+paragraph, five writing systems are set directly in Unicode, while the others
+retain their chosen local typefaces.\index{Multilingual composition}
+\index{Unicode-range routing}
 
-Հայերեն այս ամբողջական նախադասությունը գրված է նույն բազմալեզու պարբերության մեջ։
-ეს სრული ქართული წინადადება იმავე მრავალენოვან აბზაცში სხვა დამწერლობებთან ერთად გვხვდება.
+\noindent
+Գրքերը մեզ պատմում են անցյալի մարդկանց մասին։
+ძველ წიგნებში მრავალი თაობის აზრი და გამოცდილებაა შემონახული.
 Ⲟⲩⲟϩ ⲡⲓⲗⲟⲅⲟⲥ ⲁϥϣⲱⲡⲓ ⲛ̀ⲟⲩⲥⲁⲣⲝ ⲟⲩⲟϩ ⲁϥϣⲱⲡⲓ ⲛ̀ϧⲏⲧⲉⲛ.
 Ⰲⱏ ⱀⰰⱍⰰⰾⱑ ⰱⱑⰰⱎⰵ ⱄⰾⱁⰲⱁ, ⰺ ⱄⰾⱁⰲⱁ ⰱⱑⰰⱎⰵ ⰽⱏ ⰱⱁⰳⱆ.
-\SA{सर्वे भवन्तु सुखिनः, सर्वे सन्तु निरामयाः।}
-தமிழில் எழுதப்பட்ட இந்த முழு வாக்கியம் அதே பலமொழிப் பத்திக்குள் தொடர்ந்து வருகிறது.
+\SA{विद्या ददाति विनयं।}
+கற்க கசடறக் கற்பவை கற்றபின் நிற்க அதற்குத் தக.
 \TI{ཤེས་རབ་དང་སྙིང་རྗེ་ནི་མིའི་ཆོས་ཀྱི་རྩ་བ་ཡིན།}
-\AR{هذه جملة عربية كاملة تظهر في وسط الفقرة نفسها وتختبر الانتقال إلى الكتابة من اليمين إلى اليسار.}
-\UR{یہ ایک مکمل اردو جملہ ہے جو اسی کثیر لسانی پیراگراف کے اندر نستعلیق رسم الخط میں لکھی گئی ہے۔}
-\HE{זהו משפט עברי שלם שממשיך באותה פסקה לאחר הטקסט הערבי והאורדו.}
-\SY{ܗܢܐ ܦܬܓܡܐ ܣܘܪܝܝܐ ܟܠܗ ܟܬܝܒ ܒܓܘ ܗܕܐ ܦܪܓܪܦܐ ܥܡ ܠܫܢ̈ܐ ܐܚܪ̈ܢܐ.}
-\SYE{ܗܢܐ ܦܬܓܡܐ ܐܚܪܢܐ ܟܬܝܒ ܒܟܬܒܐ ܡܕܢܚܝܐ ܘܡܫܬܠܚ ܒܓܘ ܗܕܐ ܦܪܓܪܦܐ.}
+\AR{الكتاب خير جليس، والعلم نور.}
+\UR{کتابیں ہمیں ماضی کی دنیا سے ملاتی ہیں۔}
+\HE{החכמה טובה מכסף ומזהב.}
+\SY{ܒܪܫܝܬ ܐܝܬܘܗܝ ܗܘܐ ܡܠܬܐ.}
+\SYE{ܒܪܫܝܬ ܐܝܬܘܗܝ ܗܘܐ ܡܠܬܐ.}
 \SEG{𑀲𑀢𑁆𑀬𑀁 𑀯𑀤, 𑀥𑀭𑁆𑀫𑀁 𑀘𑀭.}
-\JP{日本語のこの文章では、ひらがなとカタカナと漢字が同じ文の中に自然に現れます。}
-\KR{한국어의 이 문장에서는 한글과 漢字가 같은 문장 안에 함께 나타납니다.}
-\TC{這個中文完整句子使用明確指定的繁體中文字體，並與前後不同文種保持在同一個段落中。}
-\MOv{ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠂ ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ ᠴᠢᠭᠯᠡᠯ ᠢᠶᠡᠷ ᠪᠢᠴᠢᠭᠳᠡᠨ᠎ᠡ᠃}
-\JP{縦書きのモンゴル文字の直後にも日本語の完全な文章が続き、通常の横書き状態が回復したことを確認します。}
-\MCv{ᠪᡳ ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᡨᠠᠴᡳᠮᠪᡳ᠂ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᡩᡝ ᠪᠣᠰᠣ ᠠᡵᠠᠮᠪᡳ᠉}
-\KR{두 번째 세로쓰기 구간 뒤에도 한국어의 완전한 문장이 이어지며 문단의 방향과 글꼴 상태가 정상적으로 복원되는지를 확인합니다.}
-\TC{最後這個中文完整句子仍然留在同一個段落裡，用來確認兩次豎排 local override、數次 RTL 切換與複雜 shaping 之後，普通橫排行文與局部字體狀態全部恢復正常。}
+\JP{古い図書館でカタログをめくり、昔の人の手紙を読みました。}
+\KR{古典을 읽으면 오늘의 질문을 다시 생각하게 됩니다.}
+\TC{舊書中的一句話，有時會在數百年後重新被人理解。}
 
-\subsection{Minimal Automatic Unicode-Range Regression}
+\subsection{Mixed Writing Directions}
 
-\Term[sort=Unicode range routing]{Unicode-range routing}
-[automatic font ownership] is exercised here on a small representative
-set. The showcase tests routing correctness with a compact interchar
-transition graph. The specimen itself uses raw Unicode.
+A page may also alternate between horizontal sentences and vertically
+written words. Here the Mongolian and Manchu passages rise between ordinary
+horizontal lines, while each writing system retains its own orientation.
 
-
-Հայերեն այս ամբողջական նախադասությունը գրված է առանց տեղական տառատեսակի հրամանի։
-ეს სრული ქართული წინადადება ავტომატური Unicode დიაპაზონის მარშრუტიზაციას ამოწმებს.
-Ⲟⲩⲟϩ ⲡⲓⲗⲟⲅⲟⲥ ⲁϥϣⲱⲡⲓ ⲛ̀ⲟⲩⲥⲁⲣⲝ ⲟⲩⲟϩ ⲁϥϣⲱⲡⲓ ⲛ̀ϧⲏⲧⲉⲛ.
-Ⰲⱏ ⱀⰰⱍⰰⰾⱑ ⰱⱑⰰⱎⰵ ⱄⰾⱁⰲⱁ, ⰺ ⱄⰾⱁⰲⱁ ⰱⱑⰰⱎⰵ ⰽⱏ ⰱⱁⰳⱆ.
-தமிழில் எழுதப்பட்ட இந்த முழு வாக்கியம் தனி local font command இன்றி Unicode range owner மூலம் அமைக்கப்படுகிறது.
+\noindent
+\TC{翻開一本舊書，紙頁上的文字把我們帶到另一個時代。}
+\MOv{ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠃}
+\JP{古い手紙を読むと、文字の形から書き手の暮らしまで想像できます。}
+\MCv{ᠪᡳ ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᡨᠠᠴᡳᠮᠪᡳ᠂ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᠪᡝ ᡥᡡᠯᠠᠮᠪᡳ᠃}
+\KR{오래된 기록을 읽는 일은 낯선 사람의 목소리에 귀를 기울이는 일입니다.}
+\TC{文字的方向雖然不同，閱讀仍讓相隔久遠的人彼此相遇。}
 
 
 % ==========================================================================
 \section{Right-to-Left Scripts}
 % ==========================================================================
 
-\Term[sort=right-to-left text]{Right-to-left text}
-[directional behavior] requires more than choosing a glyph source. This
-section therefore uses explicit local families throughout. Each specimen is
-long enough to form a genuine paragraph, allowing line breaking, inter-word
-spacing, punctuation, digits, bidirectional interaction, and OpenType shaping
-to be inspected through explicit local Arabic, Hebrew, and Syriac families.
+Arabic, Urdu, Hebrew, and Syriac begin their lines at the right-hand edge,
+yet their books also accommodate dates, shelfmarks, and occasional passages in
+other writing systems. These pages bring together modern prose, verse, and
+older scriptural traditions.\index{Right-to-left text}
 
 \subsection{Arabic}
 
+In a quiet manuscript room, a catalogue entry may be the beginning of a
+much longer story.
+
 \AR{%
-اَلْعَرَبِيَّةُ لُغَةٌ ذاتُ تاريخٍ طويلٍ، وَهِيَ تُكْتَبُ مِنَ الْيَمِينِ إِلَى الْيَسَارِ، وَتَتَّصِلُ حُرُوفُهَا بِأَشْكَالٍ مُخْتَلِفَةٍ بِحَسَبِ مَوْضِعِهَا فِي الْكَلِمَةِ. يَحْتَوِي هٰذَا النَّصُّ عَلَى جُمَلٍ طَوِيلَةٍ وَعَلَامَاتِ تَرْقِيمٍ مُتَنَوِّعَةٍ، وَتَتَغَيَّرُ أَطْوَالُ الْكَلِمَاتِ وَالْجُمَلِ حَتَّى يَظْهَرَ سُلُوكُ الْفَقْرَةِ عِنْدَ نِهَايَةِ السَّطْرِ. وَعِنْدَمَا يَطُولُ السَّطْرُ يَجِبُ أَنْ يَنْتَقِلَ النَّصُّ إِلَى السَّطْرِ التَّالِي بِصُورَةٍ طَبِيعِيَّةٍ مِنْ غَيْرِ أَنْ تَنْقَطِعَ أَشْكَالُ الْحُرُوفِ أَوْ تَضْطَرِبَ الْمَسَافَاتُ بَيْنَ الْكَلِمَاتِ. وَيُسْتَعْمَلُ هٰذَا الْمَقْطَعُ لِلتَّأَكُّدِ مِنْ أَنَّ الْفَقْرَةَ الْعَرَبِيَّةَ الْكَامِلَةَ تَبْقَى مُسْتَقِرَّةً دَاخِلَ وَثِيقَةٍ مُتَعَدِّدَةِ اللُّغَاتِ.
+في قاعة المخطوطات رفوف من الخشب الداكن، وعلى الرفوف كتب نُسخت في مدن مختلفة وعصور متباعدة. تحمل بعض الصفحات أسماء ناسخين وقرّاء، وتحفظ الهوامش أسئلة صغيرة تركها أشخاص لا نعرف عن حياتهم إلا القليل. تُظهر إحدى النسخ آثار التصحيحات التي أضافها ناسخ لاحق، وتروي حواشيها كيف انتقل الكتاب بين أيدي القرّاء. وحين يقارن الباحث نسختين من الكتاب نفسه يجد أن اختلاف كلمة واحدة قد يكشف طريق النص من مدينة إلى أخرى. لهذا لا تكون القراءة عودة إلى الماضي وحده؛ إنها حوار جديد مع أناس حفظوا الكلمات ونقلوها إلى من جاء بعدهم.
 \par
 }
 
-Inline Arabic inside an English sentence: \AR{العربية والكتابة في سطر واحد مع علامات الترقيم} before returning to ordinary Latin text.
+A fully vocalized couplet by al-Mutanabbī offers another typographic
+rhythm, with its vowel marks and joined letterforms:
+
+\AR{أَعَزُّ مَكَانٍ فِي الدُّنَى سَرْجُ سَابِحٍ، وَخَيْرُ جَلِيسٍ فِي الزَّمَانِ كِتَابُ.}
 
 \subsection{Urdu}
 
 \UR{%
-اُردُو ایک ایسی زبان ہے جس کی تحریری روایت میں نستعلیق رسم الخط کو خاص اہمیت حاصل ہے۔ اس رسم الخط میں حروف صرف ایک دوسرے سے ملتے ہی نہیں بلکہ الفاظ کی مجموعی ساخت بھی سطر کی بصری صورت پر اثر ڈالتی ہے، اس لیے طویل عبارت مختصر نمونے سے کہیں زیادہ مفید آزمائش فراہم کرتی ہے۔ اس پیراگراف میں مختلف لمبائی کے الفاظ، مختلف رموزِ اوقاف، اور کئی مسلسل جملے شامل ہیں تاکہ دائیں سے بائیں بہاؤ، لفظی فاصلوں، اور سطر کے اختتام پر عبارت کی تقسیم کو واضح طور پر دیکھا جا سکے۔ جب عبارت ایک سطر میں پوری نہ آئے تو اگلی سطر میں منتقلی قدرتی ہونی چاہیے، الفاظ کی ترتیب برقرار رہنی چاہیے، اور نستعلیق کی تشکیل کسی غلط فونٹ یا غیر متعلقہ عربی طرز میں تبدیل نہیں ہونی چاہیے۔ یہ آخری جملہ خاص طور پر اس بات کی جانچ کرتا ہے کہ ایک مکمل اُردُو پیراگراف کئی سطروں میں تقسیم ہونے کے بعد بھی اپنی مقامی نستعلیق فیملی اور درست سمت برقرار رکھتا ہے۔
+ایک پرانے کتب خانے میں داخل ہوتے ہی کاغذ اور روشنائی کی ایک مانوس خوشبو محسوس ہوتی ہے۔ لکڑی کی الماریوں میں رکھی ہوئی کتابوں پر زمانے کے نشان صاف دکھائی دیتے ہیں، لیکن ان کے صفحات آج بھی نئے سوال پیدا کرتے ہیں۔ بعض نسخوں کے حاشیوں میں پچھلے قارئین نے اپنے خیالات لکھے ہیں؛ کہیں کسی مشکل لفظ کا مطلب درج ہے اور کہیں صرف ایک چھوٹا سا سوالیہ نشان۔ سن ۱۹۲۷ کی ایک یادداشت میں کتاب کے مالک نے لکھا تھا کہ اسے یہ نسخہ سفر کے دوران ملا۔ اب وہی کتاب دوسرے شہر کی لائبریری میں موجود ہے، جہاں ہر نیا قاری اس کی کہانی میں اپنا حصہ شامل کرتا ہے۔ یوں ایک کتاب صرف الفاظ کا مجموعہ نہیں رہتی بلکہ مختلف زمانوں اور لوگوں کے درمیان رابطے کا ذریعہ بن جاتی ہے۔
 \par
 }
 
 \subsection{Hebrew}
 
 \HE{%
-העברית נכתבת מימין לשמאל, ולכן פסקה ארוכה מאפשרת לבדוק לא רק את צורת האותיות אלא גם את התנהגות השורות, הרווחים וסימני הפיסוק. בטקסט הזה מופיעים משפטים באורכים שונים כדי לבדוק כיצד המערכת מתמודדת עם רצף עברי ארוך בתוך פסקה רגילה. כאשר השורה נעשית ארוכה מדי, המעבר לשורה הבאה צריך להתרחש במקום טבעי בלי לשנות את סדר המילים ובלי לפגוע במיקום הנקודות, הפסיקים והסוגריים. אפשר גם לכתוב מילים מנוקדות כמו שָׁלוֹם, עִבְרִית וְכְתִיבָה בתוך אותה פסקה, וכך לבדוק שהניקוד נשאר מחובר לאות הנכונה גם לאחר שבירת שורה. המשפט האחרון נועד לוודא שהפסקה כולה נשארת יציבה בתוך מסמך רב־לשוני ולאחריה חוזר הטקסט הסובב להתנהגות הרגילה.
+כשנכנסים לספרייה ישנה, אפשר לפעמים לשמוע את רשרוש הדפים יותר מכל קול אחר. על שולחן העץ מונחים כתבי יד, מהדורות מודפסות ומחברת של קורא שכבר איננו. בשוליו של אחד הספרים נכתבה הערה קצרה בשנת 1896, ולידה סימן שאלה קטן. כעבור דורות פותח קורא אחר את אותו העמוד וממשיך את השיחה שהתחילה לפניו. כך נשמרות בספרייה לא רק המילים שבספרים, אלא גם עקבותיהם של האנשים שקראו אותם, העירו עליהם והעבירו אותם לידיים אחרות.
+\par
+}
+
+The opening of Genesis presents a different Hebrew page: fully pointed
+consonants, cantillation marks, and the verse-ending punctuation.
+
+\HE{%
+בְּרֵאשִׁ֖ית בָּרָ֣א אֱלֹהִ֑ים אֵ֥ת הַשָּׁמַ֖יִם וְאֵ֥ת הָאָֽרֶץ׃
 \par
 }
 
 \subsection{Syriac}
 
-Western / general Syriac:
+The opening of the Gospel of John in the Syriac Peshitta places words
+and light at the heart of its narrative. The following continuous passage
+is taken from John 1:2--5.
 
 \SY{%
-ܫܠܡܐ ܥܠܝܟܘܢ. ܗܢܐ ܟܬܒܐ ܟܬܝܒ ܒܠܫܢܐ ܣܘܪܝܝܐ، ܘܐܝܬ ܒܗ ܡ̈ܠܐ ܣܓܝ̈ܐܬܐ ܘܦܬܓ̈ܡܐ ܕܐܪܝܟܝܢ ܡܢ ܚܕ ܫܛܪܐ. ܟܕ ܡܬܡܠܐ ܫܛܪܐ، ܒܥܐ ܟܬܒܐ ܕܢܚܘܬ ܠܫܛܪܐ ܐܚܪܢܐ ܒܠܐ ܕܢܬܚܠܦ ܛܟܣܐ ܕܡ̈ܠܐ ܘܒܠܐ ܕܢܬܦܣܩ ܚܘܒܪܐ ܕܐܬܘ̈ܬܐ. ܗܟܢܐ ܡܨܝܢܢ ܕܢܒܕܘܩ ܐܝܟܢܐ ܡܬܕܒܪ ܟܬܒܐ ܟܕ ܐܘܪܟܗ ܪܒ ܘܟܕ ܐܝܬ ܒܗ ܪܘܚ̈ܩܐ ܘܦܘ̈ܣܩܐ ܣܓܝ̈ܐܐ. ܗܢܐ ܦܬܓܡܐ ܐܚܪܝܐ ܡܘܣܦ ܐܘܪܟܐ ܠܦܪܓܪܦܐ ܡܛܠ ܕܢܚܙܐ ܣܓܝ̈ܐܐ ܫܛܪ̈ܐ ܘܢܒܕܘܩ ܪܘܚܩܐ ܘܛܟܣܐ ܕܟܬܒܐ.
+ܗܢܐ ܐܝܬܘܗܝ ܗܘܐ ܒܪܫܝܬ ܠܘܬ ܐܠܗܐ ܀ ܟܠ ܒܐܝܕܗ ܗܘܐ ܘܒܠܥܕܘܗܝ ܐܦܠܐ ܚܕܐ ܗܘܬ ܡܕܡ ܕܗܘܐ ܀ ܒܗ ܚܝܐ ܗܘܐ ܘܚܝܐ ܐܝܬܝܗܘܢ ܢܘܗܪܐ ܕܒܢܝܢܫܐ ܀ ܘܗܘ ܢܘܗܪܐ ܒܚܫܘܟܐ ܡܢܗܪ ܘܚܫܘܟܐ ܠܐ ܐܕܪܟܗ ܀
 \par
 }
 
-Eastern Syriac stylistic family:
+Two traditional typefaces set the same opening verse, allowing their
+letterforms to be read alongside one another.
+
+\noindent
+\begin{minipage}[t]{0.47\linewidth}
+\textbf{General Syriac}
+
+\medskip
+
+\SY{%
+ܒܪܫܝܬ ܐܝܬܘܗܝ ܗܘܐ ܡܠܬܐ ܘܗܘ ܡܠܬܐ ܐܝܬܘܗܝ ܗܘܐ ܠܘܬ ܐܠܗܐ ܘܐܠܗܐ ܐܝܬܘܗܝ ܗܘܐ ܗܘ ܡܠܬܐ ܀
+\par
+}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.47\linewidth}
+\textbf{Eastern Syriac}
+
+\medskip
 
 \SYE{%
-ܫܠܡܐ ܥܠܝܟܘܢ. ܗܢܐ ܟܬܒܐ ܟܬܝܒ ܒܠܫܢܐ ܣܘܪܝܝܐ، ܘܐܝܬ ܒܗ ܡ̈ܠܐ ܣܓܝ̈ܐܬܐ ܘܦܬܓ̈ܡܐ ܕܐܪܝܟܝܢ ܡܢ ܚܕ ܫܛܪܐ. ܟܕ ܡܬܡܠܐ ܫܛܪܐ، ܒܥܐ ܟܬܒܐ ܕܢܚܘܬ ܠܫܛܪܐ ܐܚܪܢܐ ܒܠܐ ܕܢܬܚܠܦ ܛܟܣܐ ܕܡ̈ܠܐ ܘܒܠܐ ܕܢܬܦܣܩ ܚܘܒܪܐ ܕܐܬܘ̈ܬܐ. ܗܟܢܐ ܡܨܝܢܢ ܕܢܒܕܘܩ ܐܝܟܢܐ ܡܬܕܒܪ ܟܬܒܐ ܟܕ ܐܘܪܟܗ ܪܒ ܘܟܕ ܐܝܬ ܒܗ ܪܘܚ̈ܩܐ ܘܦܘ̈ܣܩܐ ܣܓܝ̈ܐܐ. ܗܢܐ ܦܬܓܡܐ ܐܚܪܝܐ ܡܘܣܦ ܐܘܪܟܐ ܠܦܪܓܪܦܐ ܡܛܠ ܕܢܚܙܐ ܣܓܝ̈ܐܐ ܫܛܪ̈ܐ ܘܢܒܕܘܩ ܪܘܚܩܐ ܘܛܟܣܐ ܕܟܬܒܐ.
+ܒܪܫܝܬ ܐܝܬܘܗܝ ܗܘܐ ܡܠܬܐ ܘܗܘ ܡܠܬܐ ܐܝܬܘܗܝ ܗܘܐ ܠܘܬ ܐܠܗܐ ܘܐܠܗܐ ܐܝܬܘܗܝ ܗܘܐ ܗܘ ܡܠܬܐ ܀
 \par
 }
+\end{minipage}
 
 % ==========================================================================
 \section{Vertical Writing}
 % ==========================================================================
 
-\Term[sort=vertical writing]{Vertical writing}
-[horizontal-layout-compatible vertical embedding] provides local vertical
-runs inside a horizontal document model. The text is divided at word
-boundaries, and each word is typeset vertically
-while the resulting word-sized units continue to participate in ordinary
-horizontal paragraph layout. Spaces therefore become natural break
-opportunities between vertical words.
-
-This design keeps genuinely vertical glyph orientation while allowing the
-text to wrap within normal horizontal pages, with relatively compact line
-spacing. The
-specimens below are deliberately long enough to test this compatibility
-strategy under realistic paragraph conditions: word segmentation, inter-word
-spacing, line breaking, line spacing, punctuation, ordering, and recovery of
-the surrounding horizontal layout.
+Mongolian, Manchu, and Old Uyghur are written in vertical lines. In a
+horizontal IMPE document, local vertical runs retain that orientation while
+individual word-sized units can wrap within the surrounding page. The
+following passages compare the two settings and their different letterforms.
+\index{Vertical writing}
 
 \subsection{Mongolian}
+
+The same Mongolian passage appears in horizontal and vertical settings.
 
 \noindent
 \begin{minipage}[t]{0.47\linewidth}
 \raggedright
-\textbf{Horizontal}
+\textbf{Horizontal reference}
 
 \medskip
 
-\MO{ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠃ ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ ᠴᠢᠭᠯᠡᠯ ᠢᠶᠡᠷ ᠪᠢᠴᠢᠭᠳᠡᠨ᠎ᠡ᠂ ᠦᠭᠡ ᠪᠦᠷᠢ ᠨᠢ ᠬᠣᠭᠣᠷᠣᠨᠳᠣᠭ᠎ᠠ ᠵᠠᠢ ᠲᠠᠢ ᠪᠠᠢᠳᠠᠭ᠃ ᠤᠷᠲᠤ ᠦᠭᠡ ᠪᠣᠯᠣᠨ ᠣᠯᠠᠨ ᠦᠭᠡ ᠨᠢ ᠨᠢᠭᠡ ᠮᠥᠷ ᠲᠦ ᠪᠠᠭᠲᠠᠬᠤ ᠦᠭᠡᠢ ᠦᠶ᠎ᠡ ᠳᠦ ᠳᠠᠷᠠᠭᠠᠴᠢ ᠶᠢᠨ ᠮᠥᠷ ᠲᠦ ᠰᠢᠯᠵᠢᠨ᠎ᠡ᠃}
+\MO{ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠃ ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ ᠴᠢᠭᠯᠡᠯ ᠢᠶᠡᠷ ᠪᠢᠴᠢᠭᠳᠡᠨ᠎ᠡ᠃}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.47\linewidth}
@@ -454,21 +398,48 @@ the surrounding horizontal layout.
 
 \medskip
 
-\MOv{ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠃ ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ ᠴᠢᠭᠯᠡᠯ ᠢᠶᠡᠷ ᠪᠢᠴᠢᠭᠳᠡᠨ᠎ᠡ᠂ ᠦᠭᠡ ᠪᠦᠷᠢ ᠨᠢ ᠬᠣᠭᠣᠷᠣᠨᠳᠣᠭ᠎ᠠ ᠵᠠᠢ ᠲᠠᠢ ᠪᠠᠢᠳᠠᠭ᠃ ᠤᠷᠲᠤ ᠦᠭᠡ ᠪᠣᠯᠣᠨ ᠣᠯᠠᠨ ᠦᠭᠡ ᠨᠢ ᠨᠢᠭᠡ ᠮᠥᠷ ᠲᠦ ᠪᠠᠭᠲᠠᠬᠤ ᠦᠭᠡᠢ ᠦᠶ᠎ᠡ ᠳᠦ ᠳᠠᠷᠠᠭᠠᠴᠢ ᠶᠢᠨ ᠮᠥᠷ ᠲᠦ ᠰᠢᠯᠵᠢᠨ᠎ᠡ᠃}
+\MOv{ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠃ ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ ᠴᠢᠭᠯᠡᠯ ᠢᠶᠡᠷ ᠪᠢᠴᠢᠭᠳᠡᠨ᠎ᠡ᠃}
+\end{minipage}
+
+\medskip
+
+The regular Mongolian family and Mongolian Baiti give the same short
+phrase different appearances in vertical setting:
+
+\noindent
+\begin{minipage}[t]{0.47\linewidth}
+\raggedright
+\textbf{Mongolian}
+
+\medskip
+
+\MOv{ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.47\linewidth}
+\raggedright
+\textbf{Mongolian Baiti}
+
+\medskip
+
+\MObv{ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ}
 \end{minipage}
 
 \bigskip
 
 \subsection{Manchu}
 
+The same Manchu passage appears in both orientations, allowing direct
+comparison without changing the text.
+
 \noindent
 \begin{minipage}[t]{0.47\linewidth}
 \raggedright
-\textbf{Horizontal}
+\textbf{Horizontal reference}
 
 \medskip
 
-\MC{ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᠮᠠᠨᠵᡠ ᠪᡳᡨᡥᡝ ‍ᡳ ᠠᡵᠠᠮᠪᡳ᠃ ᠪᡳ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᡩᡝ ᠯᠣᠨᡤᡤᠣ ᡤᡳᠰᡠᠨ ᠪᡝ ᠠᡵᠠᠮᠪᡳ᠂ ᡨᡝᡵᡝᠴᡳ ᡤᡳᠰᡠᠨ ᡨᠠᡨᠠᠮᡝ ᡤᡝᠨᡝᠮᠪᡳ᠃ ᡝᡵᡝ ᡳᠴᡳ ᠠᠮᠪᠠ ᠪᡳᡨᡥᡝ ᠪᡝ ᠠᡵᠠᡥᠠ ᠮᠠᠩᡤᡳ ᠮᡠᡵᡠ ᠪᡝ ᡥᡝᠴᡝᡥᡝ᠂ ᡤᡳᠰᡠᠨ ᠪᡝ ᠨᠠᡩᠠᠨ ᠪᠠ ᡩᡝ ᡶᠠᡵᠠᡥᠠ ᠪᡝ ᡳᠯᡝᡨᡠᠯᡝᠮᠪᡳ᠃}
+\MC{ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᠮᠠᠨᠵᡠ ᠪᡳᡨᡥᡝ ‍ᡳ ᠠᡵᠠᠮᠪᡳ᠃ ᠪᡳ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᡩᡝ ᠯᠣᠨᡤᡤᠣ ᡤᡳᠰᡠᠨ ᠪᡝ ᠠᡵᠠᠮᠪᡳ᠂ ᡨᡝᡵᡝᠴᡳ ᡤᡳᠰᡠᠨ ᡨᠠᡨᠠᠮᡝ ᡤᡝᠨᡝᠮᠪᡳ᠃}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.47\linewidth}
@@ -477,25 +448,26 @@ the surrounding horizontal layout.
 
 \medskip
 
-\MCv{ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᠮᠠᠨᠵᡠ ᠪᡳᡨᡥᡝ ‍ᡳ ᠠᡵᠠᠮᠪᡳ᠃ ᠪᡳ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᡩᡝ ᠯᠣᠨᡤᡤᠣ ᡤᡳᠰᡠᠨ ᠪᡝ ᠠᡵᠠᠮᠪᡳ᠂ ᡨᡝᡵᡝᠴᡳ ᡤᡳᠰᡠᠨ ᡨᠠᡨᠠᠮᡝ ᡤᡝᠨᡝᠮᠪᡳ᠃ ᡝᡵᡝ ᡳᠴᡳ ᠠᠮᠪᠠ ᠪᡳᡨᡥᡝ ᠪᡝ ᠠᡵᠠᡥᠠ ᠮᠠᠩᡤᡳ ᠮᡠᡵᡠ ᠪᡝ ᡥᡝᠴᡝᡥᡝ᠂ ᡤᡳᠰᡠᠨ ᠪᡝ ᠨᠠᡩᠠᠨ ᠪᠠ ᡩᡝ ᡶᠠᡵᠠᡥᠠ ᠪᡝ ᡳᠯᡝᡨᡠᠯᡝᠮᠪᡳ᠃}
+\MCv{ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᠮᠠᠨᠵᡠ ᠪᡳᡨᡥᡝ ‍ᡳ ᠠᡵᠠᠮᠪᡳ᠃ ᠪᡳ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᡩᡝ ᠯᠣᠨᡤᡤᠣ ᡤᡳᠰᡠᠨ ᠪᡝ ᠠᡵᠠᠮᠪᡳ᠂ ᡨᡝᡵᡝᠴᡳ ᡤᡳᠰᡠᠨ ᡨᠠᡨᠠᠮᡝ ᡤᡝᠨᡝᠮᠪᡳ᠃}
 \end{minipage}
 
 \bigskip
 
 \subsection{Old Uyghur}
 
-The Old Uyghur sample is deliberately extended so that several successive
-vertical columns must be produced. It is used as a layout stress string rather
-than as a continuous philological quotation.
+A provisional Unicode rendering based on the published transliteration
+of the colophon of the Turfan manuscript U~338 supplies a continuous
+Old Uyghur passage. It is presented as a typographic specimen rather
+than a critical edition.
 
 \noindent
 \begin{minipage}[t]{0.47\linewidth}
 \raggedright
-\textbf{Horizontal}
+\textbf{Horizontal reference}
 
 \medskip
 
-\UY{𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶}
+\UY{𐽰𐽳𐽸 𐽶𐽶𐾁 𐽾𐽰𐽹 𐽰𐽰𐽶 𐽰𐽳𐽶𐽽 𐽰𐽳𐾀𐽳𐽴𐽲𐽰 𐽹𐽺 𐽼𐽰𐽷𐽳𐽴 𐽼𐽶𐾀𐽶𐾀𐽶𐽹 𐽼𐽳𐽶𐽰𐽺𐽶 𐽰𐾀𐽹 𐽶𐽳𐽺𐽰𐽺𐽲𐽰 𐾀𐽰𐽷𐽻𐽳𐽺 𐽰𐽰𐽹𐽶𐽺 𐽰𐽰𐽹𐽶𐽺 𐾀𐽶𐽼 𐽹𐽳𐽺𐽶 𐾀𐽰𐽷 𐽼𐽶𐽶𐽻 𐽲𐽰𐾀𐽰 𐽼𐽶𐾀𐽶𐽼 𐽰𐽱𐽸𐽰 𐽰𐽳𐽲𐽳𐾁 𐽲𐽶𐽴 𐽲𐽰 𐽰𐽳𐽲𐽶𐾀𐽶𐽼 𐽰𐽻𐽶𐽸𐽹𐽰𐽷𐽶 𐽼𐽳𐾁𐽴𐽳𐽺 𐽰𐽹𐽶𐽺}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.47\linewidth}
@@ -504,7 +476,7 @@ than as a continuous philological quotation.
 
 \medskip
 
-\UYv{𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶 𐽳𐽶𐽲𐽳𐽾 𐽰𐽶𐾁𐽶}
+\UYv{𐽰𐽳𐽸 𐽶𐽶𐾁 𐽾𐽰𐽹 𐽰𐽰𐽶 𐽰𐽳𐽶𐽽 𐽰𐽳𐾀𐽳𐽴𐽲𐽰 𐽹𐽺 𐽼𐽰𐽷𐽳𐽴 𐽼𐽶𐾀𐽶𐾀𐽶𐽹 𐽼𐽳𐽶𐽰𐽺𐽶 𐽰𐾀𐽹 𐽶𐽳𐽺𐽰𐽺𐽲𐽰 𐾀𐽰𐽷𐽻𐽳𐽺 𐽰𐽰𐽹𐽶𐽺 𐽰𐽰𐽹𐽶𐽺 𐾀𐽶𐽼 𐽹𐽳𐽺𐽶 𐾀𐽰𐽷 𐽼𐽶𐽶𐽻 𐽲𐽰𐾀𐽰 𐽼𐽶𐾀𐽶𐽼 𐽰𐽱𐽸𐽰 𐽰𐽳𐽲𐽳𐾁 𐽲𐽶𐽴 𐽲𐽰 𐽰𐽳𐽲𐽶𐾀𐽶𐽼 𐽰𐽻𐽶𐽸𐽹𐽰𐽷𐽶 𐽼𐽳𐾁𐽴𐽳𐽺 𐽰𐽹𐽶𐽺}
 \end{minipage}
 
 
@@ -512,22 +484,25 @@ than as a continuous philological quotation.
 \section{Complex Shaping and Stacked Sequences}
 % ==========================================================================
 
-\Term[sort=OpenType shaping]{OpenType shaping}
-[generic complex shaping] is tested here through explicit local families.
-This deliberately separates shaping from Unicode-range ownership: if a local
-specimen is wrong, the failure belongs to the selected family or shaping path
-through the selected local family and shaping path. Khitan Small Script is
-recorded through its current linear fallback form.
+Two kinds of composition meet on these pages. Devanagari, Tibetan,
+Brahmi, Kharoshthi, and Thai rely on the shaping of ordinary Unicode text
+by the selected OpenType fonts. Egyptian Hieroglyphs and Khitan Small
+Script instead use XSR to arrange signs into two-dimensional units while
+preserving their original Unicode sequences.
+\index{OpenType shaping}\index{Two-dimensional composition}
 
 \subsection{Devanagari}
 
-The Sanskrit local family exercises conjuncts, virama behavior, pre-base and
-post-base vowel signs, and longer clusters through explicit local selection.
+Devanagari makes conjunct consonants, vowel signs, and the virama visible
+in the shapes of its syllables. The Sanskrit family sets the forms in
+Table~\ref{tab:deva-shaping} with the typeface used in the Sanskrit verse.
 
-\begin{TableBookX}
-  {L L}
-  {Devanagari shaping specimens}
-  {tab:deva-shaping}
+\begin{table}[htbp]
+  \centering
+  \caption{Devanagari shaping specimens}
+  \label{tab:deva-shaping}
+  \begin{tabularx}{\linewidth}{@{}LL@{}}
+    \toprule
 Sequence & Specimen \\
 \midrule
 kṣa & \SA{क्ष} \\
@@ -539,573 +514,459 @@ dharma & \SA{धर्म} \\
 dharmakṣetre & \SA{धर्मक्षेत्रे} \\
 saṃskṛtam & \SA{संस्कृतम्} \\
 oṃ & \SA{ॐ} \\
-\end{TableBookX}
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
-A longer local specimen:
+The first three verses of the \emph{Bhagavadgītā} (1.1--3)
+give a longer, continuous Sanskrit specimen with conjuncts and vowels.
 
-\begin{ExampleBlock}
-\SA{धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।
-संस्कृतवाक्यानि देवनागर्या लिखितानि सन्ति।}
-\end{ExampleBlock}
+\begin{quote}
+\upshape
+\SA{धृतराष्ट्र उवाच। धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।
+मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥१॥
+सञ्जय उवाच। दृष्ट्वा तु पाण्डवानीकं व्यूढं दुर्योधनस्तदा।
+आचार्यमुपसङ्गम्य राजा वचनमब्रवीत्॥२॥
+पश्यैतां पाण्डुपुत्राणामाचार्य महतीं चमूम्।
+व्यूढां द्रुपदपुत्रेण तव शिष्येण धीमता॥३॥}
+\end{quote}
 
 \subsection{Tibetan}
 
-Tibetan provides a visible example of generic vertical stacking inside one
-local shaping run.
+Tibetan syllables can contain stacked consonants within a single
+\emph{tsheg}-delimited unit. Table~\ref{tab:tibetan-shaping} compares short
+forms; the traditional Four Immeasurables prayer provides a longer passage.
 
-\begin{TableBookX}
-  {L L}
-  {Tibetan stack specimens}
-  {tab:tibetan-shaping}
-Type & Specimen \\
+\begin{table}[htbp]
+  \centering
+  \caption{Tibetan consonant-stack specimens}
+  \label{tab:tibetan-shaping}
+  \begin{tabularx}{\linewidth}{@{}LL@{}}
+    \toprule
+Transliteration & Specimen \\
 \midrule
-stack & \TI{བསྒྲུབས་} \\
-stack & \TI{བརྒྱུད་} \\
-stack & \TI{བསྟན་} \\
-stack & \TI{རྒྱལ་} \\
-stack & \TI{དབྱངས་} \\
-\end{TableBookX}
+bsgrubs & \TI{བསྒྲུབས་} \\
+brgyud & \TI{བརྒྱུད་} \\
+bstan & \TI{བསྟན་} \\
+rgyal & \TI{རྒྱལ་} \\
+dbyangs & \TI{དབྱངས་} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
-A longer local paragraph exercises Tibetan shaping and line breaking under
-ordinary document width:
+\TI{སེམས་ཅན་ཐམས་ཅད་བདེ་བ་དང་བདེ་བའི་རྒྱུ་དང་ལྡན་པར་གྱུར་ཅིག །
+སེམས་ཅན་ཐམས་ཅད་སྡུག་བསྔལ་དང་སྡུག་བསྔལ་གྱི་རྒྱུ་དང་བྲལ་བར་གྱུར་ཅིག །
+སེམས་ཅན་ཐམས་ཅད་སྡུག་བསྔལ་མེད་པའི་བདེ་བ་དང་མི་འབྲལ་བར་གྱུར་ཅིག །
+སེམས་ཅན་ཐམས་ཅད་ཉེ་རིང་ཆགས་སྡང་དང་བྲལ་བའི་བཏང་སྙོམ་ལ་གནས་པར་གྱུར་ཅིག །}
 
-\TI{བོད་ཡིག་ནི་བོད་ཀྱི་སྐད་ཡིག་འབྲི་བའི་ཡི་གེའི་མ་ལག་ཅིག་ཡིན་ཞིང་། ཚིག་དང་ཚིག་གི་བར་ལ་ཚེག་གིས་མཚམས་འབྱེད་པ་དང་། ཡི་གེ་མང་པོ་ཞིག་མགོ་ཅན་དང་འདོགས་ཅན་དུ་སྦྱར་ནས་ཚེག་བར་གཅིག་གི་ནང་དུ་སྤུངས་ཏེ་འབྲི་དགོས།དཔེར་ན་བསྒྲུབས་པ་དང་། བརྒྱུད་པ། བསྟན་པ། རྒྱལ་ཁབ། དབྱངས་ཅན་ལྟ་བུའི་ཚིག་ནང་དུ་ཡི་གེ་མང་པོ་སྦྱར་ཡོད་པས། ཡིག་གཟུགས་ཀྱི་སྤུངས་སྟངས་དང་ཚེག་བར་གྱི་བར་ཐག་གཉིས་ཀ་ཡང་དག་པར་སྟོན་དགོས། ཚིག་ཕྲེང་རིང་པོ་ཞིག་ཤོག་ངོས་ཀྱི་ཞེང་ཚད་ལས་བརྒལ་བའི་སྐབས་སུ། ཚེག་གི་རྗེས་སུ་རང་བཞིན་གྱིས་ཕྲེང་བ་གསར་པར་འགྲོ་ཐུབ་པ་དང་། སྔ་ཕྱིའི་ཡི་གེའི་སྤུངས་སྟངས་དང་ཚིག་གི་གོ་རིམ་མི་འཁྲུག་པ་གལ་ཆེ། དེའི་ཕྱིར་ཚིག་ཕྲེང་རིང་པོ་འདིས་བོད་ཡིག་གི་གཟུགས་སྦྱོར་དང་། ཚེག་བར། ཕྲེང་བར། ཤད་དང་ཉིས་ཤད་ཀྱི་གནས་སྟངས། དེ་བཞིན་དུ་ཕྲེང་བ་བརྗེ་བའི་སྐབས་ཀྱི་སྤྱིའི་སྒྲིག་སྟངས་བཅས་ལ་ཚོད་ལྟ་བྱེད་ཐུབ།།}
+\medskip
+\noindent\textbf{Sanskrit transcribed in Tibetan letters.}
+The \emph{Heart Sūtra} mantra illustrates Sanskrit consonant stacks,
+long-vowel marks, anusvāra, and the \emph{svāhā} cluster without
+switching away from the Tibetan-script font:
+
+\begin{quote}
+\upshape
+\TI{ཏདྱ་ཐཱ། ག་ཏེ་ག་ཏེ་པཱ་ར་ག་ཏེ།
+པཱ་ར་སཾ་ག་ཏེ། བོ་དྷི་སྭཱ་ཧཱ།}
+\end{quote}
 
 \subsection{Brahmi, Kharoshthi, and Thai}
 
-Brahmi is provided through two local families. The redistributable Noto
-family provides broad Brahmi coverage, but in the current IMPE/\XeTeX~setup
-its current shaping produces linear forms for some conjunct sequences.
-Segoe UI Historic is therefore exposed through \texttt{\textbackslash SEG}
-as an alternative reference family and produces the intended stacking in
-these cases. Because Segoe UI Historic is a Microsoft Windows font, its font
-binary remains a user-supplied local resource; the local command works when
-the font is supplied or already installed.
+The complete Rummindei (Lumbini) pillar edict of Aśoka, in Prakrit,
+provides a genuine Brāhmī inscription. The same Unicode transcription
+is set in two regular fonts; the original inscription's line breaks
+are joined into one flowing paragraph without changing its characters.
+\index{Brahmi}\index{Kharoshthi}\index{Thai line breaking}
 
-\begin{TableBookX}
-  {L L}
-  {Additional generic-shaping specimens}
-  {tab:generic-shaping}
-Script / family & Specimen \\
-\midrule
-Brahmi / Noto &
-  \BR{𑀲𑀢𑁆𑀬𑀁 𑀯𑀤, 𑀥𑀭𑁆𑀫𑀁 𑀘𑀭.} \\
-Brahmi / Segoe Historic &
-  \SEG{𑀲𑀢𑁆𑀬𑀁 𑀯𑀤, 𑀥𑀭𑁆𑀫𑀁 𑀘𑀭.} \\
-Kharoshthi &
-  \KH{𐨢𐨿𐨪𐨨 𐨐𐨿𐨪𐨨 𐨯𐨿𐨪𐨬 𐨡𐨅𐨬 𐨣𐨨 𐨐𐨁 𐨐𐨂 𐨐𐨅 𐨐𐨆} \\
-Thai &
-  \TH{ภาษาไทย กำ กิ กี้ เก้า} \\
-\end{TableBookX}
+\noindent\textbf{Brāhmī --- Noto Sans Brahmi}\par\nobreak\smallskip
+\noindent\BR{𑀤𑁂𑀯𑀸𑀦𑀁𑀧𑀺𑀬𑁂𑀦 𑀧𑀺𑀬𑀤𑀲𑀺𑀦 𑀮𑀸𑀚𑀺𑀦𑀯𑀻𑀲𑀢𑀺𑀯𑀲𑀸𑀪𑀺𑀲𑀺𑀢𑁂𑀦 𑀅𑀢𑀦𑀆𑀕𑀸𑀘 𑀫𑀳𑀻𑀬𑀺𑀢𑁂 𑀳𑀺𑀤𑀩𑀼𑀥𑁂𑀚𑀸𑀢 𑀲𑀓𑁆𑀬𑀫𑀼𑀦𑀺𑀢𑀺 𑀲𑀺𑀮𑀸𑀯𑀺𑀕𑀟𑀪𑀻𑀘𑀸𑀓𑀸𑀮𑀸𑀧𑀺𑀢 𑀲𑀺𑀮𑀸𑀣𑀪𑁂𑀘 𑀉𑀲𑀧𑀸𑀧𑀺𑀢𑁂 𑀳𑀺𑀤𑀪𑀕𑀯𑀁𑀚𑀸𑀢𑀢𑀺 𑀮𑀼𑀁𑀫𑀺𑀦𑀺𑀕𑀸𑀫𑁂 𑀉𑀩𑀮𑀺𑀓𑁂𑀓𑀝𑁂 𑀅𑀞𑀪𑀸𑀕𑀺𑀬𑁂𑀘}\par
 
-\subsection{Khitan Small Script: current linear fallback}
+\medskip
+\noindent\textbf{Brāhmī --- Segoe UI Historic}\par\nobreak\smallskip
+\noindent\SEG{𑀤𑁂𑀯𑀸𑀦𑀁𑀧𑀺𑀬𑁂𑀦 𑀧𑀺𑀬𑀤𑀲𑀺𑀦 𑀮𑀸𑀚𑀺𑀦𑀯𑀻𑀲𑀢𑀺𑀯𑀲𑀸𑀪𑀺𑀲𑀺𑀢𑁂𑀦 𑀅𑀢𑀦𑀆𑀕𑀸𑀘 𑀫𑀳𑀻𑀬𑀺𑀢𑁂 𑀳𑀺𑀤𑀩𑀼𑀥𑁂𑀚𑀸𑀢 𑀲𑀓𑁆𑀬𑀫𑀼𑀦𑀺𑀢𑀺 𑀲𑀺𑀮𑀸𑀯𑀺𑀕𑀟𑀪𑀻𑀘𑀸𑀓𑀸𑀮𑀸𑀧𑀺𑀢 𑀲𑀺𑀮𑀸𑀣𑀪𑁂𑀘 𑀉𑀲𑀧𑀸𑀧𑀺𑀢𑁂 𑀳𑀺𑀤𑀪𑀕𑀯𑀁𑀚𑀸𑀢𑀢𑀺 𑀮𑀼𑀁𑀫𑀺𑀦𑀺𑀕𑀸𑀫𑁂 𑀉𑀩𑀮𑀺𑀓𑁂𑀓𑀝𑁂 𑀅𑀞𑀪𑀸𑀕𑀺𑀬𑁂𑀘}\par
 
-Khitan Small Script is exposed through IMPE's public font interface and shown
-through its current linear rendering path. The
-following specimen is taken from the Khitan Small Script epitaph of Xiao
-Hudujin and is deliberately long enough to exercise the present linear
-fallback across continuous text, cluster boundaries, spacing, and paragraph
-line breaking.
+\smallskip
+{\footnotesize\noindent
+Source: Aśoka's Rummindei pillar edict, based on E.~Hultzsch;
+Unicode transcription at
+\href{https://en.wikipedia.org/wiki/Brahmi_script}
+{Brahmi script: Birthplace of the historical Buddha}.
+Segoe UI Historic is a separately installed Microsoft font.\par}
 
-\KHS{𘲇 𘰺𘱹𘰻 𘱿𘱤 𘱚𘮒𘲦 𘯣𘰴 𘲤𘭂𘮢𘲫𘲦 𘰺𘱄𘱯𘱸 𘬥𘲜𘰭 𘲜𘬚 𘭃𘱚𘱸 𘭞𘱄𘮽𘰕 𘲽𘭽𘭢 𘲽𘲑 𘰲 𘲅𘯺𘬐 𘲽𘱚𘲦 𘲚𘰥 𘮯𘮠 𘰷𘯀 𘱚𘱕 𘮧𘯶𘮱𘱄𘲫 𘬜𘭪𘲚𘱪 𘭩 𘱚𘱛 𘰭𘲚 𘮵𘯺𘲑 𘲽𘰥𘱦 𘮽𘯛 𘬜𘰆 𘰷𘱤 𘲽𘱦 𘭃𘭽𘲽 𘱤𘰣 𘱛𘳑𘰕 𘲽𘰥𘱸𘲦 𘰺𘱄𘭽𘱸 𘮽𘰣 𘭔𘱄𘱯𘱦 𘲚𘰥𘲐 𘰺𘭸𘰷 𘮦𖿤𘲲 𘰕𘲆𘮒 𘲵𘯺𘬾𘯺 𘬥𘰣𘱮 𘯤 𘲜𘰣𘱤 𘯥 𘯥𘲆𘬷 𘲲𘰓𘰽 𘮧𘬜𘱄 𘰣𘭺 𘮧𘲚 𘲽𘱦 𘯥 𘭃𘭺 𘮽𘲓𘱦 𘰣 𘬘𘭞}
+\medskip
+\noindent\textbf{Kharoshthi --- illustrative script transcription}\par\nobreak\smallskip
+\begin{flushright}
+\KH{𐨯𐨟𐨿𐨩𐨎 𐨬𐨡𐩐 𐨢𐨪𐨿𐨨𐨎 𐨕𐨪𐩐 𐨯𐨿𐨬𐨌𐨢𐨿𐨩𐨌𐨩𐨌𐨣𐨿 𐨨𐨌 𐨤𐨿𐨪𐨨𐨡𐨏𐩐}
+\end{flushright}
 
+\noindent
+This short Kharoshthi passage is a modern script conversion of Sanskrit,
+not an attested ancient Gāndhārī inscription. Its right-to-left shaping
+is the focus of this specimen.
+
+\medskip
+\noindent\textbf{Thai --- continuous contemporary prose}\par\nobreak\smallskip
+\noindent\TH{เมื่อเปิดหนังสือเก่าในห้องสมุด เราอาจพบลายมือของผู้อ่านจากหลายยุคสมัย บางคนขีดเส้นใต้ข้อความที่ชอบ บางคนเขียนคำถามไว้ริมหน้า และบางคนบันทึกวันเวลาที่อ่านจบ เรื่องราวเหล่านี้ทำให้หนังสือเล่มเดียวเป็นเหมือนบทสนทนาที่ดำเนินต่อไปข้ามกาลเวลา}\par
+
+\subsection{Egyptian Hieroglyphic Composition}
+
+The opening of the \emph{Tale of the Shipwrecked Sailor}, lines 1--15
+of Bob Richmond's horizontal UMdC transcription, is set as one
+continuous flowing Egyptian passage. The manuscript itself is in
+hieratic; the presentation below uses hieroglyphic transcription.
+Editorial line numbers and colour markup have been removed, while
+the original Unicode hieroglyphic signs and format controls remain.
+\index{Egyptian Hieroglyph Format Controls}
+
+\par\medskip\noindent
+{\large\EG{𓆓𓐳𓂧𓇋𓐰𓈖𓌞𓅱𓀀𓇋𓈎𓐰𓂋𓐰𓏛𓅱𓍒𓄿𓏜𓄣𓐱𓏤𓐰𓎡𓄂𓐰𓂝𓀀𓅓𓂝𓐰𓎡𓄖𓐰𓂻𓈖𓐰𓈖𓐰𓏥𓄚𓐰𓈖𓏌𓅱𓉐𓊏𓐰𓊪𓂡𓐍𓐰𓂋𓊪𓐱𓏲𓐰𓆱𓎛𓀝𓀜𓏠𓐰𓈖𓇋𓏏𓊧𓆱𓄂𓐰𓏏𓐱𓏏𓏲𓂋𓐰𓂞𓐰𓏏𓁷𓐰𓏤𓇾𓐰𓈇𓐱𓏤𓂋𓐰𓂞𓎛𓎡𓐰𓈖𓏌𓐰𓏲𓀁𓊹𓇼𓄿𓀢𓀁𓊃𓐰𓀀𓐱𓏤𓎟𓁷𓐰𓏤𓎛𓊪𓐰𓏏𓂘𓐰𓂝𓌢𓈖𓐰𓏌𓅱𓀀𓏭𓐰𓆑𓇩𓅱𓐰𓏏𓀀𓐰𓏥𓏏𓐰𓈖𓐰𓏥𓇍𓇋𓏏𓐰𓂻𓎙𓐰𓂧𓏏𓐰𓏛𓂜𓐰𓈖𓈖𓐰𓉔𓅱𓅪𓐰𓈖𓀎𓀀𓐰𓏥𓈖𓐰𓏥𓄖𓐰𓂻𓈖𓐰𓈖𓐰𓏥𓄖𓅱𓐴𓏭𓍯𓍯𓏏𓐰𓈉𓊃𓐰𓈖𓏕𓐰𓂻𓈖𓐰𓈖𓐰𓏥𓊃𓐰𓈖𓅐𓏏𓐰𓈉𓅓𓂝𓐰𓎡𓂋𓐰𓆑𓈖𓐰𓏥𓇍𓇋𓂻𓐰𓈖𓐰𓏥𓅓𓊵𓐰𓏏𓊪𓐰𓏛𓇾𓐰𓈇𓐱𓏤𓈖𓐰𓏥𓄖𓐰𓂻𓈖𓐰𓏥𓇓𓏲𓄔𓅓𓂋𓐰𓎡𓈖𓐰𓀀𓄂𓐰𓂝𓀀𓏌𓐰𓎡𓀀𓆄𓏲𓐰𓅪𓇉𓄿𓅱𓏛𓐰𓏥𓇋𓐰𓂝𓈗𓂝𓐰𓏏𓐱𓏲𓇋𓐝𓅓𓐰𓂝𓈗𓁷𓐰𓏤𓂭𓐰𓏥𓐰𓎡𓇋𓐍𓐰𓏛𓅱𓐰𓈚𓃀𓀁𓐰𓎡𓅱𓄞𓐰𓂧𓐰𓏏𓀁𓐰𓎡𓌃𓂧𓐰𓅱𓀁𓎡𓐰𓈖}\par}
+\smallskip
+
+{\footnotesize\noindent
+Source: \href{https://github.com/HieroglyphsEverywhere/UMdC/blob/master/Samples/ShipwreckedSailorHorizontal.umdc}
+{UMdC, ShipwreckedSailorHorizontal.umdc}, opening lines 1--15;
+adapted from JSesh examples with reference to James P.~Allen.\par}
+
+\subsection{Khitan Small Script}
+
+The opening of the 1134 \emph{Record of the Langjun}, an attested
+Khitan Small Script inscription, is transcribed in two-dimensional
+Unicode clusters. The first two lines of the Wikisource transcription
+form one flowing paragraph here; original transcription line breaks
+are omitted and cluster boundaries are preserved.
+\index{Khitan Small Script}
+
+\par\medskip\noindent
+\KHS{𘲇 𘮝 𘱚𘮒𘲦 𘭅𘭂𘬐 𘮉 𘬞𘱞 𘬓𘰫 𘱚𘮰 𘱄𘱹𘲚 𘱖𘯺𘭗 𘲽𘲑 𘯴𘰷 𘲅𘯺𘬐 𘱆 𘭕𘰕 𘱄𘭏 𘬥𘯺𘬐 𘲱𘱶𘱤 𘲜𘮢𘲫 𘰷𘰗𘱤 𘰝𘰆𘲦 𘲾𘭛 𘱄𘮰𘰍 𘱥𘱆𘲽 𘱚𘬛𘱫 𘰺𘱓𘭛 𘱥𘮡𘰱 𘮧𘭲𘱆𘱤 𘱥𘰕 𘱝}\par
+\smallskip
+
+{\footnotesize\noindent
+Source: \href{https://wikisource.org/w/index.php?oldid=979223}
+{Wikisource, 大金皇弟都統經略郎君行記}, opening two transcription lines
+(Unicode transcription, CC BY-SA). This is a horizontal setting
+of a traditionally vertical inscription.\par}
 
 % ==========================================================================
+
+
 \section{East Asian Writing and CJK Family Selection}
 % ==========================================================================
 
-\Term[sort=CJK family selection]{CJK family selection}
-[continuous text, shared Han ownership, and explicit regional overrides]
-distinguishes the document CJK family from language-specific local families.
-Explicit local family selection determines the intended regional form
-of shared Han characters, while several East Asian writing systems also
-require shaping behavior that extends beyond ordinary Han glyph selection.
+This chapter compares document-level CJK typography with explicit local
+families for Chinese, Korean, Japanese, Vietnamese, and Tangut.
+The same Han codepoints may take different regional forms.
+\index{CJK family selection}
 
-The specimens in this section use normal-width continuous text. They exercise paragraph composition,
-line breaking, punctuation, regional glyph forms, Hangul composition,
-historical jamo, supplementary-plane ideographs, and mixed-script runs.
-A compact table at the end isolates shared Han codepoints for direct visual
-comparison.
-
-
-% --------------------------------------------------------------------------
 \subsection{Chinese}
-% --------------------------------------------------------------------------
 
-\paragraph{Mainland Simplified Chinese --- Noto SC}
+Four paragraphs distinguish Simplified Chinese, mainland-style Traditional
+Chinese, Taiwan Traditional Chinese, and the document's Shanggu family.
+The three Traditional Chinese specimens use exactly the same source text.
 
-This paragraph uses the explicit Simplified Chinese family throughout.
+\paragraph{Simplified Chinese --- Noto SC}
+\SC{秋天的清晨，图书馆刚刚开门。书架上放着一本旧地图，画有山谷、城门与河流，旁边是《龙城纪事》。读书的人翻开书页，读到国王命令学者修订典籍的故事：有人研究龙骨，也有人制作木具，记下直角的形状。窗外下起雨，墨色在灯下格外清晰。}
 
-\SC{现代中文排版并不只是把一个个汉字依次放进页面。一个真正的正文环境还需要同时处理标点、数字、书名号、引号、括号以及连续句子之间的换行关系，并且在较长的段落中保持稳定的字面和行距。对于共享的汉字码位，不同地区使用的字体还可能给出不同的字形，因此同一个“骨、直、令、具、角”在不同字体家族中会表现出细微而稳定的区域差异。这里使用一整段连续的简体中文来检查大陆简体字形、标点悬挂附近的布局、正常段落换行以及本地字体选择在长文本中是否能够始终保持有效，而不是只验证几个孤立字符能不能显示。}
+\paragraph{Traditional Chinese --- Noto SC}
+\SC{秋天的清晨，圖書館剛剛開門。書架上放著一本舊地圖，畫有山谷、城門與河流，旁邊是《龍城紀事》。讀書的人翻開書頁，讀到國王命令學者修訂典籍的故事：有人研究龍骨，也有人製作木具，記下直角的形狀。窗外下起雨，墨色在燈下格外清晰。}
 
+\paragraph{Traditional Chinese --- Noto TC}
+\TC{秋天的清晨，圖書館剛剛開門。書架上放著一本舊地圖，畫有山谷、城門與河流，旁邊是《龍城紀事》。讀書的人翻開書頁，讀到國王命令學者修訂典籍的故事：有人研究龍骨，也有人製作木具，記下直角的形狀。窗外下起雨，墨色在燈下格外清晰。}
 
-\paragraph{Mainland Traditional Chinese --- Noto SC}
+\paragraph{Traditional Chinese --- Shanggu (document default)}
+秋天的清晨，圖書館剛剛開門。書架上放著一本舊地圖，畫有山谷、城門與河流，旁邊是《龍城紀事》。讀書的人翻開書頁，讀到國王命令學者修訂典籍的故事：有人研究龍骨，也有人製作木具，記下直角的形狀。窗外下起雨，墨色在燈下格外清晰。
 
-Traditional characters can also be deliberately typeset through the Mainland
-Chinese family. This separates character repertoire from regional glyph
-selection: the explicit family choice supplies the regional form for
-traditional codepoints.
-
-\SC{現代中文排版並不只是把一個個漢字依次放進頁面。一個真正的正文環境還需要同時處理標點、數字、書名號、引號、括號以及連續句子之間的換行關係，並且在較長的段落中保持穩定的字面和行距。對於共享的漢字碼位，不同地區使用的字體還可能給出不同的字形，因此同一個「骨、直、令、具、角」在不同字體家族中會表現出細微而穩定的區域差異。這裡特意使用傳統漢字而仍然選擇大陸字體家族，以檢查字符繁簡與地域字形選擇能否保持彼此獨立，並觀察長段落中共享漢字、繁體字和全角標點的連續排版。}
-
-
-\paragraph{Taiwan Traditional Chinese --- Noto TC}
-
-The Taiwan family is tested with continuous Taiwan Traditional Chinese rather
-than with a short regional-glyph sample.
-
-\TC{正體中文的正文排版除了字符本身之外，也牽涉字型、標點、行距與段落節奏。當文件同時包含不同語言或不同地區的漢字時，程式不能僅依 Unicode 碼位猜測應採用哪一套地區字形，而應由明確的語言或字型選擇來決定。這個段落使用臺灣正體字型，並刻意包含「骨、直、令、具、角、門、國、學、龍」等適合觀察地區字形差異的共享漢字，同時加入引號、頓號、逗號與句號，藉此確認較長的正體中文內容在正常欄寬中能自然換行，而且從段首到段末始終維持同一個本地 CJK family。}
-
-
-\paragraph{Document Traditional Chinese --- Shanggu}
-
-The following paragraph is deliberately left completely unwrapped. It
-therefore remains under the document CJK family, Shanggu, and provides the
-control against which the explicit Chinese, Japanese, and Korean families can
-be compared.
-
-漢字進入現代數位排版之後，同一個編碼往往可以由許多不同的字體呈現，而字形的歷史層次、地域習慣和設計風格並不會因此消失。傳統中文尤其適合用來觀察這種情形：有些字在不同地區的正文中結構略異，有些字的筆形和部件位置不同，而另一些差別只有在一整段文字的灰度與節奏中才會顯現。這個段落不使用任何語言專用命令，使所有漢字直接落入文件的 Shanggu CJK family；因此它不只是檢查單字是否存在，也檢查文件級 CJK 選擇在較長的連續文本、標點和自動換行之間能否穩定維持。
-
-
-% --------------------------------------------------------------------------
 \subsection{Korean and Historical Hangul}
-% --------------------------------------------------------------------------
 
-\paragraph{Modern Korean --- Hangul}
+The first two passages compare Hangul-only prose with a mixed
+Hanja--Hangul register. Both use the Korean family.
 
-The first Korean specimen deliberately avoids Hanja. It tests ordinary modern
-Hangul composition, punctuation, word spacing, and paragraph wrapping.
+\paragraph{Modern Korean}
+\KR{가을비가 그친 오후, 작은 도서관의 창가에는 햇빛이 조용히 들어왔다. 학생들은 오래된 지도를 펼쳐 놓고 사라진 마을의 이름을 찾아보았다. 한 사람은 책의 여백에 질문을 적었고, 다른 사람은 다음 주에 다시 와서 자료를 읽기로 했다.}
 
-\KR{한글로 쓰인 긴 문장은 여러 음절 블록이 끊임없이 이어지면서도 낱말 사이의 간격과 문장 부호의 위치가 자연스럽게 유지되어야 한다. 짧은 보기에서는 글꼴이 몇 글자를 제대로 보여 주는지만 확인할 수 있지만, 실제 문단에서는 줄 끝에서 낱말이 어떻게 배치되는지, 괄호와 따옴표가 앞뒤 글자와 어떻게 어울리는지, 여러 줄을 지나도 같은 글꼴 선택이 계속 유지되는지를 함께 살펴볼 수 있다. 이 문단은 완성형 한글이 이어지는 일반적인 한국어 본문을 충분히 길게 배치하여 문장 전체의 모양과 줄 간격을 확인하고, 뒤에 나오는 한자 혼용문과 옛한글 자료를 비교하기 위한 현대 한글 기준 표본으로 사용한다.}
+\paragraph{Mixed Hanja and Hangul}
+\KR{古書를 정리하던 학생은 朝鮮時代의 日記 한 권을 발견했다. 紙面에는 한글과 漢字가 나란히 적혀 있었고, 여러 사람의 손으로 남긴 註釋도 보였다. 학생은 낡은 책을 조심스럽게 넘기며 당시의 生活과 言語를 상상했다.}
 
+\paragraph{Middle Korean --- \emph{Hunminjeongeum eonhae}}
+This continuous excerpt from the \emph{Hunminjeongeum eonhae}
+retains arae-a, archaic finals, and tone marks. Its Unicode input
+includes precomposed modern syllables followed by archaic final jamo:
+the local Hangul shaper must compose these just as it composes their
+canonically equivalent decomposed sequences.
 
-\paragraph{Modern Korean --- mixed Hanja and Hangul}
+% Source: https://ko.wikisource.org/wiki/훈민정음언해 (head-text lines)
+\KR{나랏〮말〯ᄊᆞ미〮 中듀ᇰ國귁〮에〮달아〮 文문字ᄍᆞᆼ〮와〮로〮서르ᄉᆞᄆᆞᆺ디〮아니〮ᄒᆞᆯᄊᆡ〮 이〮런젼ᄎᆞ〮로〮어린〮百ᄇᆡᆨ〮姓셔ᇰ〮이〮니르고〮져〮호ᇙ〮배〮이셔〮도〮}
 
-The next paragraph keeps Hangul and Hanja inside a single explicit Korean
-family. Shared Han characters retain Korean regional forms throughout the
-surrounding Hangul text.
+\subsection{Japanese}
 
-\KR{韓國語의 現代 文體는 오늘날 대체로 한글만으로 적지만, 歷史ㆍ言語ㆍ哲學ㆍ法律과 같은 분야에서는 漢字를 함께 적은 문헌을 어렵지 않게 만날 수 있다. 이런 漢字混用文을 조판할 때에는 한글 音節과 句讀點 사이에 들어가는 漢字가 갑자기 다른 地域 字形으로 바뀌지 않아야 하며, 韓國ㆍ朝鮮ㆍ漢字ㆍ文化ㆍ文字와 같은 어휘도 앞뒤의 한글 문맥과 한 family 안에서 자연스럽게 이어져야 한다. 이 문단은 國語의 읽기 흐름을 유지하면서 여러 漢字語와 고유어를 섞어, 실제 문헌에서 볼 수 있는 긴 혼용문이 줄바꿈을 거쳐도 안정적으로 조판되는지를 시험한다.}
+Ordinary modern Japanese combines kanji, hiragana, katakana, punctuation,
+and regionally selected Han forms within the same prose paragraph.
 
+\JP{春の朝、京都の小さな書店に新しい本が届いた。店主は箱を開け、「歴史と文化」の棚に本を並べた。古い地図には城門や学校が描かれ、表紙には龍の絵がある。来店した学生はカタログで目当ての一冊を探し、静かな店内でページをめくった。}
 
-\paragraph{Jeju language --- corpus specimen}
-
-Jeju is useful here because practical orthographies make active use of the
-arae-a and decomposed Hangul sequences that are rare in ordinary modern
-Korean. The following is a composite regression specimen assembled from
-short attested Jeju-language passages for a paragraph-level regression.
-
-\KR{제주말(濟州말)은 제주섬서 ᄀᆞᆯ아지는 말이다. 제주말모음은 시간 지나멍 여러 가지 변화가 이섯다. 제주섬은 한라산광 ᄌᆞᄁᆞᆺ듸 오름덜록 일뤄진 섬이라. 엿적 화산활동으록 굼부리가 꿰쉉 곤데곤데 ᄋᆢ라 오름이 하영 삿다. 낭(木)은 나무질로 뒌 줄기를 가지고 잇인 여러헤살이 식물이다. 제주말 위키벡과 또시는 제주어 위키백과는 제주말로 운영헴신 위키벡과 언어판이라.}
-
-\paragraph{Middle Korean and Old Hangul --- historical corpus specimen}
-
-The historical specimen deliberately retains decomposed jamo and tone marks.
-Short genuine historical fragments retain their source spellings and are
-placed consecutively to form a paragraph-level
-shaping regression.
-
-\KR{나랏〮말〯ᄊᆞ미〮中듀ᇰ國귁〮에〮 달아〮문ᄍᆞᆼ와〮로서르ᄉᆞᄆᆞᆺ디〮아니〮ᄒᆞᆯᄊᆡ〮　아〮기 ᄇᆡ여〮셔 과ᄀᆞᆯ이〮 가ᄉᆞᆷ〮 알파〮주글〮 ᄃᆞᆺ〮ᄒᆞ〮거든〮　두들겐 開闢ᄒᆞᆯ 젯 므리 疏通ᄒᆞ고 남ᄀᆞᆫ 古今엣 남기 섯것도다　머리〮 알ᄑᆞ고〮 고〮히 막고〮 머리〮와눈〮괘〮 환티〮 아니〮커든〮　긔〮운이〮 우흐〮로 올아〮 머리〮 알포〮미 ᄣᆞ리ᄂᆞᆫ ᄃᆞᆺ〮거든〮　넙고 큰 天造 ᄉᆞ이예 다ᄉᆞᆯ며 어즈러우민ᄃᆞᆯ 엇디 덛덛ᄒᆞᆫ 數ㅣ리오}
-
-The corpus paragraph above tests realistic historical material. The following
-synthetic boundary sequence has a different purpose: it explicitly crosses
-Hangul Jamo Extended-A, ordinary Jamo, and Extended-B while remaining inside
-one shaping run.
-
-\begin{center}
-\Huge
-\KR{ꥠᅡퟋ〮}
-\end{center}
-
-Modern decomposed control:
-
-\begin{center}
-\Huge
-\KR{각}
-\end{center}
-
-
-% --------------------------------------------------------------------------
-\subsection{Japanese and Ryukyuan}
-% --------------------------------------------------------------------------
-
-\paragraph{Modern Japanese}
-
-Modern Japanese combines kana, regional Han forms, punctuation, and frequent
-script changes inside the same sentence. The entire paragraph remains under
-the explicit Japanese family.
-
-\JP{現代日本語の文章では、漢字、ひらがな、カタカナが一つの段落の中で何度も切り替わり、句読点や括弧、かぎ括弧も連続して現れる。短い文字列だけではフォントが表示できることしか分からないが、長い本文にすると、漢字と仮名の大きさの釣り合い、約物の位置、行末での折り返し、そして次の行へ移った後の字形の連続性まで確認できる。この段落では「日本語」「漢字」「文字」「学校」「文化」「骨」「直」「令」「具」「角」などを通常の文脈に入れ、日本語用の地域字形を保ったまま複数行の文章が安定して組版されるかを試している。}
-
-
-\paragraph{Historical kana orthography}
-
-The opening sentence below is historical text; the continuation is a
-showcase-written regression passage that deliberately retains historical kana
-spellings such as \JP{ゐる}, \JP{やう}, and \JP{言ふ}. This keeps the
-specimen long enough for paragraph testing while identifying the continuation
-as showcase-written text.
-
-\JP{真夏の宿屋は空虚であつた。窓の外には白い雲がゆつくり流れ、庭の木立では蟬が絶えず鳴いてゐる。旅人は古い椅子に腰をおろし、まだ來ない馬車の音を待ちながら、時計の針ばかりを眺めてゐた。誰も何も言はないので、午後の光だけが廊下を少しづつ移つて行くやうに見えた。かうして長い時間が過ぎても、玄關の戸は一度も開かず、遠くの道から聞えて來る物音だけが、時々靜かな宿の空氣を動かしてゐるのであつた。}
-
-\paragraph{Japanese Kanbun}
-
-The first sentence is taken from Rai San'yō's \emph{Nihon Gaishi}; the
-remainder is a showcase-written Kanbun-style regression continuation. The
-purpose here is typographic: Japanese Han glyphs must remain selected even
-throughout the all-Han run.
-
-\JP{外史氏曰、吾讀舊志、見鳥羽帝時數下制符。蓋日本文章之傳、漢籍之學與國史之記相因而久矣。昔之學者讀經史、作序記、論人物、述治亂、多用漢文而各成其體。今取其字列於一段、所以驗日本字形之連續、句讀之位置、長行之折返、以及共享漢字在無假名介入時亦不離其本地字體也。文字雖同出一碼、而骨直令具角門國學龍諸字之形、隨地域字體而微異，故尤宜以連續文章觀之。}
-
-
-\paragraph{Okinawan --- corpus specimen}
-
-Okinawan is represented by a composite specimen from the Wikimedia Okinawan
-test project. Its mixed use of kana and Han characters makes it a useful
-additional Japanese-family regression. The orthography reflects this composite
-corpus specimen.
-
-\JP{沖縄口ぇー琉球諸語ぬてぃ壱ちやいびーん。うちなーぐちぬ首里那覇方言ぉー琉球国ぬじょーま言葉やびたん。琉球王國や、昔ジジ中心んかい存在さる王国やたん。王や首里天加那志とぅ言ん。首里城や、沖縄県ぬ城やん。琉球王朝ぬ王城っし、沖縄県ぬいっちん大さるぐしくやん。漢字ぇー、大昔唐ぬ国んかいそーじー現りーる文字ぬてぃーちやん。やまとぅ、高麗、るーちゅー、ベトナムぉー、大昔唐ぬ国から漢字伝わてぃちゃん。}
-
-\paragraph{Ainu}
-
-Ainu written in the modern katakana orthography makes extensive use of
-Katakana Phonetic Extensions for syllable-final consonants. The following
-specimen therefore exercises ordinary katakana together with characters such
-as \JP{ㇰ}, \JP{ㇱ}, \JP{ㇺ}, \JP{ㇻ}, and the combining form \JP{ㇷ゚} inside
-continuous text.
-
-\JP{イタㇰプリカ　ソモネコㇿカ　シサムモシㇼ　モシㇼソカワ　チヌㇺケニㇱパ　チヌㇺケ　カッケマッ　ウタペラリワ　オカウㇱケタ　クニネネワ　アイヌイタㇰアニ　クイタㇰルウェ　ネワネヤクン　ラモッシワノ　クヤイライケㇷ゚　ネルウェタパンナ。エエパキタ　カニアナㇰネ　アイヌモシㇼ　シシㇼムカ　ニㇷ゚タニコタン　コアパマカ　クネルウェネ　ウッチケクニㇷ゚　ラカサㇰペ。}
-
-% --------------------------------------------------------------------------
 \subsection{Vietnamese}
-% --------------------------------------------------------------------------
 
-The same constitutional passage is used throughout this subsection so that
-the specimens differ primarily in writing system or font selection rather
-than in linguistic content. Quốc Ngữ is first typeset with the document Latin
-family, Libertinus, and then with the dedicated Vietnamese family. The
-corresponding Hán-Nôm text uses the VinaWiki repertoire.
+These parallel excerpts reproduce the opening of the 2013 Vietnamese
+Constitution's preamble. The same Quốc Ngữ text appears first in the
+document's Libertinus family and then in the dedicated Vietnamese
+family. The Hán-Nôm specimen is a modern transcription of the same
+passage, not a historical constitutional manuscript; the local
+regular font is Minh Nguyen.
 
-\paragraph{Quốc Ngữ --- document Latin family}
-
-The first specimen is deliberately unwrapped and therefore remains in the
-document Latin family, Libertinus. It tests Vietnamese diacritics through
-that document-wide font choice.
-
+\paragraph{Quốc Ngữ --- Libertinus}
 Trải qua mấy nghìn năm lịch sử, Nhân dân Việt Nam lao động cần cù, sáng tạo, đấu tranh anh dũng để dựng nước và giữ nước, đã hun đúc nên truyền thống yêu nước, đoàn kết, nhân nghĩa, kiên cường, bất khuất và xây dựng nên nền văn hiến Việt Nam. Từ năm 1930, dưới sự lãnh đạo của Đảng Cộng sản Việt Nam do Chủ tịch Hồ Chí Minh sáng lập và rèn luyện, Nhân dân ta tiến hành cuộc đấu tranh lâu dài, đầy gian khổ, hy sinh vì độc lập, tự do của dân tộc, vì hạnh phúc của Nhân dân. Cách mạng tháng Tám thành công, ngày 2 tháng 9 năm 1945, Chủ tịch Hồ Chí Minh đọc Tuyên ngôn độc lập, khai sinh ra nước Việt Nam dân chủ cộng hòa, nay là Cộng hòa xã hội chủ nghĩa Việt Nam.
 
-
 \paragraph{Quốc Ngữ --- Vietnamese family}
-
-The same text is repeated through the explicit Vietnamese local family,
-allowing the dedicated Vietnamese font to be compared directly with
-Libertinus under identical paragraph conditions.
-
 \VI{Trải qua mấy nghìn năm lịch sử, Nhân dân Việt Nam lao động cần cù, sáng tạo, đấu tranh anh dũng để dựng nước và giữ nước, đã hun đúc nên truyền thống yêu nước, đoàn kết, nhân nghĩa, kiên cường, bất khuất và xây dựng nên nền văn hiến Việt Nam. Từ năm 1930, dưới sự lãnh đạo của Đảng Cộng sản Việt Nam do Chủ tịch Hồ Chí Minh sáng lập và rèn luyện, Nhân dân ta tiến hành cuộc đấu tranh lâu dài, đầy gian khổ, hy sinh vì độc lập, tự do của dân tộc, vì hạnh phúc của Nhân dân. Cách mạng tháng Tám thành công, ngày 2 tháng 9 năm 1945, Chủ tịch Hồ Chí Minh đọc Tuyên ngôn độc lập, khai sinh ra nước Việt Nam dân chủ cộng hòa, nay là Cộng hòa xã hội chủ nghĩa Việt Nam.}
 
-
-\paragraph{Hán-Nôm --- VinaWiki repertoire}
-
-The Hán-Nôm specimen corresponds to the Quốc Ngữ passage above. Because the local family uses the
-VinaWiki font, the specimen is taken from the VinaWiki transcription itself
-and therefore tests the repertoire for which that font is intended.
-
+\paragraph{Hán-Nôm --- Minh Nguyen Regular}
 \HN{𱱇過𠇍𠦳𢆥歷史、人民越南勞動勤劬、創造、鬥爭英勇抵𥩯渃吧𡨺渃、㐌熏𤒘𢧚傳統𢞅渃、團結、仁義、堅強、不屈吧𡏦𥩯𢧚𡋂文獻越南。自𢆥1930、𨑜事領導𧵑黨共產越南由主席胡志明創立吧㷙鍊、人民些進行局鬥爭𥹰󠄁𨱽、𣹓艱苦、犧牲爲獨立、自由𧵑民族、爲幸福𧵑人民。革命𣎃𠔭成功、𣈜2𣎃9𢆥1945、主席胡志明讀宣言獨立、開生𫥨渃越南民主共和、𫢩羅共和社會主義越南。}
 
-
-% --------------------------------------------------------------------------
 \subsection{Tangut}
-% --------------------------------------------------------------------------
 
-Wikisource provides a sizeable Unicode Tangut corpus, including poetry,
-Buddhist literature, maxims, and the Tangut text of the Liángzhōu bilingual
-stele. The following paragraph is therefore a composite corpus specimen:
-several short attested sequences from independent Tangut texts are joined
-for visual regression. They form a composite of separate historical works.
+The following paragraph restores the original Unicode Tangut corpus
+specimen in full, including its editorial punctuation. The text is a
+composite of short attested sequences from different Tangut works on
+Wikisource, not a single continuous historical document.
 
 \TG{𘘞𗳝𘛮𗫉𗥦𗤄，𗼑𗼑𗫉𗰜𗰓𗨛，𘚜𗨤𗤮𘁾𗣃𗅋𘃪，𗼇𗗙𘋥𘝿𘎪，𗵒𗹶𗲈𗃵𘓺𘋨𗶠，𗦵𘇇𗱢𗆐𗲌𗽓𘏋，𗌜𗎫𗠒𗂥𗅋𗚛𘓁𘟂𗫶，𘚶𗢵𘄩𗘴𘜑𗃱𗀸𗀸𗏹𗅋𗁿，𗒘𘓷𗰜𘕿𗅋𗯗𘓁𘟂𗫶，𗌮𗈦𗪙𘝇𗤁𗵘𘆗𘚢，𘈒𗤄𗢳𘒣𗎫𘟀𗢳𗵆，𘘚𘒣𗰜𗎫𗮔𗩱𗫂𘟀𘟂，𗮔𗰜𗋕𗡶𘉐𗭍𗅋𗋃𗫂𗎫𘟂。}
 
-
-% --------------------------------------------------------------------------
 \subsection{WenJin Multi-Plane Coverage}
-% --------------------------------------------------------------------------
 
-WenJin is different from the language-specific families above. It is exposed
-as one public local family whose internal fallback configuration spans
-multiple CJK planes. The paragraph below is therefore intentionally a
-coverage stress test: ordinary Han text is
-interleaved with supplementary-plane characters while the public command
-remains unchanged.
+A single local WenJin family covers CJK characters in the BMP and in
+supplementary planes through its registered P0, P2, and P3 font fallbacks.
+Table~\ref{tab:wenjin-blocks} supplies a fixed Unicode coverage matrix
+alongside the mixed-plane prose specimen.
 
-\WJ{中國文字的編碼範圍遠遠超過基本多文種平面，因此只測試一二三天地玄黃這類常用字並不足以確認大型漢字字體的覆蓋是否正常。這一段先由普通漢字開始，隨後插入第二平面的𠀀、𠮷、𡈽、𡌛、𣎴，再回到典籍文字與古今學術，之後繼續進入第三平面的𰀀、𰀁、𰀂、𰀃、𰀄。當不同平面的字符在同一個長段落中交錯出現時，使用者仍然只看見一個 \texttt{\textbackslash WJ} family；Plane 0、Plane 2 和 Plane 3 的具體 fallback 應由內部配置完成，而不應要求正文作者為不同 Unicode plane 手動切換命令。}
+\WJ{古籍中的漢字有時仍未收入基本多文種平面。一位研究者翻檢舊鈔本，發現卷末記載的城門、山川、村社與古人名，當中出現了罕用的𠀀、𠮷、𡈽、𡌛、𣎴。另一本字書則收錄𰀀、𰀁、𰀂、𰀃、𰀄等第三平面的文字。這些字在典籍裏並不是一串孤立的編碼，而是與普通漢字共同構成完整的語句。編輯將不同寫本的異體並列於校記，讀者則沿著正文閱讀，不必知道每個字屬於哪個 Unicode 平面，也不必在段落中手動切換字體。}
 
-The following table complements the paragraph test with deterministic block
-coverage samples. For each CJK Unified Ideographs block, the first twenty
-encoded ideographs are shown. This makes gaps in coverage or an incorrect
-Plane 0, Plane 2, or Plane 3 fallback immediately visible and keeps the
-regression sample stable across releases.
-
-\begin{TableBookX}
-  {L L L}
-  {WenJin CJK block coverage}
-  {tab:wenjin-blocks}
-
-Block & Range & Twenty-character specimen \\
+\begin{table}[htbp]
+\centering
+\caption{WenJin CJK block coverage (twenty codepoints per block)}
+\label{tab:wenjin-blocks}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}p{0.31\linewidth}>{\large}X@{}}
+\toprule
+Unicode block and range & {\footnotesize Specimen} \\
 \midrule
+CJK Unified Ideographs\newline\texttt{U+4E00--U+9FFF} & \WJ{一丁丂七丄丅丆万丈三上下丌不与丏丐丑丒专} \\
+Extension A\newline\texttt{U+3400--U+4DBF} & \WJ{㐀㐁㐂㐃㐄㐅㐆㐇㐈㐉㐊㐋㐌㐍㐎㐏㐐㐑㐒㐓} \\
+Extension B\newline\texttt{U+20000--U+2A6DF} & \WJ{𠀀𠀁𠀂𠀃𠀄𠀅𠀆𠀇𠀈𠀉𠀊𠀋𠀌𠀍𠀎𠀏𠀐𠀑𠀒𠀓} \\
+Extension C\newline\texttt{U+2A700--U+2B73F} & \WJ{𪜀𪜁𪜂𪜃𪜄𪜅𪜆𪜇𪜈𪜉𪜊𪜋𪜌𪜍𪜎𪜏𪜐𪜑𪜒𪜓} \\
+Extension D\newline\texttt{U+2B740--U+2B81F} & \WJ{𫝀𫝁𫝂𫝃𫝄𫝅𫝆𫝇𫝈𫝉𫝊𫝋𫝌𫝍𫝎𫝏𫝐𫝑𫝒𫝓} \\
+Extension E\newline\texttt{U+2B820--U+2CEAF} & \WJ{𫠠𫠡𫠢𫠣𫠤𫠥𫠦𫠧𫠨𫠩𫠪𫠫𫠬𫠭𫠮𫠯𫠰𫠱𫠲𫠳} \\
+Extension F\newline\texttt{U+2CEB0--U+2EBEF} & \WJ{𬺰𬺱𬺲𬺳𬺴𬺵𬺶𬺷𬺸𬺹𬺺𬺻𬺼𬺽𬺾𬺿𬻀𬻁𬻂𬻃} \\
+Extension I\newline\texttt{U+2EBF0--U+2EE5F} & \WJ{𮯰𮯱𮯲𮯳𮯴𮯵𮯶𮯷𮯸𮯹𮯺𮯻𮯼𮯽𮯾𮯿𮰀𮰁𮰂𮰃} \\
+Extension G\newline\texttt{U+30000--U+3134F} & \WJ{𰀀𰀁𰀂𰀃𰀄𰀅𰀆𰀇𰀈𰀉𰀊𰀋𰀌𰀍𰀎𰀏𰀐𰀑𰀒𰀓} \\
+Extension H\newline\texttt{U+31350--U+323AF} & \WJ{𱍐𱍑𱍒𱍓𱍔𱍕𱍖𱍗𱍘𱍙𱍚𱍛𱍜𱍝𱍞𱍟𱍠𱍡𱍢𱍣} \\
+Extension J\newline\texttt{U+323B0--U+3347F} & \WJ{𲎰𲎱𲎲𲎳𲎴𲎵𲎶𲎷𲎸𲎹𲎺𲎻𲎼𲎽𲎾𲎿𲏀𲏁𲏂𲏃} \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-CJK Unified Ideographs
-& U+4E00--U+9FFF
-& \WJ{一丁丂七丄丅丆万丈三上下丌不与丏丐丑丒专} \\
-
-Extension A
-& U+3400--U+4DBF
-& \WJ{㐀㐁㐂㐃㐄㐅㐆㐇㐈㐉㐊㐋㐌㐍㐎㐏㐐㐑㐒㐓} \\
-
-Extension B
-& U+20000--U+2A6DF
-& \WJ{𠀀𠀁𠀂𠀃𠀄𠀅𠀆𠀇𠀈𠀉𠀊𠀋𠀌𠀍𠀎𠀏𠀐𠀑𠀒𠀓} \\
-
-Extension C
-& U+2A700--U+2B73F
-& \WJ{𪜀𪜁𪜂𪜃𪜄𪜅𪜆𪜇𪜈𪜉𪜊𪜋𪜌𪜍𪜎𪜏𪜐𪜑𪜒𪜓} \\
-
-Extension D
-& U+2B740--U+2B81F
-& \WJ{𫝀𫝁𫝂𫝃𫝄𫝅𫝆𫝇𫝈𫝉𫝊𫝋𫝌𫝍𫝎𫝏𫝐𫝑𫝒𫝓} \\
-
-Extension E
-& U+2B820--U+2CEAF
-& \WJ{𫠠𫠡𫠢𫠣𫠤𫠥𫠦𫠧𫠨𫠩𫠪𫠫𫠬𫠭𫠮𫠯𫠰𫠱𫠲𫠳} \\
-
-Extension F
-& U+2CEB0--U+2EBEF
-& \WJ{𬺰𬺱𬺲𬺳𬺴𬺵𬺶𬺷𬺸𬺹𬺺𬺻𬺼𬺽𬺾𬺿𬻀𬻁𬻂𬻃} \\
-
-Extension I
-& U+2EBF0--U+2EE5F
-& \WJ{𮯰𮯱𮯲𮯳𮯴𮯵𮯶𮯷𮯸𮯹𮯺𮯻𮯼𮯽𮯾𮯿𮰀𮰁𮰂𮰃} \\
-
-Extension G
-& U+30000--U+3134F
-& \WJ{𰀀𰀁𰀂𰀃𰀄𰀅𰀆𰀇𰀈𰀉𰀊𰀋𰀌𰀍𰀎𰀏𰀐𰀑𰀒𰀓} \\
-
-Extension H
-& U+31350--U+323AF
-& \WJ{𱍐𱍑𱍒𱍓𱍔𱍕𱍖𱍗𱍘𱍙𱍚𱍛𱍜𱍝𱍞𱍟𱍠𱍡𱍢𱍣} \\
-
-Extension J
-& U+323B0--U+3347F
-& \WJ{𲎰𲎱𲎲𲎳𲎴𲎵𲎶𲎷𲎸𲎹𲎺𲎻𲎼𲎽𲎾𲎿𲏀𲏁𲏂𲏃} \\
-
-\end{TableBookX}
-
-
-% --------------------------------------------------------------------------
 \subsection{Regional Forms of Shared Han Characters}
-% --------------------------------------------------------------------------
 
-The preceding specimens test normal paragraphs. Here shared
-codepoints deliberately isolated. Every cell below contains the same Unicode
-character; the visible difference should therefore come from the selected
-regional family selected for the common codepoint.
+Table~\ref{tab:cjk-regional-forms} compares the same Unicode codepoints
+across five regional families; visible differences come from font selection or fallback,
+rather than from substituting different encoded characters.
 
-\begin{TableBookX}
-  {L C C C C C}
-  {Regional forms of shared Han codepoints}
-  {tab:cjk-regional-forms}
-
+\begin{table}[htbp]
+\centering
+\caption{Regional forms of shared Han codepoints}
+\label{tab:cjk-regional-forms}
+\begin{tabularx}{\linewidth}{@{}l*{5}{>{\centering\arraybackslash}X}@{}}
+\toprule
 Character & Shanggu & Noto SC & Noto TC & Japanese & Korean \\
 \midrule
-
 骨 & 骨 & \SC{骨} & \TC{骨} & \JP{骨} & \KR{骨} \\
-
 直 & 直 & \SC{直} & \TC{直} & \JP{直} & \KR{直} \\
-
 令 & 令 & \SC{令} & \TC{令} & \JP{令} & \KR{令} \\
-
 具 & 具 & \SC{具} & \TC{具} & \JP{具} & \KR{具} \\
-
 角 & 角 & \SC{角} & \TC{角} & \JP{角} & \KR{角} \\
-
 門 & 門 & \SC{門} & \TC{門} & \JP{門} & \KR{門} \\
-
 國 & 國 & \SC{國} & \TC{國} & \JP{國} & \KR{國} \\
-
 學 & 學 & \SC{學} & \TC{學} & \JP{學} & \KR{學} \\
-
 龍 & 龍 & \SC{龍} & \TC{龍} & \JP{龍} & \KR{龍} \\
-
-\end{TableBookX}
+\bottomrule
+\end{tabularx}
+\end{table}
 
 % ==========================================================================
 \section{Document Features}
 % ==========================================================================
 
-\Term[sort=feature system]{feature system}
-[composable document modules] is demonstrated throughout this PDF, but this
-section gives each major public feature an explicit specimen as well. The
-showcase therefore tests individual modules and their coexistence in a
-realistic document.
+IMPE's feature system\index{Feature system} prepares selected, composable
+LaTeX package stacks. The specimens below use native package interfaces
+rather than the historical convenience wrappers.
 
-% --------------------------------------------------------------------------
 \subsection{Mathematics}
 % --------------------------------------------------------------------------
 
-Mathematical font selection is deliberately left at IMPE's default setting.
-The following single display combines several common mathematical alphabets,
-operators, delimiters, accents, matrices, integrals, sums, limits, radicals,
-and nested scripts as a compact stress specimen.
+The \texttt{math} feature supplies \texttt{amsmath} and
+\texttt{mathtools}. These independent identities test matrices, integrals,
+fractions, accents, cases, scripts, and mathematical alphabets without
+presenting unrelated formulae as a single derivation.
 
-\begingroup
-\small
+For a positive-definite matrix, a Gaussian integral evaluates to
+\[
+A=\begin{pmatrix}
+2&-1&0\\
+-1&2&-1\\
+0&-1&2
+\end{pmatrix},
+\qquad \det A=4,\quad\beta>0,
+\]
 \[
 \begin{aligned}
-\mathcal Z_{\beta,\mu}
-&\coloneqq
-\operatorname{Tr}_{\mathscr H}
-\exp\!\left[
--\beta
-\left(
-\widehat{\mathbf H}
--\mu\widehat{\mathbf N}
-\right)
-\right]
-\\[0.5em]
-&=
-\sum_{n=0}^{\infty}
-\frac{1}{n!}
-\int_{\mathbb R^{3n}}
-\prod_{j=1}^{n}
-\frac{d^3\mathbf p_j}{(2\pi\hbar)^3}
-\,
-\exp\!\left[
--\sum_{j=1}^{n}
-\sqrt{
-m_j^2c^4+c^2\lVert\mathbf p_j\rVert^2
-}
-\right]
-\\[0.7em]
-&\quad\times
-\det
-\begin{pmatrix}
-\displaystyle
-\frac{\partial^2\mathcal L}
-     {\partial q^i\partial q^j}
-&
-\displaystyle
-\nabla_\mu F^{\mu\nu}
-&
-\displaystyle
-\left\langle
-\psi
-\middle|
-\widehat{\mathbf H}
-\middle|
-\phi
-\right\rangle
-\\[0.9em]
-\displaystyle
-\sum_{k=1}^{\infty}\frac{(-1)^{k+1}}{k^2}
-&
-\displaystyle
-\sqrt[3]{1+\sqrt{1+\lambda^2}}
-&
-\displaystyle
-\frac{\mathbb E[X^4]-3\mathbb E[X^2]^2}
-     {\operatorname{Var}(X)^2}
-\\[0.9em]
-\displaystyle
-\oint_{|z|=1}
-\frac{\log(1+z)}{z^{r+1}}\,dz
-&
-\displaystyle
-\prod_{p\in\mathbb P}
-\left(1-p^{-s}\right)^{-1}
-&
-\displaystyle
-\lim_{\varepsilon\to0^+}
-\frac{f(x+\varepsilon)-f(x-\varepsilon)}
-     {2\varepsilon}
-\end{pmatrix}
-\\[1em]
-&\quad+
-\underbrace{
-\widetilde{\mathbf A}^{\,\dagger}{}_{\mu}{}^{\nu}
-\,
-\overline{\mathbf B}_{\nu}{}^{\rho}
-\,
-\widehat{\mathbf C}_{\rho}{}^{\mu}
-}_{\text{accented tensor contraction}}
-+
-\frac{
-\Gamma\!\left(\frac12+i\alpha\right)
-\zeta(2s)
-}{
-\sqrt{2\pi\sigma^2}
-}
-\\[0.8em]
-&\quad+
-\begin{cases}
-\displaystyle
-e^{-1/x^2}\sin(\pi/x),
-& x\ne0,
-\\[0.8em]
-0,
-& x=0,
-\end{cases}
-\\[0.8em]
-&\quad
-\xrightarrow[\alpha\to0]{\beta\to\infty}
-\left(
-\bigoplus_{j=1}^{r}\mathbb C^{\,n_j}
-\right)
-\otimes
-\bigwedge\nolimits^{k}V
-\\[0.8em]
-&\quad
-\Longrightarrow
-\mathbb P
-\left(
-|X-\mathbb E[X]|\ge t
-\right)
-\le
-\frac{\operatorname{Var}(X)}{t^2},
-\qquad
-t>0,
-\\[0.8em]
-&\quad
-\alpha,\beta,\gamma,\delta,\varepsilon,\theta,\vartheta,\lambda,\mu,\nu,
-\xi,\pi,\varpi,\rho,\varrho,\sigma,\phi,\varphi,\chi,\psi,\omega
-\in\mathbb R .
+\mathcal Z(\beta)
+&=\int_{\mathbb R^3}
+  \exp\!\left(-\frac{\beta}{2}\mathbf x^{\mathsf T}A\mathbf x\right)
+  \,\mathrm d^3\mathbf x\\
+&=\left(\frac{2\pi}{\beta}\right)^{3/2}
+  \frac{1}{\sqrt{\det A}}
+ =\frac12\left(\frac{2\pi}{\beta}\right)^{3/2}.
 \end{aligned}
 \]
-\endgroup
+
+For \(k\in\mathbb N_0\), the residue theorem provides a series and a contour
+integral:
+\[
+\begin{aligned}
+f_k(z)
+&=\frac{e^z}{z^{k+1}}
+ =\sum_{n=0}^{\infty}\frac{z^{n-k-1}}{n!},\\
+\frac{1}{2\pi i}\oint_{|z|=1}f_k(z)\,\mathrm dz
+&=\operatorname{Res}_{z=0}f_k(z)=\frac{1}{k!}.
+\end{aligned}
+\]
+For integrable \(f\), its Fourier transform illustrates wide accents:
+\[
+\widehat f(\xi)=\int_{\mathbb R} f(x)e^{-2\pi i x\xi}\,\mathrm dx,
+\qquad
+\overline{\widehat f(\xi)}=\widehat{\overline f}(-\xi).
+\]
+
+A smooth flat function demonstrates a cases environment:
+\[
+g(x)=
+\begin{cases}
+e^{-1/x^2},&x>0,\\
+0,&x\leq0,
+\end{cases}
+\qquad
+g^{(r)}(0)=0\quad(r=0,1,2,\ldots).
+\]
+Chebyshev's inequality and the decomposition of exterior powers supply
+independent examples of further mathematical notation:
+\[
+\underbrace{\mathbb P\!\left(|X-\mathbb E[X]|\geq t\right)}
+_{\text{tail probability}}
+\leq\frac{\operatorname{Var}(X)}{t^2},\qquad t>0.
+\]
+\[
+\bigwedge\nolimits^k(V\oplus W)
+\cong\bigoplus_{p+q=k}
+\left(\bigwedge\nolimits^p V\right)
+\otimes\left(\bigwedge\nolimits^q W\right).
+\]
+
+A short inline comparison shows how the same summation and fraction
+occupy different amounts of vertical space:
+
+\begin{center}
+\begin{tabular}{@{}l@{\qquad}l@{}}
+\textbf{Default display style} &
+  \(\sum_{j=1}^{n}\frac{1}{j^2}\) \\[1.2ex]
+\textbf{Local text style} &
+  {\SetInlineMathStyle{text}\(\sum_{j=1}^{n}\frac{1}{j^2}\)}
+\end{tabular}
+\end{center}
+
+\subsection{Drawing}
+
+Figure~\ref{fig:drawing-gaussian} shows a Gaussian function with its formula
+and graduated axes. Figure~\ref{fig:drawing-stemma} places a schematic
+manuscript-copying tree within the page.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      width=0.80\linewidth,
+      height=0.26\textheight,
+      axis lines=left,
+      xlabel={$x$},
+      ylabel={$f(x)$},
+      xmin=-3,
+      xmax=3,
+      ymin=0,
+      ymax=1.1,
+      grid=major,
+      samples=121,
+      domain=-3:3,
+      tick align=outside
+    ]
+      \addplot[thick] {exp(-x*x/2)};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{The Gaussian profile $f(x)=e^{-x^2/2}$.}
+  \label{fig:drawing-gaussian}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{forest}
+    for tree={
+      draw,
+      rounded corners,
+      align=center,
+      edge={-stealth},
+      l sep=12mm,
+      s sep=9mm,
+      inner xsep=7pt,
+      inner ysep=4pt
+    }
+    [Exemplar
+      [Copy A]
+      [Copy B
+        [Copy C]
+        [Copy D]
+      ]
+    ]
+  \end{forest}
+  \caption{A schematic manuscript-copying tree, not a historical stemma.}
+  \label{fig:drawing-stemma}
+\end{figure}
 
 \subsection{Tables}
 
-Table~\ref{tab:feature-summary} uses the IMPE book-table environment rather
-than a raw \texttt{tabular} wrapper.
+Table~\ref{tab:feature-summary} uses the native \texttt{table},
+\texttt{tabularx}, and \texttt{booktabs} interfaces loaded by the
+\texttt{tables} feature.
+\begin{table}[htbp]
+  \centering
+  \caption{Feature integration summary}
+  \label{tab:feature-summary}
+  \begin{tabularx}{\linewidth}{@{}LCC@{}}
+    \toprule
+    Feature & Public route & Exercised here \\
+    \midrule
+    Mathematics & \texttt{math} & yes \\
+    Tables & \texttt{tables} & yes \\
+    Images & \texttt{image} & yes \\
+    Inline glyphs & \texttt{glyphs} & yes \\
+    Drawing & \texttt{drawing} & yes \\
+    Citations & \texttt{citations} & yes \\
+    Index & \texttt{index} & yes \\
+    Hyperlinks & \texttt{hyperlinks} & yes \\
+    Running headers & \texttt{headers} & yes \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
-\begin{TableBookX}
-  {L C C}
-  {Feature integration summary}
-  {tab:feature-summary}
-Feature & Public route & Exercised here \\
-\midrule
-Mathematics & \texttt{math} & yes \\
-Tables & \texttt{tables} & yes \\
-Images & \texttt{image} & yes \\
-Citations & \texttt{citations} & yes \\
-Index & \texttt{index} & yes \\
-Hyperlinks & \texttt{hyperlinks} & yes \\
-Running headers & \texttt{headers} & yes \\
-List environments & \texttt{lists\_envs} & yes \\
-\end{TableBookX}
+\subsection{Lists and Quoted Examples}
 
-\subsection{Lists and Example Blocks}
-
-A normal list remains ordinary \LaTeX:
-
+Ordinary lists and quotations do not require an IMPE-specific environment:
 \begin{enumerate}
   \item automatic font ownership;
   \item script-specific behavior where required;
@@ -1113,45 +974,62 @@ A normal list remains ordinary \LaTeX:
   \item stable public interfaces.
 \end{enumerate}
 
-The IMPE \texttt{ExampleBlock} environment provides a distinct indented
-specimen:
-
-\begin{ExampleBlock}
+The native \texttt{quote} environment supplies an indented specimen:
+\begin{quote}
+\itshape
 A canonical showcase should be readable as a document, useful as a visual
 regression specimen, and representative of the public interface that new
 documents are expected to use.
-\end{ExampleBlock}
+\end{quote}
 
 \subsection{Images}
 
-The image feature is exercised with the standard \TeX~distribution's example
-image when it is available. This keeps the canonical source self-contained
-using a generated illustration in the build.
+The \texttt{image} feature prepares standard graphics and caption packages.
+Figure~\ref{fig:showcase-image} includes a bundled vector image without
+relying on optional example-image files from the user's TeX distribution.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[
+    width=0.68\linewidth,
+    height=0.26\textheight,
+    keepaspectratio
+  ]{figures/feature-specimen.pdf}
+  \caption{Native graphics inclusion using a bundled vector specimen.}
+  \label{fig:showcase-image}
+\end{figure}
+Figure~\ref{fig:showcase-image} also exercises native cross-references.
 
-\IfFileExists{example-image-a.pdf}{%
-  \begin{OneImage}
-    [htbp]
-    [0.55\linewidth]
-    [0.32\textheight]
-    {example-image-a}
-    [Image-feature specimen using the standard \TeX~example image.]
-    [fig:showcase-image]
-  \end{OneImage}
+\subsection{Inline Image Glyphs}
 
-  Figure~\ref{fig:showcase-image} also exercises cross-reference hyperlinks.
-}{%
-  \begin{center}
-    \fbox{%
-      \parbox{0.62\linewidth}{%
-        \centering
-        \vspace{2em}
-        \textbf{Image specimen unavailable}\\[0.5em]
-        \texttt{example-image-a.pdf} was not found in this \TeX~installation.
-        \vspace{2em}
-      }%
-    }
-  \end{center}
-}
+A short passage from Chu bamboo manuscripts sets individual manuscript
+signs directly within the running text. The images function as characters,
+not floating figures; the transcriptions and source references are reproduced
+without adopting any particular decipherment.
+
+\medskip
+「\IMPEGlyph{chu-target}」字的古文字字形爲
+「\IMPEGlyph{chu-guodian}」（《郭店簡・語叢四》，15.14）、
+「\IMPEGlyph{chu-shangbo}」（《上博簡・曹沫之陳》，30.16），
+一般隸定爲「\IMPEGlyph{chu-target}」或「\IMPEGlyph{chu-variant}」。
+在出土楚地簡帛文獻中，本字的出現如下：
+
+\medskip
+\noindent\textbf{1}\quad
+凡敓之道，級者爲首。既得其級，言必又及\textsubscript{=五}之而弗亞，
+必\WJ{𦘔}其古。\WJ{𦘔}之而\WJ{𢚝}，必\IMPEGlyph{chu-target}鋊\textsubscript{=}。
+\textsubscript{十五}之\textsubscript{=}而不可，必\IMPEGlyph{chu-context}以訛，毋命智我。
+皮邦芒\textsubscript{六}\WJ{𫳼}，流澤而行。\textsubscript{七}（《郭店簡・語叢四》）\footnote{武漢大學簡帛研究中心、荊門市博物館編著：
+《楚地出土戰國簡冊合集（一）：郭店楚墓竹書》，文物出版社，2011 年，167--168 頁。}
+
+\medskip
+\noindent\textbf{2}\quad
+……\(\square\)厚飤，思爲前行。三行之\WJ{𨒥}，句見耑兵，
+\IMPEGlyph{chu-target}\textsubscript{三十}（《上博簡・曹沫之陳》）\footnote{馬承源主編：
+《上海博物館藏戰國楚竹書（四）》，上海古籍出版社，2004 年，262 頁。}
+
+\medskip
+「鋊」的古文字字形爲「\IMPEGlyph{chu-yu}」，
+在出土楚系簡帛文獻中僅見於上述文段~1。
 
 \subsection{Citations and Bibliography}
 
@@ -1164,12 +1042,13 @@ The bibliography is printed near the end of the document.
 
 \subsection{Index Terms}
 
-Several concepts in earlier sections were inserted with the public
-\texttt{\textbackslash Term} interface. For example,
-\Term[sort=canonical showcase]{canonical showcase}
-[release-time specimen] itself is now indexed. The generated index at the end
-of the PDF therefore also exercises indexed terms, optional descriptions, and
-hyperlinks back to their first occurrence.
+Earlier sections use the native \texttt{\textbackslash index} command to
+register concepts at their actual occurrences. The phrase
+\emph{canonical showcase}\index{canonical showcase} is indexed here;
+native interfaces\index{Typesetting!Native interfaces} also provide a
+hierarchical example. IMPE supplies unique occurrence-level destinations
+for its default index, while \texttt{imakeidx} and \texttt{xindy} retain
+their usual indexing syntax.
 
 \subsection{Hyperlinks, Footnotes, and Running Headers}
 
