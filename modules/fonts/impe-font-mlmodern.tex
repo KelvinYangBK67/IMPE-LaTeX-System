@@ -17,7 +17,9 @@
     \tl_set:No \l__font_mlmodern_sfdefault_tl {\sfdefault}
     \tl_set:No \l__font_mlmodern_ttdefault_tl {\ttdefault}
     \tl_set:No \l__font_mlmodern_bfdefault_tl {\bfdefault}
+    \typeout{IMPE-MLM-CHECKPOINT before-mlmodern-package}
     \RequirePackage{mlmodern}
+    \typeout{IMPE-MLM-CHECKPOINT after-mlmodern-package}
     \cs_set:Npx \rmdefault {\exp_not:V \l__font_mlmodern_rmdefault_tl}
     \cs_set:Npx \sfdefault {\exp_not:V \l__font_mlmodern_sfdefault_tl}
     \cs_set:Npx \ttdefault {\exp_not:V \l__font_mlmodern_ttdefault_tl}
@@ -30,7 +32,9 @@
       { \fontencoding{T1}\fontfamily{mlmss}\selectfont }
     \cs_set_protected:cpn { __fonttt_\l__font_name_tl }
       { \fontencoding{T1}\fontfamily{mlmtt}\selectfont }
+    \typeout{IMPE-MLM-CHECKPOINT before-hooks}
     \exp_args:NV \__font_define_behavior_hooks:n \l__font_name_tl
+    \typeout{IMPE-MLM-CHECKPOINT after-hooks}
     \exp_args:NVV \__font_define_public_command:nn
       \l__font_command_tl
       \l__font_name_tl
