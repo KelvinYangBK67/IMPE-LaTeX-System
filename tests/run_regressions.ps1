@@ -262,6 +262,10 @@ try {
     }
     & python (Join-Path $TestRoot 'test_bounded_command.py')
     if ($LASTEXITCODE -ne 0) { throw 'Build timeout/cancellation cleanup regression failed.' }
+    # Diagnostic control: prove that Linux's bounded subprocess can run a
+    # previously passing XeLaTeX fixture independently of MLModern.
+    & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') --timeout 35 --log (Join-Path $BuildRoot 'legacy-bounded-command.log') -- $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" 'tests/legacy-entry.tex'
+    if ($LASTEXITCODE -ne 0) { throw 'Bounded XeLaTeX control failed.' }
     # The native NFSS local mapper previously recursed forever on textsf.
     # Include XDV-to-PDF conversion inside the deadline, not merely TeX success.
     # Allow a cold CI runner to initialize its font cache while retaining a
