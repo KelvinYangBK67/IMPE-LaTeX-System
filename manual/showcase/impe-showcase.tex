@@ -633,328 +633,143 @@ intermediate linear rendering.
 \section{East Asian Writing and CJK Family Selection}
 % ==========================================================================
 
-\Term[sort=CJK family selection]{CJK family selection}
-[continuous text, shared Han ownership, and explicit regional overrides]
-distinguishes the document CJK family from language-specific local families.
-Explicit local family selection determines the intended regional form
-of shared Han characters, while several East Asian writing systems also
-require shaping behavior that extends beyond ordinary Han glyph selection.
+This chapter compares document-level CJK typography with explicit local
+families for Chinese, Korean, Japanese, Vietnamese, and Tangut.
+The same Han codepoints may take different regional forms.
+\index{CJK family selection}
 
-The specimens in this section use normal-width continuous text. They exercise paragraph composition,
-line breaking, punctuation, regional glyph forms, Hangul composition,
-historical jamo, supplementary-plane ideographs, and mixed-script runs.
-A compact table at the end isolates shared Han codepoints for direct visual
-comparison.
-
-
-% --------------------------------------------------------------------------
 \subsection{Chinese}
-% --------------------------------------------------------------------------
 
-\paragraph{Mainland Simplified Chinese --- Noto SC}
+Four paragraphs distinguish Simplified Chinese, mainland-style Traditional
+Chinese, Taiwan Traditional Chinese, and the document's Shanggu family.
+The three Traditional Chinese specimens use exactly the same source text.
 
-This paragraph uses the explicit Simplified Chinese family throughout.
+\paragraph{Simplified Chinese --- Noto SC}
+\SC{秋天的清晨，图书馆刚刚开门。书架上放着一本旧地图，画有山谷、城门与河流，旁边是《龙城纪事》。读书的人翻开书页，读到国王命令学者修订典籍的故事：有人研究龙骨，也有人制作木具，记下直角的形状。窗外下起雨，墨色在灯下格外清晰。}
 
-\SC{现代中文排版并不只是把一个个汉字依次放进页面。一个真正的正文环境还需要同时处理标点、数字、书名号、引号、括号以及连续句子之间的换行关系，并且在较长的段落中保持稳定的字面和行距。对于共享的汉字码位，不同地区使用的字体还可能给出不同的字形，因此同一个“骨、直、令、具、角”在不同字体家族中会表现出细微而稳定的区域差异。这里使用一整段连续的简体中文来检查大陆简体字形、标点悬挂附近的布局、正常段落换行以及本地字体选择在长文本中是否能够始终保持有效，而不是只验证几个孤立字符能不能显示。}
+\paragraph{Traditional Chinese --- Noto SC}
+\SC{秋天的清晨，圖書館剛剛開門。書架上放著一本舊地圖，畫有山谷、城門與河流，旁邊是《龍城紀事》。讀書的人翻開書頁，讀到國王命令學者修訂典籍的故事：有人研究龍骨，也有人製作木具，記下直角的形狀。窗外下起雨，墨色在燈下格外清晰。}
 
+\paragraph{Traditional Chinese --- Noto TC}
+\TC{秋天的清晨，圖書館剛剛開門。書架上放著一本舊地圖，畫有山谷、城門與河流，旁邊是《龍城紀事》。讀書的人翻開書頁，讀到國王命令學者修訂典籍的故事：有人研究龍骨，也有人製作木具，記下直角的形狀。窗外下起雨，墨色在燈下格外清晰。}
 
-\paragraph{Mainland Traditional Chinese --- Noto SC}
+\paragraph{Traditional Chinese --- Shanggu (document default)}
+秋天的清晨，圖書館剛剛開門。書架上放著一本舊地圖，畫有山谷、城門與河流，旁邊是《龍城紀事》。讀書的人翻開書頁，讀到國王命令學者修訂典籍的故事：有人研究龍骨，也有人製作木具，記下直角的形狀。窗外下起雨，墨色在燈下格外清晰。
 
-Traditional characters can also be deliberately typeset through the Mainland
-Chinese family. This separates character repertoire from regional glyph
-selection: the explicit family choice supplies the regional form for
-traditional codepoints.
-
-\SC{現代中文排版並不只是把一個個漢字依次放進頁面。一個真正的正文環境還需要同時處理標點、數字、書名號、引號、括號以及連續句子之間的換行關係，並且在較長的段落中保持穩定的字面和行距。對於共享的漢字碼位，不同地區使用的字體還可能給出不同的字形，因此同一個「骨、直、令、具、角」在不同字體家族中會表現出細微而穩定的區域差異。這裡特意使用傳統漢字而仍然選擇大陸字體家族，以檢查字符繁簡與地域字形選擇能否保持彼此獨立，並觀察長段落中共享漢字、繁體字和全角標點的連續排版。}
-
-
-\paragraph{Taiwan Traditional Chinese --- Noto TC}
-
-The Taiwan family is tested with continuous Taiwan Traditional Chinese rather
-than with a short regional-glyph sample.
-
-\TC{正體中文的正文排版除了字符本身之外，也牽涉字型、標點、行距與段落節奏。當文件同時包含不同語言或不同地區的漢字時，程式不能僅依 Unicode 碼位猜測應採用哪一套地區字形，而應由明確的語言或字型選擇來決定。這個段落使用臺灣正體字型，並刻意包含「骨、直、令、具、角、門、國、學、龍」等適合觀察地區字形差異的共享漢字，同時加入引號、頓號、逗號與句號，藉此確認較長的正體中文內容在正常欄寬中能自然換行，而且從段首到段末始終維持同一個本地 CJK family。}
-
-
-\paragraph{Document Traditional Chinese --- Shanggu}
-
-The following paragraph is deliberately left completely unwrapped. It
-therefore remains under the document CJK family, Shanggu, and provides the
-control against which the explicit Chinese, Japanese, and Korean families can
-be compared.
-
-漢字進入現代數位排版之後，同一個編碼往往可以由許多不同的字體呈現，而字形的歷史層次、地域習慣和設計風格並不會因此消失。傳統中文尤其適合用來觀察這種情形：有些字在不同地區的正文中結構略異，有些字的筆形和部件位置不同，而另一些差別只有在一整段文字的灰度與節奏中才會顯現。這個段落不使用任何語言專用命令，使所有漢字直接落入文件的 Shanggu CJK family；因此它不只是檢查單字是否存在，也檢查文件級 CJK 選擇在較長的連續文本、標點和自動換行之間能否穩定維持。
-
-
-% --------------------------------------------------------------------------
 \subsection{Korean and Historical Hangul}
-% --------------------------------------------------------------------------
 
-\paragraph{Modern Korean --- Hangul}
+The first two passages compare Hangul-only prose with a mixed
+Hanja--Hangul register. Both use the Korean family.
 
-The first Korean specimen deliberately avoids Hanja. It tests ordinary modern
-Hangul composition, punctuation, word spacing, and paragraph wrapping.
+\paragraph{Modern Korean}
+\KR{가을비가 그친 오후, 작은 도서관의 창가에는 햇빛이 조용히 들어왔다. 학생들은 오래된 지도를 펼쳐 놓고 사라진 마을의 이름을 찾아보았다. 한 사람은 책의 여백에 질문을 적었고, 다른 사람은 다음 주에 다시 와서 자료를 읽기로 했다.}
 
-\KR{한글로 쓰인 긴 문장은 여러 음절 블록이 끊임없이 이어지면서도 낱말 사이의 간격과 문장 부호의 위치가 자연스럽게 유지되어야 한다. 짧은 보기에서는 글꼴이 몇 글자를 제대로 보여 주는지만 확인할 수 있지만, 실제 문단에서는 줄 끝에서 낱말이 어떻게 배치되는지, 괄호와 따옴표가 앞뒤 글자와 어떻게 어울리는지, 여러 줄을 지나도 같은 글꼴 선택이 계속 유지되는지를 함께 살펴볼 수 있다. 이 문단은 완성형 한글이 이어지는 일반적인 한국어 본문을 충분히 길게 배치하여 문장 전체의 모양과 줄 간격을 확인하고, 뒤에 나오는 한자 혼용문과 옛한글 자료를 비교하기 위한 현대 한글 기준 표본으로 사용한다.}
+\paragraph{Mixed Hanja and Hangul}
+\KR{古書를 정리하던 학생은 朝鮮時代의 日記 한 권을 발견했다. 紙面에는 한글과 漢字가 나란히 적혀 있었고, 여러 사람의 손으로 남긴 註釋도 보였다. 학생은 낡은 책을 조심스럽게 넘기며 당시의 生活과 言語를 상상했다.}
 
+\paragraph{Middle Korean --- \emph{Hunminjeongeum eonhae}}
+The following continuous excerpt follows the Korean head text of the
+\emph{Hunminjeongeum eonhae}; interlinear Chinese-character glosses have
+been omitted. It retains arae-a, archaic final jamo, and tone marks.
+The LV+archaic-final sequence \texttt{U+B4C0 U+11F0} is given here in its
+canonically equivalent L+V+T form \texttt{U+1103 U+1172 U+11F0}
+to probe the font's Old Hangul shaping without changing the reading.
 
-\paragraph{Modern Korean --- mixed Hanja and Hangul}
+% Source: https://ko.wikisource.org/wiki/훈민정음언해 (head-text lines)
+\KR{나랏〮말〯ᄊᆞ미〮 中듀ᇰ國귁〮에〮달아〮 文문字ᄍᆞᆼ〮와〮로〮서르ᄉᆞᄆᆞᆺ디〮아니〮ᄒᆞᆯᄊᆡ〮 이〮런젼ᄎᆞ〮로〮어린〮百ᄇᆡᆨ〮姓셔ᇰ〮이〮니르고〮져〮호ᇙ〮배〮이셔〮도〮}
 
-The next paragraph keeps Hangul and Hanja inside a single explicit Korean
-family. Shared Han characters retain Korean regional forms throughout the
-surrounding Hangul text.
+\subsection{Japanese}
 
-\KR{韓國語의 現代 文體는 오늘날 대체로 한글만으로 적지만, 歷史ㆍ言語ㆍ哲學ㆍ法律과 같은 분야에서는 漢字를 함께 적은 문헌을 어렵지 않게 만날 수 있다. 이런 漢字混用文을 조판할 때에는 한글 音節과 句讀點 사이에 들어가는 漢字가 갑자기 다른 地域 字形으로 바뀌지 않아야 하며, 韓國ㆍ朝鮮ㆍ漢字ㆍ文化ㆍ文字와 같은 어휘도 앞뒤의 한글 문맥과 한 family 안에서 자연스럽게 이어져야 한다. 이 문단은 國語의 읽기 흐름을 유지하면서 여러 漢字語와 고유어를 섞어, 실제 문헌에서 볼 수 있는 긴 혼용문이 줄바꿈을 거쳐도 안정적으로 조판되는지를 시험한다.}
+Ordinary modern Japanese combines kanji, hiragana, katakana, punctuation,
+and regionally selected Han forms within the same prose paragraph.
 
+\JP{春の朝、京都の小さな書店に新しい本が届いた。店主は箱を開け、「歴史と文化」の棚に本を並べた。古い地図には城門や学校が描かれ、表紙には龍の絵がある。来店した学生はカタログで目当ての一冊を探し、静かな店内でページをめくった。}
 
-\paragraph{Jeju language --- corpus specimen}
-
-Jeju is useful here because practical orthographies make active use of the
-arae-a and decomposed Hangul sequences that are rare in ordinary modern
-Korean. The following is a composite regression specimen assembled from
-short attested Jeju-language passages for a paragraph-level regression.
-
-\KR{제주말(濟州말)은 제주섬서 ᄀᆞᆯ아지는 말이다. 제주말모음은 시간 지나멍 여러 가지 변화가 이섯다. 제주섬은 한라산광 ᄌᆞᄁᆞᆺ듸 오름덜록 일뤄진 섬이라. 엿적 화산활동으록 굼부리가 꿰쉉 곤데곤데 ᄋᆢ라 오름이 하영 삿다. 낭(木)은 나무질로 뒌 줄기를 가지고 잇인 여러헤살이 식물이다. 제주말 위키벡과 또시는 제주어 위키백과는 제주말로 운영헴신 위키벡과 언어판이라.}
-
-\paragraph{Middle Korean and Old Hangul --- historical corpus specimen}
-
-The historical specimen deliberately retains decomposed jamo and tone marks.
-Short genuine historical fragments retain their source spellings and are
-placed consecutively to form a paragraph-level
-shaping regression.
-
-\KR{나랏〮말〯ᄊᆞ미〮中듀ᇰ國귁〮에〮 달아〮문ᄍᆞᆼ와〮로서르ᄉᆞᄆᆞᆺ디〮아니〮ᄒᆞᆯᄊᆡ〮　아〮기 ᄇᆡ여〮셔 과ᄀᆞᆯ이〮 가ᄉᆞᆷ〮 알파〮주글〮 ᄃᆞᆺ〮ᄒᆞ〮거든〮　두들겐 開闢ᄒᆞᆯ 젯 므리 疏通ᄒᆞ고 남ᄀᆞᆫ 古今엣 남기 섯것도다　머리〮 알ᄑᆞ고〮 고〮히 막고〮 머리〮와눈〮괘〮 환티〮 아니〮커든〮　긔〮운이〮 우흐〮로 올아〮 머리〮 알포〮미 ᄣᆞ리ᄂᆞᆫ ᄃᆞᆺ〮거든〮　넙고 큰 天造 ᄉᆞ이예 다ᄉᆞᆯ며 어즈러우민ᄃᆞᆯ 엇디 덛덛ᄒᆞᆫ 數ㅣ리오}
-
-The corpus paragraph above tests realistic historical material. The following
-synthetic boundary sequence has a different purpose: it explicitly crosses
-Hangul Jamo Extended-A, ordinary Jamo, and Extended-B while remaining inside
-one shaping run.
-
-\begin{center}
-\Huge
-\KR{ꥠᅡퟋ〮}
-\end{center}
-
-Modern decomposed control:
-
-\begin{center}
-\Huge
-\KR{각}
-\end{center}
-
-
-% --------------------------------------------------------------------------
-\subsection{Japanese and Ryukyuan}
-% --------------------------------------------------------------------------
-
-\paragraph{Modern Japanese}
-
-Modern Japanese combines kana, regional Han forms, punctuation, and frequent
-script changes inside the same sentence. The entire paragraph remains under
-the explicit Japanese family.
-
-\JP{現代日本語の文章では、漢字、ひらがな、カタカナが一つの段落の中で何度も切り替わり、句読点や括弧、かぎ括弧も連続して現れる。短い文字列だけではフォントが表示できることしか分からないが、長い本文にすると、漢字と仮名の大きさの釣り合い、約物の位置、行末での折り返し、そして次の行へ移った後の字形の連続性まで確認できる。この段落では「日本語」「漢字」「文字」「学校」「文化」「骨」「直」「令」「具」「角」などを通常の文脈に入れ、日本語用の地域字形を保ったまま複数行の文章が安定して組版されるかを試している。}
-
-
-\paragraph{Historical kana orthography}
-
-The opening sentence below is historical text; the continuation is a
-showcase-written regression passage that deliberately retains historical kana
-spellings such as \JP{ゐる}, \JP{やう}, and \JP{言ふ}. This keeps the
-specimen long enough for paragraph testing while identifying the continuation
-as showcase-written text.
-
-\JP{真夏の宿屋は空虚であつた。窓の外には白い雲がゆつくり流れ、庭の木立では蟬が絶えず鳴いてゐる。旅人は古い椅子に腰をおろし、まだ來ない馬車の音を待ちながら、時計の針ばかりを眺めてゐた。誰も何も言はないので、午後の光だけが廊下を少しづつ移つて行くやうに見えた。かうして長い時間が過ぎても、玄關の戸は一度も開かず、遠くの道から聞えて來る物音だけが、時々靜かな宿の空氣を動かしてゐるのであつた。}
-
-\paragraph{Japanese Kanbun}
-
-The first sentence is taken from Rai San'yō's \emph{Nihon Gaishi}; the
-remainder is a showcase-written Kanbun-style regression continuation. The
-purpose here is typographic: Japanese Han glyphs must remain selected even
-throughout the all-Han run.
-
-\JP{外史氏曰、吾讀舊志、見鳥羽帝時數下制符。蓋日本文章之傳、漢籍之學與國史之記相因而久矣。昔之學者讀經史、作序記、論人物、述治亂、多用漢文而各成其體。今取其字列於一段、所以驗日本字形之連續、句讀之位置、長行之折返、以及共享漢字在無假名介入時亦不離其本地字體也。文字雖同出一碼、而骨直令具角門國學龍諸字之形、隨地域字體而微異，故尤宜以連續文章觀之。}
-
-
-\paragraph{Okinawan --- corpus specimen}
-
-Okinawan is represented by a composite specimen from the Wikimedia Okinawan
-test project. Its mixed use of kana and Han characters makes it a useful
-additional Japanese-family regression. The orthography reflects this composite
-corpus specimen.
-
-\JP{沖縄口ぇー琉球諸語ぬてぃ壱ちやいびーん。うちなーぐちぬ首里那覇方言ぉー琉球国ぬじょーま言葉やびたん。琉球王國や、昔ジジ中心んかい存在さる王国やたん。王や首里天加那志とぅ言ん。首里城や、沖縄県ぬ城やん。琉球王朝ぬ王城っし、沖縄県ぬいっちん大さるぐしくやん。漢字ぇー、大昔唐ぬ国んかいそーじー現りーる文字ぬてぃーちやん。やまとぅ、高麗、るーちゅー、ベトナムぉー、大昔唐ぬ国から漢字伝わてぃちゃん。}
-
-\paragraph{Ainu}
-
-Ainu written in the modern katakana orthography makes extensive use of
-Katakana Phonetic Extensions for syllable-final consonants. The following
-specimen therefore exercises ordinary katakana together with characters such
-as \JP{ㇰ}, \JP{ㇱ}, \JP{ㇺ}, \JP{ㇻ}, and the combining form \JP{ㇷ゚} inside
-continuous text.
-
-\JP{イタㇰプリカ　ソモネコㇿカ　シサムモシㇼ　モシㇼソカワ　チヌㇺケニㇱパ　チヌㇺケ　カッケマッ　ウタペラリワ　オカウㇱケタ　クニネネワ　アイヌイタㇰアニ　クイタㇰルウェ　ネワネヤクン　ラモッシワノ　クヤイライケㇷ゚　ネルウェタパンナ。エエパキタ　カニアナㇰネ　アイヌモシㇼ　シシㇼムカ　ニㇷ゚タニコタン　コアパマカ　クネルウェネ　ウッチケクニㇷ゚　ラカサㇰペ。}
-
-% --------------------------------------------------------------------------
 \subsection{Vietnamese}
-% --------------------------------------------------------------------------
 
-The same constitutional passage is used throughout this subsection so that
-the specimens differ primarily in writing system or font selection rather
-than in linguistic content. Quốc Ngữ is first typeset with the document Latin
-family, Libertinus, and then with the dedicated Vietnamese family. The
-corresponding Hán-Nôm text uses the VinaWiki repertoire.
+The three specimens show the opening of the 2013 Vietnamese Constitution's
+preamble: Quốc Ngữ in the document Latin face and in the dedicated
+Vietnamese family, followed by a modern Hán-Nôm transcription of the same
+sentence. The latter text is a transcription, not an original constitutional
+manuscript, and \texttt{\textbackslash HN} uses Minh Nguyen Regular.
 
-\paragraph{Quốc Ngữ --- document Latin family}
-
-The first specimen is deliberately unwrapped and therefore remains in the
-document Latin family, Libertinus. It tests Vietnamese diacritics through
-that document-wide font choice.
-
-Trải qua mấy nghìn năm lịch sử, Nhân dân Việt Nam lao động cần cù, sáng tạo, đấu tranh anh dũng để dựng nước và giữ nước, đã hun đúc nên truyền thống yêu nước, đoàn kết, nhân nghĩa, kiên cường, bất khuất và xây dựng nên nền văn hiến Việt Nam. Từ năm 1930, dưới sự lãnh đạo của Đảng Cộng sản Việt Nam do Chủ tịch Hồ Chí Minh sáng lập và rèn luyện, Nhân dân ta tiến hành cuộc đấu tranh lâu dài, đầy gian khổ, hy sinh vì độc lập, tự do của dân tộc, vì hạnh phúc của Nhân dân. Cách mạng tháng Tám thành công, ngày 2 tháng 9 năm 1945, Chủ tịch Hồ Chí Minh đọc Tuyên ngôn độc lập, khai sinh ra nước Việt Nam dân chủ cộng hòa, nay là Cộng hòa xã hội chủ nghĩa Việt Nam.
-
+\paragraph{Quốc Ngữ --- Libertinus}
+Trải qua mấy nghìn năm lịch sử, Nhân dân Việt Nam lao động cần cù, sáng tạo, đấu tranh anh dũng để dựng nước và giữ nước, đã hun đúc nên truyền thống yêu nước, đoàn kết, nhân nghĩa, kiên cường, bất khuất và xây dựng nên nền văn hiến Việt Nam.
 
 \paragraph{Quốc Ngữ --- Vietnamese family}
+\VI{Trải qua mấy nghìn năm lịch sử, Nhân dân Việt Nam lao động cần cù, sáng tạo, đấu tranh anh dũng để dựng nước và giữ nước, đã hun đúc nên truyền thống yêu nước, đoàn kết, nhân nghĩa, kiên cường, bất khuất và xây dựng nên nền văn hiến Việt Nam.}
 
-The same text is repeated through the explicit Vietnamese local family,
-allowing the dedicated Vietnamese font to be compared directly with
-Libertinus under identical paragraph conditions.
+\paragraph{Hán-Nôm --- Minh Nguyen Regular}
+\HN{𱱇過𠇍𠦳𢆥歷史、人民越南勞動勤劬、創造、鬥爭英勇抵𥩯渃吧𡨺渃、㐌熏𤒘𢧚傳統𢞅渃、團結、仁義、堅強、不屈吧𡏦𥩯𢧚𡋂文獻越南。}
 
-\VI{Trải qua mấy nghìn năm lịch sử, Nhân dân Việt Nam lao động cần cù, sáng tạo, đấu tranh anh dũng để dựng nước và giữ nước, đã hun đúc nên truyền thống yêu nước, đoàn kết, nhân nghĩa, kiên cường, bất khuất và xây dựng nên nền văn hiến Việt Nam. Từ năm 1930, dưới sự lãnh đạo của Đảng Cộng sản Việt Nam do Chủ tịch Hồ Chí Minh sáng lập và rèn luyện, Nhân dân ta tiến hành cuộc đấu tranh lâu dài, đầy gian khổ, hy sinh vì độc lập, tự do của dân tộc, vì hạnh phúc của Nhân dân. Cách mạng tháng Tám thành công, ngày 2 tháng 9 năm 1945, Chủ tịch Hồ Chí Minh đọc Tuyên ngôn độc lập, khai sinh ra nước Việt Nam dân chủ cộng hòa, nay là Cộng hòa xã hội chủ nghĩa Việt Nam.}
-
-
-\paragraph{Hán-Nôm --- VinaWiki repertoire}
-
-The Hán-Nôm specimen corresponds to the Quốc Ngữ passage above. Because the local family uses the
-VinaWiki font, the specimen is taken from the VinaWiki transcription itself
-and therefore tests the repertoire for which that font is intended.
-
-\HN{𱱇過𠇍𠦳𢆥歷史、人民越南勞動勤劬、創造、鬥爭英勇抵𥩯渃吧𡨺渃、㐌熏𤒘𢧚傳統𢞅渃、團結、仁義、堅強、不屈吧𡏦𥩯𢧚𡋂文獻越南。自𢆥1930、𨑜事領導𧵑黨共產越南由主席胡志明創立吧㷙鍊、人民些進行局鬥爭𥹰󠄁𨱽、𣹓艱苦、犧牲爲獨立、自由𧵑民族、爲幸福𧵑人民。革命𣎃𠔭成功、𣈜2𣎃9𢆥1945、主席胡志明讀宣言獨立、開生𫥨渃越南民主共和、𫢩羅共和社會主義越南。}
-
-
-% --------------------------------------------------------------------------
 \subsection{Tangut}
-% --------------------------------------------------------------------------
 
-Wikisource provides a sizeable Unicode Tangut corpus, including poetry,
-Buddhist literature, maxims, and the Tangut text of the Liángzhōu bilingual
-stele. The following paragraph is therefore a composite corpus specimen:
-several short attested sequences from independent Tangut texts are joined
-for visual regression. They form a composite of separate historical works.
+The opening parallel lines of the \emph{Ode on Monthly Pleasures}
+(\emph{Tang.25}, Khara-khoto; colophon dated 1185) appear in the Unicode
+transcription on Wikisource. The poem alternates its two linguistic forms,
+preserved here rather than combining unrelated Tangut compositions.
 
-\TG{𘘞𗳝𘛮𗫉𗥦𗤄，𗼑𗼑𗫉𗰜𗰓𗨛，𘚜𗨤𗤮𘁾𗣃𗅋𘃪，𗼇𗗙𘋥𘝿𘎪，𗵒𗹶𗲈𗃵𘓺𘋨𗶠，𗦵𘇇𗱢𗆐𗲌𗽓𘏋，𗌜𗎫𗠒𗂥𗅋𗚛𘓁𘟂𗫶，𘚶𗢵𘄩𗘴𘜑𗃱𗀸𗀸𗏹𗅋𗁿，𗒘𘓷𗰜𘕿𗅋𗯗𘓁𘟂𗫶，𗌮𗈦𗪙𘝇𗤁𗵘𘆗𘚢，𘈒𗤄𗢳𘒣𗎫𘟀𗢳𗵆，𘘚𘒣𗰜𗎫𗮔𗩱𗫂𘟀𘟂，𗮔𗰜𗋕𗡶𘉐𗭍𗅋𗋃𗫂𗎫𘟂。}
+% Source: https://wikisource.org/wiki/𗼑𗼑𗫉𗊱
+\TG{𘘞𗳝𘛮𗫉𗥦𗤄 𗼑𗼑𗫉𗰜𗰓𗨛 𘘞𗳝𘛮𗫉𗥦𗑲 𗼑𗼑𗫉𗰜𗓱𘀼}
 
-
-% --------------------------------------------------------------------------
 \subsection{WenJin Multi-Plane Coverage}
-% --------------------------------------------------------------------------
 
-WenJin is different from the language-specific families above. It is exposed
-as one public local family whose internal fallback configuration spans
-multiple CJK planes. The paragraph below is therefore intentionally a
-coverage stress test: ordinary Han text is
-interleaved with supplementary-plane characters while the public command
-remains unchanged.
+A single local WenJin family covers CJK characters in the BMP and in
+supplementary planes through its registered P0, P2, and P3 font fallbacks.
+The brief mixed-plane paragraph precedes a fixed Unicode coverage matrix.
 
-\WJ{中國文字的編碼範圍遠遠超過基本多文種平面，因此只測試一二三天地玄黃這類常用字並不足以確認大型漢字字體的覆蓋是否正常。這一段先由普通漢字開始，隨後插入第二平面的𠀀、𠮷、𡈽、𡌛、𣎴，再回到典籍文字與古今學術，之後繼續進入第三平面的𰀀、𰀁、𰀂、𰀃、𰀄。當不同平面的字符在同一個長段落中交錯出現時，使用者仍然只看見一個 \texttt{\textbackslash WJ} family；Plane 0、Plane 2 和 Plane 3 的具體 fallback 應由內部配置完成，而不應要求正文作者為不同 Unicode plane 手動切換命令。}
+\WJ{古籍中的漢字有時仍未收入基本多文種平面。這頁抄錄了城門與山川的舊名，又出現罕用的𠀀、𠮷、𡈽、𡌛、𣎴。旁邊附有古文字索引，還收錄𰀀、𰀁、𰀂、𰀃、𰀄等字符；讀者仍可在同一段文字中連續閱讀。}
 
-The following table complements the paragraph test with deterministic block
-coverage samples. For each CJK Unified Ideographs block, the first twenty
-encoded ideographs are shown. This makes gaps in coverage or an incorrect
-Plane 0, Plane 2, or Plane 3 fallback immediately visible and keeps the
-regression sample stable across releases.
-
-\begin{TableBookX}
-  {L L L}
-  {WenJin CJK block coverage}
-  {tab:wenjin-blocks}
-
-Block & Range & Twenty-character specimen \\
+\begin{table}[htbp]
+\centering
+\caption{WenJin CJK block coverage (twenty codepoints per block)}
+\label{tab:wenjin-blocks}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}p{0.31\linewidth}X@{}}
+\toprule
+Unicode block and range & Specimen \\
 \midrule
+CJK Unified Ideographs\newline\texttt{U+4E00--U+9FFF} & \WJ{一丁丂七丄丅丆万丈三上下丌不与丏丐丑丒专} \\
+Extension A\newline\texttt{U+3400--U+4DBF} & \WJ{㐀㐁㐂㐃㐄㐅㐆㐇㐈㐉㐊㐋㐌㐍㐎㐏㐐㐑㐒㐓} \\
+Extension B\newline\texttt{U+20000--U+2A6DF} & \WJ{𠀀𠀁𠀂𠀃𠀄𠀅𠀆𠀇𠀈𠀉𠀊𠀋𠀌𠀍𠀎𠀏𠀐𠀑𠀒𠀓} \\
+Extension C\newline\texttt{U+2A700--U+2B73F} & \WJ{𪜀𪜁𪜂𪜃𪜄𪜅𪜆𪜇𪜈𪜉𪜊𪜋𪜌𪜍𪜎𪜏𪜐𪜑𪜒𪜓} \\
+Extension D\newline\texttt{U+2B740--U+2B81F} & \WJ{𫝀𫝁𫝂𫝃𫝄𫝅𫝆𫝇𫝈𫝉𫝊𫝋𫝌𫝍𫝎𫝏𫝐𫝑𫝒𫝓} \\
+Extension E\newline\texttt{U+2B820--U+2CEAF} & \WJ{𫠠𫠡𫠢𫠣𫠤𫠥𫠦𫠧𫠨𫠩𫠪𫠫𫠬𫠭𫠮𫠯𫠰𫠱𫠲𫠳} \\
+Extension F\newline\texttt{U+2CEB0--U+2EBEF} & \WJ{𬺰𬺱𬺲𬺳𬺴𬺵𬺶𬺷𬺸𬺹𬺺𬺻𬺼𬺽𬺾𬺿𬻀𬻁𬻂𬻃} \\
+Extension I\newline\texttt{U+2EBF0--U+2EE5F} & \WJ{𮯰𮯱𮯲𮯳𮯴𮯵𮯶𮯷𮯸𮯹𮯺𮯻𮯼𮯽𮯾𮯿𮰀𮰁𮰂𮰃} \\
+Extension G\newline\texttt{U+30000--U+3134F} & \WJ{𰀀𰀁𰀂𰀃𰀄𰀅𰀆𰀇𰀈𰀉𰀊𰀋𰀌𰀍𰀎𰀏𰀐𰀑𰀒𰀓} \\
+Extension H\newline\texttt{U+31350--U+323AF} & \WJ{𱍐𱍑𱍒𱍓𱍔𱍕𱍖𱍗𱍘𱍙𱍚𱍛𱍜𱍝𱍞𱍟𱍠𱍡𱍢𱍣} \\
+Extension J\newline\texttt{U+323B0--U+3347F} & \WJ{𲎰𲎱𲎲𲎳𲎴𲎵𲎶𲎷𲎸𲎹𲎺𲎻𲎼𲎽𲎾𲎿𲏀𲏁𲏂𲏃} \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-CJK Unified Ideographs
-& U+4E00--U+9FFF
-& \WJ{一丁丂七丄丅丆万丈三上下丌不与丏丐丑丒专} \\
-
-Extension A
-& U+3400--U+4DBF
-& \WJ{㐀㐁㐂㐃㐄㐅㐆㐇㐈㐉㐊㐋㐌㐍㐎㐏㐐㐑㐒㐓} \\
-
-Extension B
-& U+20000--U+2A6DF
-& \WJ{𠀀𠀁𠀂𠀃𠀄𠀅𠀆𠀇𠀈𠀉𠀊𠀋𠀌𠀍𠀎𠀏𠀐𠀑𠀒𠀓} \\
-
-Extension C
-& U+2A700--U+2B73F
-& \WJ{𪜀𪜁𪜂𪜃𪜄𪜅𪜆𪜇𪜈𪜉𪜊𪜋𪜌𪜍𪜎𪜏𪜐𪜑𪜒𪜓} \\
-
-Extension D
-& U+2B740--U+2B81F
-& \WJ{𫝀𫝁𫝂𫝃𫝄𫝅𫝆𫝇𫝈𫝉𫝊𫝋𫝌𫝍𫝎𫝏𫝐𫝑𫝒𫝓} \\
-
-Extension E
-& U+2B820--U+2CEAF
-& \WJ{𫠠𫠡𫠢𫠣𫠤𫠥𫠦𫠧𫠨𫠩𫠪𫠫𫠬𫠭𫠮𫠯𫠰𫠱𫠲𫠳} \\
-
-Extension F
-& U+2CEB0--U+2EBEF
-& \WJ{𬺰𬺱𬺲𬺳𬺴𬺵𬺶𬺷𬺸𬺹𬺺𬺻𬺼𬺽𬺾𬺿𬻀𬻁𬻂𬻃} \\
-
-Extension I
-& U+2EBF0--U+2EE5F
-& \WJ{𮯰𮯱𮯲𮯳𮯴𮯵𮯶𮯷𮯸𮯹𮯺𮯻𮯼𮯽𮯾𮯿𮰀𮰁𮰂𮰃} \\
-
-Extension G
-& U+30000--U+3134F
-& \WJ{𰀀𰀁𰀂𰀃𰀄𰀅𰀆𰀇𰀈𰀉𰀊𰀋𰀌𰀍𰀎𰀏𰀐𰀑𰀒𰀓} \\
-
-Extension H
-& U+31350--U+323AF
-& \WJ{𱍐𱍑𱍒𱍓𱍔𱍕𱍖𱍗𱍘𱍙𱍚𱍛𱍜𱍝𱍞𱍟𱍠𱍡𱍢𱍣} \\
-
-Extension J
-& U+323B0--U+3347F
-& \WJ{𲎰𲎱𲎲𲎳𲎴𲎵𲎶𲎷𲎸𲎹𲎺𲎻𲎼𲎽𲎾𲎿𲏀𲏁𲏂𲏃} \\
-
-\end{TableBookX}
-
-
-% --------------------------------------------------------------------------
 \subsection{Regional Forms of Shared Han Characters}
-% --------------------------------------------------------------------------
 
-The preceding specimens test normal paragraphs. Here shared
-codepoints deliberately isolated. Every cell below contains the same Unicode
-character; the visible difference should therefore come from the selected
-regional family selected for the common codepoint.
+Each row below uses the same Unicode codepoint in five regional families;
+any visible form difference therefore comes from font selection or fallback,
+rather than from substituting different encoded characters.
 
-\begin{TableBookX}
-  {L C C C C C}
-  {Regional forms of shared Han codepoints}
-  {tab:cjk-regional-forms}
-
+\begin{table}[htbp]
+\centering
+\caption{Regional forms of shared Han codepoints}
+\label{tab:cjk-regional-forms}
+\begin{tabularx}{\linewidth}{@{}l*{5}{>{\centering\arraybackslash}X}@{}}
+\toprule
 Character & Shanggu & Noto SC & Noto TC & Japanese & Korean \\
 \midrule
-
 骨 & 骨 & \SC{骨} & \TC{骨} & \JP{骨} & \KR{骨} \\
-
 直 & 直 & \SC{直} & \TC{直} & \JP{直} & \KR{直} \\
-
 令 & 令 & \SC{令} & \TC{令} & \JP{令} & \KR{令} \\
-
 具 & 具 & \SC{具} & \TC{具} & \JP{具} & \KR{具} \\
-
 角 & 角 & \SC{角} & \TC{角} & \JP{角} & \KR{角} \\
-
 門 & 門 & \SC{門} & \TC{門} & \JP{門} & \KR{門} \\
-
 國 & 國 & \SC{國} & \TC{國} & \JP{國} & \KR{國} \\
-
 學 & 學 & \SC{學} & \TC{學} & \JP{學} & \KR{學} \\
-
 龍 & 龍 & \SC{龍} & \TC{龍} & \JP{龍} & \KR{龍} \\
-
-\end{TableBookX}
+\bottomrule
+\end{tabularx}
+\end{table}
 
 % ==========================================================================
 \section{Document Features}
