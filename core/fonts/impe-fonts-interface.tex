@@ -496,6 +496,21 @@
           { \cs_set_protected:Npn \ttfamily { \use:c { __fonttt_#2 } } }
       }
 
+    % Preserve archaic Hangul grapheme clusters across LV+T, L+V+T,
+    % and U+302E/U+302F tone marks without changing the input Unicode.
+    % Roman and CJK selectors of this forced-local face share a font;
+    % xeCJK interchar hooks must not split its OpenType shaping run.
+    % The public command's outer group restores the caller's state.
+    \cs_set_protected:cpn { __font_hangul_cluster_policy_#2: } { }
+    \str_if_eq:VnT \l__font_script_class_tl { cjk }
+      {
+        \str_if_eq:VnT \l__font_script_tl { Hangul }
+          {
+            \cs_set_protected:cpn { __font_hangul_cluster_policy_#2: }
+              { \tex_XeTeXinterchartokenstate:D = 0 \scan_stop: }
+          }
+      }
+
     \cs_set_protected:cpn { __font_prepare_local_#2: }
       {
         \use:c { __font_space_policy_#2: }
@@ -512,6 +527,7 @@
               { \xeCJKsetup { AutoFallBack = true } }
             \use:c { __font_force_cjk_#2: }
           }
+        \use:c { __font_hangul_cluster_policy_#2: }
         \bool_set_false:N \l__font_reapply_style_bool
         \str_if_eq:eeF { \use:c { f@series } } { \mddefault }
           {
