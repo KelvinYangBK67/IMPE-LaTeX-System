@@ -72,8 +72,8 @@ checkout 內的文件可載入 package 層原始碼：
 ```
 
 標準入口是 `impe.sty`，以及 `impeart`、`impebook`、`impereport`、
-`impebeamer` 的中英文 class。`next*` 入口供舊文件相容使用；新程式碼與文件使用
-`impe*`。
+`impebeamer` 類別。中文文件在標準類別上使用 `lang=zh`；原有
+`*_zh` 與 `next*` 仍為受支援的相容入口。
 
 ## 統一設定
 
@@ -146,6 +146,14 @@ class 加上明確的 `\UseTemplateSet`。
 `\HeaderTitle{...}` 可指定較短文字；在 feature 模組中，
 `\HeaderStyle{title}` 會改用只有固定標題的頁眉。
 
+## Writing 與字體登錄
+
+Unicode 區段資料、人工維護的 Writing Profile、字體資源包及與舊版
+相容的 preset 分開登錄。全域 CJK 綁定會獨立保存 Writing Profile，
+字形缺漏由 xeCJK 及 2×2×2 字體面矩陣處理。
+本機制不取代舊有 XeTeX interchar 全域區段路由仲裁。
+詳見 [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md)。
+
 ## 字體根目錄
 
 預設本地字體根目錄是 `assets/fonts`。可用 `impe.local.tex` 或
@@ -172,10 +180,3 @@ class 加上明確的 `\UseTemplateSet`。
 CTAN id 用於命名封裝；`\ProvidesPackage{impe}`、class 名稱、執行檔前綴與
 `tex/latex/impe/` 安裝 namespace 沿用 IMPE 標準名稱。版本號取自倉庫根目錄的 `VERSION`。
 
-## 1.0.5 Writing／字體分層
-
-Unicode 區段資料、人工維護的 Writing Profile、字體資源包及與舊版
-相容的 preset 分開登錄。全域 CJK 綁定會獨立保存 Writing Profile，
-字形缺漏由 xeCJK 及 2×2×2 字體面矩陣處理。
-本機制不取代舊有 XeTeX interchar 全域區段路由仲裁。
-詳見 [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md)。

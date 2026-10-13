@@ -8,10 +8,9 @@ IMPE 負責提供完整、成熟的**默認排版**，只保留少量便捷設�
 詳細自訂直接使用 **LaTeX 原生套件**（geometry、fancyhdr、setspace、
 Beamer 等），不為每個原生參數再包裝一層 IMPE 專用 API。
 
-本次會改變標準類別的默認外觀，但保留既有類別名稱、公開
-`\UseLayout`／`\LayoutSetup` API 及舊 Component ID。需要
-復現舊文件外觀者，可選用相容版面 Preset；不能保證舊文件升級後
-頁面仍完全相同。
+標準類別提供經校準的出版排版預設。既有 `\UseLayout`、
+`\LayoutSetup` 與舊 Component ID 均繼續支援；
+`\UseLegacyLayout` 可恢復 1.0.5 的版面參數。
 
 ## 各類別的默認頁面
 
@@ -121,4 +120,3 @@ Component ID 保留。若需要沿用 A4 舊版版心及文字間距，可選
 `modules/features/impe-feature-headers.tex`、
 `core/layout/impe-layout-config.tex`。
 
-**1.1.0 遠端收口候選版暫不重建三語手冊、Showcase 或出版用 PDF**，待正式發佈時同步。
