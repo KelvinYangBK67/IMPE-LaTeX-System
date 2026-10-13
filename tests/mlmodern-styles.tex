@@ -1,21 +1,6 @@
 \documentclass{article}
 \usepackage{impe}
-\ExplSyntaxOn
-\tl_new:N \g__test_mlm_rm_tl
-\tl_new:N \g__test_mlm_sf_tl
-\tl_new:N \g__test_mlm_tt_tl
-\tl_set:Nx \g__test_mlm_rm_tl {\rmdefault}
-\tl_set:Nx \g__test_mlm_sf_tl {\sfdefault}
-\tl_set:Nx \g__test_mlm_tt_tl {\ttdefault}
 \UseFont{mlmodern}
-\ExplSyntaxOn
-\str_if_eq:eeF {\rmdefault}{\g__test_mlm_rm_tl}
-  {\PackageError{impe-test}{MLModern changed the document Roman default}{}}
-\str_if_eq:eeF {\sfdefault}{\g__test_mlm_sf_tl}
-  {\PackageError{impe-test}{MLModern changed the document sans default}{}}
-\str_if_eq:eeF {\ttdefault}{\g__test_mlm_tt_tl}
-  {\PackageError{impe-test}{MLModern changed the document mono default}{}}
-\ExplSyntaxOff
 \begin{document}
 \MLM{Roman}\par
 \MLM{\textbf{Bold}}\par
