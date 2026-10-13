@@ -1,4 +1,4 @@
-# Fonts
+# 字體
 
 [English](FONTS.md)
 

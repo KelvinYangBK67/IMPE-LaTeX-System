@@ -1,8 +1,8 @@
-# Features
+# 功能
 
 [English](FEATURES.md)
 
-## Feature API
+## 功能介面
 
 Feature 負責載入按用途組合的 LaTeX 套件，並提供原生套件介面。
 使用 `tables`、`image`、`drawing` 時，推薦其標準表格、圖片及繪圖環境。
