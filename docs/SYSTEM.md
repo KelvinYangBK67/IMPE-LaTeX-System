@@ -19,7 +19,7 @@ tools are under `scripts/`.
 ### `core/`
 
 - `core/fonts/`: declarations, fallback resolution, writing models, routing,
-  shaping options and registry behavior; opt-in XSR via the feature catalog
+  shaping options and registry behavior; script-specific XSR font backends
 - `core/layout/`: class detection, preset parsing, component application, and
   the layout registry
 - `core/features/impe-features-system.tex`: feature catalog loading,

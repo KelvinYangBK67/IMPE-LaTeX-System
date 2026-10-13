@@ -14,6 +14,7 @@ Release preparation (remote closure). This entry records the source/API freeze c
 * Add regression coverage for footnote/minipage handling and all six public starter templates.
 * Require an explicit reviewed font allowlist for public full archives; unapproved binaries are excluded by default.
 * Add an isolated Showcase build-and-compare gate to the release pipeline. The existing publication check remains deferred until the Showcase/manual sources and PDFs are synchronized.
+* Vendor XSR 1.2 with Khitan host-paragraph alignment and preserve the 1.1 Unicode extraction behavior.
 * Harmonize current technical Markdown with the implementation and remove a stale direction-version error message.
 
 ## [1.0.8] - 2026-10-11

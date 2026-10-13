@@ -111,7 +111,7 @@ core/fonts/impe-fonts-system.tex
 - `impe-font-egyptian.tex`
   埃及聖書字字體與 Unicode 自動組字
 - `impe-font-khitan_small.tex`
-  契丹小字的線性字體路由及 XSR 堆疊接口
+  契丹小字的 XSR 原生堆疊接口
 - `impe-font-mlmodern.tex`
   `mlmodern` family 的 NFSS/package 整合
 
@@ -370,10 +370,10 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 - `urdu`
   Nastaliq 作為烏爾都文 family 的專用字體；`arabic` 使用獨立的 Naskh/Ruqaa 映射。
 - `khitan_small`
-  `\KHS{...}` 是 showcase 使用的線性 local-font 命令；
-  `\KHSstack{...}` 與 `\KHSstackblock{...}` 交由可選的 XSR 後端處理。
+  `\KHS{...}` 預設由 XSR 排出原生二維 cluster；
+  `\KHSstack{...}` 與 `\KHSstackblock{...}` 保留為顯式堆疊命令。
   請先載入 `\UseFonts{egyptian,khitan_small}` 並設定實際契丹字型檔案；
-  XSR 處理 cluster 與 Type B 的 U+16FE4 標記。
+  XSR 處理 cluster 與 Type B 的 U+16FE4 標記；`\Font{khitan_small}{...}` 也使用堆疊路徑。
 
 ## 字體庫模型
 
@@ -408,7 +408,7 @@ assets/fonts/
 
 - 一般倉庫開發仍可繼續
 - `core` release 仍可正常生成
-- `full` release 會直接報出明確錯誤，並要求完整的本機字體庫
+- `full` 封裝須有可讀取的 `assets/fonts/` 目錄及至少一個已核准字體檔，並僅收錄清單中實際存在的檔案
 
 ## 隨附與外部解析的字體
 
@@ -560,10 +560,10 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 兩者屬正常字體，而非 feature。以 \UseFont{egyptian}、
 \UseFont{khitan_small} 或 \UseFonts{egyptian,khitan_small} 載入，預設 Noto。
 直接輸入 Unicode 字符及組字控制符即可由 XSR 自動二維排版；保留
-\EG{...}、\KHS{...}（傳統線性模式）、\KHSstack{...}、
+\EG{...}、\KHS{...}（預設原生堆疊）、\KHSstack{...}、
 \KHSstackblock{...} 及顯式 XSR 入口。
 
 XSR 須讀取實際字體檔案。非 full 安裝應以 \SetCatalogFontRoot{...}
-設定字體鏡像，不能只依賴作業系統中的字體名稱。目前內附 XSR 1.1；TeX Live 2024+ 的 shell 模式可透過
+設定字體鏡像，不能只依賴作業系統中的字體名稱。目前內附 XSR 1.2；TeX Live 2024+ 的 shell 模式可透過
 `TEXMF_OUTPUT_DIRECTORY` 支援 `-output-directory`；舊版引擎則可能需
 明確設定環境變數或採用預處理。

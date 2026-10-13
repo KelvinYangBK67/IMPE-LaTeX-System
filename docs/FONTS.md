@@ -460,7 +460,7 @@ If that directory is unavailable:
 
 - normal repository work can still continue
 - `core` release packaging still works
-- `full` release packaging reports an explicit error and requires the complete local font library
+- `full` packaging requires a readable `assets/fonts/` directory and at least one approved font file; it copies only approved paths that exist locally
 
 ## Bundled and Externally Resolved Fonts
 
@@ -622,13 +622,13 @@ These are font families, not features. Load with \UseFont{egyptian},
 \UseFont{khitan_small}, or \UseFonts{egyptian,khitan_small}. Both default
 to their Noto font. Direct Unicode text, including Egyptian format controls
 and the Khitan filler, is composed by XSR through script-specific range
-detection. Legacy linear \KHS{...}, explicit \KHSstack{...} and
-\KHSstackblock{...}, and explicit \IMPEEgyptianText{...} and
-\IMPEKhitanText{...} are also available.
+detection. \KHS{...} uses XSR native stacking by default; \KHSstack{...} and
+\KHSstackblock{...} remain explicit stacking commands. The \EG{...},
+\IMPEEgyptianText{...}, and \IMPEKhitanText{...} entries are also available.
 
 The XSR renderer needs a readable real TTF/OTF file, resolved by the IMPE
 font registry. On non-full installations, supply the matching file under
 the font mirror configured by \SetCatalogFontRoot{...}. Font family name
-lookup alone is not sufficient for the XSR Python renderer. The bundled XSR 1.1 supports shell escape or preprocessing. TeX Live 2024+
+lookup alone is not sufficient for the XSR Python renderer. The bundled XSR 1.2 supports shell escape or preprocessing. TeX Live 2024+
 supports `-output-directory` through `TEXMF_OUTPUT_DIRECTORY`; older engines
 may require the environment variable explicitly or preprocessing.

@@ -55,7 +55,7 @@
 - `assets/fonts/mongolian_baiti/monbaiti.ttf`
 - `assets/fonts/segoe/seguihis.ttf`
 
-這兩款字體的可明確辨識授權全文仍待確認並收入倉庫。
+上述八個字體檔案仍缺乏足以核准公開再分發的授權證據；詳見下方 1.1.0 稽核。
 若要在本專案之外再分發、公開或另作使用，請使用者自行確認其原始來源與適用授權條款。
 如需使用這兩款西夏文字體，也請使用者自行由原始來源取得：
 http://ccamc.org/fonts_tangut.php
@@ -65,9 +65,7 @@ http://www.mongolfont.com/cn/font/index.html
 https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti
 如需使用 `seguihis.ttf`，也請使用者自行由微軟頁面取得：
 https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
-公開 `full` release 套件收錄已確認可再分發的字體。
-
-之後如果還有其他第三方字體需要附上完整授權或額外再分發聲明，也可以繼續放在這個目錄中。
+[1.1.0 授權稽核](AUDIT-1.1.0.md)亦記錄了文津、Gothic Nguyen、藏文與滿文字體等未核准項目；公開封裝依逐檔清單決定可收錄的字體。
 
 公開 `full` 發行包改用 [`approved-public-fonts.txt`](approved-public-fonts.txt)
 的**逐檔核准清單**，未列出的字體一律不進入正式 ZIP。1.1.0 本地稽核後

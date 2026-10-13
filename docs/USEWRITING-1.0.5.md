@@ -258,7 +258,7 @@ to execute through the old loader under the shared preset dispatcher.
   Candidates of the same Writing Profile precede candidates from other CJK
   profiles. Tangut punctuation can use a loaded Chinese resource or an
   available TeX-provided Fandol font.
-- When a font is globally registered after `\\begin{document}`, the CJK
+- When a font is globally registered after `\begin{document}`, the CJK
   resource pool and previously installed xeCJK fallback families are refreshed.
   A generation-based cache check prevents xeCJK from continuing to use stale
   already-resolved fallback fonts. Redundant refreshes of identical candidate

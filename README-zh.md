@@ -35,8 +35,8 @@ Hello, IMPE.
 `impebook_zh`、`impereport`、`impereport_zh`、`impebeamer` 與
 `impebeamer_zh`。舊的 `next*` 名稱供既有文件相容使用，並收錄於
 full 與 core release。`_zh` 類別已轉為相容入口；新文件推薦
-`\\documentclass[lang=zh]{impeart}` 等標準類別。全局 Layout 參數可用
-`\\LayoutSetup{...}`，段落局部參數可用 `LayoutScope`，參見
+`\documentclass[lang=zh]{impeart}` 等標準類別。全局 Layout 參數可用
+`\LayoutSetup{...}`，段落局部參數可用 `LayoutScope`，參見
 [Layouts](docs/LAYOUTS-zh.md)。
 
 ## Layout 新默認值（1.0.6）
@@ -52,7 +52,7 @@ Beamer 預設簡潔學術主題與 16:9 畫布。中英文正文、頁眉、
 直接透過 `\geometry{...}`、`\fancyhead` 等原生命令覆寫。
 詳見 [Layouts](docs/LAYOUTS-zh.md) 及 [相容性政策](docs/STABILITY-zh.md)。
 
-## Writing 與字體選擇（1.0.5 引入，1.0.8 繼續支援）
+## Writing 與字體選擇
 
 既有字體 preset 仍推薦使用 \UseFont{preset}；需要把字體資源與 Unicode Writing Profile 分開指定時，則使用：
 
@@ -86,7 +86,7 @@ CJK 缺字備援採用 xeCJK 的 2×2×2 字體面矩陣；非 CJK 不作通用�
 | XeLaTeX | 受支援；手冊、showcase 與一般回歸測試皆使用此引擎 |
 | LuaLaTeX | 舊版外部化 backend 已移除；非一般文件的主要受測引擎 |
 | Unicode-range 全域路由 | XeLaTeX |
-| 可選 XSR 整合 | 內附 XSR 1.1、Python 與 XeLaTeX shell-escape／預處理 |
+| 可選 XSR 整合 | 內附 XSR 1.2、Python 與 XeLaTeX shell-escape／預處理 |
 | TeX Live | 已測試 2026 |
 | Windows | 經 CI 測試 |
 | Linux | 經 CI 測試 |
@@ -205,7 +205,7 @@ MIT License。詳見 [LICENSE](LICENSE)。
 自 1.0.3 起：`fonts={egyptian,khitan_small}` 啟用 Noto Unicode 自動組字；
 `features={glyphs}` 獨立啟用行內圖片字形。
 
-### 內附 XSR 1.1
+### 內附 XSR 1.2
 
 IMPE 普通 Git checkout、core 與 full 發行包均內附 vendor/xsr 固定快照，
 **不需要另行 clone XSR 或處理 submodule**。IMPE 安裝器會把 XSR 的 TeX

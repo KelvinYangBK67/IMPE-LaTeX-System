@@ -35,9 +35,9 @@ The primary entry points are `impe.sty`, `impeart`, `impebook`,
 `impereport`, and `impebeamer`. Historical `impe*_zh` and `next*` classes
 remain compatibility wrappers for existing documents and ship in the full
 and core distributions.
-For new Chinese documents, prefer `\\documentclass[lang=zh]{impeart}` (and
+For new Chinese documents, prefer `\documentclass[lang=zh]{impeart}` (and
 analogous `impebook`, `impereport`, `impebeamer`) over the historical `_zh`
-classes. Use `\\LayoutSetup{...}` and `LayoutScope` for document-wide and
+classes. Use `\LayoutSetup{...}` and `LayoutScope` for document-wide and
 paragraph-local parameters; see [Layouts](docs/LAYOUTS.md).
 
 ## Layout defaults (1.0.6)
@@ -55,7 +55,7 @@ Paper classes already load `geometry` and `fancyhdr`; for advanced control
 use native `\geometry{...}` and `\fancyhead{...}` after the defaults.
 See [Layouts](docs/LAYOUTS.md) and [stability policy](docs/STABILITY.md).
 
-## Writing and font selection (introduced in 1.0.5; retained in 1.0.8)
+## Writing and font selection
 
 The recommended quick interface for existing registered font presets remains
 \UseFont{preset}. For a separate Unicode Writing Profile and font resource,
@@ -93,7 +93,7 @@ See [Feature reference](docs/FEATURES.md#index-native-first).
 | XeLaTeX | Supported and used by manuals, showcase, and general regressions |
 | LuaLaTeX | Legacy externalized backend removed |
 | Unicode-range global routing | XeLaTeX |
-| Optional XSR integration | Bundled XSR 1.1, Python and XeLaTeX shell-escape/preprocess |
+| Optional XSR integration | Bundled XSR 1.2, Python and XeLaTeX shell-escape/preprocess |
 | TeX Live | 2026 tested |
 | Windows | CI tested |
 | Linux | CI tested |
@@ -219,10 +219,10 @@ MIT License. See [LICENSE](LICENSE).
 Since 1.0.3: `fonts={egyptian,khitan_small}` activates Unicode-aware
 Noto-backed composition; `features={glyphs}` independently enables image glyphs.
 
-### Bundled XSR 1.1
+### Bundled XSR 1.2
 
 The ordinary IMPE source checkout, core archive and full archive all include
-a pinned XSR 1.1 TeX/Python runtime under vendor/xsr. No additional checkout,
+a pinned XSR 1.2 TeX/Python runtime under vendor/xsr. No additional checkout,
 submodule, or independent user-managed XSR installation is needed.
 The IMPE installer copies XSR TeX packages to user TEXMF, creates an isolated
 Python environment under ~/texmf/scripts/impe/xsr-venv (or the configured

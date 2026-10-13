@@ -39,7 +39,7 @@ support status of `next*` requires an explicit statement.
 
 ## Language-based canonical classes (1.0.4)
 
-New documents should use `\\documentclass[lang=zh]{impebook}` (likewise
+New documents should use `\documentclass[lang=zh]{impebook}` (likewise
 for `impeart`, `impereport` and `impebeamer`) instead of `*_zh`.
 The `*_zh` entries remain fully supported compatibility aliases in 1.x.
 

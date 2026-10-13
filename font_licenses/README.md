@@ -55,7 +55,7 @@ Fonts requiring license review before public release packaging:
 - `assets/fonts/mongolian_baiti/monbaiti.ttf`
 - `assets/fonts/segoe/seguihis.ttf`
 
-Their exact redistribution license texts await confirmation and inclusion in this repository.
+These eight files remain outside the public allowlist pending redistribution evidence or clarification of restrictive terms.
 Users should verify the original source and applicable license terms themselves before redistribution or reuse outside this project context.
 If users need these Tangut fonts, they should obtain them from the original source themselves:
 http://ccamc.org/fonts_tangut.php
@@ -73,9 +73,7 @@ artifact. The 1.1.0 local audit approves 131 exact paths (121 OFL, eight Meltho,
 one IPA and one MIT); 17 files remain excluded. See [AUDIT-1.1.0.md](AUDIT-1.1.0.md)
 for the evidence, exclusions and dependency distinctions. Review replacement artifacts before publishing.
 
-The public `full` release package contains fonts with confirmed redistribution terms.
-
-This directory can be extended later for other third-party fonts whose licenses require inclusion of the full text or additional notices.
+The full-package allowlist covers 131 reviewed files; the remaining 17 excluded paths, including WenJin, Gothic Nguyen, Tibetan and Manchu cases, are recorded in [AUDIT-1.1.0.md](AUDIT-1.1.0.md).
 
 ## 1.1.0 reviewed notices
 

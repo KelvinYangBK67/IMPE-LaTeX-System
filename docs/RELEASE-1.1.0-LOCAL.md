@@ -11,7 +11,7 @@ or create a GitHub Release until every applicable release gate succeeds.
    `font_licenses/approved-public-fonts.txt`. Unlisted fonts are **never**
    copied into a public full archive. Review the resulting full ZIP contents.
 2. Rewrite `manual/showcase/impe-showcase.tex` against the frozen public API:
-   current XSR 1.1 Egyptian/Khitan stacks, native-first `imakeidx`, Writing
+   current XSR 1.2 Egyptian/Khitan stacks, native-first `imakeidx`, Writing
    Profiles, style fallback, publication layouts and Unicode extraction
    limitations. Update all version strings and PDF metadata.
 3. Build a new Showcase from the canonical TeX, then replace the tracked
@@ -34,7 +34,7 @@ or create a GitHub Release until every applicable release gate succeeds.
 
 ## Invariants
 
-* XSR stays pinned to its independently tested 1.1 runtime.
+* XSR stays pinned to the vendored 1.2 runtime; `scripts/check_xsr_vendor.py` verifies its upstream snapshot.
 * The writing-directions and nonstandard-mathematics engines are separate
   future projects, not prerequisites for this IMPE release.
 * The current TeX class/package compatibility aliases remain supported in 1.x.
