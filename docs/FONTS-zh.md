@@ -2,7 +2,7 @@
 
 [English](FONTS.md)
 
-## Writing Profile 與字體資源（1.0.5 引入，1.1.0 繼續使用）
+## Writing Profile 與字體資源
 
 簡單選擇既有 preset 仍推薦 \UseFont{preset}（包含全部舊版 ID）。
 進階介面將 **Unicode Writing Profile**（文字路由及 Renderer 行為）與
@@ -34,7 +34,6 @@ Upright/Italic 的 2×2×2 矩陣按逐字字形覆蓋選擇：
 非 CJK 文字不提供通用缺字自動備援，重疊 Unicode Profile 的全域仲裁亦未實作。
 
 完整選項、別名及限制見 [1.0.5 Writing API](USEWRITING-1.0.5.md)。
-三語手冊與 Showcase 的原始碼及 PDF 暫時維持先前版本，留待本地出版收口後再正式發佈。
 
 ## 結構
 
@@ -373,57 +372,26 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
   `\KHS{...}` 預設由 XSR 排出原生二維 cluster；
   `\KHSstack{...}` 與 `\KHSstackblock{...}` 保留為顯式堆疊命令。
   請先載入 `\UseFonts{egyptian,khitan_small}` 並設定實際契丹字型檔案；
-  XSR 處理 cluster 與 Type B 的 U+16FE4 標記；`\Font{khitan_small}{...}` 也使用堆疊路徑。
+  XSR 處理 cluster 與 Type B 的 U+16FE4 標記；`\Font{khitan_small}{...}`
+  也使用堆疊路徑。XSR 1.2 使首個 cluster 與宿主段落對齊，包含表格儲存格。
+  Python 渲染器須透過字體登錄資訊讀取真實 TTF／OTF 字體檔，
+  僅靠已安裝字族名稱仍不足以提供字體檔案；動態堆疊可使用 shell-escape 或預處理。
 
-## 字體庫模型
+## 本地字體庫與公開封裝
 
-IMPE LaTeX System 現在把 Git 倉庫與實際字體庫分開：
+Git 倉庫收錄原始碼與文件。本地字體二進位檔可存放於 `assets/fonts/`，
+並透過 `impe.local.tex` 或 `\SetCatalogFontRoot{...}` 指定。
+公開 Full 封裝只收錄[逐檔核准清單](../font_licenses/approved-public-fonts.txt)
+內、本地實際存在的字體。發行腳本要求字體目錄可讀取，且至少包含
+一個已核准的字體檔；未核准檔案仍留在本地字體庫。
+core 與 CTAN 封裝則使用已安裝的 TeX Live／系統字體或用戶指定的字體庫。
+授權細節見[第三方字體授權](../font_licenses/README-zh.md)。
 
-- Git 倉庫收錄源碼與文件
-- `assets/fonts/` 被視為工作樹中的本地字體庫
-- 本地編譯與本地生成的 `full` release 可以把這套字體庫帶進去
-- 公開 `git push` 傳送源碼；本機字體檔留在獨立字體庫
+## 外部字體解析
 
-這樣可以同時保留：
-
-- 輕量的公開倉庫
-- 完整的本地工作環境
-- 在需要時由本地生成完整 `full` 安裝包
-
-## 本地字體庫路徑
-
-目前的工作模型是：
-
-- 公開 Git 倉庫收錄源碼與文件
-- 本地字體庫放在工作樹中的 `assets/fonts/`
-- 本地開發與本地 `full` release 打包都從這個位置讀字體
-
-也就是說，預設本地路徑是：
-
-```text
-assets/fonts/
-```
-
-若本機字體目錄缺失：
-
-- 一般倉庫開發仍可繼續
-- `core` release 仍可正常生成
-- `full` 封裝須有可讀取的 `assets/fonts/` 目錄及至少一個已核准字體檔，並僅收錄清單中實際存在的檔案
-
-## 隨附與外部解析的字體
-
-IMPE LaTeX System 從多種來源解析字體。
-
-其中尤其需要注意：
-
-- `cmu` 字體族從已安裝的 TeX 字體系統解析
-- 它通常來自 TeX 發行版安裝，或使用者本地字體環境
-- 官方頁面：
-  https://cm-unicode.sourceforge.io/
-
-至於第三方字體的授權全文與再分發說明，請見：
-
-- `font_licenses/`
+本地檔案解析後，fontspec 與 TeX 字體系統會繼續尋找已安裝字體。
+例如 `cmu` 使用 Computer Modern Unicode
+（[專案網站](https://cm-unicode.sourceforge.io/)）。
 
 ## Fallback 行為
 
@@ -443,9 +411,9 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 
 這樣既能保住編譯流程，也能在 log 中明確看到缺字體狀態。
 
-## 目前的 Layout 與特殊模組模型
+## Layout 與特殊模組
 
-現在 catalog 區分標準 shaping、core layout route 與外部 TeX module：
+Catalog 分別處理字體 shaping、內建 layout route 與專用 TeX 模組：
 
 - `script`、`language`、`features` 是標準 fontspec shaping 欄位
 - `layout = vertical` 會選擇 `core/fonts/impe-fonts-interface.tex` 內建的 vertical layout route
@@ -540,30 +508,3 @@ IMPE LaTeX System 目前支援兩種字體 fallback 模式：
 
 標準公開字體稽核位於 `manual/showcase/impe-showcase.tex`；聚焦的自動檢查則位於
 `tests/`。
-
-## 局部字體與字體面解析（1.0.5 API，1.1.0 繼續支援）
-
-\UseFont{id}[local|global] 的既有載入／啟用模型與家族捷徑完整保留。
-1.0.5 的 \Font{名稱}[覆寫]{內容} 不僅支援舊家族，亦可使用
-\DeclareWriting 登錄的具名設定及新字體資源；局部選擇無需先在導言區呼叫
-\UseFont。匿名版本則使用 \Writing{設定}{內容}。
-例如 \Font{hindi}{हिन्दी} 與 \HI{हिन्दी} 維持相容。
-原來的專用捷徑及其附加可選參數（如 \MOv[0pt]{...}）不受影響。
-
-各字體面先解析隨附檔案，再由 fontspec 尋找 TeX Live／系統字體。
-既有嚴格／軟回退是「字體檔案無法載入」的處理，與上述 xeCJK
-「字體存在但缺少某個 CJK 字形」的矩陣備援並不相同。
-獨立字體庫仍以 \SetCatalogFontRoot 設定。
-
-## 1.0.3（內部）：埃及聖書字及契丹小字
-
-兩者屬正常字體，而非 feature。以 \UseFont{egyptian}、
-\UseFont{khitan_small} 或 \UseFonts{egyptian,khitan_small} 載入，預設 Noto。
-直接輸入 Unicode 字符及組字控制符即可由 XSR 自動二維排版；保留
-\EG{...}、\KHS{...}（預設原生堆疊）、\KHSstack{...}、
-\KHSstackblock{...} 及顯式 XSR 入口。
-
-XSR 須讀取實際字體檔案。非 full 安裝應以 \SetCatalogFontRoot{...}
-設定字體鏡像，不能只依賴作業系統中的字體名稱。目前內附 XSR 1.2；TeX Live 2024+ 的 shell 模式可透過
-`TEXMF_OUTPUT_DIRECTORY` 支援 `-output-directory`；舊版引擎則可能需
-明確設定環境變數或採用預處理。

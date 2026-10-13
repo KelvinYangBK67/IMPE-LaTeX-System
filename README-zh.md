@@ -5,9 +5,9 @@
 IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
 文件功能。
 
-目前原始碼版本：`1.1.0`（2026-10-12；遠端收口候選版，**尚未正式發佈**）。詳見 [CHANGELOG-zh.md](CHANGELOG-zh.md)。
+目前原始碼版本：**1.1.0**（尚未正式發佈的候選版）。詳見[變更日誌](CHANGELOG-zh.md)。
 
-**文件狀態：**英文、德文、繁體中文手冊及 Showcase 的 TeX 原始碼和 PDF 暫時保留上一版，待正式發佈前再同步修訂。1.0.5 引入、1.1.0 持續支援的字體介面請參閱 [Writing API 參考](docs/USEWRITING-1.0.5.md) 與 [字體參考](docs/FONTS-zh.md)；正式封裝及 PDF 重建亦留待日後處理。
+目前的 API 以本文件及 [`docs/`](docs/SYSTEM-zh.md) 為準。三語手冊及 Showcase PDF 的出版更新見 [1.1.0 驗收清單](docs/RELEASE-1.1.0-LOCAL.md)。
 
 ## 快速開始
 
@@ -31,15 +31,14 @@ Hello, IMPE.
 \end{document}
 ```
 
-標準入口是 `impe.sty`、`impeart`、`impeart_zh`、`impebook`、
-`impebook_zh`、`impereport`、`impereport_zh`、`impebeamer` 與
-`impebeamer_zh`。舊的 `next*` 名稱供既有文件相容使用，並收錄於
-full 與 core release。`_zh` 類別已轉為相容入口；新文件推薦
-`\documentclass[lang=zh]{impeart}` 等標準類別。全局 Layout 參數可用
+標準入口是 `impe.sty` 及 `impeart`、`impebook`、`impereport`、
+`impebeamer` 四個類別。中文文件使用 `lang=zh` 選項，例如
+`\documentclass[lang=zh]{impeart}`。原有 `impe*_zh` 及 `next*` 類別
+仍作為受支援的相容入口，收錄於 full／core 封裝。全域版面參數可用
 `\LayoutSetup{...}`，段落局部參數可用 `LayoutScope`，參見
 [Layouts](docs/LAYOUTS-zh.md)。
 
-## Layout 新默認值（1.0.6）
+## 版面設定
 
 Book 預設 ISO B5；Article 與 Report 有各自的 A4 版式；
 Beamer 預設簡潔學術主題與 16:9 畫布。中英文正文、頁眉、
@@ -70,7 +69,7 @@ Beamer 預設簡潔學術主題與 16:9 畫布。中英文正文、頁眉、
 CJK 缺字備援採用 xeCJK 的 2×2×2 字體面矩陣；非 CJK 不作通用逐字缺字替換。
 詳見 [1.0.5 Writing API](docs/USEWRITING-1.0.5.md)。
 
-## Index 原生索引（1.0.7）
+## 索引
 
 使用 `\UseFeature{index}` 後，推薦直接使用 `imakeidx` 的
 `\index`、`\makeindex`、`\printindex`。IMPE 預設索引
@@ -82,9 +81,8 @@ CJK 缺字備援採用 xeCJK 的 2×2×2 字體面矩陣；非 CJK 不作通用�
 
 | 項目 | 支援狀態 |
 | --- | --- |
-| 主要文件引擎 | XeLaTeX |
-| XeLaTeX | 受支援；手冊、showcase 與一般回歸測試皆使用此引擎 |
-| LuaLaTeX | 舊版外部化 backend 已移除；非一般文件的主要受測引擎 |
+| 文件引擎 | XeLaTeX |
+| LuaLaTeX | 無受支援的執行後端 |
 | Unicode-range 全域路由 | XeLaTeX |
 | 可選 XSR 整合 | 內附 XSR 1.2、Python 與 XeLaTeX shell-escape／預處理 |
 | TeX Live | 已測試 2026 |
@@ -124,6 +122,25 @@ CTAN 封裝提供標準執行環境與公開文件。部分多語手冊與 showc
 最終收錄清單須於本地完成授權稽覈。`font_licenses/` 下的第三方
 記錄屬於原始碼倉庫及適用時的 full 封裝。CTAN 封裝提供原始碼與文件資源。
 
+## 埃及聖書字、契丹小字與行內圖片字形
+
+`fonts={egyptian,khitan_small}` 載入對應的 XSR 文字渲染器；
+`features={glyphs}` 則獨立啟用已登記的行內圖片字形。
+`\KHS{...}` 預設以原生二維方式排列契丹小字。
+IMPE 在 `vendor/xsr/` 中內附 **XSR 1.2**；full／core 安裝器將
+Python 程式及依賴安裝於專用虛擬環境。
+
+動態渲染需 Python 3.11+、`venv` 及 `pip`，首次安裝依賴時可能需要網路。
+Windows 可執行 `install.bat` 或 `scripts/install.ps1`；
+Unix 可執行 `sh scripts/install.sh`。僅安裝 TeX 時，可在 PowerShell
+使用 `-SkipXsrPython`，或在 Unix 設定 `IMPE_SKIP_XSR_PYTHON=1`；
+需要 XSR 動態渲染時再另行設定執行環境。渲染可使用 XeLaTeX
+shell-escape 或 XSR 預處理，一般 IMPE 文件則無須啟動 Python。
+
+core 封裝不附字體二進位檔；XSR 的文字後端需要可讀取的 TTF／OTF 字體檔。
+CTAN 分發原始碼，但 TeX Live 安裝程序不會自動執行 `pip`。
+詳見[字體參考](docs/FONTS-zh.md)及 [XSR 驗收清單](docs/XSR-INSTALL-CHECKLIST-zh.md)。
+
 ## 文件
 
 - [英文手冊](manual/en/impe-manual-en.pdf)——技術參考版
@@ -158,9 +175,6 @@ scripts/          建置與安裝工具
 tests/            回歸測試
 ```
 
-其餘三語手冊、Showcase、字體授權及正式封裝驗收見
-[1.1.0 本地出版收口清單](docs/RELEASE-1.1.0-LOCAL.md)。
-
 ## 發佈封裝
 
 `scripts\build_release.bat` 會生成：
@@ -189,9 +203,10 @@ tests\run_regressions.ps1
 tests\run_regressions.ps1 -PublicFonts
 ```
 
-測試涵蓋標準與相容入口、字體路由、手冊建置、可重現 CTAN 封裝、archive
-內容與安裝遷移。本地字體二進位檔存於 `assets/fonts/`；分發政策見
-[assets/README-zh.md](assets/README-zh.md)。
+測試涵蓋標準與相容入口、字體路由、入門模板、手冊建置及安裝。
+發行封裝另會檢查重新建置的 Showcase 是否與追蹤中的 PDF 一致。
+正式驗收見[本地出版清單](docs/RELEASE-1.1.0-LOCAL.md)；字體封裝政策見
+[字體庫說明](assets/README-zh.md)。
 
 ## 維護者
 
@@ -201,26 +216,3 @@ Sikai Yang。公開聯絡與支援請使用
 ## 授權
 
 MIT License。詳見 [LICENSE](LICENSE)。
-
-自 1.0.3 起：`fonts={egyptian,khitan_small}` 啟用 Noto Unicode 自動組字；
-`features={glyphs}` 獨立啟用行內圖片字形。
-
-### 內附 XSR 1.2
-
-IMPE 普通 Git checkout、core 與 full 發行包均內附 vendor/xsr 固定快照，
-**不需要另行 clone XSR 或處理 submodule**。IMPE 安裝器會把 XSR 的 TeX
-套件放進使用者 TEXMF，在 ~/texmf/scripts/impe/xsr-venv（或指定目錄）
-建立獨立 Python 環境、安裝 XSR 及依賴，並生成
-impe-xsr-runtime.tex，讓文件使用 XSR 時自動調用專用 Python。
-不會覆寫使用者的全域 Python 套件。
-
-首次安裝依賴需 Python 3.11+、venv、pip 及必要的下載網路。
-Windows 執行 .\scripts\install.ps1；Unix 執行 sh scripts/install.sh。
-如刻意只安裝 TeX，可在 PowerShell 加 -SkipXsrPython，或於 Unix
-設定 IMPE_SKIP_XSR_PYTHON=1；這時自動組字仍需另行配置 Python。
-普通 IMPE 文件不會啟動 Python；XSR 動態渲染須 shell-escape 或預處理。
-core 仍不附帶 Noto 字體二進位檔。
-
-CTAN／TeX Live 不會在安裝時自動執行 pip。CTAN 封裝包含 XSR 來源，
-但完整的一站式安裝應使用 IMPE core／full 安裝器。
-XSR 上游繼續獨立開發，IMPE 封裝目前固定其 1.1 來源。
