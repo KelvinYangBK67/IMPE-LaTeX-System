@@ -228,59 +228,52 @@ Sans bold italic \\
 }
 
 % ==========================================================================
-\section{Multilingual Routing and Mixed-Script Composition}
+\section{Multilingual and Mixed-Script Composition}
 % ==========================================================================
 
-\Term[sort=multilingual composition]{Multilingual composition}
-[combined routing and local overrides] is tested here in two deliberately
-different ways. The main specimen is a dense paragraph in which explicit local
-families, right-to-left runs, complex shaping, shared Han choices, and inline
-vertical writing are allowed to interact. A later compact regression enables
-automatic Unicode-range ownership for a small representative set of scripts.
+Written traditions carry voices across languages, centuries, and regions.
+The passages here bring together reflections on books and learning alongside
+short proverbial and scriptural lines, composed in their own writing systems.
 
-\subsection{Mixed-Script Paragraph}
+\subsection{Polyglot Composition}
 
-The following specimen is intentionally one \TeX~paragraph. Each script
-contributes a complete
-sentence or clause. Armenian, Georgian, Coptic, Glagolitic, and Tamil are
-left as raw Unicode to exercise the small automatic-routing set; all other
-script families in the paragraph use explicit local overrides.
+The same page can accommodate many scripts without assigning any single one
+the role of a translation or a transcription. In the following continuous
+paragraph, five writing systems are set directly in Unicode, while the others
+retain their chosen local typefaces.\index{Multilingual composition}
+\index{Unicode-range routing}
 
-Հայերեն այս ամբողջական նախադասությունը գրված է նույն բազմալեզու պարբերության մեջ։
-ეს სრული ქართული წინადადება იმავე მრავალენოვან აბზაცში სხვა დამწერლობებთან ერთად გვხვდება.
+\noindent
+Գրքերը մեզ պատմում են անցյալի մարդկանց մասին։
+ძველ წიგნებში მრავალი თაობის აზრი და გამოცდილებაა შემონახული.
 Ⲟⲩⲟϩ ⲡⲓⲗⲟⲅⲟⲥ ⲁϥϣⲱⲡⲓ ⲛ̀ⲟⲩⲥⲁⲣⲝ ⲟⲩⲟϩ ⲁϥϣⲱⲡⲓ ⲛ̀ϧⲏⲧⲉⲛ.
 Ⰲⱏ ⱀⰰⱍⰰⰾⱑ ⰱⱑⰰⱎⰵ ⱄⰾⱁⰲⱁ, ⰺ ⱄⰾⱁⰲⱁ ⰱⱑⰰⱎⰵ ⰽⱏ ⰱⱁⰳⱆ.
-\SA{सर्वे भवन्तु सुखिनः, सर्वे सन्तु निरामयाः।}
-தமிழில் எழுதப்பட்ட இந்த முழு வாக்கியம் அதே பலமொழிப் பத்திக்குள் தொடர்ந்து வருகிறது.
+\SA{विद्या ददाति विनयं।}
+கற்க கசடறக் கற்பவை கற்றபின் நிற்க அதற்குத் தக.
 \TI{ཤེས་རབ་དང་སྙིང་རྗེ་ནི་མིའི་ཆོས་ཀྱི་རྩ་བ་ཡིན།}
-\AR{هذه جملة عربية كاملة تظهر في وسط الفقرة نفسها وتختبر الانتقال إلى الكتابة من اليمين إلى اليسار.}
-\UR{یہ ایک مکمل اردو جملہ ہے جو اسی کثیر لسانی پیراگراف کے اندر نستعلیق رسم الخط میں لکھی گئی ہے۔}
-\HE{זהו משפט עברי שלם שממשיך באותה פסקה לאחר הטקסט הערבי והאורדו.}
-\SY{ܗܢܐ ܦܬܓܡܐ ܣܘܪܝܝܐ ܟܠܗ ܟܬܝܒ ܒܓܘ ܗܕܐ ܦܪܓܪܦܐ ܥܡ ܠܫܢ̈ܐ ܐܚܪ̈ܢܐ.}
-\SYE{ܗܢܐ ܦܬܓܡܐ ܐܚܪܢܐ ܟܬܝܒ ܒܟܬܒܐ ܡܕܢܚܝܐ ܘܡܫܬܠܚ ܒܓܘ ܗܕܐ ܦܪܓܪܦܐ.}
+\AR{الكتاب خير جليس، والعلم نور.}
+\UR{کتابیں ہمیں ماضی کی دنیا سے ملاتی ہیں۔}
+\HE{החכמה טובה מכסף ומזהב.}
+\SY{ܒܪܫܝܬ ܐܝܬܘܗܝ ܗܘܐ ܡܠܬܐ.}
+\SYE{ܒܪܫܝܬ ܐܝܬܘܗܝ ܗܘܐ ܡܠܬܐ.}
 \SEG{𑀲𑀢𑁆𑀬𑀁 𑀯𑀤, 𑀥𑀭𑁆𑀫𑀁 𑀘𑀭.}
-\JP{日本語のこの文章では、ひらがなとカタカナと漢字が同じ文の中に自然に現れます。}
-\KR{한국어의 이 문장에서는 한글과 漢字가 같은 문장 안에 함께 나타납니다.}
-\TC{這個中文完整句子使用明確指定的繁體中文字體，並與前後不同文種保持在同一個段落中。}
-\MOv{ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠂ ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠨᠢ ᠪᠣᠰᠤᠭ᠎ᠠ ᠴᠢᠭᠯᠡᠯ ᠢᠶᠡᠷ ᠪᠢᠴᠢᠭᠳᠡᠨ᠎ᠡ᠃}
-\JP{縦書きのモンゴル文字の直後にも日本語の完全な文章が続き、通常の横書き状態が回復したことを確認します。}
-\MCv{ᠪᡳ ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᡨᠠᠴᡳᠮᠪᡳ᠂ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᡩᡝ ᠪᠣᠰᠣ ᠠᡵᠠᠮᠪᡳ᠉}
-\KR{두 번째 세로쓰기 구간 뒤에도 한국어의 완전한 문장이 이어지며 문단의 방향과 글꼴 상태가 정상적으로 복원되는지를 확인합니다.}
-\TC{最後這個中文完整句子仍然留在同一個段落裡，用來確認兩次豎排 local override、數次 RTL 切換與複雜 shaping 之後，普通橫排行文與局部字體狀態全部恢復正常。}
+\JP{古い図書館でカタログをめくり、昔の人の手紙を読みました。}
+\KR{古典을 읽으면 오늘의 질문을 다시 생각하게 됩니다.}
+\TC{舊書中的一句話，有時會在數百年後重新被人理解。}
 
-\subsection{Minimal Automatic Unicode-Range Regression}
+\subsection{Mixed Writing Directions}
 
-\Term[sort=Unicode range routing]{Unicode-range routing}
-[automatic font ownership] is exercised here on a small representative
-set. The showcase tests routing correctness with a compact interchar
-transition graph. The specimen itself uses raw Unicode.
+A page may also alternate between horizontal sentences and vertically
+written words. Here the Mongolian and Manchu passages rise between ordinary
+horizontal lines, while each writing system retains its own orientation.
 
-
-Հայերեն այս ամբողջական նախադասությունը գրված է առանց տեղական տառատեսակի հրամանի։
-ეს სრული ქართული წინადადება ავტომატური Unicode დიაპაზონის მარშრუტიზაციას ამოწმებს.
-Ⲟⲩⲟϩ ⲡⲓⲗⲟⲅⲟⲥ ⲁϥϣⲱⲡⲓ ⲛ̀ⲟⲩⲥⲁⲣⲝ ⲟⲩⲟϩ ⲁϥϣⲱⲡⲓ ⲛ̀ϧⲏⲧⲉⲛ.
-Ⰲⱏ ⱀⰰⱍⰰⰾⱑ ⰱⱑⰰⱎⰵ ⱄⰾⱁⰲⱁ, ⰺ ⱄⰾⱁⰲⱁ ⰱⱑⰰⱎⰵ ⰽⱏ ⰱⱁⰳⱆ.
-தமிழில் எழுதப்பட்ட இந்த முழு வாக்கியம் தனி local font command இன்றி Unicode range owner மூலம் அமைக்கப்படுகிறது.
+\noindent
+\TC{翻開一本舊書，紙頁上的文字把我們帶到另一個時代。}
+\MOv{ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠣᠯ ᠮᠣᠩᠭᠣᠯᠴᠤᠳ ‍ᠤᠨ ᠬᠡᠯᠡ ᠮᠥᠨ᠃}
+\JP{古い手紙を読むと、文字の形から書き手の暮らしまで想像できます。}
+\MCv{ᠪᡳ ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ ᠪᡝ ᡨᠠᠴᡳᠮᠪᡳ᠂ ᡝᡵᡝ ᠪᡳᡨᡥᡝ ᠪᡝ ᡥᡡᠯᠠᠮᠪᡳ᠃}
+\KR{오래된 기록을 읽는 일은 낯선 사람의 목소리에 귀를 기울이는 일입니다.}
+\TC{文字的方向雖然不同，閱讀仍讓相隔久遠的人彼此相遇。}
 
 
 % ==========================================================================
