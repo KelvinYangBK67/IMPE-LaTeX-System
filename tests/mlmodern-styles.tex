@@ -1,12 +1,16 @@
 \documentclass{article}
+\typeout{IMPE-MLM-CHECKPOINT before-impe-package}
 \usepackage{impe}
+\typeout{IMPE-MLM-CHECKPOINT after-impe-package}
 \ExplSyntaxOn
 \tl_new:N \g__test_mlm_rm_tl
 \tl_new:N \g__test_mlm_sf_tl
 \tl_new:N \g__test_mlm_tt_tl
+\typeout{IMPE-MLM-CHECKPOINT before-default-capture}
 \tl_set:Nx \g__test_mlm_rm_tl {\rmdefault}
 \tl_set:Nx \g__test_mlm_sf_tl {\sfdefault}
 \tl_set:Nx \g__test_mlm_tt_tl {\ttdefault}
+\typeout{IMPE-MLM-CHECKPOINT after-default-capture}
 \typeout{IMPE-MLM-CHECKPOINT before-usefont}
 \UseFont{mlmodern}
 \typeout{IMPE-MLM-CHECKPOINT after-usefont}
