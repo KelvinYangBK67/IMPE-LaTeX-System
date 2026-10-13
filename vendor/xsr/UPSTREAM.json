@@ -1,6 +1,6 @@
 {
   "upstream": "KelvinYangBK67/xetex-stack-renderer",
-  "commit": "8db7e0eb5421b704c7963bc2515c312d73bf8cac",
+  "commit": "30520437e87c9f98301f7ae7e0c200711541edc9",
   "version": "1.1",
   "git_blobs": {
     "LICENSE": "c53cd491510552734fdd3eeb35f474fedcbe5873",
@@ -46,7 +46,7 @@
     "tex/xsr-detector-active.sty": "faa963a1fe70d294162932f714e5ff6f987c6e56",
     "tex/xsr-egyptian.sty": "e896e5a58bcd7e45c03379f17d0ed79cc537fd1c",
     "tex/xsr-inline.sty": "a166902fd75469c943e73ad295b6f09ed094a450",
-    "tex/xsr-khitan.sty": "ec6710d2823e524f543c55b6ffd141f04da1c157",
+    "tex/xsr-khitan.sty": "4aa922bb6b51380cf59d88901b285175e60bb325",
     "tex/xsr-vector.sty": "c33dc8ef9d0954f377c2841ad9d360c2a8155737",
     "VERSION": "9459d4ba2a0d3cc475f89ed03a13a1517c04798e",
     "tex/xsr-version.tex": "de26429e89b3f1161475c69bebbc30e49e9e22b8",
