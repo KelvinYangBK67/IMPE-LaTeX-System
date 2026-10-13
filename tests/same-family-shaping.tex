@@ -26,7 +26,10 @@
 \cs_new_protected:Npn \__impe_test_assert_korean_face:
   {
     \tl_set:Nx \l_tmpa_tl { \fontname\font }
-    \tl_if_in:VnTF \l_tmpa_tl { NotoSerifKR-Regular.ttf }
+    % \fontname emits catcode-12 tokens; token-list matching against
+    % source letters (catcode 11) would falsely reject the correct font.
+    \exp_args:Nee \str_if_in:nnTF
+      { \fontname\font } { NotoSerifKR-Regular.ttf }
       { \typeout{IMPE-TEST-HANGUL-ACTUAL-FACE-PASS} }
       {
         \PackageError{impe-test}
