@@ -262,8 +262,10 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Build timeout/cancellation cleanup regression failed.' }
     # The native NFSS local mapper previously recursed forever on textsf.
     # Include XDV-to-PDF conversion inside the deadline, not merely TeX success.
+    # Allow a cold CI runner to initialize its font cache while retaining a
+    # bounded end-to-end check and the following actual-PDF face assertions.
     & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') `
-        --timeout 30 --log (Join-Path $BuildRoot 'mlmodern-styles-command.log') -- `
+        --timeout 90 --log (Join-Path $BuildRoot 'mlmodern-styles-command.log') -- `
         $xelatex.Source -interaction=nonstopmode -halt-on-error `
         "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex'
     if ($LASTEXITCODE -ne 0) { throw 'MLModern end-to-end PDF build failed or timed out.' }
