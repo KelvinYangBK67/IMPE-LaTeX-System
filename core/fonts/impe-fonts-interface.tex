@@ -925,23 +925,34 @@
             [ \tl_use:N \l__font_main_options_tl ]
             { \l__font_regular_tl }
           }
+        % A Hangul local face must select its fontspec Roman companion
+        % even with \UseFonts{...}[local], not just a forced \Writing
+        % declaration. While its xeCJK interchar hooks are suspended,
+        % glyph shaping follows the current Roman font; without this
+        % companion the glyphs silently fall back to the document's
+        % Latin default instead of the requested Korean font.
+        \bool_set_false:N \l_tmpa_bool
+        \str_if_eq:VnT \l__font_script_tl { Hangul }
+          { \bool_set_true:N \l_tmpa_bool }
         \cs_if_exist:NT \l__writing_local_call_bool
           {
             \bool_if:NT \l__writing_local_call_bool
+              { \bool_set_true:N \l_tmpa_bool }
+          }
+        \bool_if:NT \l_tmpa_bool
+          {
+            \use:x
               {
-                \use:x
-                  {
-                    \exp_not:N \newfontfamily
-                    \exp_not:c { __fontlatin_\l__font_name_tl }
-                    [ \tl_use:N \l__font_main_options_tl ]
-                    { \l__font_regular_tl }
-                  }
-                \use:x
-                  {
-                    \exp_not:N \cs_set_protected:cpn
-                      { __font_force_roman_\l__font_name_tl : }
-                      { \exp_not:c { __fontlatin_\l__font_name_tl } }
-                  }
+                \exp_not:N \newfontfamily
+                \exp_not:c { __fontlatin_\l__font_name_tl }
+                [ \tl_use:N \l__font_main_options_tl ]
+                { \l__font_regular_tl }
+              }
+            \use:x
+              {
+                \exp_not:N \cs_set_protected:cpn
+                  { __font_force_roman_\l__font_name_tl : }
+                  { \exp_not:c { __fontlatin_\l__font_name_tl } }
               }
           }
         \__font_apply_cjk_fallback_family:n { __fontrm_\l__font_name_tl }
