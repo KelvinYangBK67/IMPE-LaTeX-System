@@ -51,6 +51,26 @@ if (-not (Test-Path -LiteralPath $FigureSource)) {
 $FigureWorkDir = Join-Path $WorkDir "figures"
 New-Item -ItemType Directory -Force -Path $FigureWorkDir | Out-Null
 Copy-Item -LiteralPath $FigureSource -Destination (Join-Path $FigureWorkDir "feature-specimen.pdf")
+# XSR resolves registered inline glyph paths from the TeX working directory.
+$GlyphSourceDir = Join-Path $SourceDir "glyphs"
+$GlyphWorkDir = Join-Path $WorkDir "glyphs"
+New-Item -ItemType Directory -Force -Path $GlyphWorkDir | Out-Null
+$GlyphFiles = @(
+    "01_target-main-glyph.png",
+    "02_guodian-yucong4-15_14-glyph.png",
+    "03_shangbo-caomozhichen-30_16-glyph.png",
+    "04_alt-regularized-glyph.png",
+    "05_context-glyph-before-yi-e.png",
+    "06_yu-glyph.png"
+)
+foreach ($glyphName in $GlyphFiles) {
+    $glyphPath = Join-Path $GlyphSourceDir $glyphName
+    if (-not (Test-Path -LiteralPath $glyphPath)) {
+        throw "Showcase inline glyph missing: $glyphPath"
+    }
+    Copy-Item -LiteralPath $glyphPath -Destination (Join-Path $GlyphWorkDir $glyphName)
+}
+
 $FontRoot = (Join-Path $RepoRoot "assets/fonts").Replace([char]92, [char]47)
 [IO.File]::WriteAllText(
     (Join-Path $WorkDir "impe.local.tex"),

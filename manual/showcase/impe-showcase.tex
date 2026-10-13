@@ -13,6 +13,8 @@
     math,
     tables,
     image,
+    glyphs,
+    drawing,
     citations,
     index,
     hyperlinks,
@@ -38,6 +40,14 @@
 
 % Automatic Unicode-range routing for the current mixed-script specimen.
 \UseFonts{armenian,georgian,coptic,glagolitic,tamil}
+
+% Registration keeps each real manuscript image inside the text flow.
+\IMPEGlyphRegister{chu-target}{glyphs/01_target-main-glyph.png}
+\IMPEGlyphRegister{chu-guodian}{glyphs/02_guodian-yucong4-15_14-glyph.png}
+\IMPEGlyphRegister{chu-shangbo}{glyphs/03_shangbo-caomozhichen-30_16-glyph.png}
+\IMPEGlyphRegister{chu-variant}{glyphs/04_alt-regularized-glyph.png}
+\IMPEGlyphRegister{chu-context}{glyphs/05_context-glyph-before-yi-e.png}
+\IMPEGlyphRegister{chu-yu}{glyphs/06_yu-glyph.png}
 
 \addbibresource{references.bib}
 
@@ -100,7 +110,7 @@ showcase is intentionally broader than the focused regression fixtures under
 \section{Local Font Families and Styles}
 % ==========================================================================
 
-The following typeface atlas pairs concise script specimens with eight
+Table~\ref{tab:typeface-atlas} pairs concise script specimens with eight
 corresponding text styles. Repeated specimens make differences between
 typefaces directly comparable; where a face is not supplied, the registered
 family's normal fallback applies. Egyptian format controls and Khitan clusters
@@ -484,8 +494,8 @@ preserving their original Unicode sequences.
 \subsection{Devanagari}
 
 Devanagari makes conjunct consonants, vowel signs, and the virama visible
-in the shapes of its syllables. The Sanskrit family sets the following
-forms with the same typeface used in the verse below.
+in the shapes of its syllables. The Sanskrit family sets the forms in
+Table~\ref{tab:deva-shaping} with the typeface used in the Sanskrit verse.
 
 \begin{table}[htbp]
   \centering
@@ -524,8 +534,8 @@ give a longer, continuous Sanskrit specimen with conjuncts and vowels.
 \subsection{Tibetan}
 
 Tibetan syllables can contain stacked consonants within a single
-\emph{tsheg}-delimited unit. The short forms below are followed by a
-connected passage from the traditional Four Immeasurables prayer.
+\emph{tsheg}-delimited unit. Table~\ref{tab:tibetan-shaping} compares short
+forms; the traditional Four Immeasurables prayer provides a longer passage.
 
 \begin{table}[htbp]
   \centering
@@ -725,7 +735,8 @@ Wikisource, not a single continuous historical document.
 
 A single local WenJin family covers CJK characters in the BMP and in
 supplementary planes through its registered P0, P2, and P3 font fallbacks.
-The brief mixed-plane paragraph precedes a fixed Unicode coverage matrix.
+Table~\ref{tab:wenjin-blocks} supplies a fixed Unicode coverage matrix
+alongside the mixed-plane prose specimen.
 
 \WJ{古籍中的漢字有時仍未收入基本多文種平面。一位研究者翻檢舊鈔本，發現卷末記載的城門、山川、村社與古人名，當中出現了罕用的𠀀、𠮷、𡈽、𡌛、𣎴。另一本字書則收錄𰀀、𰀁、𰀂、𰀃、𰀄等第三平面的文字。這些字在典籍裏並不是一串孤立的編碼，而是與普通漢字共同構成完整的語句。編輯將不同寫本的異體並列於校記，讀者則沿著正文閱讀，不必知道每個字屬於哪個 Unicode 平面，也不必在段落中手動切換字體。}
 
@@ -755,8 +766,8 @@ Extension J\newline\texttt{U+323B0--U+3347F} & \WJ{𲎰𲎱𲎲𲎳𲎴𲎵𲎶�
 
 \subsection{Regional Forms of Shared Han Characters}
 
-Each row below uses the same Unicode codepoint in five regional families;
-any visible form difference therefore comes from font selection or fallback,
+Table~\ref{tab:cjk-regional-forms} compares the same Unicode codepoints
+across five regional families; visible differences come from font selection or fallback,
 rather than from substituting different encoded characters.
 
 \begin{table}[htbp]
@@ -871,6 +882,62 @@ occupy different amounts of vertical space:
 \end{tabular}
 \end{center}
 
+\subsection{Drawing}
+
+Figure~\ref{fig:drawing-gaussian} shows a Gaussian function with its formula
+and graduated axes. Figure~\ref{fig:drawing-stemma} places a schematic
+manuscript-copying tree within the page.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      width=0.80\linewidth,
+      height=0.26\textheight,
+      axis lines=left,
+      xlabel={$x$},
+      ylabel={$f(x)$},
+      xmin=-3,
+      xmax=3,
+      ymin=0,
+      ymax=1.1,
+      grid=major,
+      samples=121,
+      domain=-3:3,
+      tick align=outside
+    ]
+      \addplot[thick] {exp(-x*x/2)};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{The Gaussian profile $f(x)=e^{-x^2/2}$.}
+  \label{fig:drawing-gaussian}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{forest}
+    for tree={
+      draw,
+      rounded corners,
+      align=center,
+      edge={-stealth},
+      l sep=12mm,
+      s sep=9mm,
+      inner xsep=7pt,
+      inner ysep=4pt
+    }
+    [Exemplar
+      [Copy A]
+      [Copy B
+        [Copy C]
+        [Copy D]
+      ]
+    ]
+  \end{forest}
+  \caption{A schematic manuscript-copying tree, not a historical stemma.}
+  \label{fig:drawing-stemma}
+\end{figure}
+
 \subsection{Tables}
 
 Table~\ref{tab:feature-summary} uses the native \texttt{table},
@@ -887,6 +954,8 @@ Table~\ref{tab:feature-summary} uses the native \texttt{table},
     Mathematics & \texttt{math} & yes \\
     Tables & \texttt{tables} & yes \\
     Images & \texttt{image} & yes \\
+    Inline glyphs & \texttt{glyphs} & yes \\
+    Drawing & \texttt{drawing} & yes \\
     Citations & \texttt{citations} & yes \\
     Index & \texttt{index} & yes \\
     Hyperlinks & \texttt{hyperlinks} & yes \\
@@ -916,8 +985,8 @@ documents are expected to use.
 \subsection{Images}
 
 The \texttt{image} feature prepares standard graphics and caption packages.
-The bundled vector image below works without any optional example-image
-files from the user's TeX distribution.
+Figure~\ref{fig:showcase-image} includes a bundled vector image without
+relying on optional example-image files from the user's TeX distribution.
 \begin{figure}[htbp]
   \centering
   \includegraphics[
@@ -929,6 +998,38 @@ files from the user's TeX distribution.
   \label{fig:showcase-image}
 \end{figure}
 Figure~\ref{fig:showcase-image} also exercises native cross-references.
+
+\subsection{Inline Image Glyphs}
+
+A short passage from Chu bamboo manuscripts sets individual manuscript
+signs directly within the running text. The images function as characters,
+not floating figures; the transcriptions and source references are reproduced
+without adopting any particular decipherment.
+
+\medskip
+「\IMPEGlyph{chu-target}」字的古文字字形爲
+「\IMPEGlyph{chu-guodian}」（《郭店簡・語叢四》，15.14）、
+「\IMPEGlyph{chu-shangbo}」（《上博簡・曹沫之陳》，30.16），
+一般隸定爲「\IMPEGlyph{chu-target}」或「\IMPEGlyph{chu-variant}」。
+在出土楚地簡帛文獻中，本字的出現如下：
+
+\medskip
+\noindent\textbf{1}\quad
+凡敓之道，級者爲首。既得其級，言必又及\textsubscript{=}五之而弗亞，
+必𦘔其古。𦘔之而𢚝，必\IMPEGlyph{chu-target}鋊\textsubscript{=}。
+十五之\textsubscript{=}而不可，必\IMPEGlyph{chu-context}以訛，毋命智我。
+皮邦芒六𫳼，流澤而行。七（《郭店簡・語叢四》）\footnote{武漢大學簡帛研究中心、荊門市博物館編著：
+《楚地出土戰國簡冊合集（一）：郭店楚墓竹書》，文物出版社，2011 年，167--168 頁。}
+
+\medskip
+\noindent\textbf{2}\quad
+……☐厚飤，思爲前行。三行之𨒥，句見耑兵，
+\IMPEGlyph{chu-target}三十（《上博簡・曹沫之陳》）\footnote{馬承源主編：
+《上海博物館藏戰國楚竹書（四）》，上海古籍出版社，2004 年，262 頁。}
+
+\medskip
+「鋊」的古文字字形爲「\IMPEGlyph{chu-yu}」，
+在出土楚系簡帛文獻中僅見於上述文段~1。
 
 \subsection{Citations and Bibliography}
 
