@@ -265,7 +265,11 @@ try {
     # Verify actual MLModern faces, including the former sans/mono recursion.
     # Keep the full XeLaTeX-to-PDF pipeline inside a bounded subprocess.
     & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') --timeout 40 --log (Join-Path $BuildRoot 'mlmodern-styles-command.log') -- $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex'
-    if ($LASTEXITCODE -ne 0) { throw 'MLModern end-to-end PDF build failed or timed out.' }
+    if ($LASTEXITCODE -ne 0) {
+        $mlmStage = Join-Path $BuildRoot 'mlmodern-stage.txt'
+        if (Test-Path $mlmStage) { Write-Host ('MLModern stage before timeout: ' + (Get-Content $mlmStage -Raw)) }
+        throw 'MLModern end-to-end PDF build failed or timed out.'
+    }
     & python (Join-Path $TestRoot 'check_mlmodern_styles.py') (Join-Path $BuildRoot 'mlmodern-styles.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'MLModern PDF used incorrect faces.' }
 
