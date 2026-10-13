@@ -262,14 +262,9 @@ try {
     }
     & python (Join-Path $TestRoot 'test_bounded_command.py')
     if ($LASTEXITCODE -ne 0) { throw 'Build timeout/cancellation cleanup regression failed.' }
-    # Exercise MLModern with a bounded XeLaTeX-to-PDF compile and verify
-    # actual font faces. Linux runs with ordinary XeLaTeX console streams.
-    if ($IsLinux) {
-        & /usr/bin/timeout 40s $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex' | Out-Host
-    }
-    else {
-        & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') --timeout 40 --log (Join-Path $BuildRoot 'mlmodern-styles-command.log') -- $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex'
-    }
+    # Verify actual MLModern faces, including the former sans/mono recursion.
+    # Keep the full XeLaTeX-to-PDF pipeline inside a bounded subprocess.
+    & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') --timeout 40 --log (Join-Path $BuildRoot 'mlmodern-styles-command.log') -- $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex'
     if ($LASTEXITCODE -ne 0) { throw 'MLModern end-to-end PDF build failed or timed out.' }
     & python (Join-Path $TestRoot 'check_mlmodern_styles.py') (Join-Path $BuildRoot 'mlmodern-styles.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'MLModern PDF used incorrect faces.' }
