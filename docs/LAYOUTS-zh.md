@@ -114,9 +114,11 @@ Component ID 保留。若需要沿用 A4 舊版版心及文字間距，可選
 `legacy_zh_book` 或 `legacy_beamer`；這些是舊方案的相容入口，
 不承諾逐位元一致的 PDF。
 
-主要來源：
-`catalog/impe-layouts-catalog.tex`、
-`modules/layout/impe-layout-components.tex`、
-`modules/features/impe-feature-headers.tex`、
-`core/layout/impe-layout-config.tex`。
+### 相關檔案
+
+- `catalog/impe-layouts-catalog.tex`：標準類別預設與可選 preset
+- `modules/layout/impe-layout-components.tex`：共用版面元件
+- `modules/features/impe-feature-headers.tex`：頁眉管理
+- `core/layout/impe-layout-config.tex`：便捷版面參數
+- `tests/layout-publication-*.tex`：版面、字號與覆寫測試
 

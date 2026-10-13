@@ -242,10 +242,9 @@ rather than replacing them with a new competing XeTeX interchar router.
 Overlapping new Unicode profiles still use the established binding
 and routing rules.
 
-The new `\\UseWriting` entry is not a stand-in for inline text commands:
-existing `\\MOv`, `\\IMPEEgyptianText`, etc. remain applicable.
-All legacy `\\UseFont` IDs, scopes and script-specific rendering continue
-to execute through the old loader under the shared preset dispatcher.
+Global `\UseWriting` bindings coexist with inline commands such as
+`\MOv` and `\IMPEEgyptianText`. The existing `\UseFont` presets,
+scopes and script-specific renderers use the shared preset dispatcher.
 
 
 ## Native CJK glyph fallback (1.0.5)
