@@ -19,6 +19,23 @@
   { Same-family~transition~#1~must~remain~empty. }
 \__impe_test_assert_empty_transition:nn { HangulJamoExtendedA } { HangulJamo }
 \__impe_test_assert_empty_transition:nn { HangulJamo } { HangulJamoExtendedB }
+
+% Checking the interchar switch alone is insufficient: when disabled,
+% XeTeX falls back to the active Roman font, so the Korean font must
+% also be selected as the Roman companion of its xeCJK local family.
+\cs_new_protected:Npn \__impe_test_assert_korean_face:
+  {
+    \tl_set:Nx \l_tmpa_tl { \fontname\font }
+    \tl_if_in:VnTF \l_tmpa_tl { NotoSerifKR-Regular.ttf }
+      { \typeout{IMPE-TEST-HANGUL-ACTUAL-FACE-PASS} }
+      {
+        \PackageError{impe-test}
+          {Hangul cluster routed into a non-Korean face: \tl_use:N \l_tmpa_tl}
+          {The Korean local family must select its own fontspec Roman face.}
+      }
+  }
+\NewDocumentCommand \AssertKoreanFace { }
+  { \__impe_test_assert_korean_face: }
 \ExplSyntaxOff
 
 \begin{document}
@@ -32,6 +49,7 @@ Automatic Old Hangul: ꥠᅡퟋ〮
 \KR{%
   \ifnum\XeTeXinterchartokenstate=0\relax
     \typeout{IMPE-TEST-HANGUL-CLUSTER-LOCAL-PASS}%
+    \AssertKoreanFace
   \else
     \errmessage{Hangul local cluster shaping is split by xeCJK}%
   \fi
