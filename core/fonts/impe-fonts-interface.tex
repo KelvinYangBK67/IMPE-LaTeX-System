@@ -1726,7 +1726,8 @@
               {#1}
               { \l__font_name_tl }
             \prop_put:Nnx \g__font_range_global_name_prop {#1} { \l__font_name_tl }
-            \seq_gput_right:Nn \g__font_range_global_blocks_seq {#1}
+            \seq_if_in:NnF \g__font_range_global_blocks_seq {#1}
+              { \seq_gput_right:Nn \g__font_range_global_blocks_seq {#1} }
             \prop_gput:Nnx \g__font_range_global_origin_prop {#1}
               {\int_use:N \l__font_global_candidate_origin_int}
           }
