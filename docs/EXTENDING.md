@@ -2,8 +2,8 @@
 
 [繁體中文](EXTENDING-zh.md)
 
-Use the existing catalog and module boundaries before changing `core/`. The
-first design question for a new family or script is: why must core change?
+Extend fonts, layouts and features through the catalog and namespaced modules.
+Use `core/` for mechanisms shared across multiple families or scripts.
 
 ## Adding an Ordinary Font Family
 
@@ -16,6 +16,13 @@ under the optional local library are addressed through `\CatalogFontRoot`.
 Update both font reference languages and add a minimal regression when the new
 behavior needs long-term protection. Local focused probes may be used while
 developing the family.
+
+When a face serves several scripts, register the font resource separately
+from its Unicode Writing Profile. Use `\UseWriting`, `\DeclareWriting`,
+`\Font` and `\Writing` to check bindings. Existing `\UseFont` presets and
+family shortcuts retain their behavior. The implementation lives in
+`core/fonts/impe-fonts-usewriting.tex` and its style/fallback modules.
+See [Writing API](USEWRITING-1.0.5.md).
 
 ## Adding Script-Specific Behavior
 
@@ -58,14 +65,3 @@ updates, and any required manual or showcase change. Focused probes may be
 used locally during development and kept as local scratch files. Run
 `tests/run_regressions.ps1 -PublicFonts` before release; use public font
 fixtures for tests and CTAN packaging.
-
-## Writing Profiles and resources (1.0.5)
-
-Prefer registering a font resource separately from a Unicode Writing Profile
-when the same face is reused with multiple script policies. Use the new
-\UseWriting / \DeclareWriting / \Font / \Writing entry points to test bindings
-without changing the existing \UseFont preset and local shortcut semantics.
-The implementation lives under core/fonts/impe-fonts-usewriting.tex and
-the related font fallback/style modules. Non-CJK automatic glyph fallback
-must not be added as a side effect of new resources.
-See [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md).

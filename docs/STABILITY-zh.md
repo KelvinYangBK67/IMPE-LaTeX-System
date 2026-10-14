@@ -37,7 +37,7 @@ CTAN `impe-framework` 發佈、新手冊、模板、示例與一般受維護來�
 
 ## 語言參數化標準類別（1.0.4）
 
-新文件建議採用 `\\documentclass[lang=zh]{impebook}`（`impeart`、
+新文件建議採用 `\documentclass[lang=zh]{impebook}`（`impeart`、
 `impereport`、`impebeamer` 同理），而非 `*_zh`。
 原有 `*_zh` 入口在 1.x 中繼續作為受支援的相容別名。
 
@@ -60,6 +60,3 @@ CTAN `impe-framework` 發佈、新手冊、模板、示例與一般受維護來�
 恢復 1.0.5 默認設定。之後的原生 LaTeX 覆寫仍優先；
 不凍結外部字體／套件版本，也不保證 PDF 位元完全一致。
 1.0.6 新版數值及配置見 [LAYOUTS-zh.md](LAYOUTS-zh.md)。
-1.1.0 遠端收口候選版 **不代表** 三語手冊與 Showcase 已同步發佈。
-這些原始碼、追蹤中的 PDF、字體授權及正式封裝均待本地出版階段稽覈；
-在完成驗證前不建立 v1.1.0 Tag 或正式 Release。

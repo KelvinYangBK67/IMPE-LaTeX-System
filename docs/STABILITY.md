@@ -39,7 +39,7 @@ support status of `next*` requires an explicit statement.
 
 ## Language-based canonical classes (1.0.4)
 
-New documents should use `\\documentclass[lang=zh]{impebook}` (likewise
+New documents should use `\documentclass[lang=zh]{impebook}` (likewise
 for `impeart`, `impereport` and `impebeamer`) instead of `*_zh`.
 The `*_zh` entries remain fully supported compatibility aliases in 1.x.
 
@@ -66,7 +66,3 @@ class and the selected `lang=en`/`lang=zh` default. Later native LaTeX
 overrides take precedence; external font/package versions and byte-for-byte
 historical output are not pinned. The 1.0.6 defaults and exact dimensions
 are documented in [LAYOUTS.md](LAYOUTS.md).
-The 1.1.0 remote-closure candidate does **not** yet constitute public
-publication. Manuals, Showcase sources/PDFs and final archive validation
-remain a separate local release gate. Do not tag or publish v1.1.0
-until the tracked documents have been rebuilt and verified.

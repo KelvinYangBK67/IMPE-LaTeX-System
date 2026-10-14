@@ -2,7 +2,7 @@
 
 [繁體中文](FONTS-zh.md)
 
-## Writing Profiles and font resources (introduced in 1.0.5; current in 1.1.0)
+## Writing Profiles and Font Resources
 
 The recommended simple interface is still \UseFont{preset} (including all
 historical IDs). The advanced interface separates a **Unicode Writing Profile**
@@ -40,8 +40,6 @@ is also not yet implemented.
 
 For syntax, complete option and alias lists, and caveats, see
 [Writing and font selection (1.0.5)](USEWRITING-1.0.5.md).
-The canonical manual/showcase sources and PDFs remain a separate local publication task; they will be updated when
-preparing a formal public release.
 
 ## Structure
 
@@ -121,7 +119,7 @@ Current modules:
 - `impe-font-egyptian.tex`
   Egyptian Hieroglyphs font and automatic Unicode composition
 - `impe-font-khitan_small.tex`
-  Khitan Small Script linear and explicit stacked rendering commands
+  Khitan Small Script native XSR stacking and explicit stack commands
 - `impe-font-mlmodern.tex`
   NFSS/package integration for the `mlmodern` family
 
@@ -425,57 +423,28 @@ This section lists families with specialized internal mapping. Simple families u
   Type B clusters using U+16FE4 KHITAN SMALL SCRIPT FILLER. The existing
   `\KHSstack{...}` and `\KHSstackblock{...}` commands remain explicit aliases.
   Load `\UseFonts{egyptian,khitan_small}` with a Khitan font file available;
-  `\Font{khitan_small}{...}` follows the same stacked path.
+  `\Font{khitan_small}{...}` follows the same stacked path. XSR 1.2 also
+  aligns the first cluster with the host paragraph, including table cells.
+  The renderer needs a readable TTF/OTF file through the font registry;
+  an installed family name alone does not provide the font file to Python.
+  Use shell escape or preprocessing for dynamic stacks.
 
-## Font Library Model
+## Local Font Library and Distribution
 
-IMPE LaTeX System now separates the Git repository from the actual font library:
+The Git repository contains source and documentation. Local font binaries can
+be placed in `assets/fonts/` and selected using `impe.local.tex` or
+`\SetCatalogFontRoot{...}`. The public Full package copies existing files
+whose exact paths appear in [the approved-font manifest](../font_licenses/approved-public-fonts.txt).
+The release builder requires a readable font directory and at least one
+approved local font. Other local files remain outside the public archive.
+Core and CTAN archives rely on installed TeX Live or system fonts and user
+font directories. See [third-party font licenses](../font_licenses/README.md).
 
-- the Git repository carries source and documentation
-- `assets/fonts/` is treated as a local font library in the working tree
-- local builds and local `full` releases may include that font library
-- public Git pushes carry the source while local font files stay in the separate font library
+## External Font Resolution
 
-This lets the project keep:
-
-- a lightweight public repository
-- a complete local working setup
-- a locally generated `full` package when needed
-
-## Local Font Library Path
-
-The working assumption is:
-
-- the public Git repository carries source and documentation
-- the local font library lives under `assets/fonts/` in your working tree
-- local development and local `full` release builds read from that location
-
-In other words, the default local path is:
-
-```text
-assets/fonts/
-```
-
-If that directory is unavailable:
-
-- normal repository work can still continue
-- `core` release packaging still works
-- `full` release packaging reports an explicit error and requires the complete local font library
-
-## Bundled and Externally Resolved Fonts
-
-IMPE LaTeX System resolves fonts from several sources.
-
-In particular:
-
-- the `cmu` family resolves through the installed TeX font system
-- it is expected to come from a TeX installation or the local font environment
-- official project page:
-  https://cm-unicode.sourceforge.io/
-
-For third-party font license texts and redistribution notes, see:
-
-- `font_licenses/`
+Installed fonts are resolved through fontspec and the TeX font system after
+the local-file search. For example, `cmu` uses the installed Computer Modern
+Unicode fonts ([project page](https://cm-unicode.sourceforge.io/)).
 
 ## Fallback Behavior
 
@@ -495,9 +464,9 @@ In `soft` mode:
 
 This preserves compilation while recording the unresolved-font state in the log.
 
-## Current Layout and Special-Module Model
+## Layout and Special Modules
 
-The catalog now distinguishes standard shaping, core layout routes, and external
+The catalog distinguishes font shaping, built-in layout routes and specialized
 TeX modules:
 
 - `script`, `language`, and `features` are standard fontspec shaping fields
@@ -598,37 +567,3 @@ The bundled `SyrCOM*.otf` files now have their license text stored under `font_l
 The canonical public font audit is
 `manual/showcase/impe-showcase.tex`. Focused automated checks live under
 `tests/`.
-
-## Local font selection and face resolution (1.0.5 API, still supported in 1.1.0)
-
-The original \UseFont{id}[local|global] activation model and legacy
-local family commands remain available. Since 1.0.5, \Font{id}[overrides]{text}
-also accepts named \DeclareWriting declarations and built-in resources,
-and it performs a forced local selection without requiring a prior preamble
-activation. The related anonymous form is \Writing{configuration}{text}.
-For example \Font{hindi}{हिन्दी} remains compatible with \HI{हिन्दी}.
-Old family-specific shortcuts keep their extra optional arguments, such as
-\MOv[0pt]{...}; no script-specific renderer is substituted for an unrelated
-writing profile.
-
-Individual font files resolve from bundled files first, then fontspec/TeX Live
-or system lookup. The registered strict/soft missing-file modes are distinct
-from xeCJK CJK *missing-glyph* substitution, whose face matrix is described
-above. \SetCatalogFontRoot selects a separate font library.
-
-## Egyptian and Khitan Small Script (1.0.3 internal)
-
-These are font families, not features. Load with \UseFont{egyptian},
-\UseFont{khitan_small}, or \UseFonts{egyptian,khitan_small}. Both default
-to their Noto font. Direct Unicode text, including Egyptian format controls
-and the Khitan filler, is composed by XSR through script-specific range
-detection. Legacy linear \KHS{...}, explicit \KHSstack{...} and
-\KHSstackblock{...}, and explicit \IMPEEgyptianText{...} and
-\IMPEKhitanText{...} are also available.
-
-The XSR renderer needs a readable real TTF/OTF file, resolved by the IMPE
-font registry. On non-full installations, supply the matching file under
-the font mirror configured by \SetCatalogFontRoot{...}. Font family name
-lookup alone is not sufficient for the XSR Python renderer. The bundled XSR 1.1 supports shell escape or preprocessing. TeX Live 2024+
-supports `-output-directory` through `TEXMF_OUTPUT_DIRECTORY`; older engines
-may require the environment variable explicitly or preprocessing.

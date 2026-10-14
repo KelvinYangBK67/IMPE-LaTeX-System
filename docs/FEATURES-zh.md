@@ -1,40 +1,14 @@
-# Features
+# 功能
 
 [English](FEATURES.md)
 
-## 1.0.2：繪圖與索引目的地
+## 功能介面
 
-`\UseFeature{drawing}` 載入 TikZ/PGF、pgfplots（`compat=1.18`）與 forest。
-直接使用 `tikzpicture`、`axis`、`forest` 的標準套件介面。
-三種最小範例見 `tests/drawing.tex`。
-
-hyperlinks 使用共用遞增序列配置唯一目的地。結構性引用保留
-`\autoref` 所需的語義前綴（例如 `section.impe.<sequence>`），目錄返回點、
-雙向腳註及術語索引則仍使用 `impe.dest.<sequence>`，均不依賴可見編號。
-明確建立的 `\MakeLinkTarget*{...}` 名稱不會被覆寫。
-index 會載入 hyperlinks。`\Term` 依 key 記錄首次出現；不同 key 可記錄
-同一顯示術語的多個位置。索引頁碼直接連到所記錄的正文位置，重設頁碼後
-即使兩個實體頁都顯示 1，仍能準確抵達各自位置。xindy 使用內部位置及固定的
-`NextIndexLocation` 屬性；可變位置類別保留各筆位置，頁碼來自 shipout 標籤。
-產生的 `<job>-impe.xdy` 是編譯產物，應與輸出檔放在一起。
-
-手動索引步驟請在輸出目錄執行
-`texindy -L english -C utf8 -M <job>-impe <job>.idx`，再執行兩次 XeLaTeX。
-允許 shell 執行時，imakeidx 會自動傳入相同模組選項。
-上述精確位置機制也用於 **IMPE 自行建立的預設索引** 之普通原生 `\index` 項目；
-舊 `\Term` 只作相容用途。其他索引、明確 `|...` 封裝、具名索引及使用者既有
-索引配置保留 imakeidx/hyperref 的原生規則。詳見下方「`index`（原生優先）」。
-
-## Feature 介面原則（1.0.4 確立，1.1.0 繼續適用）
-
-Feature 可以只負責**按功能載入成熟套件**，不必重新定義原生 LaTeX
-語法。新文件使用 `tables`、`image`、`drawing` 準備相關套件後，
-直接使用原生表格、圖片及繪圖環境。
-`Table*`、`NiceBooktable*`、`OneImage*`、`PanelFigure*` 和
-`ExampleBlock` 仍保留原有參數與功能，維持 IMPE 1.x 相容；
-不再推薦於新文件使用。原有 feature id 均未刪除。
-`lists_envs` 僅作相容用途。1.0.6 Book Layout 已採用新的頁眉及頁腳頁碼默認；
-日後將頁眉統一交予 `headers` 的計畫另見 #16。
+Feature 負責載入按用途組合的 LaTeX 套件，並提供原生套件介面。
+使用 `tables`、`image`、`drawing` 時，推薦其標準表格、圖片及繪圖環境。
+舊有 `Table*`、`NiceBooktable*`、`OneImage*`、`PanelFigure*` 及
+`ExampleBlock` 在 IMPE 1.x 仍受支援；`lists_envs` 供相容文件使用。
+各類別的頁眉預設值由版面 Preset 設定；`headers` 功能提供頁眉控制。
 
 ## 結構
 
@@ -195,7 +169,11 @@ Article 類文件以 section 標題更新變動頁眉；report 與 book 類文�
 - 內文標題可反向連到目錄中的對應條目
 - 腳註正文標號與頁腳腳註標號可互相跳轉
 
-同時用 `\hypersetup` 初始化空白 PDF metadata 欄位。
+所有目的地使用同一單調遞增序列。原生結構引用保留 `\autoref` 所需的
+類型前綴，例如 `section.impe.<sequence>` 與 `figure.impe.<sequence>`；
+目錄返回點、雙向腳註及索引使用 `impe.dest.<sequence>`。
+使用者顯式設定的 `\MakeLinkTarget*{...}` 名稱保持原樣。
+此外，以 `\hypersetup` 初始化空白 PDF metadata 欄位。
 
 例：
 
@@ -227,8 +205,8 @@ See Section~\ref{sec:intro}.
 
 \addbibresource{references.bib}
 
-See \textcite{doe2026} for a narrative citation, or use
-\parencite{doe2026} for a parenthetical citation.
+可用 \textcite{doe2026} 作敘述式引用，
+或用 \parencite{doe2026} 作括號式引用。
 
 \printbibliography
 ```
@@ -284,8 +262,9 @@ See \textcite{doe2026} for a narrative citation, or use
 IMPE 自行建立的預設索引，對普通 `\index` 項目（包括
 `sort@display` 和 `!` 層級）提供逐次出現位置的 PDF 錨點：
 即使頁碼重複，或同一頁有兩次標記，也能區分具體座標。
-`<job>-impe.xdy` 僅負責將內部唯一序號對應至正確頁碼和
-超連結；排序、分類、排印等仍交由 xindy／imakeidx。
+`<job>-impe.xdy` 透過固定的 `NextIndexLocation` 屬性及
+shipout 產生的實際頁碼，將內部唯一位置還原為正確頁碼與超連結；
+排序、分類、排印、交叉參照與格式設定仍由 xindy／imakeidx 負責。
 
 原生 `\index` 的 `|...` 格式封裝、`see`／`seealso`、
 範圍索引及具名索引**原樣交給原生套件**，不由 IMPE 擅自解釋。
@@ -431,6 +410,28 @@ texindy -L english -C utf8 -M <job>-impe <job>.idx
 \end{OneImage}
 ```
 
+### `drawing`
+
+`\UseFeature{drawing}` 載入 TikZ/PGF、pgfplots（`compat=1.18`）
+及 forest。使用標準的 `tikzpicture`、`axis`、`forest` 環境；
+三種用法見 `tests/drawing.tex`。
+
+### `glyphs`
+
+`glyphs` 與埃及、契丹字體家族獨立，啟用 `\UseFeature{glyphs}`
+或 `features={glyphs}` 時載入 XSR 的行內／向量圖片功能。
+
+```tex
+\UseFeature{glyphs}
+\IMPEGlyphRegister[logical={未編碼字},description={拓片甲}]
+  {bs-042}{images/bs-042.svg}
+前文 \IMPEGlyph{bs-042} 後文。
+\IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
+```
+
+登記的元資料不另加 PDF 隱形文字層；`trim` 僅裁切顯示的 TeX 盒子，
+原始圖檔保持不變。
+
 ### `lists_envs`（僅相容）
 
 載入 `setspace`，並定義一個展示用環境：
@@ -464,20 +465,3 @@ This is an indented example block.
 - `\UseFeature{id}`
 - `\UseFeatures{a,b,c}`
 - 在 `\UseTemplateSet{...}` 中使用 `features = {...}`
-
-## 1.0.3：獨立行內圖片字形
-
-glyphs 是獨立可選 feature，與埃及及契丹字體分開。
-以 \UseFeature{glyphs} 或 features={glyphs} 載入；
-只使用 XSR 的行內／向量圖片功能，不啟動字體組字偵測。
-
-例子：
-
-    \UseFeature{glyphs}
-    \IMPEGlyphRegister[logical={未編碼字},description={拓片甲}]
-      {bs-042}{images/bs-042.svg}
-    \IMPEGlyph{bs-042}
-
-元資料不增加 PDF 隱形文字層，裁切只影響 TeX 排版盒。
-
-

@@ -2,86 +2,61 @@
 
 [繁體中文](README-zh.md)
 
-This directory stores license texts and redistribution notices for third-party fonts used by IMPE LaTeX System local font libraries and full release packages.
+IMPE source code is licensed under the repository's [MIT License](../LICENSE).
+Fonts retain their original licenses. This directory contains the notices
+required for fonts reviewed for the local and public Full distributions.
+The Git checkout tracks source; local font binaries are maintained under
+`assets/fonts/`.
 
-Important:
+## Public Full font set (1.1.0 audit)
 
-- The repository-level MIT license applies to the IMPE LaTeX System codebase itself.
-- Third-party fonts in local and release font libraries retain their respective licenses.
-- This directory documents third-party font licensing.
-- General font sourcing notes, including non-bundled dependencies such as `cmu`, belong in `docs/FONTS.md`.
-- The Git repository carries source; the font files under `assets/fonts/` reside in a separate local library.
+The Full release builder uses the exact-path
+[approved font manifest](approved-public-fonts.txt). The reviewed inventory
+contains **131 approved files** (121 SIL OFL 1.1, eight Meltho, one IPA and
+one MIT) and **17 excluded files**. Only locally present files named in the
+manifest enter the public archive; the release script also copies the license
+notices in this directory. See [AUDIT-1.1.0.md](AUDIT-1.1.0.md) for the
+file-level evidence, hashes and exceptions. Replacement binaries require
+new license and notice review.
 
-Current licensing summary:
+The approved fonts include the original, unmodified Meltho files under
+`syriac/` and `syriac_eastern/`; the Meltho license permits redistribution
+of these originals but restricts modifications. `I.Ming-8.10.ttf` uses the
+IPA Font License and `NomNaTong-Regular.ttf` uses MIT. Other approved fonts
+follow their reviewed SIL OFL 1.1 terms.
 
-- The maintainer has checked the generally used third-party fonts in local IMPE LaTeX System libraries as using the SIL Open Font License, with the separately licensed cases listed below:
-  https://openfontlicense.org/
-- `I.Ming-8.10.ttf` is distributed under the IPA Font License.
-- `NomNaTong-Regular.ttf` is distributed under the MIT License.
-- The two Tangut fonts listed below await confirmation of their exact redistribution license texts and require separate review.
-- The four bundled-local Mongolian `mngl*.ttf` fonts await confirmation of their exact redistribution status for public release packaging.
-- `SyrCOM*.otf` is distributed under Beth Mardutho's Meltho Font License. The license permits redistribution of the original, unmodified fonts but prohibits modification of the Font Software.
+## Files and notices
 
+- [FONT-NOTICES.md](FONT-NOTICES.md): per-file SHA-256, embedded copyright,
+  license statements and Reserved Font Names.
+- [OFL-1.1.txt](OFL-1.1.txt): common full SIL OFL 1.1 text.
+- [NotoSansEgyptianHieroglyphs-OFL.txt](NotoSansEgyptianHieroglyphs-OFL.txt):
+  upstream copyright and license matching Noto Egyptian Hieroglyphs 2.002.
+- [SyrCOM-Meltho-LICENSE.txt](SyrCOM-Meltho-LICENSE.txt): Beth Mardutho Meltho
+  license for the unmodified `SyrCOM*.otf` files.
+- [IPA-Font-License-v1.0.md](IPA-Font-License-v1.0.md): license for
+  `assets/fonts/bopomofo/I.Ming-8.10.ttf`.
+- [NomNaTong-MIT-LICENSE.md](NomNaTong-MIT-LICENSE.md): license for
+  `assets/fonts/vietnamese_hannom/NomNaTong-Regular.ttf`.
 
-Current contents:
+An [IPA license reference translation](https://github.com/ichitenfont/I.Ming/blob/master/LICENSE_CHI.md)
+is maintained by the I.Ming project.
 
-- `IPA-Font-License-v1.0.md`
-  License text for `assets/fonts/bopomofo/I.Ming-8.10.ttf`
-- `NomNaTong-MIT-LICENSE.md`
-  MIT license text for `assets/fonts/vietnamese_hannom/NomNaTong-Regular.ttf`
-- `SyrCOM-Meltho-LICENSE.txt`
-  Contains the Meltho font license applicable to the bundled `assets/fonts/syriac/SyrCOM*.otf` files. Redistribution of the original, unmodified fonts is permitted, but modification of the Font Software is not allowed.
+## Excluded font files
 
-Reference translation:
+The current exclusions comprise two Tangut fonts, four `mngl*.ttf` Mongolian
+fonts, Microsoft Mongolian Baiti and Segoe UI Historic, two Manchu files,
+two Tibetan files, two Gothic Nguyen copies and three WenJin files.
+Redistribution evidence is incomplete or restrictive for these exact files;
+the audit records each path and reason. These exclusions affect public
+redistribution rather than private font selection.
 
-- Chinese reference translation of the IPA Font License is available upstream:
-  https://github.com/ichitenfont/I.Ming/blob/master/LICENSE_CHI.md
+Users can obtain the Tangut fonts from the
+[original source](http://ccamc.org/fonts_tangut.php), the four `mngl*.ttf`
+fonts from [Mongolfont](http://www.mongolfont.com/cn/font/index.html), and
+[Microsoft Mongolian Baiti](https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti)
+and [Segoe UI Historic](https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic)
+from Microsoft's font listings, subject to their respective license terms.
 
-License exception requiring separate handling:
-
-- `assets/fonts/bopomofo/I.Ming-8.10.ttf`
-  IPA Font License
-- `assets/fonts/vietnamese_hannom/NomNaTong-Regular.ttf`
-  MIT License
-
-Fonts requiring license review before public release packaging:
-
-- `assets/fonts/tangut/Tangut N4694 V3.10.ttf`
-- `assets/fonts/tangut/new Tangut Std V2.008.ttf`
-- `assets/fonts/mongolian/mnglwhiteotf.ttf`
-- `assets/fonts/mongolian/mnglwritingotf.ttf`
-- `assets/fonts/mongolian/mngltitleotf.ttf`
-- `assets/fonts/mongolian/mnglartotf.ttf`
-- `assets/fonts/mongolian_baiti/monbaiti.ttf`
-- `assets/fonts/segoe/seguihis.ttf`
-
-Their exact redistribution license texts await confirmation and inclusion in this repository.
-Users should verify the original source and applicable license terms themselves before redistribution or reuse outside this project context.
-If users need these Tangut fonts, they should obtain them from the original source themselves:
-http://ccamc.org/fonts_tangut.php
-If users need the four Mongolian `mngl*.ttf` fonts, they should obtain them from the original source themselves:
-http://www.mongolfont.com/cn/font/index.html
-If users need `monbaiti.ttf`, they should obtain it themselves from:
-https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti
-If users need `seguihis.ttf`, they should obtain it themselves from:
-https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic
-The public `full` release package uses the exact-path allowlist in
-[`approved-public-fonts.txt`](approved-public-fonts.txt). Only files
-explicitly listed there are included in public archives; all others are
-excluded until the local maintainer confirms each license and redistributable
-artifact. The 1.1.0 local audit approves 131 exact paths (121 OFL, eight Meltho,
-one IPA and one MIT); 17 files remain excluded. See [AUDIT-1.1.0.md](AUDIT-1.1.0.md)
-for the evidence, exclusions and dependency distinctions. Review replacement artifacts before publishing.
-
-The public `full` release package contains fonts with confirmed redistribution terms.
-
-This directory can be extended later for other third-party fonts whose licenses require inclusion of the full text or additional notices.
-
-## 1.1.0 reviewed notices
-
-- [FONT-NOTICES.md](FONT-NOTICES.md): per-artifact SHA-256, embedded copyright, license and Reserved Font Name notices.
-- [OFL-1.1.txt](OFL-1.1.txt): shared full SIL OFL 1.1 text.
-- [NotoSansEgyptianHieroglyphs-OFL.txt](NotoSansEgyptianHieroglyphs-OFL.txt): official Egyptian upstream copyright and OFL text matching local version 2.002.
-- Meltho coverage includes the eight unmodified files in both `syriac` and `syriac_eastern`.
-
-The release script copies this entire directory into Full before filtering font binaries. Keep these notices with the fonts; do not treat the project MIT license as a replacement.
+General sourcing, font lookup and configuration are documented in
+[Fonts](../docs/FONTS.md).

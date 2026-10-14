@@ -2,8 +2,8 @@
 
 [English](EXTENDING.md)
 
-修改 `core/` 前，先使用現有 catalog 與 module 邊界。新增 family 或文字時，第一個
-設計問題應是：為什麼一定要修改 core？
+字體、版面與功能應優先透過 catalog 及命名明確的 module 擴充。
+跨多個 family 或文字系統共用的機制則實作於 `core/`。
 
 ## 新增一般字體族
 
@@ -14,6 +14,12 @@
 
 同步更新兩種語言的字體參考文件；若新行為需要長期保護，加入最小回歸測試。開發該
 family 時可以使用本機的聚焦探針。
+
+同一字體若用於多種文字，應將字體資源與 Unicode Writing Profile
+分開登錄，並使用 `\UseWriting`、`\DeclareWriting`、`\Font`、
+`\Writing` 檢查綁定。既有 `\UseFont` preset 與專用局部命令仍照常使用。
+實作位於 `core/fonts/impe-fonts-usewriting.tex` 及其樣式／備援模組。
+詳見 [Writing API](USEWRITING-1.0.5.md)。
 
 ## 新增特定文字行為
 
@@ -50,12 +56,3 @@ target 進行測試。
 以及必要的手冊或 showcase。開發期間可使用本機聚焦探針，並保留為本地暫存檔。
 發佈前執行 `tests/run_regressions.ps1 -PublicFonts`；測試與 CTAN 封裝使用
 公開字體 fixture。
-
-## Writing Profile 與字體資源（1.0.5）
-
-同一字體用於多種文字時，應把字體資源與 Unicode Writing Profile
-分開登錄，再以 \UseWriting／\DeclareWriting／\Font／\Writing
-測試綁定，不改動舊 \UseFont preset 與專用局部命令的既有語義。
-實作位於 core/fonts/impe-fonts-usewriting.tex 及其字體備援／樣式模組；
-新增資源時不得附帶啟用非 CJK 的通用逐字缺字備援。
-詳見 [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md)。

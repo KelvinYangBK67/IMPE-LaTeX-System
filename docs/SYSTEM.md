@@ -19,7 +19,7 @@ tools are under `scripts/`.
 ### `core/`
 
 - `core/fonts/`: declarations, fallback resolution, writing models, routing,
-  shaping options and registry behavior; opt-in XSR via the feature catalog
+  shaping options and registry behavior; script-specific XSR font backends
 - `core/layout/`: class detection, preset parsing, component application, and
   the layout registry
 - `core/features/impe-features-system.tex`: feature catalog loading,
@@ -77,8 +77,8 @@ Checkout-local documents may load the package-layer source:
 ```
 
 Canonical entries are `impe.sty` and the `impeart`, `impebook`, `impereport`,
-and `impebeamer` class pairs. The `next*` entries are compatibility wrappers;
-new code and documentation use `impe*`.
+and `impebeamer` classes. Set `lang=zh` on a canonical class for Chinese
+text; `*_zh` and `next*` remain compatibility wrappers.
 
 ## Unified Setup
 
@@ -154,6 +154,15 @@ the `headers` feature and book header layout. `\HeaderTitle{...}` supplies a
 shorter value; `\HeaderStyle{title}` selects headers displaying the fixed title in the
 feature module.
 
+## Writing and Font Registries
+
+Unicode block data, curated Writing Profiles, font resource packs, and
+backward-compatible presets are distinct registries. For global CJK bindings
+the active Writing Profile is recorded independently of the resource identity;
+xeCJK handles glyph-level fallback with the 2×2×2 face matrix.
+These mechanisms do not replace the legacy XeTeX interchar ownership arbiter.
+See [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md).
+
 ## Font Root
 
 The default local font root is `assets/fonts`. Override it with
@@ -184,11 +193,3 @@ file prefixes, and the `tex/latex/impe/` installation namespace retain the
 canonical IMPE names. The version comes
 from the repository `VERSION` file.
 
-## Writing/font registries in 1.0.5
-
-Unicode block data, curated Writing Profiles, font resource packs, and
-backward-compatible presets are distinct registries. For global CJK bindings
-the active Writing Profile is recorded independently of the resource identity;
-xeCJK handles glyph-level fallback with the 2×2×2 face matrix.
-These mechanisms do not replace the legacy XeTeX interchar ownership arbiter.
-See [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md).

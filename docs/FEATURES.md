@@ -2,17 +2,14 @@
 
 [繁體中文](FEATURES-zh.md)
 
-## Feature API policy (established in 1.0.4; current in 1.1.0)
+## Feature API
 
-A feature may be a **curated package stack** rather than a new language for
-existing LaTeX constructs. New documents should use the native environments
-of the packages enabled by `tables`, `image`, and `drawing`.
-The legacy `Table*`, `NiceBooktable*`, `OneImage*`, `PanelFigure*`,
-and `ExampleBlock` interfaces remain available for IMPE 1.x compatibility;
-they are no longer recommended for new work. No existing arguments or feature
-ids have been removed. The `lists_envs` feature is compatibility-only.
-Layout presets configure class-specific headers in 1.0.6; their
-ownership transfer to the `headers` feature is tracked separately in #16.
+Features load curated LaTeX packages and expose their native interfaces.
+Use the standard environments provided by `tables`, `image` and `drawing`.
+Legacy `Table*`, `NiceBooktable*`, `OneImage*`, `PanelFigure*` and
+`ExampleBlock` commands remain supported in IMPE 1.x; `lists_envs` serves
+compatibility documents. Layout presets set class-specific header defaults;
+the `headers` feature provides the running-head controls.
 
 ## Structure
 
@@ -183,7 +180,11 @@ Loads `hyperref` and `bookmark` with repository defaults:
 - linked heading titles that jump back to their table-of-contents entries
 - bidirectional footnote marker links between the text marker and the footnote text
 
-It also initializes empty PDF metadata fields with `\hypersetup`.
+Destinations use one monotonic sequence. Native references retain type
+prefixes for `\autoref` (for example `section.impe.<sequence>` and
+`figure.impe.<sequence>`); TOC returns, footnotes and index helpers use
+`impe.dest.<sequence>`. Explicit `\MakeLinkTarget*{...}` names are preserved.
+The feature also initializes empty PDF metadata fields with `\hypersetup`.
 
 Example:
 
@@ -278,8 +279,10 @@ For the default index initialized by IMPE, ordinary native entries, including
 destination shared with the `hyperlinks` feature. Repeated page labels and
 multiple marks on the same page remain distinct. Put `\index` next to the
 word to be targeted. The small generated `<job>-impe.xdy` file only maps
-opaque occurrences back to real page labels; **sorting, grouping, printing,
-cross-references, and formats stay with xindy and imakeidx**.
+opaque occurrences back to real page labels with the fixed
+`NextIndexLocation` attribute and shipout-supplied display numbers;
+**sorting, grouping, printing, cross-references and formats stay with xindy
+and imakeidx**.
 
 Native index grammar is never reinterpreted: explicit `|...` formatting,
 `|see`, `|seealso`, range delimiters, and named indexes pass unchanged
@@ -433,6 +436,32 @@ Example:
 \end{OneImage}
 ```
 
+### `drawing`
+
+`\UseFeature{drawing}` loads TikZ/PGF, pgfplots (`compat=1.18`) and forest.
+Use ordinary `tikzpicture`, `axis` and `forest` syntax with their standard
+package interfaces. See `tests/drawing.tex` for examples.
+
+
+### `glyphs`
+
+The glyphs feature is separate from Egyptian and Khitan font families.
+Enable `\UseFeature{glyphs}` or `features={glyphs}`; it loads only XSR's
+inline/vector image components, not the script detector or font backends.
+
+Example:
+
+```tex
+\UseFeature{glyphs}
+\IMPEGlyphRegister[logical={unencoded sign},description={rubbing}]
+  {bs-042}{images/bs-042.svg}
+Before \IMPEGlyph{bs-042} after.
+\IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
+```
+
+The optional metadata does not create a hidden PDF text layer, and
+trim only clips the rendered TeX box, not the original source image.
+
 ### `lists_envs` (compatibility-only)
 
 Loads `setspace` and defines a single display environment:
@@ -467,58 +496,3 @@ Use:
 - `\UseFeature{id}`
 - `\UseFeatures{a,b,c}`
 - `features = {...}` inside `\UseTemplateSet{...}`
-
-## Drawing (1.0.2)
-
-`\UseFeature{drawing}` loads TikZ/PGF, pgfplots (`compat=1.18`) and forest.
-Use ordinary `tikzpicture`, `axis` and `forest` syntax with their standard
-package interfaces. See `tests/drawing.tex` for all three examples.
-
-## Destination identities and index passes (1.0.2)
-
-The hyperlinks feature uses one monotonic sequence across its targets.
-Native structural references retain the type prefix expected by `\autoref`,
-for example `section.impe.<sequence>` or `figure.impe.<sequence>`.
-TOC returns, footnotes and index helpers retain `impe.dest.<sequence>`.
-Explicit `\MakeLinkTarget*{...}` names are not replaced.
-
-The index feature loads hyperlinks. `\Term` still indexes the first occurrence
-per key; distinct keys can record multiple occurrences of the same display term.
-Each printed index page number links to that recorded occurrence, including
-when physical pages share the same visible page number. xindy receives an
-internal location with a fixed `NextIndexLocation` attribute; a variable
-location class prevents range compression. Shipout labels supply the displayed
-page numbers. The generated `<job>-impe.xdy` file belongs with the build outputs.
-
-For a manual index pass, run in the output directory:
-
-```sh
-texindy -L english -C utf8 -M <job>-impe <job>.idx
-```
-
-Then rerun XeLaTeX twice. imakeidx's automatic invocation includes the same
-module option when shell execution is enabled. Ordinary custom `\index`
-encapsulations remain under imakeidx/hyperref control; the occurrence mechanism
-above is used by legacy `\Term` and by ordinary native `\index`
-entries in the IMPE-created default index. Named indices, explicit `|...`
-encapsulations, and pre-existing user index setups retain native behavior.
-See [Index (native-first)](#index-native-first) for the current contract.
-
-## Inline image glyphs (1.0.3)
-
-The glyphs feature is separate from Egyptian and Khitan font families.
-Enable \UseFeature{glyphs} or features={glyphs}; it loads only XSR's
-inline/vector image components, not the script detector or font backends.
-
-Example:
-
-    \UseFeature{glyphs}
-    \IMPEGlyphRegister[logical={unencoded sign},description={rubbing}]
-      {bs-042}{images/bs-042.svg}
-    Before \IMPEGlyph{bs-042} after.
-    \IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
-
-The optional metadata does not create a hidden PDF text layer, and
-trim only clips the rendered TeX box, not the original source image.
-
-
