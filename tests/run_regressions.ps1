@@ -816,6 +816,30 @@ if ($RunFormalReleaseChecks) {
             throw "CTAN archive is missing $required."
         }
     }
+    # Every Showcase specimen must retain its relative source path in CTAN.
+    foreach ($specimenDir in @("figures", "glyphs")) {
+        $sourceDir = Join-Path $RepoRoot "manual/showcase/$specimenDir"
+        $sourceFiles = @(Get-ChildItem -LiteralPath $sourceDir -Recurse -File)
+        if ($sourceFiles.Count -eq 0) {
+            throw "No Showcase specimens found under $sourceDir."
+        }
+        foreach ($sourceFile in $sourceFiles) {
+            $relative = $sourceFile.FullName.Substring($sourceDir.Length).TrimStart([char[]](92,47))
+            $archivedFile = Join-Path (Join-Path $ctanPackage "manual/showcase/$specimenDir") $relative
+            if (-not (Test-Path -LiteralPath $archivedFile -PathType Leaf)) {
+                throw "CTAN archive is missing Showcase specimen: $specimenDir/$relative"
+            }
+            # ZIP text resources receive LF normalization, but image bytes
+            # must remain unchanged.
+            if ($sourceFile.Extension.ToLowerInvariant() -in @(".png", ".pdf")) {
+                $sourceHash = (Get-FileHash -LiteralPath $sourceFile.FullName -Algorithm SHA256).Hash
+                $archivedHash = (Get-FileHash -LiteralPath $archivedFile -Algorithm SHA256).Hash
+                if ($sourceHash -ne $archivedHash) {
+                    throw "CTAN Showcase specimen differs from source: $specimenDir/$relative"
+                }
+            }
+        }
+    }
     foreach ($xsrFile in @("vendor/xsr/UPSTREAM.txt", "vendor/xsr/LICENSE", "vendor/xsr/pyproject.toml", "vendor/xsr/tex/xsr-core.sty", "vendor/xsr/src/xsr/renderer.py")) {
         if (-not (Test-Path (Join-Path $ctanPackage $xsrFile))) { throw "CTAN source missing XSR: $xsrFile" }
     }

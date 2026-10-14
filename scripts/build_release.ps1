@@ -577,6 +577,17 @@ function New-CtanPackage {
     Copy-Item -LiteralPath $ShowcasePdf -Destination (Join-Path $CtanShowcaseRoot "impe-showcase.pdf") -Force
     Copy-Item -LiteralPath $ShowcaseBibliography -Destination (Join-Path $CtanShowcaseRoot "references.bib") -Force
 
+    # A CTAN source distribution must retain the Showcase's relative image
+    # paths, so users can rebuild the specimens with their own fonts.
+    foreach ($specimenDir in @("figures", "glyphs")) {
+        $sourceDir = Join-Path $RepoRoot "manual/showcase/$specimenDir"
+        if (-not (Test-Path -LiteralPath $sourceDir -PathType Container)) {
+            throw "Showcase specimen assets are missing: $sourceDir"
+        }
+        Copy-Item -LiteralPath $sourceDir `
+            -Destination (Join-Path $CtanShowcaseRoot $specimenDir) -Recurse -Force
+    }
+
     $AssetsReadmes = @("README.md", "README-zh.md")
     if (Test-Path (Join-Path $RepoRoot "assets")) {
         $CtanAssets = Join-Path $StageRoot "assets"
