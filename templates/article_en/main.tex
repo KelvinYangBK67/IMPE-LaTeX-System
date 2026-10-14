@@ -1,49 +1,131 @@
 % !TeX program = xelatex
+% All manuscript witnesses and references below are invented examples.
 \documentclass{impeart}
-
-\UseTemplateSet{
-  features = {tables,image,citations,hyperlinks}
-}
+\UseTemplateSet{features={tables,image,citations,hyperlinks}}
 \addbibresource{references.bib}
-
-\title{Article Title}
+\title{Reading Variants in a Small Manuscript Corpus}
 \author{Author Name}
 \date{\today}
-
 \begin{document}
 \maketitle
-
 \begin{abstract}
-A brief statement of the question, sources, method, and principal finding.
+This model article examines how three hypothetical manuscript witnesses
+might support different readings of a short passage. It distinguishes
+transcription from interpretation, demonstrates a repeatable comparison
+procedure, and explains how to record uncertainty in a reading edition.
+All manuscripts and bibliographic data are fictitious teaching examples.
 \end{abstract}
 
-\section{Introduction}
+\section{Introduction}\label{sec:intro}
+A manuscript tradition rarely supplies a single, unproblematic text.
+Differences between witnesses may result from copying, deliberate revision,
+material damage or editorial decisions made at a later date. The task of
+the researcher is not simply to choose a familiar reading, but to explain
+what each source preserves and what assumptions inform a reconstruction.
 
-Introduce the subject and its sources. Cite a sample reference with
-\textcite{sample2026} or \parencite{sample2026}; replace the sample
-entry in \texttt{references.bib} with your own bibliography.
+This article uses a deliberately small imagined corpus to show that process.
+Witness A represents an early copy with concise wording. Witness B preserves
+a longer formulation, and C has lost part of the decisive line. The labels
+identify objects rather than ranks of trustworthiness. A late manuscript
+can preserve an old reading, while an early copy can contain distinctive
+errors.\footnote{A real edition should supply shelfmarks, dating arguments
+and manuscript images or precise references.}
 
-\section{Analysis}
+A sample guide can be cited through the standard \verb|\textcite|
+command: \textcite{sample2026}. The provided bibliographic entry is
+fictional and should be replaced. In this template citations, notes,
+cross-references and the bibliography are all produced with native
+\LaTeX{} interfaces supported by IMPE.
 
-Write the argument here. Footnotes use the standard
-LaTeX command.\footnote{A sample note.}
+\section{Sources and transcription}\label{sec:sources}
+Our example comprises three copies of an identical short statement.
+A preserves an abbreviated phrase; B supplies an additional modifier;
+C has a damaged centre. Their readings are given here in English,
+but a historical edition would normally provide a diplomatic
+transcription, a normalized text and an explanation of the relationship
+between them.
+
+The first stage of work records what appears in each surviving object.
+Gaps, insertions, erasures and punctuation are represented according to
+declared conventions. This task may appear mechanical, yet it separates
+visible marks from editorial supplements. When a proposed restoration
+is silently included in a transcription, the later argument risks
+becoming circular.
 
 \begin{table}[htbp]
   \centering
-  \caption{Sample comparison}
-  \begin{tabular}{ll}
+  \caption{Hypothetical witnesses and readings}\label{tab:witnesses}
+  \begin{tabular}{lll}
     \toprule
-    Source & Observation \\
+    Witness & Transmitted phrase & Assessment \\
     \midrule
-    A & First reading \\
-    B & Second reading \\
+    A & the record is kept & shorter reading \\
+    B & the record is carefully kept & expanded reading \\
+    C & the record \ldots{} kept & damaged middle \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\section{Conclusion}
+Table~\ref{tab:witnesses} distinguishes transmitted words from the
+editor's description of them. The absence of the modifier in C is
+not positive support for A because the relevant part of C is missing.
+For a larger corpus the same data may belong in a critical apparatus;
+for three witnesses the tabular form exposes the question clearly.
 
-Summarize the result and its implications.
+\section{Method of comparison}\label{sec:method}
+Comparison involves three different operations: identifying the location
+of a variation, explaining plausible copying processes, and testing
+preferred readings against the context. These stages should not be
+collapsed into a single judgement. Another scholar should be able to
+inspect the observations even when disagreeing with the interpretation.
+
+The extra adverb in B provides a useful illustration. A scribe may
+have introduced it to clarify an abrupt instruction. Equally, A may
+have dropped a word found in the common ancestor of all the witnesses.
+C cannot decide between the alternatives because its damaged line
+could accommodate either one. An editor must avoid converting missing
+evidence into confirmation of a preferred theory.
+
+The analysis becomes stronger when it identifies possible counterexamples.
+An independent, reliably dated witness with B's wording would lend
+weight to the longer text. A comparable witness with A's expression
+would support the short form. Neither observation would settle the
+issue automatically; each would change the evidential balance.
+
+\section{Discussion}\label{sec:discussion}
+For an accessible reading edition we provisionally print A's concise
+form and record the extra word from B in a note. This is a choice of
+editorial presentation, not proof that A contains the original. A
+synoptic edition might preserve all three versions in parallel if
+variation itself is the central research question.
+
+The structure of the document helps preserve scholarly distinctions.
+Section headings separate descriptions from arguments. A table presents
+alternatives without requiring readers to remember them from prose.
+Footnotes accommodate contextual information, and the reference system
+links readers back to earlier discussions in Section~\ref{sec:sources}.
+These facilities support a clear argument but cannot substitute for
+an accurate transcription or a credible historical inference.
+
+Research writing should also distinguish degrees of confidence.
+A reconstruction may be probable, possible or simply compatible with
+the surviving text. Stating those degrees gives future researchers room
+to revisit the case without first undoing an appearance of certainty.
+The most useful edition is not always the one that prints the most
+confident single text; it is the one that allows its evidence to be
+checked.
+
+\section{Conclusion}\label{sec:conclusion}
+The imaginary case demonstrates a modest but complete editorial
+workflow: record the witnesses, separate description from conjecture,
+compare alternative histories and present a revisable conclusion.
+A real article would now expand its corpus and replace every fictional
+reference with verifiable evidence \parencite{sample2026}.
+
+This source can serve as a starting point for an academic article:
+replace the title, abstract, prose, manuscript descriptions and
+bibliography, while keeping whichever native headings, footnotes,
+tables and cross-references the work requires.
 
 \printbibliography
 \end{document}
