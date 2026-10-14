@@ -1,6 +1,7 @@
 param(
     [string[]]$Language = @("all"),
     [string]$OutputRoot,
+    [string]$ShowcasePdf,
     [switch]$NoUpdateTracked,
     [switch]$ListLanguages
 )
@@ -11,7 +12,10 @@ $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $ScriptRoot
 $ManualRoot = Join-Path $RepoRoot "manual"
 $VersionFile = Join-Path $RepoRoot "VERSION"
-$ShowcaseSource = Join-Path $RepoRoot "manual/showcase/impe-showcase.pdf"
+# Normal manual builds use the reviewed tracked PDF. Release builds can supply
+# the freshly compiled Showcase without changing the repository's PDF.
+$ShowcaseSource = if ($ShowcasePdf) { [IO.Path]::GetFullPath($ShowcasePdf) }
+    else { Join-Path $RepoRoot "manual/showcase/impe-showcase.pdf" }
 $DefaultSourceDateEpoch = "1790035200"
 
 if (-not (Test-Path -LiteralPath $ManualRoot)) {
