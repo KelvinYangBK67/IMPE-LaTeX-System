@@ -1196,8 +1196,10 @@ Use \texttt{font=} for resolvable family names,
 known resources. \texttt{stylemap=native|full},
 named face overrides, and \texttt{writing=horizontal|vertical}
 are among the available settings. Global vertical writing is
-not supported. See \texttt{docs/USEWRITING-1.0.5.md} for the
-complete 69-profile, 85-resource-alias reference.
+not supported. The complete Profile and Resource/Pack ID catalogs appear in
+Sections~\ref{app:writing-profile-ids}
+and~\ref{app:writing-resource-ids}; see
+\texttt{docs/USEWRITING-1.0.5.md} for option details.
 
 \subsection{Layouts and header controls}
 
@@ -1403,6 +1405,288 @@ become the effective primary font.
 \texttt{vietnamese\_hannom} & L & \texttt{\string\HN} & Vietnamese Hán-Nôm / CJK text. \\
 \bottomrule
 \end{longtable}
+
+\subsection{Curated Writing Profile identifiers (69)}
+\label{app:writing-profile-ids}
+
+Use a Profile ID with \verb|\UseWriting| for global range selection
+or with \verb|\Writing| and named declarations for local rendering.
+These identifiers follow the maintained Unicode codepoint composition
+in \texttt{core/fonts/impe-fonts-usewriting.tex}. The coverage column
+lists the registered scope keys; several profiles combine multiple
+blocks or selected portions of a block.
+
+\begin{verbatim}
+\UseWriting{[shanggu]chinese}
+\UseWriting{[tiro]devanagari}
+\Writing{[naskh]arabic}{العَرَبِيَّة}
+\end{verbatim}
+
+\textbf{Default resource} is the resource alias selected when a
+Profile supplies its own font default. A dash means the Profile
+defines Unicode coverage and script behavior but leaves the font
+resource to an explicit \texttt{[pack]}, \texttt{font=} or
+\texttt{file=} choice. These profiles can be used with a suitable
+user-provided font.
+
+\begingroup\small
+\begin{longtable}{@{}p{0.265\linewidth}p{0.205\linewidth}p{0.455\linewidth}@{}}
+\toprule
+\textbf{Profile ID} & \textbf{Default resource} & \textbf{Coverage key(s)} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Profile ID} & \textbf{Default resource} & \textbf{Coverage key(s)} \\
+\midrule
+\endhead
+\texttt{basic} & \texttt{basic} & \texttt{basic} \\
+\texttt{latin} & \texttt{basic} & \texttt{latin} \\
+\texttt{greek} & \texttt{basic} & \texttt{greek-only} \\
+\texttt{cyrillic} & \texttt{basic} & \texttt{cyrillic} \\
+\texttt{armenian} & \texttt{armenian} & \texttt{armenian} \\
+\texttt{georgian} & \texttt{georgian} & \texttt{georgian} \\
+\texttt{hebrew} & \texttt{hebrew} & \texttt{hebrew} \\
+\texttt{arabic} & \texttt{naskh} & \texttt{arabic} \\
+\texttt{syriac} & \texttt{syriac} & \texttt{syriac} \\
+\texttt{samaritan} & \texttt{samaritan} & \texttt{samaritan} \\
+\texttt{aramaic} & \texttt{aramaic} & \texttt{imperial-aramaic} \\
+\texttt{nabataean} & \texttt{nabataean} & \texttt{nabataean} \\
+\texttt{phoenician} & \texttt{phoenician} & \texttt{phoenician} \\
+\texttt{avestan} & \texttt{avestan} & \texttt{avestan} \\
+\texttt{pahlavi-parthian} & \texttt{pahlavi-parthian} & \texttt{inscriptional-parthian} \\
+\texttt{pahlavi-inscriptional} & \texttt{pahlavi-inscriptional} & \texttt{inscriptional-pahlavi} \\
+\texttt{pahlavi-psalter} & \texttt{pahlavi-psalter} & \texttt{psalter-pahlavi} \\
+\texttt{manichaean} & \texttt{manichaean} & \texttt{manichaean} \\
+\texttt{sogdian} & \texttt{sogdian} & \texttt{sogdian} \\
+\texttt{old-sogdian} & \texttt{old-sogdian} & \texttt{old-sogdian} \\
+\texttt{old-uyghur} & \texttt{old-uyghur} & \texttt{old-uyghur} \\
+\texttt{devanagari} & \texttt{devanagari} & \texttt{devanagari} \\
+\texttt{tamil} & \texttt{tamil} & \texttt{tamil} \\
+\texttt{thai} & \texttt{thai} & \texttt{thai} \\
+\texttt{brahmi} & \texttt{brahmi} & \texttt{brahmi} \\
+\texttt{kharoshthi} & \texttt{kharoshthi} & \texttt{kharoshthi} \\
+\texttt{tibetan} & \texttt{tibetan} & \texttt{tibetan} \\
+\texttt{coptic} & \texttt{coptic} & \texttt{coptic-main}, \texttt{coptic-legacy} \\
+\texttt{glagolitic} & \texttt{glagolitic} & \texttt{glagolitic} \\
+\texttt{old-italic} & \texttt{old-italic} & \texttt{old-italic} \\
+\texttt{old-hungarian} & \texttt{old-hungarian} & \texttt{old-hungarian} \\
+\texttt{runic} & \texttt{runic} & \texttt{runic} \\
+\texttt{old-turkic} & \texttt{old-turkic} & \texttt{old-turkic} \\
+\texttt{carian} & \texttt{carian} & \texttt{carian} \\
+\texttt{cuneiform} & \texttt{cuneiform} & \texttt{cuneiform} \\
+\texttt{egyptian} & \texttt{egyptian} & \texttt{egyptian} \\
+\texttt{khitan-small} & \texttt{khitan-small} & \texttt{khitan-small} \\
+\texttt{tangut} & \texttt{tangut} & \texttt{tangut} \\
+\texttt{han} & \texttt{shanggu} & \texttt{han} \\
+\texttt{chinese} & \texttt{shanggu} & \texttt{chinese} \\
+\texttt{japanese} & \texttt{japanese} & \texttt{japanese} \\
+\texttt{korean} & \texttt{korean} & \texttt{korean} \\
+\texttt{kana} & \texttt{japanese} & \texttt{kana} \\
+\texttt{hangul} & \texttt{korean} & \texttt{hangul} \\
+\texttt{bopomofo} & \texttt{iming} & \texttt{bopomofo} \\
+\texttt{mongolian} & \texttt{mnglwhite} & \texttt{mongolian} \\
+\texttt{jurchen} & --- & \texttt{jurchen} \\
+\texttt{seal} & --- & \texttt{seal} \\
+\texttt{proto-cuneiform} & --- & \texttt{proto-cuneiform} \\
+\texttt{bengali} & --- & \texttt{Bengali}, \texttt{BengaliSupplement} \\
+\texttt{gurmukhi} & --- & \texttt{Gurmukhi} \\
+\texttt{gujarati} & --- & \texttt{Gujarati} \\
+\texttt{oriya} & --- & \texttt{Oriya} \\
+\texttt{telugu} & --- & \texttt{Telugu} \\
+\texttt{kannada} & --- & \texttt{Kannada} \\
+\texttt{malayalam} & --- & \texttt{Malayalam} \\
+\texttt{sinhala} & --- & \texttt{Sinhala} \\
+\texttt{lao} & --- & \texttt{Lao} \\
+\texttt{myanmar} & --- & \texttt{Myanmar}, \texttt{MyanmarExtendedA}, \texttt{MyanmarExtendedB} \\
+\texttt{ethiopic} & --- & \texttt{Ethiopic}, \texttt{EthiopicExtended}, \texttt{EthiopicExtendedA}, \texttt{EthiopicExtendedB} \\
+\texttt{khmer} & --- & \texttt{Khmer}, \texttt{KhmerSymbols} \\
+\texttt{ogham} & --- & \texttt{Ogham} \\
+\texttt{cherokee} & --- & \texttt{Cherokee}, \texttt{CherokeeSupplement} \\
+\texttt{nko} & --- & \texttt{NKo} \\
+\texttt{tifinagh} & --- & \texttt{Tifinagh} \\
+\texttt{yi} & --- & \texttt{YiSyllables}, \texttt{YiRadicals} \\
+\texttt{adlam} & --- & \texttt{Adlam} \\
+\texttt{thaana} & --- & \texttt{Thaana} \\
+\texttt{mandaic} & --- & \texttt{Mandaic} \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+A Writing Profile identifies Unicode coverage rather than a
+language-specific font choice. For instance, \texttt{chinese},
+\texttt{japanese} and \texttt{korean} overlap in their Han coverage.
+The older \texttt{sanskrit}, \texttt{hindi}, \texttt{urdu} and
+\texttt{manchu} names remain useful in the registered preset
+namespace. The \texttt{kharoshthi} Profile and resource alias
+use that spelling; the historical \texttt{kharosthi} preset
+retains its established spelling.
+
+\subsection{Font Resource and Pack aliases (85)}
+\label{app:writing-resource-ids}
+
+The bracketed resource name in a writing configuration is one of
+the \textbf{85 registered resource aliases} below. The corresponding
+source-family column identifies the legacy catalog family whose
+font faces and file-resolution rules supply the resource.
+Several aliases intentionally share a source family but select
+different faces. An alias can designate a multi-face pack,
+a script-specific resource, or a particular face.
+
+\begin{verbatim}
+\UseWriting{[libertinus]latin}
+\UseWriting{[chinese-traditional]chinese}
+\UseWriting{[naskh]arabic}
+\Writing{[mnglwhite,writing=vertical]mongolian}{ᠮᠣᠩᠭᠣᠯ}
+\end{verbatim}
+
+Resource aliases and legacy Preset IDs occupy separate namespaces.
+In particular, \texttt{basic} selects the Noto Western resource
+associated with the legacy \texttt{noto} family, whereas
+\verb|\UseFont{noto}| continues to use the legacy preset.
+\verb|\UseFont{arabic}| follows its complete historical font recipe;
+\verb|\UseWriting{[naskh]arabic}| independently selects the
+\texttt{naskh} resource for the \texttt{arabic} Unicode Profile.
+
+\begingroup\small
+\begin{longtable}{@{}p{0.43\linewidth}p{0.47\linewidth}@{}}
+\toprule
+\textbf{Resource/pack alias} & \textbf{Source catalog family} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Resource/pack alias} & \textbf{Source catalog family} \\
+\midrule
+\endhead
+\texttt{basic} & \texttt{noto} \\
+\texttt{cmu} & \texttt{cmu} \\
+\texttt{times} & \texttt{times} \\
+\texttt{gentium} & \texttt{gentium} \\
+\texttt{charis} & \texttt{charis} \\
+\texttt{libertinus} & \texttt{libertinus} \\
+\texttt{latinmodern} & \texttt{mlmodern} \\
+\texttt{chinese-simplified} & \texttt{chinese\_simplified} \\
+\texttt{chinese-traditional} & \texttt{chinese\_traditional} \\
+\texttt{japanese} & \texttt{japanese} \\
+\texttt{korean} & \texttt{korean} \\
+\texttt{wenjin} & \texttt{wenjin} \\
+\texttt{shanggu} & \texttt{shanggu} \\
+\texttt{armenian} & \texttt{armenian} \\
+\texttt{devanagari} & \texttt{devanagari} \\
+\texttt{tamil} & \texttt{tamil} \\
+\texttt{georgian} & \texttt{georgian} \\
+\texttt{tibetan} & \texttt{tibetan} \\
+\texttt{hebrew} & \texttt{hebrew} \\
+\texttt{arabic} & \texttt{arabic} \\
+\texttt{syriac} & \texttt{syriac} \\
+\texttt{syriac-eastern} & \texttt{syriac\_eastern} \\
+\texttt{syriac-western} & \texttt{syriac} \\
+\texttt{thai} & \texttt{thai} \\
+\texttt{thai-looped} & \texttt{thai} \\
+\texttt{naskh} & \texttt{arabic} \\
+\texttt{kufi} & \texttt{arabic} \\
+\texttt{nastaliq} & \texttt{urdu} \\
+\texttt{aref} & \texttt{arabic} \\
+\texttt{davidlibre} & \texttt{hebrew} \\
+\texttt{khawa} & \texttt{tibetan} \\
+\texttt{carian} & \texttt{anatolian} \\
+\texttt{coptic} & \texttt{coptic} \\
+\texttt{cuneiform} & \texttt{cuneiform} \\
+\texttt{glagolitic} & \texttt{glagolitic} \\
+\texttt{old-italic} & \texttt{italic} \\
+\texttt{old-hungarian} & \texttt{hungarian} \\
+\texttt{runic} & \texttt{runic} \\
+\texttt{brahmi} & \texttt{brahmi} \\
+\texttt{kharoshthi} & \texttt{kharosthi} \\
+\texttt{aramaic} & \texttt{aramaic} \\
+\texttt{nabataean} & \texttt{nabataean} \\
+\texttt{phoenician} & \texttt{phoenician} \\
+\texttt{avestan} & \texttt{avestan} \\
+\texttt{pahlavi-parthian} & \texttt{pahlavi\_parthian} \\
+\texttt{pahlavi-inscriptional} & \texttt{pahlavi\_inscriptional} \\
+\texttt{pahlavi-psalter} & \texttt{pahlavi\_psalter} \\
+\texttt{manichaean} & \texttt{manichaean} \\
+\texttt{samaritan} & \texttt{samaritan} \\
+\texttt{sogdian} & \texttt{sogdian} \\
+\texttt{old-sogdian} & \texttt{sogdian\_old} \\
+\texttt{old-turkic} & \texttt{turkic} \\
+\texttt{old-uyghur} & \texttt{uyghur} \\
+\texttt{egyptian} & \texttt{egyptian} \\
+\texttt{khitan-small} & \texttt{khitan\_small} \\
+\texttt{tangut} & \texttt{tangut} \\
+\texttt{mongolian} & \texttt{mongolian} \\
+\texttt{mnglwhite} & \texttt{mongolian} \\
+\texttt{mngltitle} & \texttt{mongolian} \\
+\texttt{mnglwriting} & \texttt{mongolian} \\
+\texttt{mnglart} & \texttt{mongolian} \\
+\texttt{monbaiti} & \texttt{mongolian\_baiti} \\
+\texttt{abxy} & \texttt{manchu} \\
+\texttt{segoeuihistoric} & \texttt{segoe} \\
+\texttt{tiro} & \texttt{sanskrit} \\
+\texttt{iming} & \texttt{bopomofo} \\
+\texttt{zhuque} & \texttt{shanggu} \\
+\texttt{simsun} & \texttt{sim} \\
+\texttt{simhei} & \texttt{sim} \\
+\texttt{simfang} & \texttt{sim} \\
+\texttt{simkai} & \texttt{sim} \\
+\texttt{arial} & \texttt{times} \\
+\texttt{consolas} & \texttt{times} \\
+\texttt{nomnatong} & \texttt{vietnamese\_hannom} \\
+\texttt{minhnguyen} & \texttt{vietnamese\_hannom} \\
+\texttt{gothicnguyen} & \texttt{vietnamese\_hannom} \\
+\texttt{syrcom} & \texttt{syriac} \\
+\texttt{syrcom-edessa} & \texttt{syriac} \\
+\texttt{syrcom-midyat} & \texttt{syriac} \\
+\texttt{syrcom-jerusalem} & \texttt{syriac} \\
+\texttt{syrcom-jerusalem-bold} & \texttt{syriac} \\
+\texttt{syrcom-adiabene} & \texttt{syriac\_eastern} \\
+\texttt{syrcom-ctesiphon} & \texttt{syriac\_eastern} \\
+\texttt{tangut-n4694} & \texttt{tangut} \\
+\texttt{new-tangut-std} & \texttt{tangut} \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+The alias list is the set of names recognized by IMPE's writing
+registry, rather than an inventory of font binaries included in
+a release archive. Fonts already available in the \TeX{} or
+system font environment can resolve normally. For other resources,
+supply the corresponding font files or choose an explicit
+\texttt{font=} or \texttt{file=} override. Multiple aliases may
+resolve to faces in one source family.
+
+\subsection{Style-face shorthand aliases (6)}
+
+The face-override options \texttt{bold=}, \texttt{italic=},
+\texttt{bolditalic=}, \texttt{sans=} and the other documented
+style slots can use the following explicitly registered
+shorthand face names. These six names are also included among
+the 85 resource aliases above; this separate table shows
+the exact selected face file.
+
+\begin{longtable}{@{}p{0.26\linewidth}p{0.66\linewidth}@{}}
+\toprule
+\textbf{Style alias} & \textbf{Font face file} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Style alias} & \textbf{Font face file} \\
+\midrule
+\endhead
+\texttt{zhuque} & \texttt{ZhuqueFangsong-Regular.ttf} \\
+\texttt{simkai} & \texttt{simkai.ttf} \\
+\texttt{simfang} & \texttt{simfang.ttf} \\
+\texttt{aref} & \texttt{ArefRuqaa-Regular.ttf} \\
+\texttt{naskh} & \texttt{NotoNaskhArabic-Regular.ttf} \\
+\texttt{nastaliq} & \texttt{NotoNastaliqUrdu-Regular.ttf} \\
+\bottomrule
+\end{longtable}
+
+For example,
+\verb|\UseWriting{[shanggu,italic=zhuque]chinese}|
+maps the italic style explicitly. A style alias is a
+named face selection, distinct from a separate Writing Profile.
+Stylemap and declared faces determine the final eight-style
+family mapping; named overrides take precedence.
 
 \subsection{Advanced extension interfaces}
 
