@@ -1688,6 +1688,37 @@ named face selection, distinct from a separate Writing Profile.
 Stylemap and declared faces determine the final eight-style
 family mapping; named overrides take precedence.
 
+\subsection{Additional script rendering commands}
+
+Besides the primary local commands in the registered-preset table,
+four legacy vertical forms are generated from families configured
+for local vertical rotation:
+
+\begin{longtable}{@{}p{0.30\linewidth}p{0.60\linewidth}@{}}
+\toprule
+\textbf{Command} & \textbf{Typesetting behavior} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Command} & \textbf{Typesetting behavior} \\
+\midrule
+\endhead
+\texttt{\string\MOv[offset]\{text\}} & Mongolian, local vertical rotation. \\
+\texttt{\string\MObv[offset]\{text\}} & Mongolian Baiti, local vertical rotation. \\
+\texttt{\string\MCv[offset]\{text\}} & Manchu, local vertical rotation. \\
+\texttt{\string\UYv[offset]\{text\}} & Old Uyghur, local vertical rotation. \\
+\bottomrule
+\end{longtable}
+
+The optional vertical offset defaults to \texttt{0pt}.
+These commands become available when their corresponding family
+is loaded. The Egyptian font preset supplies \verb|\EG|
+and \verb|\IMPEEgyptianText|. For Khitan, \verb|\KHS|
+is the normal stacked entry point;
+\verb|\KHSstack| and \verb|\KHSstackblock|
+offer explicit inline and paragraph-level stack forms.
+Their XSR rendering requirements are described in the Fonts section.
+
 \subsection{Advanced extension interfaces}
 
 Extension authors can use the catalog-level
