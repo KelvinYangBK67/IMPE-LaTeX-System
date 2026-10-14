@@ -1,41 +1,137 @@
 % !TeX program = xelatex
-\documentclass{impebeamer} % IMPE defaults to 16:9.
-
-\UseTemplateSet{
-  features = {tables,image}
-}
-
-\title{Presentation Title}
+% Madrid and 4:3 are IMPE's restored global Beamer defaults.
+\documentclass{impebeamer}
+\UseTemplateSet{features={tables,image}}
+\title{Comparing Manuscript Witnesses}
+\subtitle{From Transcription to Editorial Choice}
 \author{Author Name}
 \date{\today}
-
 \begin{document}
 \begin{frame}
   \titlepage
 \end{frame}
 
 \section{Question}
+\begin{frame}{Roadmap}
+  \tableofcontents
+  \medskip
+  \begin{block}{Purpose}
+    A source comparison, methodological discussion and cautious
+    editorial conclusion using entirely fictional witnesses.
+  \end{block}
+\end{frame}
+
 \begin{frame}{Research Question}
   \begin{itemize}
-    \item What is the central problem?
-    \item Which sources are being compared?
+    \item How should an editor represent competing readings?
+    \item Which observations count as manuscript evidence?
+    \item When is a preferred reading justified?
   \end{itemize}
+  \begin{alertblock}{Guiding distinction}
+    What survives in a source is not identical to what
+    an editor reconstructs.
+  \end{alertblock}
 \end{frame}
 
 \section{Evidence}
-\begin{frame}{Sample Comparison}
-  \begin{tabular}{ll}
-    \toprule
-    Source & Observation \\
-    \midrule
-    A & First reading \\
-    B & Second reading \\
-    \bottomrule
-  \end{tabular}
+\begin{frame}{The Imagined Corpus}
+  \begin{description}
+    \item[Witness A] Earlier copy with a concise formulation.
+    \item[Witness B] Later copy preserving an extra modifier.
+    \item[Witness C] Fragmentary copy, damaged at the variant.
+  \end{description}
+  \medskip
+  These letters do not imply a rank of reliability.
+  Every witness needs its own material description.
+\end{frame}
+
+\begin{frame}{Reading the Evidence}
+  A useful transcription distinguishes:
+  \begin{enumerate}
+    \item visible letters and punctuation;
+    \item gaps, corrections and additions;
+    \item editorial supplements and normalization.
+  \end{enumerate}
+  \medskip
+  \begin{block}{Principle}
+    Conjecture belongs in the apparatus, not silently
+    in the description of surviving traces.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Three Readings at a Glance}
+  \small
+  \begin{table}
+    \centering
+    \begin{tabular}{lll}
+      \toprule
+      Source & Imagined text & Status \\
+      \midrule
+      A & the record is kept & complete \\
+      B & the record is carefully kept & expanded \\
+      C & the record \ldots{} kept & damaged \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  \medskip
+  C's missing middle cannot provide positive support
+  for the shorter text transmitted by A.
+\end{frame}
+
+\section{Interpretation}
+\begin{frame}{Two Possible Histories}
+  \begin{columns}[T]
+    \begin{column}{.47\textwidth}
+      \begin{block}{Expansion}
+        B may add a modifier to clarify
+        A's abrupt instruction.
+      \end{block}
+    \end{column}
+    \begin{column}{.47\textwidth}
+      \begin{block}{Omission}
+        A may have lost a modifier
+        still preserved by B.
+      \end{block}
+    \end{column}
+  \end{columns}
+  \medskip
+  Neither explanation follows from chronology alone.
+\end{frame}
+
+\begin{frame}{Testing an Editorial Hypothesis}
+  \begin{itemize}
+    \item Compare independent parallels and local vocabulary.
+    \item Examine characteristic errors in each witness.
+    \item Identify evidence that could overturn the inference.
+  \end{itemize}
+  \begin{exampleblock}{A revisable hypothesis}
+    An independent witness with B's wording
+    would strengthen the longer reading.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Presenting the Result}
+  For a short reading edition we provisionally print A's form.
+  \begin{block}{The apparatus records}
+    \begin{itemize}
+      \item B's additional modifier;
+      \item C's damaged middle;
+      \item the reasons for the adopted text.
+    \end{itemize}
+  \end{block}
+  A synoptic edition may be better when variation
+  itself is the research question.
 \end{frame}
 
 \section{Conclusion}
-\begin{frame}{Conclusion}
-  State the principal result and its significance.
+\begin{frame}{Takeaways}
+  \begin{enumerate}
+    \item Describe witnesses before selecting a text.
+    \item Separate observed evidence from judgement.
+    \item Make alternative readings recoverable.
+  \end{enumerate}
+  \medskip
+  \centering
+  \textbf{A readable edition should also be an inspectable one.}
 \end{frame}
 \end{document}

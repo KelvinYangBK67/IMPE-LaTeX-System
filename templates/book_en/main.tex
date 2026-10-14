@@ -1,36 +1,229 @@
 % !TeX program = xelatex
+% Fictional witnesses are used to demonstrate complete monograph typography.
 \documentclass{impebook}
-
-\UseTemplateSet{
-  features = {image,hyperlinks}
-}
-
-\title{Book Title}
+\UseTemplateSet{features={image,hyperlinks}}
+\title{A Short Guide to Comparing Manuscripts}
 \author{Author Name}
 \date{\today}
-
 \begin{document}
 \frontmatter
 \maketitle
 \chapter*{Preface}
+This small book models the structure of a humanities monograph.
+Its manuscript witnesses are invented, not historical evidence.
+Their purpose is to let the reader inspect chapter openings,
+running heads, notes, cross-references, continuous prose and the
+transition between preliminary matter and the main text.
 
-Introduce the scope and organization of the book.
+A longer document needs room for explanation. Isolated sentences
+cannot show how a paragraph behaves over a page break, or how
+a reader follows an argument through successive chapters.
+The present sample therefore develops one question from a
+description of material through textual comparison to an editorial
+decision. In a real book, each invented witness would be replaced
+with a precisely identified source.
+
+The layout intentionally uses ordinary \LaTeX{} structures.
+A writer can replace the prose and section headings without
+learning a special markup vocabulary. New features, including
+bibliography, illustrations and indexes, can be added when the
+actual research calls for them.
+
 \tableofcontents
-
 \mainmatter
-\chapter{Introduction}
-\section{Sources}
 
-Describe the primary materials and the questions they raise.
+\chapter{The Problem of a Text}\label{chap:problem}
+\section{What counts as a witness?}
+A text is encountered through specific objects: manuscripts,
+prints, inscriptions and quotations in other books. These
+objects may contain overlapping passages, but they seldom
+transmit precisely the same words. Some variations result
+from physical damage, others from copying or deliberate
+reorganization. The objects are evidence for a textual
+history rather than interchangeable containers of words.
 
-\chapter{Analysis}
-\section{A Sample Section}
+Our example introduces three fictional copies, A, B and C.
+A is relatively early and gives a short statement; B is
+later and gives a longer version; C loses the decisive
+middle of the sentence. These properties create a question
+rather than a hierarchy. A late manuscript may transmit
+an old reading, just as an early witness can contain
+an unusual mistake.
 
-Develop the argument across chapters. Notes can be added
-as ordinary footnotes.\footnote{A sample note.}
+Before editing a sentence, the researcher describes each
+witness as an object. Where is it preserved? What is its
+material condition? Which scribal hands can be identified?
+How securely can the proposed date be justified? These
+details may seem remote from textual criticism, but an
+edition becomes difficult to evaluate when it fails to
+connect its readings to physical evidence.
+
+\section{From object to transcription}
+A transcription always involves decisions. The scholar
+identifies letter shapes, records damage and determines
+how to represent additions, deletions and punctuation.
+It is useful to distinguish a diplomatic transcription
+from a normalized reading text, with explicit conventions
+for moving from one form to the other.
+
+Suppose that C has lost the middle of a line. If the editor
+silently supplies the wording of A, readers may overlook
+the absence of evidence. A responsible transcription
+shows the gap, while a possible supplement can appear
+in an apparatus or a separate reconstructed text.
+That distinction is small typographically but large
+methodologically.\footnote{A genuine edition should define
+its signs for uncertain letters, gaps and conjectural
+supplements, and wherever possible cite a facsimile.}
+
+\section{The limits of chronology}
+The oldest surviving witness is not necessarily the
+closest copy of an otherwise lost original. A textual
+tradition may branch, and copying errors can persist in
+one line while a younger copy elsewhere preserves a
+more archaic form. The editor needs to compare shared
+errors, patterns of revision and the grammar of each
+passage before arguing for an earlier reading.
+
+Chapter~\ref{chap:compare} begins only after these
+descriptive questions have been stated. This order is
+deliberate: first ask what survives and how it survives,
+then consider which history explains the differences.
+An argument that reverses the order may simply confirm
+a preferred reading chosen at the outset.
+
+\chapter{Comparing the Readings}\label{chap:compare}
+\section{A small difference}
+Imagine that A contains the phrase "the record is kept",
+whereas B says "the record is carefully kept". C retains
+the opening and closing words, but the middle is damaged.
+B's additional word may be an explanatory expansion.
+Equally, A may have lost a modifier once present in the
+common ancestor of the three copies.
+
+C cannot settle the matter. Its lost area is compatible
+with more than one supplement, but compatibility is not
+the same as positive attestation. An apparatus that
+acknowledges an unresolved question can be more useful
+than one that hides the uncertain state of a manuscript.
+This is particularly important when a single restored
+word controls the interpretation of a longer passage.
+
+\section{Explanations and counterexamples}
+The editor can search for parallels in related texts.
+If an independent source repeatedly uses the longer
+formula, B may deserve greater weight. If a known
+scribe frequently inserts explanatory adverbs, the
+short form of A may be more economical. Neither
+observation should be introduced as a universal rule:
+copying practices vary across texts and periods.
+
+An argument is stronger when its author identifies a
+possible counterexample. A newly discovered copy
+independent of A and B might shift the balance;
+another quotation might show that the same phrase
+circulated in both forms. The possibility of revision
+does not require an editor to suspend judgement
+forever, but it does require proportional confidence.
+
+One should also return continually to material details.
+Ink traces, overwritten characters and the location
+of a gap may settle questions that abstract arguments
+about textual economy cannot answer. A history of
+transmission gains precision by keeping those
+observations separate from the inferences drawn
+from them.
+
+\section{Choosing a presentation}
+A synoptic edition keeps variants visible in parallel,
+making it useful when the development of a textual
+tradition is itself the object of research. A reading
+edition instead constructs a continuous text and
+typically records competing readings in notes.
+Both forms can be academically responsible when
+their aims and limitations are made explicit.
+
+Page design follows from that choice. Parallel columns
+require different widths and annotation strategies
+from a continuous single-column text. A book with
+extensive manuscript images or dense apparatus
+needs a larger or more carefully balanced page.
+The present sample demonstrates default running
+prose rather than presupposing those extra requirements.
+
+\chapter{Presenting an Edition}\label{chap:edition}
+\section{A provisional decision}
+For this exercise we provisionally adopt the shorter
+reading found in A. This follows a working hypothesis
+that B expanded a terse sentence. It is not a proof:
+a different editor might prefer B or retain both.
+A clear apparatus would record B's addition and
+C's damage so that the decision remains reviewable.
+
+The success of an edition depends less on the
+confidence of a single reconstructed line than on
+the inspectability of its reasoning. Sigla must
+be defined, references precise and alternatives
+legible. A later scholar should be able to return
+to the witnesses without unravelling hidden
+decisions embedded in the printed text.
+
+\section{Chapter structure and notes}
+Chapter~\ref{chap:problem} describes our objects;
+Chapter~\ref{chap:compare} discusses the readings;
+the present chapter explains how to present an
+editorial result. Cross-references allow readers
+to move through that structure rather than
+remembering every page number unaided.
+
+Running heads identify the current discussion
+when a page is opened in the middle of a chapter.
+Section headings indicate smaller turns in the
+argument. Footnotes accommodate supporting
+information without dissolving the main text
+into a list of citations.\footnote{Replace this
+illustrative note with a verified source reference
+or a concise comment about the textual evidence.}
+
+Typography cannot replace accurate research.
+A perfectly aligned table cannot correct a
+mistaken transcription, and an elegant heading
+cannot establish an unsupported date. Yet
+consistent presentation can make the structure
+of an argument easier to inspect and challenge,
+which is an important scholarly benefit.
+
+\section{Using this source}
+Replace the title, the invented sources and
+the prose in each chapter. Add further chapters
+without changing the document class. Front
+matter can include a list of abbreviations,
+a dedication or notes on editorial conventions.
+A bibliography, index or illustrations can be
+enabled when the project actually needs them.
+
+During revision, inspect the typeset PDF as
+well as the source. A sentence that looks
+balanced in the editor may produce an
+unfortunate page break, or a heading may be
+isolated from its next paragraph. The aim is
+to adjust presentation without changing
+the evidence or the hierarchy of argument.
 
 \backmatter
 \chapter*{Afterword}
+This fictional exercise has served its purpose
+if it makes the distinction between evidence,
+inference and editorial decision clear.
+A sound monograph permits readers to follow
+that distinction across chapters, while the
+page layout gives each part a recognizable
+and comfortable place.
 
-State the final conclusions.
+Use the document as a starting point rather
+than a prescribed research design. Real
+sources, precise citations, specialized
+scripts and illustrations should be added
+as the inquiry develops, with continued
+attention to the readability of the result.
 \end{document}

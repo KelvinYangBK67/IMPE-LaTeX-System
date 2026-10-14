@@ -21,7 +21,7 @@ Beamer 等），不為每個原生參數再包裝一層 IMPE 專用 API。
 | impebook（en/zh） | ISO B5（176×250）；雙面、章節右頁開始 | 內 19、外 31、裝訂 3、上 22、下 32 | 123×196 | 偶頁書名／奇頁章名；頁腳中央頁碼 |
 | impeart（en/zh） | A4（210×297）；單面 | 左右 29、上 28、下 32 | 152×237 | 無頁眉，頁腳中央頁碼 |
 | impereport（en/zh） | A4；單面、章節任意頁開始 | 左 31、右 29、上 29、下 34 | 150×234 | 報告短題／章名；頁腳中央頁碼 |
-| impebeamer（en/zh） | 16:9；160×90mm 邏輯畫布 | 左右內容留白各 9mm | 由 Beamer 管理 | 不顯示頁眉與導航圖示；右下頁碼 |
+| impebeamer（en/zh） | 4:3；128×96mm 邏輯畫布 | 由 Beamer／Madrid 主題管理 | 由 Beamer 管理 | Madrid 標題與頁腳；隱藏導航圖示 |
 
 Book／Report 的章首頁使用 `plain`：不顯示頁眉，但**保留頁腳頁碼**。
 補入的純空白頁使用 `empty`，不顯示頁碼。明確使用
@@ -36,7 +36,7 @@ Book／Report 的章首頁使用 `plain`：不顯示頁眉，但**保留頁腳�
 | Book | 10.5/14.5pt；縮排 1.3em、段後 0 | 10.5/16.5pt；縮排 2em、段後 0 |
 | Article | 11/15.5pt；縮排 1.3em、段後 0 | 11/17.5pt；縮排 2em、段後 0 |
 | Report | 11/15.5pt；不縮排、段後 0.35em | 11/17.5pt；縮排 2em、段後 0 |
-| Beamer | 12/16.5pt | 12/18.5pt |
+| Beamer | Madrid 原生字號及間距 | Madrid 原生字號及間距 |
 
 `10pt` Class 默認會採用 IMPE 校準後的字號及基線距；
 使用者顯式選擇 `11pt`／`12pt`，則尊重底層類別的字號，
@@ -62,12 +62,14 @@ Report 章題 18pt。
 
 `\UseLegacyLayout` 會自動辨識 Class 與 `lang`。Book、Article、Report
 均可恢復對應英文或中文的 1.0.5 排版；舊版 Report 原本共用 Article
-設定，也會照原樣恢復。Beamer 恢復 Madrid 主題及 4:3 默認比例，
-但不覆蓋使用者明確指定的 `aspectratio=...`。
+設定，也會照原樣恢復。Beamer 目前已重新以 Madrid 主題及 4:3 為預設，
+仍不覆蓋使用者明確指定的 `aspectratio=...`。
 
 舊版 Profile 包括紙張、版心、原本的正文字號與腳註字號、章節
 標題、行距、段間距、頁眉頁腳，以及章節首頁的 `plain` 樣式；
-Beamer 也恢復舊主題字號。不保證其他套件、字體引擎或 PDF
+Beamer 也恢復舊主題字號。若要使用 1.0.6 的極簡風格，可另用
+`\UseLayout{beamer_clean}`（中文可用 `beamer_clean_zh`）；寬螢幕時請在
+Class 顯式指定 `aspectratio=169`。不保證其他套件、字體引擎或 PDF
 逐位元一致。命令只供導言區使用，重複呼叫不會重複覆寫。
 此命令之後的 `\geometry` 等原生設定仍然優先。
 原有具名 `legacy_*` Preset 仍然保留。

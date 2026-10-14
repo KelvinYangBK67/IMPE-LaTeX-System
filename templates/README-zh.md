@@ -8,7 +8,11 @@
 | --- | --- | --- |
 | `article_en/`、`article_zh/` | `impeart` | A4 論文 |
 | `book_en/`、`book_zh/` | `impebook` | ISO B5 書籍 |
-| `beamer_en/`、`beamer_zh/` | `impebeamer` | 16:9 簡報 |
+| `beamer_en/`、`beamer_zh/` | `impebeamer` | Madrid 4:3 簡報 |
+
+論文範例使用虛構的三寫本異文研究，完整示範摘要、腳註、引文、表格與
+書目；書稿範例含前後置內容及三章連續正文；Beamer 範例則有十頁 Madrid
+投影片。各篇中的寫本與示例書目均為虛構材料。
 
 複製整個目錄即可起稿。模板採用已安裝至 TEXMF 的 IMPE，
 無須引用原始碼倉庫路徑。中文模板透過標準類別的 `lang=zh`

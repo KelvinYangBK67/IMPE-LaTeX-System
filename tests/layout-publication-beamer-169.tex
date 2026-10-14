@@ -1,0 +1,14 @@
+% Explicit native widescreen selection overrides the restored 4:3 default.
+\documentclass[aspectratio=169]{impebeamer}
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{160mm}
+\IMPECheckDim{\paperheight}{90mm}
+\makeatletter
+\@ifpackageloaded{beamerthemeMadrid}{}{\PackageError{impe-test}{Madrid theme was not loaded}{}}
+\makeatother
+\begin{document}
+\begin{frame}{Widescreen Madrid}
+Explicit aspect ratio retained.
+\end{frame}
+\typeout{IMPE-TEST-LAYOUT-PUBLICATION-BEAMER-169-PASS}
+\end{document}

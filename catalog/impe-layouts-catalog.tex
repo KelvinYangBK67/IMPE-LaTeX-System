@@ -60,15 +60,31 @@
   book = { book_openright, book_blankpage_empty }
 }
 
+% Madrid / 4:3 are once again the default for both Beamer languages.
+% Explicit native aspectratio=... options remain authoritative.
 \LayoutPresetRegister{
   id = beamer,
   targets = { beamer },
-  slides = { slides_academic_clean, slides_impe_helpers }
+  text = text_beamer_dense,
+  slides = { slides_legacy_beamer_geometry, slides_madrid_nav, slides_impe_helpers }
 }
 
-% Optional curated alternative; direct Beamer native theme commands remain usable.
 \LayoutPresetRegister{
   id = beamer_zh,
+  targets = { beamer },
+  text = text_beamer_dense,
+  slides = { slides_legacy_beamer_geometry, slides_madrid_nav_zh, slides_impe_helpers }
+}
+
+% The 1.0.6 minimalist appearance remains an optional named layout.
+% To use its original widescreen canvas, select aspectratio=169 in the class.
+\LayoutPresetRegister{
+  id = beamer_clean,
+  targets = { beamer },
+  slides = { slides_academic_clean, slides_impe_helpers }
+}
+\LayoutPresetRegister{
+  id = beamer_clean_zh,
   targets = { beamer },
   slides = { slides_academic_clean_zh, slides_impe_helpers }
 }

@@ -1,8 +1,11 @@
-% Beamer should choose a 16:9 academic theme without explicit class options.
+% Beamer defaults to the historical Madrid theme on a 4:3 canvas.
 \documentclass{impebeamer}
 \input{tests/layout-publication-assert.tex}
-\IMPECheckDim{\paperwidth}{160mm}
-\IMPECheckDim{\paperheight}{90mm}
+\IMPECheckDim{\paperwidth}{128mm}
+\IMPECheckDim{\paperheight}{96mm}
+\makeatletter
+\@ifpackageloaded{beamerthemeMadrid}{}{\PackageError{impe-test}{Madrid theme was not loaded}{}}
+\makeatother
 \begin{document}
 \begin{frame}{Heading}
 Slide body.
