@@ -236,6 +236,16 @@
     \setbeamerfont{section in head/foot}{family=\sffamily}
   }
 
+% The Chinese Madrid layout must use a frame-number footer even when the
+% default theme loads before the language-specific presentation metadata.
+% This explicit preset avoids expanding CJK title/author material in the
+% Madrid author/title footer at begin-document time.
+\cs_new_protected:cpn { __layout_component_slides_madrid_nav_zh: }
+  {
+    \use:c { __layout_component_slides_madrid_nav: }
+    \setbeamertemplate{footline}[frame number]
+  }
+
 % Beamer convenience interfaces are separate from theme/layout configuration.
 \cs_new_protected:cpn { __layout_component_slides_impe_helpers: }
   {
