@@ -612,142 +612,232 @@ XSR 可透過 PDF 的 \texttt{/ActualText}
 
 \section{版面與功能}
 
-\subsection{版面預設}
+\subsection{各類出版物的版面預設}
 
-版面描述文件層級的呈現方式。一個公開版面預設，是由頁面幾何、文字間距、頁眉行為、
-書籍行為或投影片行為等項目組成的結構化組合。各低階組件屬於內部實作；一般文件直接
-選擇完整的公開預設即可。
-
-IMPE 1.x 提供的公開預設為：
+版面預設統一決定紙張、版心、行距、頁眉與章節排版。
+IMPE 提供可直接使用的出版版面，作者需要細部修改時，
+仍可使用一般 \LaTeX{} 套件。
 
 \begin{description}
-  \item[\texttt{en\_doc}] 英文文章／報告版面。
-  \item[\texttt{zh\_doc}] 中文文章／報告版面。
-  \item[\texttt{en\_book}] 英文書籍／報告版面，帶有面向書籍的頁面與頁眉行為。
-  \item[\texttt{zh\_book}] 對應的中文書籍／報告版面。
-  \item[\texttt{beamer}] Beamer 簡報版面。
+  \item[\texttt{en\_doc}、\texttt{zh\_doc}]
+    A4 文章版面；左右各 29\,mm、上方 28\,mm、
+    下方 32\,mm。
+  \item[\texttt{en\_report}、\texttt{zh\_report}]
+    獨立的 A4 報告版面；左 31\,mm、右 29\,mm、
+    上 29\,mm、下 34\,mm，並有專用頁眉。
+  \item[\texttt{en\_book}、\texttt{zh\_book}]
+    ISO B5（176$\times$250\,mm）雙面書籍版面；
+    內側 19\,mm、外側 31\,mm，裝訂補償 3\,mm。
+  \item[\texttt{beamer}、\texttt{beamer\_zh}]
+    Madrid 主題的 4:3 簡報版面。
 \end{description}
 
-各預設會聲明自己支援哪些底層文件類別。IMPE 在套用前會先檢查相容性，並回報
-不相符的文件類別。
+文章與報告都有自己的 A4 版心和文字設定。
+另提供 \texttt{beamer\_clean} 與
+\texttt{beamer\_clean\_zh}，供需要簡潔型簡報的人選用。
+要製作寬螢幕簡報，可設定原生類別選項
+\texttt{aspectratio=169}。
 
-包裝類別會自動選擇對應的版面。直接使用標準類別，或希望讓報告採用書籍導向版面時，
-才需要明確指定，例如：
+\subsection{原生版面調整與局部設定}
+
+標準文章、報告和書籍類別已載入
+\texttt{geometry} 與 \texttt{fancyhdr}。
+若要精確調整頁邊距或頁眉，建議直接使用這兩套
+\LaTeX{} 套件的命令：
 
 \begin{verbatim}
-\UseLayout{en_book}
+\documentclass{impereport}
+\geometry{a4paper,left=30mm,right=30mm}
+\fancyhead[R]{頁眉短題}
 \end{verbatim}
 
-各組件的具體值與頁面幾何詳見 \texttt{docs/LAYOUTS-zh.md}。
+IMPE 也提供 \verb|\LayoutSetup| 和 \verb|\LayoutSet|
+設定已登錄的版面參數；
+\texttt{LayoutScope} 可在正文的一段範圍內使用局部設定。
+
+\begin{verbatim}
+\documentclass[lang=zh]{impeart}
+\LayoutSetup{page.inner=25mm,page.top=24mm}
+\begin{document}
+\begin{LayoutScope}{text.par-indent=2em}
+本段採用局部設定的段首縮排。
+\end{LayoutScope}
+\end{document}
+\end{verbatim}
+
+進階排版可繼續使用原生的頁面、頁眉與 Beamer 命令。
+需要重現早期 1.0.5 的版面參數時，可查閱
+第~\ref{sec:compatibility} 節的相容設定。
 
 \subsection{功能模組}
 
-\texttt{drawing} 載入 TikZ/PGF、pgfplots（compatibility 1.18）與 forest，
-直接使用原生圖形、函數圖與樹狀圖語法。
-
-\texttt{index} 會載入 hyperlinks；\verb|\Term| 的索引頁碼直接連到所記錄的
-正文位置，即使重設頁碼仍可區分。每個 key 記錄首次出現位置的語義保持不變。
-手動處理請在輸出目錄執行
-\texttt{texindy -L english -C utf8 -M <job>-impe <job>.idx}，再執行兩次 XeLaTeX。
-
-功能是扁平、可組合的模組。某個功能識別碼在第一次請求時載入相應的選用功能；
-後續重複請求沿用已載入的模組。
-
-目前的公開功能包括：
+各功能模組負責載入配套套件，使用者則可直接使用
+這些套件的一般 \LaTeX{} 命令：
 
 \begin{description}
-  \item[\texttt{math}] 標準數學套件、定理環境與選用的數學字體設定。
-  \item[\texttt{hyperlinks}] 超連結、PDF 書籤、穩定目標與程式碼倉庫連結預設。
-  \item[\texttt{citations}] 基於 \texttt{biblatex}/\texttt{biber} 的引用支援，
-    並提供可選的引用樣式預設。
-  \item[\texttt{index}] 索引生成以及 IMPE 的術語／索引輔助命令。
-  \item[\texttt{tables}] 表格套件、可重用欄類型與表格環境。
-  \item[\texttt{image}] 圖形、圖片與多面板輔助功能。
-  \item[\texttt{lists\_envs}] 可重用的 \texttt{ExampleBlock} 範例區塊格式。
-  \item[\texttt{headers}] 供文章、報告與書籍使用的可設定頁眉。
+  \item[\texttt{math}] 數學套件、定理環境與數學字體設定。
+  \item[\texttt{hyperlinks}] 超連結、PDF 書籤和穩定的跳轉目標。
+  \item[\texttt{citations}] 使用 \texttt{biblatex}／\texttt{biber}
+    的引文及參考書目。
+  \item[\texttt{index}] 使用 \texttt{imakeidx}／\texttt{xindy} 的原生索引。
+  \item[\texttt{tables}] 表格、\texttt{booktabs}、
+    \texttt{longtable} 及 \texttt{tabularx}。
+  \item[\texttt{image}] 圖片、圖說與子圖。
+  \item[\texttt{drawing}] TikZ／PGF、\texttt{pgfplots}
+    （相容版本 1.18）和 \texttt{forest}。
+  \item[\texttt{glyphs}] 以 XSR 登錄並插入行內圖片字形。
+  \item[\texttt{headers}] 使用 \texttt{fancyhdr} 設定頁眉。
 \end{description}
 
-文件可以載入任意所需的組合：
-
 \begin{verbatim}
-\UseFeatures{math,hyperlinks,tables,image}
+\UseFeatures{math,hyperlinks,tables,image,drawing,glyphs}
 \end{verbatim}
 
-或者：
+同一份文件可組合多項功能，重複載入同一功能時不會再次初始化。
 
-\begin{verbatim}
-\UseTemplateSet{
-  features = {citations,index,hyperlinks}
-}
-\end{verbatim}
+\subsection{數學與文獻引用}
 
-\subsection{數學}
-
-\texttt{math} 功能會載入以 AMS 套件為核心的標準數學組合，並定義包括
-\texttt{theorem}、\texttt{lemma}、\texttt{proposition}、
-\texttt{corollary}、\texttt{definition}、\texttt{example} 與
-\texttt{remark} 在內的定理類環境。載入文字字體族時，Computer Modern 數學字體
-仍為預設；明確選擇數學路徑則可切換數學字母。
-
-可在載入功能之前選擇另一個數學字體族。例如：
+\texttt{math} 提供 \texttt{theorem}、\texttt{lemma}、
+\texttt{proposition}、\texttt{corollary}、
+\texttt{definition}、\texttt{example}、
+\texttt{remark} 等定理類環境。
+若未另行指定，數學字體仍使用 Computer Modern；
+要使用 Libertinus Math，可在載入功能前設定：
 
 \begin{verbatim}
 \UseMathFont{libertinus}
 \UseFeature{math}
 \end{verbatim}
 
-會透過 \texttt{unicode-math} 使用 Libertinus Math。其他受支援路徑以及實際載入的
-套件組合，詳見 \texttt{docs/FEATURES-zh.md}。
+\texttt{citations} 使用原生 \texttt{biblatex}，
+因此可照常使用 \verb|\addbibresource|、
+\verb|\textcite|、\verb|\parencite|、
+\verb|\printbibliography| 等命令。
+\verb|\UseCitationStyle| 可以設定 APA、GB/T 7714、
+數字式及作者—年份式等引文樣式。
 
-\subsection{引用、索引、表格與圖片}
+\subsection{以原生命令建立索引}
 
-各功能模組提供實用預設，並保留原本的 \LaTeX{} 生態。例如，
-\texttt{citations} 功能使用 \texttt{biblatex} 與 \texttt{biber}；文件仍然照常使用
-\verb|\addbibresource|、\verb|\textcite| 與 \verb|\printbibliography| 等命令。
-APA、GB/T 7714、數字式或作者—年份式等引用預設，可在功能載入前選擇。
+新文件建議直接使用 \texttt{imakeidx} 的
+\verb|\makeindex|、\verb|\index|、
+\verb|\printindex|。若由 IMPE 建立預設索引，
+每一個一般 \verb|\index| 標記都會有獨立的 PDF
+跳轉目標；即使同一頁有多個標記，或文件曾重設頁碼，
+也能分別連到對應位置。
 
-\texttt{index} 功能建立在 \texttt{imakeidx} 之上，並加入
-\verb|\Term| 輔助命令，使術語排版與索引可以一起處理。\texttt{tables} 與
-\texttt{image} 功能同樣提供較高階的便利環境，同時仍保留原生
-\texttt{booktabs}、\texttt{graphicx} 及相關命令可直接使用。
+\begin{verbatim}
+\UseFeature{index}
+\begin{document}
+佛教\index{佛教}與大乘\index{佛教!大乘}。
+後文仍可再次標記佛教\index{佛教}。
+\printindex
+\end{document}
+\end{verbatim}
 
-整套功能系統減少重複設定，同時保留一般 \LaTeX{} 命令。
+若使用者已自行宣告預設索引，IMPE 會遵循其設定。
+也可以使用原生語法建立具名索引，例如
+\verb|\makeindex[name=people,title={人物},program=xindy]|，
+搭配 \verb|\index[people]{...}| 和
+\verb|\printindex[people]|。
+逐項獨立跳轉的保證範圍，是 IMPE 自行建立的
+預設索引中的普通索引標記；
+\texttt{see}、\texttt{seealso}、範圍標記、
+具名索引等進階語法仍遵循原生處理方式。
+
+IMPE 所建立的預設索引可在輸出目錄使用：
+
+\begin{verbatim}
+texindy -L english -C utf8 -M <job>-impe <job>.idx
+\end{verbatim}
+
+完成索引處理後，再執行兩次 \XeLaTeX{}。
+
+\subsection{表格、圖片、繪圖與行內字形}
+
+一般表格使用 \texttt{table}、\texttt{tabular}、
+\texttt{longtable}、\texttt{booktabs} 等原生環境與命令；
+圖片使用 \texttt{figure}、\verb|\includegraphics| 和子圖功能；
+繪圖則使用 \texttt{tikzpicture}、\texttt{axis}、
+\texttt{forest}。舊式的表格與圖片便利命令仍供既有文件使用。
+
+圖片字形的用法如下：
+
+\begin{verbatim}
+\UseFeature{glyphs}
+\IMPEGlyphRegister[logical={未編碼字形},description={拓片}]
+  {bs-042}{images/bs-042.svg}
+\begin{document}
+前文 \IMPEGlyph{bs-042} 後文。
+\IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
+\end{document}
+\end{verbatim}
+
+圖片路徑必須可以由渲染程式讀取。
+\texttt{logical} 與 \texttt{description} 用於描述字形；
+\texttt{trim} 裁切的是顯示範圍。
 
 \subsection{頁眉與超連結}
 
-\texttt{headers} 功能透過 \texttt{fancyhdr} 提供頁眉。預設情況下，它會從
-\verb|\title| 的第一行取得固定頁眉標題；若希望使用更短的形式，可以用
-\verb|\HeaderTitle{...}| 明確指定。文章類文件以節資訊作為變動頁眉，而報告與書籍類
-文件使用章資訊。
+\texttt{headers} 可以取 \verb|\title| 的第一行
+作為固定頁眉短題，也可以使用
+\verb|\HeaderTitle{...}| 另行指定。
+更細緻的頁眉變動可直接使用 \texttt{fancyhdr}。
 
-\texttt{hyperlinks} 功能會載入 \texttt{hyperref} 與 \texttt{bookmark}，並提供
-支援 Unicode 的 PDF 設定、隱藏連結邊框、可點擊的目錄結構與穩定目標。文件仍可照常
-使用 \verb|\label|、\verb|\ref|、\verb|\href| 與 \verb|\url|。
-
-功能專屬命令與環境的完整清單，請查閱 \texttt{docs/FEATURES-zh.md}；本節介紹
-主要用途。
+\texttt{hyperlinks} 載入 \texttt{hyperref} 與
+\texttt{bookmark}，提供支援 Unicode 的 PDF 設定、
+穩定的跳轉目標與可點選的目錄。
+文件依然使用原生 \verb|\label|、\verb|\ref|、
+\verb|\href|、\verb|\url| 命令。
+詳見 \texttt{docs/FEATURES.md}。
 
 \section{相容性與遷移}\label{sec:compatibility}
 
-IMPE 1.x 將 \texttt{impe*} 名稱確立為標準公開介面。因此，新文件應使用
-\texttt{impe.sty}、\texttt{impeart}、\texttt{impebook}、
-\texttt{impereport}、\texttt{impebeamer} 以及相應的中文版本。
+新文件統一使用 \texttt{impe.sty}、
+\texttt{impeart}、\texttt{impereport}、
+\texttt{impebook}、\texttt{impebeamer}，
+中文以 \texttt{lang=zh} 選擇設定。
+既有的 \texttt{impeart\_zh}、\texttt{impereport\_zh}、
+\texttt{impebook\_zh}、\texttt{impebeamer\_zh}
+分別等同於對應的標準類別加上 \texttt{lang=zh}；
+\texttt{next*} 舊類別及 \texttt{nextsystem.sty}
+亦繼續作為相容入口。
 
-較早的開發版本使用 \texttt{next*} 命名方式。這些入口在 1.x 中仍是受支援的相容
-包裝入口，並維持現有支援狀態。載入 \texttt{nextart} class 或
-\texttt{nextsystem} package 的既有文件仍可使用同一套底層實作正常編譯。相容層的目的，
-是保留舊文件的可用性；標準 \texttt{impe*} 入口供新文件使用。
+原有 \verb|\UseFont| 識別碼、局部字體縮寫及
+\texttt{[local]}／\texttt{[global]} 模式仍受支援；
+新的書寫設定檔與字體資源介面提供另一種組合方式。
 
-直接安裝器也能識別 \texttt{tex/latex/nextsystem/} 下由 0.1.x 系列建立的受管理
-安裝。遷移時，它會在 \texttt{tex/latex/impe/} 下安裝標準執行環境，在適當情況下
-遷移已識別的本機覆寫檔案，移除確定屬於舊受管理執行環境的檔案，同時保留與 IMPE
-無關的使用者檔案與子目錄。
+索引以 \verb|\index| 等原生命令為推薦方式。
+原有 \verb|\Term| 和 \verb|\IndexTitle|
+保留其格式與首次出現規則；
+一般 \verb|\index| 則能對每次出現的位置建立標記。
+需要真正的術語表時，可以直接使用
+\texttt{glossaries-extra}。
 
-因此，舊的 \texttt{nextsystem.local.tex} 可在遷移後作為本機覆寫繼續生效。
-新的本機設定應使用 \texttt{impe.local.tex}。
+舊式 \texttt{TableInlineFit}、\texttt{TableLong}、
+\texttt{TableBook}、\texttt{TableBookX}、
+\texttt{TableBookNotes}、\texttt{NiceBooktable*}、
+\texttt{OneImage}、\texttt{OneImageInline}、
+\texttt{PanelFigure}、\verb|\Panel| 等介面均保留。
+新文件優先使用 \LaTeX{} 的原生表格、圖片與子圖語法；
+\texttt{ExampleBlock} 也仍可供舊稿使用。
 
-使用舊包裝名稱撰寫的文件可透過相容執行環境繼續編譯。作者可以在方便時
-更新這些名稱。
+若要還原 1.0.5 的版面參數，可在標準類別之後使用
+\verb|\UseLegacyLayout|：
+
+\begin{verbatim}
+\documentclass[lang=zh]{impebook}
+\UseLegacyLayout
+\end{verbatim}
+
+舊式的 \texttt{report} 及 \texttt{legacy\_*}
+版面識別碼仍可使用。相容性保留的是公開命令與設定；
+字體或版式更新後，分頁可能有所改變。
+
+直接安裝程式能辨識 \texttt{tex/latex/nextsystem/}
+下的 0.1.x 系列安裝，並將目前套件放到
+\texttt{tex/latex/impe/}。遷移時會保留既有的使用者檔案，
+在適當情況下轉移本機設定，並清理已識別的舊套件檔案。
+新的本機設定檔應使用 \texttt{impe.local.tex}。
 
 \section{套件結構與擴充點}
 
