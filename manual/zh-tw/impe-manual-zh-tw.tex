@@ -261,11 +261,11 @@ IMPE 也可以作為套件載入到標準 \LaTeX{} 類別之下：
 
 \begin{description}
   \item[\texttt{article\_en/}] 使用 \texttt{impeart} 的英文文章起始範本。
-  \item[\texttt{article\_zh/}] 使用 \texttt{impeart\_zh} 的中文文章起始範本。
+  \item[\texttt{article\_zh/}] 使用 \texttt{impeart} 與 \texttt{lang=zh} 的中文文章範本。
   \item[\texttt{book\_en/}] 使用 \texttt{impebook} 的英文書籍起始範本。
-  \item[\texttt{book\_zh/}] 使用 \texttt{impebook\_zh} 的中文書籍起始範本。
+  \item[\texttt{book\_zh/}] 使用 \texttt{impebook} 與 \texttt{lang=zh} 的中文書籍範本。
   \item[\texttt{beamer\_en/}] 使用 \texttt{impebeamer} 的英文簡報起始範本。
-  \item[\texttt{beamer\_zh/}] 使用 \texttt{impebeamer\_zh} 的中文簡報起始範本。
+  \item[\texttt{beamer\_zh/}] 使用 \texttt{impebeamer} 與 \texttt{lang=zh} 的中文簡報範本。
 \end{description}
 
 每個範本都遵循已安裝套件的正常寫法，並包含實際可用的中繼資料、章節與正文結構；
@@ -277,33 +277,43 @@ IMPE 也可以作為套件載入到標準 \LaTeX{} 類別之下：
 
 \section{文件類別與公開入口}
 
-\subsection{包裝類別}
+\subsection{標準文件類別與語言選擇}
 
-IMPE 為系統主要使用的四種文件形式提供包裝類別：
-
-\begin{description}
-  \item[\texttt{impeart}] 面向英文文章的包裝類別。一般版面為
-    \texttt{en\_doc}，預設全域字體族為 \texttt{cmu}。
-  \item[\texttt{impebook}] 面向英文書籍的包裝類別。一般版面為
-    \texttt{en\_book}，預設全域字體族為 \texttt{cmu}。
-  \item[\texttt{impereport}] 面向英文報告的包裝類別。預設使用
-    \texttt{en\_doc} 版面與 \texttt{cmu}。
-  \item[\texttt{impebeamer}] 簡報包裝類別。預設選擇
-    \texttt{beamer} 版面與 \texttt{cmu}。
-\end{description}
-
-中文對應類別為 \texttt{impeart\_zh}、\texttt{impebook\_zh}、
-\texttt{impereport\_zh} 與 \texttt{impebeamer\_zh}。它們會選擇相應的中文文件
-設定，並在預設全域字體設定中同時加入 \texttt{shanggu} 與 \texttt{cmu}。這項差異
-涉及預設設定；兩組包裝類別都可編排多語內容。
-
-未識別的類別選項會原樣傳遞給底層標準類別。因此，像
+新文件統一使用四個標準類別：\texttt{impeart}、
+\texttt{impereport}、\texttt{impebook} 和
+\texttt{impebeamer}。同一類別可以透過
+\texttt{lang=en}（預設）或 \texttt{lang=zh}
+切換語言與對應排版，無須另換類別名稱：
 
 \begin{verbatim}
+% 英文文章
 \documentclass[12pt,twoside]{impeart}
+
+% 中文文章
+\documentclass[lang=zh,12pt]{impeart}
+
+% 中文書籍
+\documentclass[lang=zh]{impebook}
+
+% 中文簡報
+\documentclass[lang=zh]{impebeamer}
 \end{verbatim}
 
-這樣的普通選項，仍會照常控制底層的 \texttt{article} 類別。
+這四個類別分別建立在 \texttt{article}、
+\texttt{report}、\texttt{book} 與
+\texttt{beamer} 之上。英文預設版面依次為
+\texttt{en\_doc}、\texttt{en\_report}、
+\texttt{en\_book}、\texttt{beamer}；
+中文則為 \texttt{zh\_doc}、
+\texttt{zh\_report}、\texttt{zh\_book}、
+\texttt{beamer\_zh}。英文預設字體包含 CMU；
+中文另加 Shanggu。使用者明確指定的字體可覆寫類別預設。
+
+一般類別選項，如 \texttt{12pt}、\texttt{twoside}
+及 Beamer 的 \texttt{aspectratio=169}，
+會傳給底層標準類別。舊式 \texttt{impe*\_zh}
+與 \texttt{next*} 類別仍可使用，但屬相容入口；
+詳見第~\ref{sec:compatibility} 節。
 
 \subsection{直接使用 \texttt{impe.sty}}
 
@@ -393,22 +403,24 @@ IMPE 的範本由可重用的元件組成。某個版面可以與不同字體選
 例如，下列兩組宣告透過相同範本介面組合出兩份相當不同的文件：
 
 \begin{verbatim}
-% 英文文章
+% 英文文章：類別已提供 en_doc 和 CMU
+\documentclass{impeart}
 \UseTemplateSet{
-  layout = en_doc,
   fonts = {libertinus},
   features = {math,hyperlinks}
 }
 
-% 支援其他文字的中文書籍
+% 中文書籍：類別已提供 zh_book、CMU 與 Shanggu
+\documentclass[lang=zh]{impebook}
 \UseTemplateSet{
-  layout = zh_book,
-  fonts = {cmu,shanggu,sanskrit,tibetan},
+  fonts = {sanskrit,tibetan},
   features = {citations,index,hyperlinks}
 }
 \end{verbatim}
 
-第二個例子陳述實際需要的字體族與功能；內部的字體與版面子系統仍負責實作細節。
+以上是兩份不同文件的導言區示例。文件類別會提供相應的版面與基礎字體，
+作者只需補上額外字體和功能。如需使用其他已登錄版面，再明確指定
+\texttt{layout=}。
 
 
 \section{字體、文字路由與多語排版}
