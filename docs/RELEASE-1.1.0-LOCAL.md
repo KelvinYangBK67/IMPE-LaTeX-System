@@ -11,7 +11,7 @@ or create a GitHub Release until every applicable release gate succeeds.
    notices. Only individually approved, locally present files enter the
    public Full archive. Inspect the resulting ZIP contents.
 2. Review the updated 1.1.0 `manual/showcase/impe-showcase.tex` source against
-   the frozen public API: XSR 1.2 Egyptian/Khitan stacks, native-first
+   the frozen public API: XSR 1.3 Egyptian/Khitan stacks, native-first
    `imakeidx`, Writing Profiles, style fallback, publication layouts and
    Unicode extraction behavior. Confirm version strings and PDF metadata.
 3. Build a new Showcase from the canonical TeX, then replace the tracked
@@ -34,7 +34,7 @@ or create a GitHub Release until every applicable release gate succeeds.
 
 ## Invariants
 
-* XSR stays pinned to the vendored 1.2 runtime; `scripts/check_xsr_vendor.py` verifies its upstream snapshot.
+* XSR stays pinned to the vendored 1.3 runtime; `scripts/check_xsr_vendor.py` verifies its upstream snapshot.
 * The writing-directions and nonstandard-mathematics engines are separate
   future projects, not prerequisites for this IMPE release.
 * The current TeX class/package compatibility aliases remain supported in 1.x.
