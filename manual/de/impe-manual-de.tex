@@ -493,148 +493,222 @@ wählen bereits Satzspiegel und Standardschriften; angegeben werden
 nur weitere Schriften und Funktionen. Für abweichende Satzspiegel
 steht der Schlüssel \texttt{layout=} zur Verfügung.
 
-\section{Schriften, Schriftsystem-Routing und mehrsprachiger Satz}
+\section{Schriften, Schriftzuordnung und mehrsprachiger Satz}
 
-\subsection{Schriftfamilien als registrierte Fähigkeiten}
+Für die Schriftauswahl gibt es zwei öffentliche Wege: registrierte
+Schriftvoreinstellungen für den alltäglichen Satz sowie ausdrücklich
+zusammengesetzte Schreibprofile und Schriftressourcen. Beide
+Schnittstellen sind in Version 1.1.0 verfügbar; die bekannten
+lokalen Schriftbefehle bleiben erhalten.
 
-IMPE registriert jede Schriftfamilie mit ihrem Shaping- und Routing-Verhalten.
-Schriftfamilien werden in einem zentralen Katalog mit den
-Informationen registriert, die zu ihrer korrekten Verwendung erforderlich
-sind: verfügbare Schnitte, Pfade oder Systemschriftnamen,
-OpenType-Skript- und Spracheinstellungen, Metadaten für lokale Befehle, globales
-Routing-Verhalten sowie, wo nötig, eine spezialisierte Layout- oder
-Rendering-Route.
+\subsection{Registrierte Schriftvoreinstellungen}
 
-Dieses Modell erlaubt einer einfachen lateinischen Familie und einer Familie
-für komplexe Schriftsysteme, dieselbe öffentliche Ladeschnittstelle zu
-verwenden, obwohl ihre internen Anforderungen sehr unterschiedlich sein können.
-Die gemeinsame Abstraktion ist die \emph{registrierte Familie}; jedes
-Schriftsystem behält seine passende Implementierung.
-
-\subsection{Automatisches, globales und lokales Laden}
-
-Für den normalen Gebrauch wird der Modus beim Laden einer Familie ausgelassen. IMPE folgt
-dann dem registrierten Verhalten der Familie, das lokal, global oder
-bereichsspezifisch sein kann. Der Template-Schlüssel \texttt{fonts} wendet
-dieselbe automatische Regel auf eine Liste an.
-
-Eine \emph{globale} Familie nimmt an der dokumentweiten Schriftauswahl teil. Bei
-einer normalen lateinischen Familie kann dies bedeuten, die Hauptkanäle für
-Serifen-, serifenlose und nichtproportionale Schrift zu ersetzen. Bei einer
-schriftspezifischen Familie kann es bedeuten, die Verantwortung
-für ausgewählte Unicode-Bereiche zu übernehmen, während Lateinisch, Han und
-andere Schriftsysteme unverändert bleiben.
-
-Eine \emph{lokale} Familie wird zur ausdrücklichen Verwendung geladen. Lokale
-Auswahl ist nützlich, wenn ein bestimmter Abschnitt eine bestimmte
-Schriftsystemschrift, eine regionale Glyphenform oder eine redaktionell
-gewählte Schrift benötigt und das dokumentweite Routing erhalten bleiben soll.
-
-Familien werden beispielsweise so geladen:
+\verb|\UseFont{id}| lädt eine registrierte Voreinstellung.
+Auch der Schlüssel \texttt{fonts} in \verb|\UseTemplateSet|
+nimmt solche Kennungen entgegen. Ohne zusätzliche Modusangabe
+greift die automatische Registrierung der jeweiligen Familie:
+Sie kann einen lokalen Befehl anlegen, eine globale Schrift
+anmelden oder bestimmten Unicode-Bereichen eine Schrift zuweisen.
 
 \begin{verbatim}
 \UseFont{libertinus}
 \UseFonts{sanskrit,tibetan,arabic}
-
-\UseFont{libertinus}[global]   % deliberate global override
-\UseLocalFonts{sanskrit}       % deliberate local override
+\UseFont{libertinus}[local]
+\UseFont{libertinus}[global]
 \end{verbatim}
 
-oder über die entsprechenden Schlüssel in \verb|\UseTemplateSet|. Die Aliase
-\verb|\UseGlobalFont| und \verb|\UseLocalFont| sind explizite
-Überschreibungen; der Aufruf mit ausgelassenem Modus bleibt die
-Standardempfehlung. Öffentliche Befehle, die für
-einzelne lokale Familien erzeugt werden, sind in deren Katalogregistrierungen
-definiert; die vollständige Liste steht in der Schriftreferenz.
+\verb|\UseFont{libertinus}| stellt \verb|\LIB| bereit und
+meldet Libertinus zugleich als ausdrücklich gewählte
+lateinische Hauptschrift an. Damit kann es die von einer
+IMPE-Klasse vorgegebene CMU-Schrift ersetzen. Mit
+\texttt{[local]} wird nur die lokale Bindung angelegt;
+\texttt{[global]} verlangt eine global verwendbare
+Voreinstellung. Für eine eindeutige Moduswahl gibt es
+\verb|\UseLocalFont| und \verb|\UseGlobalFont|
+sowie ihre Pluralformen; \verb|\UseMainFont| ist eine
+weitere Bezeichnung für die globale Auswahl.
 
-Wenn ein expliziter lokaler Schriftbefehl aktiv ist, hat er innerhalb seines
-Gültigkeitsbereichs Vorrang vor dem automatischen globalen Bereichs-Router.
-Beim Verlassen des lokalen Gültigkeitsbereichs wird der globale Routing-Zustand
-wiederhergestellt. Dadurch bleibt eine ausdrückliche Entscheidung des Autors
-auch in einem Dokument mit umfangreicher automatischer Schriftsystemauswahl
-vorhersehbar.
+Lokale Befehle wie \verb|\SA{...}| übernehmen die
+Schriftgestaltung innerhalb ihres Textarguments.
+\verb|\Font{sanskrit}{...}| erlaubt die gleiche
+ausdrückliche lokale Auswahl ohne vorausgehendes
+\verb|\UseFont|. Die 59 registrierten Voreinstellungen
+mit ihren lokalen Kurzbefehlen sind im Anhang verzeichnet.
 
-\subsection{Unicode-Bereichs-Routing}
+\subsection{Schreibprofile und Schriftressourcen}
 
-Einige globale Familien sind bewusst auf bestimmte Bereiche beschränkt. Eine
-Devanagari-Familie kann beispielsweise ihre konfigurierten Unicode-Blöcke
-übernehmen, während die lateinische Hauptschrift ihre bisherige Rolle behält.
-Mehrere registrierte Familien können so mit getrennten Textbereichen in einem
-Dokument nebeneinander bestehen.
+Das neue Schriftmodell unterscheidet vier Verzeichnisse:
+Unicode-Blockdaten, \emph{Schreibprofile} für Zeichenbereiche
+und Schriftsystemverhalten, \emph{Schriftressourcen}
+für konkrete Schnitte sowie die registrierten
+\emph{Voreinstellungen}. So bezeichnet
+\texttt{devanagari} ein Schreibprofil, während
+\texttt{sanskrit} eine bestehende Schriftvoreinstellung
+mit besonderen Satzregeln ist.
 
-Dieses Routing ist besonders für tatsächlich mehrsprachige Prosa nützlich: Der
-Autor schreibt gewöhnlichen Unicode-Text, während IMPE die aktive registrierte
-Familie auswählt, sobald der Text in einen konfigurierten Schriftsystembereich
-eintritt. Bereichs-Routing hilft bei der Schriftauswahl; das Shaping bleibt
-Aufgabe von \XeTeX{}, \texttt{fontspec} und den OpenType-Daten der ausgewählten
-Familie.
+IMPE 1.1.0 enthält 69 gepflegte Schreibprofile,
+85 Ressourcenkennungen und 59 ursprüngliche
+Voreinstellungen. Das Schreibprofil bestimmt die
+Unicode-Abdeckung und die Darstellung; die Schriftressource
+bestimmt die verwendeten Schriftdateien. Die Profile
+\texttt{chinese}, \texttt{japanese} und \texttt{korean}
+überschneiden sich bei Han-Zeichen; deren regionale
+Glyphenform muss deshalb gegebenenfalls ausgewählt werden.
 
-\subsection{CJK-Behandlung}
+\begin{verbatim}
+\UseWriting{[shanggu]chinese}
+\UseWriting{[tiro]devanagari}
+\UseWriting{[naskh]arabic}
+\end{verbatim}
 
-CJK-Schriften benötigen eine etwas andere Route als gewöhnliches
-Unicode-Bereichs-Umschalten. IMPE verwendet für globale CJK-Familien den
-xeCJK-Pfad, sodass die Haupt-, serifenlosen und nichtproportionalen CJK-Kanäle
-gemeinsam als CJK-Schriften verwaltet werden können.
+Ein Eintrag hat die Form
+\verb|\UseWriting{[Ressource,Optionen]Profil}|.
+Mehrere Einträge können außerhalb von eckigen Klammern
+und geschweiften Gruppen durch Kommata getrennt werden.
+Der erste Klammerwert kann eine eingetragene
+Ressourcenkennung sein; \texttt{font=} wählt einen
+auflösbaren Schriftnamen, \texttt{file=} eine konkrete
+Schriftdatei. Pro Eintrag wird eine dieser Alternativen
+gewählt. Weitere Optionen sind
+\texttt{stylemap=native|full},
+\texttt{writing=horizontal|vertical}, \texttt{offset=}
+sowie einzelne Schriftstilzuweisungen wie
+\texttt{italic=zhuque}. Eine globale Schriftauswahl
+verwendet waagerechte Schreibrichtung; unterstützte
+lokale Darstellungen können senkrecht gesetzt werden.
 
-Gemeinsame Han-Ideogramme teilen Unicode-Codepunkte über chinesische,
-japanische und koreanische regionale Glyphenkonventionen hinweg.
-Automatisches Routing weist daher sprachspezifischen Schriftsystemen wie Kana
-und Hangul eigene Ansprüche zu, während gemeinsame Han-Zeichen bei der
-CJK-Schrift des Dokuments verbleiben. Wenn ausdrücklich eine japanische oder
-koreanische Han-Form erforderlich ist, kann ein lokaler Familienbefehl diese
-Auswahl direkt treffen.
+\subsection{Benannte und unmittelbare lokale Schriftauswahl}
 
-Diese Unterscheidung ist beabsichtigt. Automatisches Routing behandelt
-eindeutige Schriftsystembereiche; explizite lokale Auswahl liefert regionale
-Formen für gemeinsame Han-Zeichen.
+\verb|\DeclareWriting{Name}{Konfiguration}| legt eine
+wiederverwendbare Konfiguration an.
+\verb|\Font{Name}[Optionen]{Text}| verwendet sie lokal;
+\verb|\Writing{Konfiguration}{Text}| übernimmt die
+unmittelbare Auswahl ohne Namen.
 
-\subsection{Shaping und Zeilenumbruch}
+\begin{verbatim}
+\DeclareWriting{han-note}
+  {[shanggu,stylemap=full,italic=zhuque]chinese}
+\begin{document}
+\Font{han-note}{漢字}
+\Font{sanskrit}{संस्कृतम्}
+\Writing{[tiro]devanagari}{संस्कृतम्}
+\end{document}
+\end{verbatim}
 
-OpenType-Shaping für gewöhnliche komplexe Schriftsysteme wird durch die
-registrierten Skript-, Sprach- und Feature-Einstellungen einer Familie
-ausgedrückt. Indische, arabische und andere shaping-sensitive Schriften bleiben
-daher auf Dokumentebene gewöhnlicher Unicode-Text; IMPE liefert die
-Schriftkonfiguration, die die Text-Engine benötigt, um sie korrekt zu formen.
+Bei lokaler Auswahl gelten eine Schriftressource
+und eine Darstellung für das gesamte Textargument.
+Innerhalb davon kann eine weitere ausdrückliche lokale
+Auswahl den äußeren Stil überschreiben. Auch
+\texttt{font=} oder \texttt{file=} allein sind
+als lokale Konfiguration möglich.
 
-Einige Schriftsysteme benötigen außerdem Zeilenumbruchverhalten über
-gewöhnliche Leerzeichen hinaus. IMPE behandelt Sanskrit in Devanagari,
-Tibetisch und Thai schriftsystembewusst. Schrift- und Verhaltensschichten
-stellen geeignete Umbruchmöglichkeiten bereit und bewahren dabei Cluster
-sowie schriftspezifische Interpunktionsregeln.
+\texttt{stylemap=native} bevorzugt vorhandene
+Schriftschnitte; \texttt{stylemap=full} erlaubt außerdem
+ausdrücklich registrierte stilistische Ersetzungen.
+Einige westliche Mehrschnittfamilien verwenden
+standardmäßig die vollständige Zuordnung.
+Eine fehlende Glyphe und ein fehlender Schriftschnitt
+sind dabei unterschiedliche Fälle. Die einzelnen
+Optionen stehen in \texttt{docs/USEWRITING-1.0.5.md};
+die vollständigen Kennungen enthält der Anhang.
 
-Rechts-nach-links-Verhalten ist ebenfalls an die Familien gebunden, die es
-benötigen. Das öffentliche Schriftmodell bleibt gleich, auch wenn sich das
-zugrunde liegende Absatz- oder Inline-Verhalten von einer
-links-nach-rechts gesetzten lateinischen Familie unterscheidet.
+\subsection{Globale Priorität und Glyphenersatz}
 
-\subsection{Vertikales und externalisiertes Rendering}
+Die Klassen stellen CMU und bei \texttt{lang=zh}
+zusätzlich Shanggu als vorgegebene Schriften bereit.
+Ausdrückliche Schriftauswahlen des Autors haben
+Vorrang. Innerhalb derselben Prioritätsstufe bleibt
+bei konkurrierenden lateinischen Hauptschriften
+normalerweise die zuerst angemeldete maßgeblich.
+Für überschneidende CJK-Bereiche gilt innerhalb
+einer Stufe weiterhin Chinesisch vor Japanisch
+vor Koreanisch.
 
-Eine kleine Zahl von Schriftsystemen benötigt mehr als standardmäßiges
-horizontales OpenType-Shaping. IMPE enthält daher eine eingebaute vertikale
-Layout-Route, die von registrierten vertikalen Familien verwendet wird, und
-stellt einen externalisierten Rendering-Pfad für Fälle bereit, in denen ein
-Fragment zuverlässiger als kleines zusätzliches \TeX{}-Dokument erzeugt und
-anschließend als PDF wieder eingefügt werden kann.
+\begin{verbatim}
+\UseGlobalFonts{cmu,libertinus}
+\end{verbatim}
 
-Externalisiertes Rendering wird über einen portablen \texttt{texlua}-Helfer
-implementiert. Der Helfer löst die angeforderte \TeX{}-Engine über den
-\texttt{PATH} des Systems auf, rendert in ein IMPE-Cacheverzeichnis und gibt
-das resultierende PDF an das Hauptdokument zurück. Der Mechanismus bleibt hinter
-der Schriftregistrierungsschicht verborgen, sodass ein gewöhnliches Dokument
-temporäre Dateien und Engine-Pfade dem Helfer überlassen kann.
+Hier bleibt CMU die erste ausdrücklich gewählte
+lateinische Hauptschrift; eine spätere Anmeldung von
+Libertinus ersetzt sie nicht automatisch. Dagegen
+kann \verb|\UseFont{libertinus}| die bloß implizite
+CMU-Vorgabe der Klasse übersteuern.
 
-Diese spezialisierten Routen teilen die öffentliche Schrifteschnittstelle.
-Sie halten das Modell für Schriftsysteme kohärent, deren Verhalten über eine
-einfache \verb|\newfontfamily|-Deklaration hinausgeht.
+Der automatische \emph{zeichenweise Glyphenersatz}
+ist auf CJK beschränkt. Über xeCJK werden
+Serifen/serifenlos $\times$ normal/fett
+$\times$ aufrecht/kursiv (2$\times$2$\times$2)
+nach verfügbaren Schnitten geprüft. Danach kommen
+weitere registrierte Ressourcen desselben
+Schreibprofils und schließlich andere CJK-Profile
+in Betracht. Ausdrückliche Autorenauswahlen stehen
+vor Klassenstandards, und neu angemeldete Ressourcen
+aktualisieren die entsprechenden Ersatzketten.
+Ein nicht auflösbarer Schriftname kann unabhängig
+davon eine Ersatzschrift auslösen; für andere
+Schriftsysteme bleibt die zusammenhängende
+OpenType-Formung maßgeblich.
 
-\subsection{Wo die vollständige Schriftreferenz zu finden ist}
+\subsection{Unicode-Bereiche und CJK-Schriften}
 
-Der detaillierte Familienkatalog, die Registrierungssyntax, Regeln für
-Stil-Fallbacks, das globale Routing-Modell, vertikale Parameter, das
-externalisierte Backend und schriftspezifische Hinweise werden in
-\texttt{docs/FONTS.md} gepflegt. Benutzer, die eine neue Familie hinzufügen
-oder das Font-Routing untersuchen, sollten dieses Dokument als technische
-Referenz behandeln.
+Globale Schriftsystembindungen können bestimmte
+Unicode-Bereiche übernehmen; lokale Befehle
+übersteuern diese Zuordnung in ihrem Textargument.
+Für Han, Kana und Hangul nutzt IMPE die
+CJK-Schriftkanäle von xeCJK. Gemeinsam verwendete
+Han-Zeichen behalten die CJK-Hauptschrift;
+die japanische oder koreanische Glyphenform lässt
+sich beispielsweise durch \verb|\JP{...}| und
+\verb|\KR{...}| gezielt wählen.
+
+\subsection{Formung, Umbruch und Schreibrichtung}
+
+Die OpenType-Formung komplexer Schriftsysteme
+übernehmen \XeTeX{} und die Schriftdateien.
+IMPE ergänzt passende Schrift-, Sprach- und
+Umbrucheinstellungen, etwa für Sanskrit in
+Devanagari, tibetische Tsheg-Grenzen und
+thailändische Wörterbuchtrennung. Für entsprechende
+Schriften stehen auch Rechts-nach-links-Funktionen
+bereit. Mongolisch, Mandschurisch und Altuigurisch
+besitzen lokale gedrehte senkrechte Satzformen.
+
+\subsection{XSR 1.3: Hieroglyphen, Kitan und Bildglyphen}
+
+XSR 1.3 ist in IMPE eingebunden. Es setzt ägyptische
+Hieroglyphen, Stapel der kleinen Kitan-Schrift
+sowie registrierte Bildglyphen. Die beiden Schriften
+verwenden ihre eigenen Voreinstellungen;
+Bildglyphen stehen über die Funktion \texttt{glyphs}
+zur Verfügung.
+
+\begin{description}
+  \item[Ägyptisch] Nach \verb|\UseFont{egyptian}|
+    können die Unicode-Steuerzeichen des Satzsystems
+    oder \verb|\IMPEEgyptianText{...}| verwendet werden.
+  \item[Kleine Kitan-Schrift] \verb|\UseFont{khitan_small}|
+    aktiviert \verb|\KHS{...}| mit der nativen
+    XSR-Stapelung. \verb|\KHSstack| und
+    \verb|\KHSstackblock| stehen ebenfalls bereit.
+    Clustertrenner und U+16FE4 bleiben erhalten;
+    unterschiedliche Stapelhöhen werden ausgerichtet.
+  \item[Bildglyphen] Mit \verb|\UseFeature{glyphs}|
+    registriert \verb|\IMPEGlyphRegister| eine
+    Bilddatei, die \verb|\IMPEGlyph| im Text setzt.
+\end{description}
+
+Für die dynamische Darstellung benötigt XSR Python,
+Shell Escape oder Vorverarbeitung sowie lesbare
+Schrift- und Bilddateien. Für hieroglyphische Quadrate
+und Kitan-Cluster kann XSR den ursprünglichen linearen
+Unicode-Text in PDF-\texttt{/ActualText} bewahren;
+die tatsächliche Textübernahme hängt vom PDF-Leser ab.
+
+\subsection{Weitere Hinweise zu Schriften}
+
+Vertiefende Angaben stehen in \texttt{docs/FONTS.md}
+und \texttt{docs/USEWRITING-1.0.5.md}.
+Die Bildbeispiele enthält der Showcase.
 
 \section{Layouts und Features}
 
