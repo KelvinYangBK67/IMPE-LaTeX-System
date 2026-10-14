@@ -59,6 +59,16 @@
 \bool_new:N \g__font_cjk_main_declared_bool
 \int_new:N \g__font_cjk_main_priority_int
 \int_new:N \l__font_cjk_candidate_priority_int
+% An implicit class font is the final fallback, not a user declaration.
+% Rank 2 = explicit document choice; rank 1 = class/template default.
+\bool_new:N \g__font_registering_defaults_bool
+\int_new:N \l__font_global_candidate_origin_int
+\int_new:N \g__font_latin_main_origin_int
+\int_new:N \g__font_cjk_main_origin_int
+\bool_new:N \l__font_global_select_primary_bool
+\tl_new:N \g__font_latin_main_resource_tl
+\tl_new:N \g__font_cjk_main_resource_tl
+\prop_new:N \g__font_range_global_origin_prop
 \seq_new:N \g__font_loaded_special_modules_seq
 \seq_new:N \g__font_range_global_blocks_seq
 \prop_new:N \g__font_range_global_name_prop
@@ -1063,14 +1073,26 @@
       { #1 [#3] {#4} }
   }
 
+% The first explicit font wins within a priority tier.  A user font
+% promotes itself ahead of an earlier class default, which stays available
+% in the glyph-fallback resource pool.  The CJK cross-profile rank retains
+% the existing Chinese > Japanese > Korean policy within the same tier.
+\cs_new_protected:Npn \__font_global_candidate_origin:
+  {
+    \int_set:Nn \l__font_global_candidate_origin_int {2}
+    \bool_if:NT \g__font_registering_defaults_bool
+      { \int_set:Nn \l__font_global_candidate_origin_int {1} }
+  }
+
 \cs_new_protected:Npn \__font_define_global_binding:
   {
     \__font_build_main_options:
     \__font_build_sans_options:
     \__font_build_mono_options:
+    \__font_global_candidate_origin:
+    \bool_set_false:N \l__font_global_select_primary_bool
     \str_if_eq:VnTF \l__font_script_class_tl { cjk }
       {
-        % Chinese > Japanese > Korean, irrespective of declaration order.
         \int_zero:N \l__font_cjk_candidate_priority_int
         \tl_set:NV \l_tmpa_tl \l__font_decl_writing_profile_tl
         \tl_if_blank:VT \l_tmpa_tl
@@ -1088,12 +1110,26 @@
             {japanese}{\int_set:Nn \l__font_cjk_candidate_priority_int {2}}
             {korean}{\int_set:Nn \l__font_cjk_candidate_priority_int {1}}
           }
-        \int_compare:nNnF
-          {\l__font_cjk_candidate_priority_int} <
-          {\g__font_cjk_main_priority_int}
+        \int_compare:nNnT
+          {\l__font_global_candidate_origin_int} >
+          {\g__font_cjk_main_origin_int}
+          { \bool_set_true:N \l__font_global_select_primary_bool }
+        \int_compare:nNnT
+          {\l__font_global_candidate_origin_int} =
+          {\g__font_cjk_main_origin_int}
           {
+            \int_compare:nNnT
+              {\l__font_cjk_candidate_priority_int} >
+              {\g__font_cjk_main_priority_int}
+              { \bool_set_true:N \l__font_global_select_primary_bool }
+          }
+        \bool_if:NT \l__font_global_select_primary_bool
+          {
+            \int_gset_eq:NN \g__font_cjk_main_origin_int
+              \l__font_global_candidate_origin_int
             \int_gset_eq:NN \g__font_cjk_main_priority_int
               \l__font_cjk_candidate_priority_int
+            \tl_gset:NV \g__font_cjk_main_resource_tl \l__font_regular_tl
             \cs_if_exist:NF \setCJKmainfont
               { \RequirePackage{xeCJK} }
             \__writing_fallback_effective_profile:
@@ -1108,54 +1144,64 @@
                 { \exp_not:N \CJKrmdefault }
                 { \tl_use:N \l__font_main_options_tl }
                 { \l__font_regular_tl }
-          }
-        \__font_apply_cjk_fallback_family:n { \CJKrmdefault }
-        \__writing_fallback_effective_profile:
-        \prop_gput:NnV \g__writing_cjk_family_owner_prop {sf}
-          \l__font_name_tl
-        \prop_gput:NnV \g__writing_cjk_family_profile_prop {sf}
-          \l__writing_effective_profile_tl
-        \prop_gput:NnV \g__writing_cjk_family_owner_prop {tt}
-          \l__font_name_tl
-        \prop_gput:NnV \g__writing_cjk_family_profile_prop {tt}
-          \l__writing_effective_profile_tl
-        \use:x
-          {
-            \exp_not:N \__font_set_cjk_global_family:Nnnn
-            \exp_not:N \setCJKsansfont
-            { \exp_not:N \CJKsfdefault }
-            { \tl_use:N \l__font_sans_options_tl }
-            { \l__font_resolved_sans_tl }
-          }
-        \use:x
-          {
-            \exp_not:N \__font_set_cjk_global_family:Nnnn
-            \exp_not:N \setCJKmonofont
-            { \exp_not:N \CJKttdefault }
-            { \tl_use:N \l__font_mono_options_tl }
-            { \l__font_resolved_mono_tl }
-          }
+              }
+            \__font_apply_cjk_fallback_family:n { \CJKrmdefault }
+            \__writing_fallback_effective_profile:
+            \prop_gput:NnV \g__writing_cjk_family_owner_prop {sf}
+              \l__font_name_tl
+            \prop_gput:NnV \g__writing_cjk_family_profile_prop {sf}
+              \l__writing_effective_profile_tl
+            \prop_gput:NnV \g__writing_cjk_family_owner_prop {tt}
+              \l__font_name_tl
+            \prop_gput:NnV \g__writing_cjk_family_profile_prop {tt}
+              \l__writing_effective_profile_tl
+            \use:x
+              {
+                \exp_not:N \__font_set_cjk_global_family:Nnnn
+                \exp_not:N \setCJKsansfont
+                { \exp_not:N \CJKsfdefault }
+                { \tl_use:N \l__font_sans_options_tl }
+                { \l__font_resolved_sans_tl }
+              }
+            \use:x
+              {
+                \exp_not:N \__font_set_cjk_global_family:Nnnn
+                \exp_not:N \setCJKmonofont
+                { \exp_not:N \CJKttdefault }
+                { \tl_use:N \l__font_mono_options_tl }
+                { \l__font_resolved_mono_tl }
+              }
             \bool_gset_true:N \g__font_cjk_main_declared_bool
           }
       }
       {
-        \use:x
+        \int_compare:nNnT
+          {\l__font_global_candidate_origin_int} >
+          {\g__font_latin_main_origin_int}
+          { \bool_set_true:N \l__font_global_select_primary_bool }
+        \bool_if:NT \l__font_global_select_primary_bool
           {
-            \exp_not:N \setmainfont
-            [ \tl_use:N \l__font_main_options_tl ]
-            { \l__font_regular_tl }
-          }
-        \use:x
-          {
-            \exp_not:N \setsansfont
-            [ \tl_use:N \l__font_sans_options_tl ]
-            { \l__font_resolved_sans_tl }
-          }
-        \use:x
-          {
-            \exp_not:N \setmonofont
-            [ \tl_use:N \l__font_mono_options_tl ]
-            { \l__font_resolved_mono_tl }
+            \int_gset_eq:NN \g__font_latin_main_origin_int
+              \l__font_global_candidate_origin_int
+            \tl_gset:NV \g__font_latin_main_resource_tl \l__font_regular_tl
+            \use:x
+              {
+                \exp_not:N \setmainfont
+                [ \tl_use:N \l__font_main_options_tl ]
+                { \l__font_regular_tl }
+              }
+            \use:x
+              {
+                \exp_not:N \setsansfont
+                [ \tl_use:N \l__font_sans_options_tl ]
+                { \l__font_resolved_sans_tl }
+              }
+            \use:x
+              {
+                \exp_not:N \setmonofont
+                [ \tl_use:N \l__font_mono_options_tl ]
+                { \l__font_resolved_mono_tl }
+              }
           }
       }
   }
@@ -1654,6 +1700,13 @@
   {
     \tl_if_blank:nF {#1}
       {
+        \__font_global_candidate_origin:
+        \int_zero:N \l_tmpa_int
+        \prop_get:NnNT \g__font_range_global_origin_prop {#1} \l_tmpa_tl
+          { \int_set:Nn \l_tmpa_int {\l_tmpa_tl} }
+        \int_compare:nNnT
+          {\l__font_global_candidate_origin_int} > {\l_tmpa_int}
+          {
         \__font_ensure_unicode_block_class:n {#1}
         \cs_if_exist:cTF { __font_unicode_block_#1_class }
           {
@@ -1662,20 +1715,29 @@
               { \__font_set_tibetan_tsheg_transitions:n { \l__font_name_tl } }
             \seq_map_inline:Nn \g__font_range_global_blocks_seq
               {
-                \prop_get:NnN \g__font_range_global_name_prop {##1} \l_tmpa_tl
-                \__font_set_range_cross_transition:nnnn
-                  {##1}
-                  {#1}
-                  { \l_tmpa_tl }
-                  { \l__font_name_tl }
+                % A promoted range is already present in this sequence.
+                % Never redefine its own intra-block shaping as a cross-run.
+                \str_if_eq:nnF {##1} {#1}
+                  {
+                    \prop_get:NnN \g__font_range_global_name_prop {##1} \l_tmpa_tl
+                    \__font_set_range_cross_transition:nnnn
+                      {##1}
+                      {#1}
+                      { \l_tmpa_tl }
+                      { \l__font_name_tl }
+                  }
               }
             \__font_set_devanagari_akshara_cross_for_block:nn
               {#1}
               { \l__font_name_tl }
             \prop_put:Nnx \g__font_range_global_name_prop {#1} { \l__font_name_tl }
-            \seq_gput_right:Nn \g__font_range_global_blocks_seq {#1}
+            \seq_if_in:NnF \g__font_range_global_blocks_seq {#1}
+              { \seq_gput_right:Nn \g__font_range_global_blocks_seq {#1} }
+            \prop_gput:Nnx \g__font_range_global_origin_prop {#1}
+              {\int_use:N \l__font_global_candidate_origin_int}
           }
           { }
+          }
       }
   }
 

@@ -12,12 +12,15 @@
 \prop_new:N \g__font_family_global_prop
 \prop_new:N \g__font_family_default_prop
 \prop_new:N \g__font_family_loaded_prop
+\prop_new:N \g__font_family_loaded_default_prop
 \prop_new:N \g__font_family_command_prop
 \prop_new:N \g__font_family_range_profile_prop
 \prop_new:N \g__font_family_global_route_prop
 \prop_new:N \g__font_range_profile_keys_prop
 \prop_new:N \g__font_range_key_blocks_prop
 \prop_new:N \g__font_range_key_owner_prop
+\prop_new:N \g__font_range_key_origin_prop
+\bool_new:N \l__font_family_range_key_take_bool
 \prop_new:N \g__font_range_key_chain_prop
 
 \tl_new:N \l__font_family_id_tl
@@ -157,10 +160,26 @@
       { \__writing_legacy_registered: }
   }
 
+% Re-declaring a class default as a user choice promotes its priority.
+% This is the only case that bypasses the usual already-loaded fast path.
 \cs_new_protected:Npn \__font_family_use_declaration:nnn #1#2#3
   {
     \prop_if_in:NnTF \g__font_family_loaded_prop { #1 / #2 }
-      { }
+      {
+        \str_if_eq:nnT {#2} {global}
+          {
+            \bool_if:NF \g__font_registering_defaults_bool
+              {
+                \prop_if_in:NnT \g__font_family_loaded_default_prop { #1 / #2 }
+                  {
+                    \tl_set:Nx \l_tmpb_tl
+                      {scope=global,familyid=#1,\exp_not:n {#3}}
+                    \exp_args:NV \FontDeclare \l_tmpb_tl
+                    \prop_gremove:Nn \g__font_family_loaded_default_prop { #1 / #2 }
+                  }
+              }
+          }
+      }
       {
         \tl_set:Nx \l_tmpb_tl { scope = #2, familyid = #1, \exp_not:n {#3} }
         \exp_args:NV \FontDeclare \l_tmpb_tl
@@ -171,6 +190,14 @@
               { \__writing_wrap_legacy_local:n {#1} }
           }
         \prop_put:Nnn \g__font_family_loaded_prop { #1 / #2 } { loaded }
+        \str_if_eq:nnT {#2} {global}
+          {
+            \bool_if:NT \g__font_registering_defaults_bool
+              {
+                \prop_gput:Nnn \g__font_family_loaded_default_prop
+                  { #1 / #2 } { default }
+              }
+          }
       }
   }
 
@@ -190,15 +217,31 @@
       { \prop_gput:Nnn \g__font_range_key_chain_prop {#2} {#1} }
   }
 
+% A class-owned range may be replaced by its first explicit user choice.
+% Within either tier the first owner remains in force.  Later families are
+% still recorded in the ordered range chain for compatibility/introspection.
 \cs_new_protected:Npn \__font_family_add_owned_range_key:nn #1#2
   {
     \tl_if_blank:nF {#2}
       {
         \__font_family_append_range_chain:nn {#1} {#2}
+        \bool_set_false:N \l__font_family_range_key_take_bool
         \prop_if_in:NnTF \g__font_range_key_owner_prop {#2}
-          { }
+          {
+            \bool_if:NF \g__font_registering_defaults_bool
+              {
+                \prop_get:NnN \g__font_range_key_origin_prop {#2} \l_tmpa_tl
+                \str_if_eq:VnT \l_tmpa_tl {default}
+                  { \bool_set_true:N \l__font_family_range_key_take_bool }
+              }
+          }
+          { \bool_set_true:N \l__font_family_range_key_take_bool }
+        \bool_if:NT \l__font_family_range_key_take_bool
           {
             \prop_gput:Nnn \g__font_range_key_owner_prop {#2} {#1}
+            \bool_if:NTF \g__font_registering_defaults_bool
+              { \prop_gput:Nnn \g__font_range_key_origin_prop {#2} {default} }
+              { \prop_gput:Nnn \g__font_range_key_origin_prop {#2} {user} }
             \tl_if_blank:VTF \l__font_family_owned_range_keys_tl
               { \tl_set:Nn \l__font_family_owned_range_keys_tl {#2} }
               { \tl_put_right:Nn \l__font_family_owned_range_keys_tl { , #2 } }
@@ -243,6 +286,9 @@
       {
         \__font_family_append_range_chain:nn {#1} {#2}
         \prop_gput:Nnn \g__font_range_key_owner_prop {#2} {#1}
+        \bool_if:NTF \g__font_registering_defaults_bool
+          { \prop_gput:Nnn \g__font_range_key_origin_prop {#2} {default} }
+          { \prop_gput:Nnn \g__font_range_key_origin_prop {#2} {user} }
         \prop_get:NnNT \g__font_range_key_blocks_prop {#2} \l_tmpa_tl
           {
             \prop_if_in:NnF \g__font_family_loaded_prop { #1 / auto-range / #2 }

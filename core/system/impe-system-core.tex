@@ -48,6 +48,7 @@
 \tl_new:N \l__nextsystem_effective_globalfonts_tl
 \bool_new:N \g__nextsystem_class_defaults_loaded_bool
 \bool_new:N \g__nextsystem_ui_loaded_bool
+\bool_new:N \l__nextsystem_globalfonts_are_defaults_bool
 
 \providecommand{\NextHeaderTitleText}{}
 \providecommand{\HeaderTitle}[1]{\renewcommand{\NextHeaderTitleText}{#1}}
@@ -90,6 +91,7 @@
   {
     \tl_set_eq:NN \l__nextsystem_effective_layout_tl \l__nextsystem_layout_tl
     \tl_set_eq:NN \l__nextsystem_effective_globalfonts_tl \l__nextsystem_globalfonts_tl
+    \bool_set_false:N \l__nextsystem_globalfonts_are_defaults_bool
 
     \tl_if_blank:VT \l__nextsystem_effective_layout_tl
       {
@@ -100,7 +102,10 @@
     \tl_if_blank:VT \l__nextsystem_effective_globalfonts_tl
       {
         \cs_if_exist:NT \NextDefaultGlobalFonts
-          { \tl_set:Nx \l__nextsystem_effective_globalfonts_tl { \NextDefaultGlobalFonts } }
+          {
+            \tl_set:Nx \l__nextsystem_effective_globalfonts_tl { \NextDefaultGlobalFonts }
+            \bool_set_true:N \l__nextsystem_globalfonts_are_defaults_bool
+          }
       }
   }
 
@@ -141,7 +146,11 @@
           {
             \tl_set:Nx \l_tmpa_tl { \NextDefaultGlobalFonts }
             \tl_if_blank:VF \l_tmpa_tl
-              { \exp_args:NV \UseFonts \l_tmpa_tl [global] }
+              {
+                \bool_gset_true:N \g__font_registering_defaults_bool
+                \exp_args:NV \UseFonts \l_tmpa_tl [global]
+                \bool_gset_false:N \g__font_registering_defaults_bool
+              }
           }
 
         \__nextsystem_apply_ui:
@@ -166,7 +175,15 @@
       { \exp_args:NV \UseLayout \l__nextsystem_effective_layout_tl }
 
     \tl_if_blank:VF \l__nextsystem_effective_globalfonts_tl
-      { \exp_args:NV \UseFonts \l__nextsystem_effective_globalfonts_tl [global] }
+      {
+        \bool_if:NTF \l__nextsystem_globalfonts_are_defaults_bool
+          {
+            \bool_gset_true:N \g__font_registering_defaults_bool
+            \exp_args:NV \UseFonts \l__nextsystem_effective_globalfonts_tl [global]
+            \bool_gset_false:N \g__font_registering_defaults_bool
+          }
+          { \exp_args:NV \UseFonts \l__nextsystem_effective_globalfonts_tl [global] }
+      }
 
     \tl_if_blank:VF \l__nextsystem_fonts_tl
       { \exp_args:NV \UseFonts \l__nextsystem_fonts_tl }
