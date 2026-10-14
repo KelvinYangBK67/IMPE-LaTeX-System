@@ -210,7 +210,7 @@ tests\run_regressions.ps1 -PublicFonts
 
 ## 維護者
 
-Sikai Yang。公開聯絡與支援請使用
+YANG Sikai。公開聯絡與支援請使用
 [GitHub Issues](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues)。
 
 ## 授權
