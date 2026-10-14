@@ -100,102 +100,124 @@ that motivated the system.
 
 \subsection{Distribution forms}
 
-IMPE is prepared in three distribution forms, each intended for a different
-use case.
+IMPE 1.1.0 is prepared in three distribution forms. They share the same
+public class/package names and the core \XeLaTeX{} runtime, but differ in
+font assets and installation workflow.
 
-The \emph{CTAN-oriented distribution} contains the portable runtime and public
-documentation. The local font library is managed separately. This is
-the \texttt{impe-framework.zip} archive, rooted at
-\texttt{impe-framework/}, and is intended for standard \TeX{} distribution.
-It contains canonical \texttt{impe*} entries.  The \emph{core distribution}
-contains the same system logic for users who prefer to install IMPE directly
-from a release and manage fonts separately.  The \emph{full distribution} may
-add a prepared local font library, subject to the redistribution status of the
-individual fonts.
+\begin{description}
+  \item[\texttt{Full}] The complete managed release, including the runtime,
+    compatibility entry points, vendored XSR, and only those local font files
+    approved for redistribution and actually present when the archive is built.
+    A public Full archive is not a promise that every catalogued font is bundled.
+  \item[\texttt{Core}] The managed runtime, compatibility entry points, vendored
+    XSR and installers, without a local font library. Existing \TeX{} Live and
+    system fonts can be resolved directly; other required files must be supplied.
+  \item[\texttt{CTAN}] The \texttt{impe-framework.zip} source and runtime
+    distribution rooted at \texttt{impe-framework/}. It includes canonical
+    \texttt{impe*} entry points, the vendored XSR sources, and documentation
+    resources, but no font binaries. CTAN installation itself does not run
+    \texttt{pip} or create a Python environment.
+\end{description}
 
-The distinction is deliberate. IMPE's document runtime remains portable,
-while machines and users can supply their own large font libraries through
-the independent font-resource layer.
+The project is designed to keep the package runtime separate from licensing and
+availability decisions about large third-party font collections. The final
+public Full archive uses an explicit reviewed font allowlist.
 
-\subsection{Installed location}
+\subsection{Installing Full or Core}
 
-A direct installation places the package in the user's TEXMF tree under
+Direct installation places the managed package under
+\texttt{TEXMFHOME/tex/latex/impe/}. Its canonical entry points are
+\texttt{impe.sty}, \texttt{impeart.cls}, \texttt{impebook.cls},
+\texttt{impereport.cls} and \texttt{impebeamer.cls}; the
+\texttt{\_zh} wrappers and historical \texttt{next*} names are retained for
+compatibility in direct releases.
 
-\begin{verbatim}
-tex/latex/impe/
-\end{verbatim}
-
-so that the package and wrapper classes are available through the normal \TeX{}
-search path.  The canonical public entries are
-
-\begin{verbatim}
-impe.sty
-impeart.cls
-impebook.cls
-impereport.cls
-impebeamer.cls
-\end{verbatim}
-
-with corresponding \texttt{\_zh} wrapper classes for Chinese-oriented document
-defaults.  Direct GitHub full and core releases also install the earlier
-\texttt{next*} compatibility entries; the CTAN \texttt{impe-framework}
-distribution contains the canonical entries.
-See Section~\ref{sec:compatibility}.
-
-When using a direct IMPE release, the supplied installer can be used to copy the
-runtime into the user TEXMF tree.  A release archive may provide the usual
-Windows entry point
+The provided installers work from an extracted Full/Core release or from a
+complete source checkout. Typical entry points are:
 
 \begin{verbatim}
-install.bat
+# Windows PowerShell, in an extracted release:
+.\install.bat
+# Windows PowerShell, in a source checkout:
+.\scripts\install.ps1
+
+# Unix, in an extracted release:
+sh ./install.sh
+# Unix, in a source checkout:
+sh ./scripts/install.sh
 \end{verbatim}
 
-The launcher delegates to \texttt{install.ps1}; advanced callers may invoke
-that script with their host's normal script runner.
+The Windows installer accepts \texttt{-TexmfRoot} and
+\texttt{-SkipXsrPython}; the Unix installer accepts an optional TEXMF
+destination as its positional argument. When its installation completes, refresh
+the \TeX{} filename database if the installer could not run
+\texttt{mktexlsr}. A package installed through the \TeX{} distribution's own
+package manager follows that distribution's installation rules instead.
 
-For \TeX{} distribution installations, the \TeX{} distribution handles package
-discovery through its usual mechanism.
+\subsection{XSR and the Python renderer}
+
+IMPE bundles XSR \textbf{1.3}. Full and Core installers copy its \TeX{}
+integration and normally set up a \emph{private} Python virtual environment for
+its renderer, without installing XSR into the user's global Python environment.
+Dynamic Egyptian hieroglyphic composition, native Khitan stacking, and XSR
+vector glyph processing may require that renderer.
+
+The normal managed installation requires Python \textbf{3.11 or newer},
+\texttt{venv}, and \texttt{pip}; the initial dependency installation may require
+network access. A \TeX{}-only installation can skip automatic Python setup:
+
+\begin{verbatim}
+# Windows:
+.\scripts\install.ps1 -SkipXsrPython
+# Unix:
+IMPE_SKIP_XSR_PYTHON=1 sh ./scripts/install.sh
+\end{verbatim}
+
+The \TeX{}-only option installs the \TeX{} runtime, not a working dynamic
+Python renderer; configure the renderer separately if using XSR. Dynamic XSR
+jobs need an allowed XeLaTeX shell-escape invocation or the XSR preprocessing
+route. Ordinary documents not requesting those renderers do not start Python.
+The XSR script backends also need the real readable TTF/OTF files used to
+produce their glyph outlines: an installed font family name by itself is
+insufficient for the Python font-file reader.
 
 \subsection{Font resources and local configuration}
 
-Each registered face first uses its bundled file if present, then fontspec's
-TeX Live or system lookup, and finally the configured error or fallback.
-Core installations use already resolvable fonts directly.
+For a registered face IMPE first checks the corresponding local/bundled file,
+then attempts resolution through the \TeX{} font system or operating system.
+Core and CTAN users do not have to copy an already resolvable system font into
+the IMPE repository. Other registered fonts need the necessary files supplied
+by the user, subject to their respective licenses.
 
-The source repository carries the runtime; the full font library is managed
-locally. In a local
-or full installation, catalogued font files are normally resolved below an
-\texttt{assets/fonts/} root.  \texttt{\string\SetCatalogFontRoot} selects another
-location through local configuration.
-
-The preferred persistent mechanism is \texttt{impe.local.tex}.  A local setup
-may, for example, contain
+The normal local font root is \texttt{assets/fonts/}. To point at a separately
+managed font library, put the following in \texttt{impe.local.tex}, or issue
+the command from the document preamble:
 
 \begin{verbatim}
 \SetCatalogFontRoot{D:/Fonts/IMPE}
 \end{verbatim}
 
-with the path adjusted to the local machine.  The same command can also be used
-from a document when a one-off override is more appropriate. Core and CTAN
-installations use resolvable system or TeX fonts directly. Document features
-that request local font files require those resources to be supplied.
+The path is only an example. Full installations can provide an automatically
+managed local root. Unresolved ordinary fonts default to a soft warning and
+LaTeX fallback; that fallback does not substitute for the actual outline file
+required by an XSR script renderer.
 
 \subsection{A quick installation check}
 
-After installation, the following file should compile with \XeLaTeX{} on a system
-with Libertinus available:
+On a system with Libertinus available, the following checks that the wrapper,
+registry and local font command can be found:
 
 \begin{verbatim}
 \documentclass{impeart}
 \UseFont{libertinus}
-
 \begin{document}
-\LIB{IMPE is ready.}
+IMPE is ready. \LIB{Local Libertinus text.}
 \end{document}
 \end{verbatim}
 
-If this succeeds, the canonical wrapper class, package entry, and automatic
-font-loading interface are visible to \TeX{}.
+This checks normal \XeLaTeX{} operation; it does not test XSR/Python or every
+optional feature. See the project README and the installation checklist for
+separate XSR and release validation.
 
 \section{Quick Start}
 
@@ -448,127 +470,219 @@ font and layout subsystems remain responsible for the implementation details.
 
 \section{Fonts, Script Routing, and Multilingual Typesetting}
 
-Use \verb|\Font{family-id}{content}| for generic local selection, for example
-\verb|\Font{hindi}{...}|. It uses the same command path as the family-specific
-command, preserving series, shape, local routing override and script behavior.
-\verb|\UseFont| retains its loading/activation meaning. Local declarations load
-on demand; load families requiring extra packages in the preamble.
+IMPE provides a short preset interface for everyday documents and a separate
+Writing Profile interface for explicit multilingual configuration. Both are
+supported public APIs in 1.1.0; the newer model does not invalidate historical
+font IDs or their local commands.
 
-\subsection{Font families as registered capabilities}
+\subsection{Simple registered presets: \texttt{\string\UseFont}}
 
-IMPE registers each font family with its shaping and routing behavior.
-Font families are registered in a central catalog with the information needed
-to use them correctly: available faces, paths or system font names, OpenType
-script and language settings, local command metadata, global routing behavior,
-and, where necessary, a specialized layout or rendering route.
-
-This model allows a simple Latin family and a complex-script family to share
-the same public loading interface even when their internal requirements are
-very different. The common abstraction is the \emph{registered family}; each
-writing system retains its appropriate implementation.
-
-\subsection{Automatic, global, and local loading}
-
-For ordinary use, omit the mode when loading a family. IMPE then follows the
-family's registered behavior, which may be local, global, or range-specific.
-The \texttt{fonts} template key applies the same automatic rule to a list.
-
-A \emph{global} family participates in document-wide font selection.  For a
-normal Latin family this can mean replacing the main roman, sans-serif, and
-monospaced channels. For a script-specific family it can mean taking
-responsibility for selected Unicode ranges while Latin, Han, and other
-scripts retain their existing font routing.
-
-A \emph{local} family is loaded for explicit use.  Local selection is useful
-when a particular passage requires a specific script font, a regional glyph
-form, or an editorially chosen typeface while preserving document-wide routing.
-
-Families are loaded through, for example,
+The easiest way to load an existing registered preset is
+\verb|\UseFont{id}|; the \texttt{fonts} key of
+\verb|\UseTemplateSet| accepts a list of the same IDs.
+Omitting the mode follows that preset's \emph{automatic dispatch}, which can
+enable a local command, a document-wide font binding, and/or Unicode-range
+routing. It is not equivalent to simply reading the catalog's
+\texttt{defaultmode} field.
 
 \begin{verbatim}
-\UseFont{libertinus}
+\UseFont{libertinus}       % automatic: local command plus global candidate
 \UseFonts{sanskrit,tibetan,arabic}
-
-\UseFont{libertinus}[global]   % deliberate global override
-\UseLocalFonts{sanskrit}       % deliberate local override
+\UseFont{libertinus}[local]   % local declaration only
+\UseFont{libertinus}[global]  % explicit global declaration
 \end{verbatim}
 
-or through the corresponding keys in \verb|\UseTemplateSet|.  The
-\verb|\UseGlobalFont(s)| and \verb|\UseLocalFont(s)| aliases are explicit
-overrides; the mode-free call remains the default recommendation. Public commands created for
-individual local families are defined by their catalog registrations; the
-complete list appears in the font reference.
+The first call makes \verb|\LIB{...}| available and also registers
+Libertinus as an explicit global Latin candidate. In a wrapper document it
+can replace the implicit CMU primary according to the precedence rules below.
+An explicit \texttt{[local]} confines the request to the local declaration.
+An explicit \texttt{[global]} requires a global-capable preset. The
+\verb|\UseLocalFont(s)|, \verb|\UseGlobalFont(s)| and
+\verb|\UseMainFont(s)| aliases give the corresponding deliberate overrides.
 
-When an explicit local font command is active, it takes precedence over the
-automatic global range router within that scope.  Leaving the local scope
-restores the global routing state.  This makes explicit authorial choice
-predictable even in a document with extensive automatic script selection.
+A local command, such as \verb|\SA{...}|, applies to its text argument,
+preserving the script's shaping and special renderer. The generic
+\verb|\Font{preset}{text}| offers the same forced-local selection without
+needing an earlier \verb|\UseFont| call. Family commands and the preset
+interface remain especially convenient for established editorial styles.
 
-\subsection{Unicode-range routing}
+\subsection{Writing Profiles and Font Resources}
 
-Some global families are intentionally range-limited.  A Devanagari family,
-for example, can own its configured Unicode blocks while the Latin main font
-retains its existing role. Multiple registered families can therefore coexist
-in one document with distinct text ranges.
+The explicit writing model separates four kinds of information:
+\emph{Unicode block data}, \emph{Writing Profiles} (codepoint coverage and
+script-dependent behavior), \emph{font resources/packs} (real font faces), and
+\emph{backward-compatible registered presets}. A profile is not a language
+name, a font family or a legacy preset. For example, \texttt{sanskrit} is a
+preset with historically established typography; \texttt{devanagari} is a
+Writing Profile to which a suitable font resource can be attached.
 
-This routing is most useful for genuinely multilingual prose: the author writes
-Unicode text normally, while IMPE selects the active registered family when the
-text enters a configured script range.  Range routing is an aid to font
-selection; shaping remains the responsibility of \XeTeX{}, \texttt{fontspec}, and
-the OpenType data associated with the selected family.
+Version 1.1.0 provides 69 curated profiles, 85 resource aliases and all 59
+original registered preset IDs. The profile determines Unicode coverage and
+the appropriate script/renderer policy; a resource override changes the font
+choice, not the profile's identity. Thus \texttt{chinese},
+\texttt{japanese} and \texttt{korean} profiles can share Han codepoints:
+Unicode alone cannot guess which regional Han form is intended.
 
-\subsection{CJK handling}
+A global writing declaration uses:
 
-CJK fonts require a somewhat different route from ordinary Unicode-range
-switching.  IMPE uses the xeCJK path for CJK global families, allowing the main,
-sans-serif, and monospaced CJK channels to be managed together as CJK fonts.
+\begin{verbatim}
+\UseWriting{[shanggu]chinese}
+\UseWriting{[tiro]devanagari}
+\UseWriting{[naskh]arabic}
+\end{verbatim}
 
-Shared Han ideographs use the same Unicode codepoints across Chinese, Japanese,
-and Korean regional glyph conventions. Automatic routing therefore gives
-language-specific scripts such as kana and Hangul their own claims while
-leaving shared Han characters on the document CJK family.  When an explicitly
-Japanese or Korean Han form is required, a local family command can be used to
-make that choice directly.
+The general syntax is \verb|\UseWriting{[pack,options]profile}|. Multiple
+entries may be comma-separated outside brackets and braces. A known pack name
+may appear first in brackets; \texttt{font=} selects a resolvable font family
+name, whereas \texttt{file=} selects a physical file path. These mutually
+exclusive resource selectors are distinct from the Writing Profile. Additional
+keys include \texttt{stylemap}, face overrides (for example
+\texttt{italic=} or \texttt{sansbold=}) and \texttt{writing=}.
+Use a global declaration only when its script coverage and rendering mode
+are appropriate. Global vertical writing is not supported.
 
-This distinction is intentional. Automatic routing handles unambiguous script
-ranges; explicit local selection supplies regional forms for shared Han characters.
+\subsection{Named and anonymous local writing}
 
-\subsection{Shaping and line breaking}
+Use \verb|\DeclareWriting{name}{configuration}| to save a reusable
+configuration without activating it globally. \verb|\Font{name}[overrides]{text}|
+forces that configuration locally; \verb|\Writing{configuration}{text}| is
+its anonymous counterpart. For example:
 
-OpenType shaping for ordinary complex scripts is expressed through the
-registered script, language, and feature settings of a family.  Indic, Arabic,
-and other shaping-sensitive scripts therefore remain ordinary Unicode text at
-the document level; IMPE supplies the font configuration needed for the text
-engine to shape them correctly.
+\begin{verbatim}
+\DeclareWriting{han-note}
+  {[shanggu,stylemap=full,italic=zhuque]chinese}
+\begin{document}
+\Font{han-note}{漢字}
+\Font{sanskrit}{संस्कृतम्}
+\Writing{[tiro]devanagari}{संस्कृतम्}
+\end{document}
+\end{verbatim}
 
-Some scripts need line-breaking behavior beyond ordinary spaces. IMPE includes
-script-aware handling for Sanskrit in Devanagari, Tibetan, and Thai. The font
-and behavior layers provide appropriate break opportunities while preserving
-clusters and script-specific punctuation rules.
+Local selection applies one font resource and renderer to the
+\emph{entire supplied argument}; it does not automatically subdivide that
+argument according to the profile's Unicode ranges. Nested explicit local
+calls can override the outer selection. A local configuration may also
+specify only \texttt{font=} or \texttt{file=} when no script-specific
+Profile behavior is needed.
 
-Right-to-left behavior is likewise attached to families that require it.  The
-public font model remains the same even though the underlying paragraph or
-inline behavior differs from a left-to-right Latin family.
+The \texttt{stylemap=native} policy favors the resource's genuine style
+faces; \texttt{stylemap=full} additionally permits the documented
+cross-family stylistic mappings. Several multi-face Western packs default
+to the full mapping. Style selection and missing-character recovery are
+separate operations: an available Bold face may still lack a particular
+character. See \texttt{docs/USEWRITING-1.0.5.md} for complete options
+and profile/resource names; the filename records the API's introduction,
+not its support ceiling.
 
-\subsection{Vertical layout and XSR-backed stacked scripts}
+\subsection{Global precedence and automatic fallback}
 
-The built-in vertical writing model remains part of the font subsystem.
-For two-dimensional stacked scripts and inline glyph images, IMPE 1.0.3 adds
-an optional XSR 0.10 feature.  XSR renders script runs and registered
-image glyphs without IMPE generating separate auxiliary \TeX{} documents
-or reinserting externally produced PDFs.  Load \verb|\UseFeature{xsr}| in
-the preamble and install XSR with its Python dependencies separately.
-XSR's active Unicode detector is not loaded: IMPE retains font routing.
-The linear Khitan route stays available through \verb|\KHS|, while
-\verb|\KHSstack| delegates composition to XSR.
+A wrapper's implicit CMU (and, in Chinese wrappers, Shanggu) setup supplies
+the default font pool, but \emph{explicit user declarations take priority}
+over those class defaults. Within one priority tier, the first declared
+Latin global primary normally remains primary. A later global registration
+does not automatically replace the earlier explicit primary. For CJK
+cross-profile conflicts within a tier, the existing Chinese--Japanese--Korean
+priority is retained. Explicitly selecting a previously implicit default can
+promote it to the user tier.
 
-\subsection{Where to find the complete font reference}
+For example, after \verb|\documentclass{impeart}|, calling
+\verb|\UseFont{libertinus}| explicitly lets Libertinus supersede the
+class-provided CMU primary. But in
 
-The detailed family catalog, registration syntax, style fallback rules, global
-routing model, vertical parameters, optional XSR integration, and script-specific
-notes are maintained in \texttt{docs/FONTS.md}.  Users adding a new family or
-investigating font-routing behavior should treat that document as the technical
-reference.
+\begin{verbatim}
+\UseGlobalFonts{cmu,libertinus}
+\end{verbatim}
+
+the first explicit Latin primary, CMU, remains primary. This difference is
+intentional. It also explains why an \emph{Auto} table entry describes
+registration capabilities and effects, not an unconditional promise that
+every requested font becomes the document's main face.
+
+\emph{Automatic missing-glyph fallback currently applies to CJK only.}
+The xeCJK backend searches the active resource's declared faces using the
+Serif/Sans $\times$ Regular/Bold $\times$ Upright/Italic
+(2$\times$2$\times$2) style matrix. It then considers available registered
+resources of the same Writing Profile, followed by other CJK profiles.
+The global fallback resource pool places explicit user resources before
+implicit class defaults and maintains first-registration order within a tier.
+Candidates with a valid face but a missing glyph can be skipped; late
+registrations refresh the relevant fallback chains.
+
+This is different from the soft declaration fallback used when a font
+itself cannot be resolved. For non-CJK scripts IMPE deliberately does not
+replace missing glyphs one codepoint at a time, which could disrupt shaping
+and word structure. Ordinary Unicode text uses fontspec/OpenType shaping
+and the chosen script-specific behavior.
+
+\subsection{Unicode-range and CJK routing}
+
+A script-specific global binding can claim selected Unicode blocks while
+unrelated text stays with its existing font. Existing local commands take
+precedence within their argument and suppress the outer automatic range
+router there. Leaving their scope restores global routing.
+
+For CJK, IMPE uses xeCJK main/sans/mono channels. Shared Han characters
+retain the active document CJK selection, while kana and Hangul can be
+claimed as distinct script ranges. Use local selection such as
+\verb|\JP{...}| or \verb|\KR{...}| when a regional form of a shared
+Han ideograph must be chosen explicitly. Unified conflict resolution for
+new, overlapping global Writing Profiles is not a language-detection
+engine; the existing routing and arbitration limits still apply.
+
+\subsection{Shaping, line breaking and writing directions}
+
+OpenType shaping for Indic, Arabic and other complex scripts remains the
+responsibility of \XeTeX{} and the selected OpenType fonts. IMPE supplies
+script, language and feature settings and selected script-specific breaking
+behavior: Sanskrit Devanagari akshara boundaries, Tibetan tsheg boundaries
+and Thai dictionary-based line breaks are supported in their documented
+routes. Right-to-left behavior is attached to appropriate presets and
+renderers. The built-in local rotation route provides Mongolian, Manchu
+and Old Uyghur-style \emph{local} vertical forms; it is not a general
+four-direction page-layout engine.
+
+\subsection{XSR 1.3: Egyptian, Khitan and inline glyph images}
+
+XSR is vendored with IMPE rather than installed as a separate IMPE feature
+named \texttt{xsr}. Two font modules use its active Unicode detector and
+script backends; the independent \texttt{glyphs} feature uses its inline
+vector/image backend.
+
+\begin{description}
+  \item[Egyptian hieroglyphs] Load \verb|\UseFont{egyptian}|, then use the
+    renderer's supported Unicode hieroglyphic controls or
+    \verb|\IMPEEgyptianText{...}| where explicit selection is preferable.
+  \item[Khitan Small Script] Load \verb|\UseFont{khitan_small}| and use
+    \verb|\KHS{...}|, the default \emph{native XSR stack} renderer.
+    \verb|\KHSstack{...}| and \verb|\KHSstackblock{...}| remain
+    explicit aliases. Unicode cluster separators and U+16FE4 fillers
+    are retained; XSR 1.3 uses normal host-text interword spacing and
+    vertically centers stacks of differing heights.
+  \item[Registered inline images] Load \verb|\UseFeature{glyphs}| and
+    register glyph assets with \verb|\IMPEGlyphRegister|; insert them
+    through \verb|\IMPEGlyph|. This feature does not install the
+    Egyptian or Khitan detector merely by being loaded.
+\end{description}
+
+For dynamic rendering, provide Python 3.11+, the installed private XSR
+runtime or equivalent configured renderer, XeLaTeX shell escape (or XSR
+preprocessing), and readable source/font files. Do not attempt
+\verb|\UseFeature{xsr}|: there is no such feature identifier.
+
+XSR 1.1 and later can preserve the original linear Unicode source of
+Egyptian quadrats and Khitan clusters via PDF \texttt{/ActualText},
+including controls and separators, while drawing the stacked visual output.
+This is not an invisible duplicate text layer or a guarantee that every
+PDF reader copies identically. IMPE does not claim general LaTeX-source
+recovery for equations, tables or arbitrary image glyphs.
+
+\subsection{Further font documentation}
+
+The complete family catalog, source/font resolution, writing options,
+style-face mapping, compatibility presets, XSR requirements and
+script-specific notes are maintained in \texttt{docs/FONTS.md} and
+\texttt{docs/USEWRITING-1.0.5.md}. The public Showcase illustrates
+the actual rendered output.
 
 \section{Layouts and Features}
 
