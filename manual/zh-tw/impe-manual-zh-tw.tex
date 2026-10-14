@@ -1,7 +1,7 @@
 % !TeX program = xelatex
-\documentclass[11pt]{impeart_zh}
+\documentclass[11pt,lang=zh]{impeart}
 
-% 中文由 impeart_zh 的標準 Shanggu 路由處理；拉丁文字沿用 Libertinus。
+% 使用標準文件類別的 lang=zh 選項；中文用 Shanggu，拉丁文字用 Libertinus。
 \UseFont{libertinus}[global]
 \setmonofont[
   BoldFont=lmmonolt10-bold.otf,
@@ -59,7 +59,7 @@
 IMPE \LaTeX{} System 是一套模組化 \XeLaTeX{} 框架，提供可重用的版面、字體路由、
 多語排版與選用文件功能。
 
-IMPE 透過把系統拆分成可重用的部分來處理這個問題。對使用者而言，最重要的區分是
+IMPE 由三個可以獨立設定的部分組成：
 \emph{版面}、\emph{字體}與\emph{功能}。版面描述文件主要的視覺組織方式；字體族提供
 全域或局部的字體行為，必要時也包括依書寫系統進行的路由；功能模組則提供數學、
 超連結、引用、表格或圖片等選用功能。這些部分既可分別選擇，也可透過統一的範本介面
@@ -89,85 +89,106 @@ OpenType 字體、\texttt{fontspec} 以及 \XeTeX{} 的字元間機制，同時�
 
 \subsection{發行形式}
 
-IMPE 準備了三種發行形式，分別面向不同的使用情境。
+IMPE 1.1.0 準備了 \texttt{Full}、\texttt{Core} 與
+\texttt{CTAN} 三種發行形式。三者使用相同的核心
+\XeLaTeX{} 執行環境與標準文件類別，差別在於隨附字體及安裝程序。
 
-\emph{面向 CTAN 的發行版}是根目錄為 \texttt{impe-framework/} 的
-\texttt{impe-framework.zip}；它包含可攜的執行環境、公開文件與標準
-\texttt{impe*} 入口。本機字體庫另行管理。\emph{核心發行版}包含相同的系統
-邏輯，供希望直接從發行版安裝 IMPE、並自行管理字體的使用者使用。\emph{完整發行版}
-則可在字體再分發條件允許的範圍內，附帶一套準備好的本機字體庫。
+\begin{description}
+  \item[\texttt{Full}（完整包）]
+    包含核心、相容入口、XSR，以及經授權檢查且實際收入發行包的
+    可再分發字體檔。
+  \item[\texttt{Core}（核心包）]
+    包含核心、相容入口、XSR 與安裝工具。所需字體可由
+    \TeX{} Live、作業系統或使用者提供的字體檔解析。
+  \item[\texttt{CTAN}]
+    根目錄為 \texttt{impe-framework/} 的
+    \texttt{impe-framework.zip}，包含標準文件類別、
+    套件程式碼、XSR 原始碼及文件，但不附帶字體檔。
+    透過 CTAN 安裝不會自動執行 Python 套件安裝。
+\end{description}
 
-這項區分是刻意設計的。IMPE 文件執行環境保持可攜；不同電腦或使用者可透過獨立的
-字體資源層提供各自的大型字體庫。
+完整包實際包含哪些字體，依發行時經授權審核的清單決定。
+字體登錄表中的所有項目不一定都隨包附送。
 
-\subsection{安裝位置}
+\subsection{安裝完整包或核心包}
 
-直接安裝時，套件會放入使用者 TEXMF 樹中的
-
-\begin{verbatim}
-tex/latex/impe/
-\end{verbatim}
-
-因此套件與包裝類別都可透過標準 \TeX{} 搜尋路徑找到。標準公開入口為
-
-\begin{verbatim}
-impe.sty
-impeart.cls
-impebook.cls
-impereport.cls
-impebeamer.cls
-\end{verbatim}
-
-另有對應的 \texttt{\_zh} 包裝類別，提供面向中文文件的預設設定。直接從 GitHub
-取得的 full 與 core release 也會安裝較早的 \texttt{next*} 相容入口；CTAN 的
-\texttt{impe-framework} 發佈包含標準入口。詳見
-第~\ref{sec:compatibility} 節。
-
-若直接使用 IMPE 發行包，可透過隨附的安裝器把執行環境複製到使用者 TEXMF 樹。
-發行包可提供通常的 Windows 入口
+直接安裝會將套件放入使用者 TEXMF 樹的
+\texttt{TEXMFHOME/tex/latex/impe/}。標準公開入口為
+\texttt{impe.sty}、\texttt{impeart.cls}、
+\texttt{impereport.cls}、\texttt{impebook.cls}
+和 \texttt{impebeamer.cls}。
+舊式 \texttt{\_zh}、\texttt{next*} 名稱屬相容入口。
 
 \begin{verbatim}
-install.bat
+# Windows：已解壓的發行包
+.\install.bat
+# Windows：原始碼倉庫
+.\scripts\install.ps1
+
+# Unix：已解壓的發行包
+sh ./install.sh
+# Unix：原始碼倉庫
+sh ./scripts/install.sh
 \end{verbatim}
 
-該啟動程式會轉交 \texttt{install.ps1}；有進階需求的使用者也可用系統平常的腳本
-執行方式直接呼叫後者。
+Windows 安裝程式可使用 \texttt{-TexmfRoot} 和
+\texttt{-SkipXsrPython}；Unix 安裝程式可接受自訂 TEXMF 路徑。
+若安裝時未能更新 \TeX{} 檔名資料庫，可另外執行
+\texttt{mktexlsr}。透過 \TeX{} 發行版的套件管理器安裝時，
+則遵循該發行版的安裝流程。
 
-透過 \TeX{} 發行版安裝時，該發行版會依一般機制找到套件。
+\subsection{XSR 與 Python 執行環境}
+
+IMPE 隨附 XSR \textbf{1.3}。完整包與核心包的安裝程式
+通常會為 XSR 建立獨立的 Python 虛擬環境，不會直接修改
+使用者的全域 Python 套件。動態埃及聖書字排版、契丹小字堆疊、
+圖片字形處理可能需要 Python \textbf{3.11 以上}、
+\texttt{venv} 與 \texttt{pip}；首次安裝相依套件時也可能需要網路。
+
+如果只要安裝 \TeX{} 部分，可以略過 Python 環境設定：
+
+\begin{verbatim}
+# Windows
+.\scripts\install.ps1 -SkipXsrPython
+# Unix
+IMPE_SKIP_XSR_PYTHON=1 sh ./scripts/install.sh
+\end{verbatim}
+
+使用動態 XSR 功能時，需要允許 XeLaTeX 執行
+Shell Escape，或先行預處理 XSR 內容。渲染程式還必須能讀取
+實際 TTF／OTF 字體檔；只有系統字體名稱不足以讓 Python
+取得字形輪廓。
 
 \subsection{字體資源與本機設定}
 
-每個登錄字面先使用隨附檔案，再交由 fontspec 查找 TeX Live 或系統字體，
-最後才使用既有錯誤或回退設定。core 安裝可直接使用已可解析的字體。
-
-原始碼倉庫收錄執行環境；完整字體庫另行在本機管理。在本機安裝或完整發行版中，
-字體登錄表所指向的字體檔通常從 \texttt{assets/fonts/} 根目錄下解析。
-\texttt{\string\SetCatalogFontRoot} 可透過本機設定指定另一個位置。
-
-建議使用 \texttt{impe.local.tex} 作為持久設定方式。例如，本機設定可以包含
+IMPE 會先嘗試已登錄的本機字體檔，再向 \TeX{} 字體系統
+或作業系統尋找字體。已能直接解析的系統字體無須另外複製
+到 IMPE 目錄。新增字體檔通常放在
+\texttt{assets/fonts/} 下，亦可在 \texttt{impe.local.tex}
+內設定其他存放位置：
 
 \begin{verbatim}
 \SetCatalogFontRoot{D:/Fonts/IMPE}
 \end{verbatim}
 
-並將路徑改成實際使用的位置。若只需對單一文件作臨時覆寫，也可以直接在文件中使用
-同一命令。核心發行版與 CTAN 安裝可直接使用已可解析的系統或 TeX 字體；
-要求本機字體檔的功能則需要提供相應資源。
+此命令也可在單一文件的導言區使用。
+一般字體解析失敗時，IMPE 可以警告並採用代用字體；
+XSR 則須取得所用字體的實體檔案。
 
 \subsection{快速安裝檢查}
 
-安裝完成後，在提供 Libertinus 的系統上，下列文件應能以 \XeLaTeX{} 編譯：
+若系統提供 Libertinus，可用下面的最小文件確認類別、
+字體登錄與局部命令能正常工作：
 
 \begin{verbatim}
 \documentclass{impeart}
 \UseFont{libertinus}
-
 \begin{document}
-\LIB{IMPE is ready.}
+IMPE 已可使用。\LIB{Libertinus 局部文字。}
 \end{document}
 \end{verbatim}
 
-若編譯成功，即表示標準包裝類別、套件入口與自動字體載入介面均已能由 \TeX{} 找到。
+這項檢查針對一般 \XeLaTeX{} 編譯；XSR 和發行包另有測試。
 
 \section{快速開始}
 
@@ -177,27 +198,27 @@ install.bat
 因此，一份簡短文章可以寫成：
 
 \begin{verbatim}
-\documentclass[11pt]{impeart}
+\documentclass[11pt,lang=zh]{impeart}
 
 \UseFont{libertinus}
 \UseFeatures{math,hyperlinks}
 
-\title{A Sample Document}
-\subtitle{Typeset with IMPE}
-\author{Author Name}
+\title{一份排版示例}
+\subtitle{使用 IMPE 排版}
+\author{作者姓名}
 
 \begin{document}
 
 \maketitle
 
-\section{Introduction}
-\LIB{Hello, world.}
+\section{引言}
+本文件使用 IMPE 排版。\LIB{Hello, world.}
 
 \end{document}
 \end{verbatim}
 
-這個類別已經提供一般的英文文章版面與基礎字體。省略模式的
-\verb|\UseFont{libertinus}| 會遵循該字體族登錄的自動行為：啟用其全域字體組合，
+這個類別已提供中文文章版面，以及 CMU、Shanggu 等基礎字體。省略模式的
+\verb|\UseFont{libertinus}| 會遵循已登錄的自動行為：將 Libertinus 登錄為明確的全域拉丁字體候選，
 同時提供局部命令 \verb|\LIB|；\verb|\UseFeatures| 則啟用兩個選用功能模組。
 其餘部分都是一般的 \LaTeX{}。
 
@@ -223,7 +244,7 @@ IMPE 也可以作為套件載入到標準 \LaTeX{} 類別之下：
 
 \UseTemplateSet{
   layout = en_doc,
-  fonts = {cmu,libertinus},
+  fonts = {libertinus},
   features = {hyperlinks}
 }
 \end{verbatim}
@@ -240,11 +261,11 @@ IMPE 也可以作為套件載入到標準 \LaTeX{} 類別之下：
 
 \begin{description}
   \item[\texttt{article\_en/}] 使用 \texttt{impeart} 的英文文章起始範本。
-  \item[\texttt{article\_zh/}] 使用 \texttt{impeart\_zh} 的中文文章起始範本。
+  \item[\texttt{article\_zh/}] 使用 \texttt{impeart} 與 \texttt{lang=zh} 的中文文章範本。
   \item[\texttt{book\_en/}] 使用 \texttt{impebook} 的英文書籍起始範本。
-  \item[\texttt{book\_zh/}] 使用 \texttt{impebook\_zh} 的中文書籍起始範本。
+  \item[\texttt{book\_zh/}] 使用 \texttt{impebook} 與 \texttt{lang=zh} 的中文書籍範本。
   \item[\texttt{beamer\_en/}] 使用 \texttt{impebeamer} 的英文簡報起始範本。
-  \item[\texttt{beamer\_zh/}] 使用 \texttt{impebeamer\_zh} 的中文簡報起始範本。
+  \item[\texttt{beamer\_zh/}] 使用 \texttt{impebeamer} 與 \texttt{lang=zh} 的中文簡報範本。
 \end{description}
 
 每個範本都遵循已安裝套件的正常寫法，並包含實際可用的中繼資料、章節與正文結構；
@@ -256,33 +277,43 @@ IMPE 也可以作為套件載入到標準 \LaTeX{} 類別之下：
 
 \section{文件類別與公開入口}
 
-\subsection{包裝類別}
+\subsection{標準文件類別與語言選擇}
 
-IMPE 為系統主要使用的四種文件形式提供包裝類別：
-
-\begin{description}
-  \item[\texttt{impeart}] 面向英文文章的包裝類別。一般版面為
-    \texttt{en\_doc}，預設全域字體族為 \texttt{cmu}。
-  \item[\texttt{impebook}] 面向英文書籍的包裝類別。一般版面為
-    \texttt{en\_book}，預設全域字體族為 \texttt{cmu}。
-  \item[\texttt{impereport}] 面向英文報告的包裝類別。預設使用
-    \texttt{en\_doc} 版面與 \texttt{cmu}。
-  \item[\texttt{impebeamer}] 簡報包裝類別。預設選擇
-    \texttt{beamer} 版面與 \texttt{cmu}。
-\end{description}
-
-中文對應類別為 \texttt{impeart\_zh}、\texttt{impebook\_zh}、
-\texttt{impereport\_zh} 與 \texttt{impebeamer\_zh}。它們會選擇相應的中文文件
-設定，並在預設全域字體設定中同時加入 \texttt{shanggu} 與 \texttt{cmu}。這項差異
-涉及預設設定；兩組包裝類別都可編排多語內容。
-
-未識別的類別選項會原樣傳遞給底層標準類別。因此，像
+新文件統一使用四個標準類別：\texttt{impeart}、
+\texttt{impereport}、\texttt{impebook} 和
+\texttt{impebeamer}。同一類別可以透過
+\texttt{lang=en}（預設）或 \texttt{lang=zh}
+切換語言與對應排版，無須另換類別名稱：
 
 \begin{verbatim}
+% 英文文章
 \documentclass[12pt,twoside]{impeart}
+
+% 中文文章
+\documentclass[lang=zh,12pt]{impeart}
+
+% 中文書籍
+\documentclass[lang=zh]{impebook}
+
+% 中文簡報
+\documentclass[lang=zh]{impebeamer}
 \end{verbatim}
 
-這樣的普通選項，仍會照常控制底層的 \texttt{article} 類別。
+這四個類別分別建立在 \texttt{article}、
+\texttt{report}、\texttt{book} 與
+\texttt{beamer} 之上。英文預設版面依次為
+\texttt{en\_doc}、\texttt{en\_report}、
+\texttt{en\_book}、\texttt{beamer}；
+中文則為 \texttt{zh\_doc}、
+\texttt{zh\_report}、\texttt{zh\_book}、
+\texttt{beamer\_zh}。英文預設字體包含 CMU；
+中文另加 Shanggu。使用者明確指定的字體可覆寫類別預設。
+
+一般類別選項，如 \texttt{12pt}、\texttt{twoside}
+及 Beamer 的 \texttt{aspectratio=169}，
+會傳給底層標準類別。舊式 \texttt{impe*\_zh}
+與 \texttt{next*} 類別仍可使用，但屬相容入口；
+詳見第~\ref{sec:compatibility} 節。
 
 \subsection{直接使用 \texttt{impe.sty}}
 
@@ -302,9 +333,9 @@ IMPE 為系統主要使用的四種文件形式提供包裝類別：
 標題機制仍保持熟悉的形式。典型的導言區可以簡單寫成
 
 \begin{verbatim}
-\title{Main Title}
-\subtitle{A More Specific Description}
-\author{Author Name}
+\title{主標題}
+\subtitle{更具體的副標題}
+\author{作者姓名}
 \end{verbatim}
 
 並在正文中呼叫 \verb|\maketitle|。
@@ -372,265 +403,441 @@ IMPE 的範本由可重用的元件組成。某個版面可以與不同字體選
 例如，下列兩組宣告透過相同範本介面組合出兩份相當不同的文件：
 
 \begin{verbatim}
-% 英文文章
+% 英文文章：類別已提供 en_doc 和 CMU
+\documentclass{impeart}
 \UseTemplateSet{
-  layout = en_doc,
   fonts = {libertinus},
   features = {math,hyperlinks}
 }
 
-% 支援其他文字的中文書籍
+% 中文書籍：類別已提供 zh_book、CMU 與 Shanggu
+\documentclass[lang=zh]{impebook}
 \UseTemplateSet{
-  layout = zh_book,
-  fonts = {cmu,shanggu,sanskrit,tibetan},
+  fonts = {sanskrit,tibetan},
   features = {citations,index,hyperlinks}
 }
 \end{verbatim}
 
-第二個例子陳述實際需要的字體族與功能；內部的字體與版面子系統仍負責實作細節。
+以上是兩份不同文件的導言區示例。文件類別會提供相應的版面與基礎字體，
+作者只需補上額外字體和功能。如需使用其他已登錄版面，再明確指定
+\texttt{layout=}。
 
 
-\section{字體、文字路由與多語排版}
+\section{字體、書寫系統路由與多語排版}
 
-通用局部命令為 \verb|\Font{family-id}{content}|，例如
-\verb|\Font{hindi}{...}|。它共用家族命令的字重、字形、局部路由覆寫與文字系統處理。
-\verb|\UseFont| 保持載入／啟用的原意。局部宣告按需載入；需要額外套件的家族
-請先在導言區載入。
+IMPE 提供兩種公開字體選擇方式：簡單的已登錄字體預設，
+以及可以自行組合的書寫設定檔與字體資源。兩者都屬 1.1.0
+正式支援的介面；既有的字體縮寫命令亦繼續保留。
 
-\subsection{作為已登錄能力的字體族}
+\subsection{已登錄字體預設}
 
-IMPE 將字體族連同塑形與路由行為一起登錄。字體族會在中央登錄表中登記
-正確使用它們所需的資訊：可用字體樣式、路徑或系統字體名稱、OpenType 的文字與語言設定、
-局部命令的中繼資料、全域路由行為，以及必要時的特殊版面或渲染路徑。
-
-這套模型使簡單的拉丁字體族與複雜文字字體族能共享同一套公開載入介面，即使它們內部
-需要的機制各有差異。共同的抽象單位是「已登錄的字體族」；每種書寫系統保留適合的實作。
-
-\subsection{自動、全域與局部載入}
-
-一般使用時，載入字體族可省略模式。IMPE 會遵循該字體族已登錄的行為；這種
-行為可能是局部、全域，或針對特定文字範圍。\texttt{fonts} 範本鍵對一組字體族套用
-相同的自動規則。
-
-\emph{全域}字體族參與文件層級的字體選擇。對一般拉丁字體族而言，這可能表示替換主要
-襯線體、無襯線體與等寬字體通道。對專門服務特定書寫系統的字體族而言，則可能只負責
-某些 Unicode 範圍，而拉丁文、漢字與其他文字保持原有字體路由。
-
-\emph{局部}字體族則供明確呼叫。當某一段文字需要特定文字字體、地區字形，或編輯者
-刻意選擇的字體，並希望維持文件全域路由時，局部選擇特別有用。
-
-例如，可以使用
+一般情況下，使用 \verb|\UseFont{id}| 載入既有字體預設；
+\verb|\UseTemplateSet| 的 \texttt{fonts} 鍵可以一次指定多個。
+省略模式時，IMPE 依完整的登錄規則自動處理：建立局部字體命令、
+登錄全域候選字體，或接管指定 Unicode 範圍。
 
 \begin{verbatim}
 \UseFont{libertinus}
 \UseFonts{sanskrit,tibetan,arabic}
-
-\UseFont{libertinus}[global]   % 刻意的全域覆寫
-\UseLocalFonts{sanskrit}       % 刻意的局部覆寫
+\UseFont{libertinus}[local]
+\UseFont{libertinus}[global]
 \end{verbatim}
 
-也可以透過 \verb|\UseTemplateSet| 中對應的鍵完成相同設定。
-\verb|\UseGlobalFont(s)| 與 \verb|\UseLocalFont(s)| 都是明確覆寫；省略模式
-是一般情況的建議形式。各局部字體族所建立的公開命令由其登錄資訊定義；完整清單見字體
-參考文件。
+第一個命令既提供 \verb|\LIB|，也把 Libertinus
+登錄為使用者明確指定的全域拉丁字體候選。
+因此，它可以取代文件類別預設的 CMU。
+\texttt{[local]} 只建立局部設定；
+\texttt{[global]} 明確要求全域模式。
+\verb|\UseLocalFont|、\verb|\UseGlobalFont|
+及各自的複數形式，可用來明確指定模式；
+\verb|\UseMainFont| 是全域選擇的另一名稱。
 
-當某個明確的局部字體命令正在作用時，它在該作用域內會優先於自動的全域範圍路由。
-離開局部作用域後，原有全域路由狀態會恢復。即使一份文件大量依賴自動文字選擇，
-作者的明確選擇仍可保持可預期。
+像 \verb|\SA{...}| 這類既有命令，
+可在文字參數內套用相應字體及專用排版處理。
+也可以直接寫 \verb|\Font{sanskrit}{...}|，
+不必預先呼叫 \verb|\UseFont|。
+全部 59 個原有字體預設及其局部命令列於附錄。
 
-\subsection{Unicode 範圍路由}
+\subsection{書寫設定檔與字體資源}
 
-某些全域字體族負責指定範圍。例如，天城文字體族以全域模式載入時，可接管其
-Unicode 區塊，而拉丁主字體維持原有角色。多個已登錄字體族因此可在同一份文件中
-分別負責各自的文字範圍。
+字體系統區分四類登錄資訊：
+\emph{Unicode 區塊資料}、
+\emph{書寫設定檔}（碼位覆蓋範圍與文字處理規則）、
+\emph{字體資源／字體組}（實際字面與樣式），
+以及\emph{已登錄字體預設}。
+例如，\texttt{sanskrit} 是包含梵語排版行為的舊式字體預設，
+\texttt{devanagari} 則是可以搭配不同字體資源的書寫設定檔。
 
-這種路由對真正的多語正文尤其有用：作者照常輸入 Unicode 文字，當文字進入某個已設定
-的書寫系統範圍時，IMPE 自動選擇相應的已登錄字體族。範圍路由負責協助字體選擇；
-塑形仍由 \XeTeX{}、\texttt{fontspec} 與所選字體自身的 OpenType 資料處理。
+1.1.0 提供 69 個書寫設定檔、85 個字體資源別名，
+並保留原有 59 個字體預設。書寫設定檔決定
+Unicode 範圍及文字處理方式，字體資源決定字形來源；
+更換字體不會改變該設定檔的碼位範圍。
+\texttt{chinese}、\texttt{japanese} 與
+\texttt{korean} 的漢字範圍互有重合，
+需要時應明確指定相應的地區字形。
 
-\subsection{CJK 處理}
+\begin{verbatim}
+\UseWriting{[shanggu]chinese}
+\UseWriting{[tiro]devanagari}
+\UseWriting{[naskh]arabic}
+\end{verbatim}
 
-CJK 字體與一般 Unicode 範圍切換略有不同。IMPE 透過 xeCJK 路徑處理 CJK 全域字體族，
-使主要、無襯線與等寬的 CJK 字體通道能以真正的 CJK 字體方式統一管理。
+一般寫法為 \verb|\UseWriting{[字體資源,選項]設定檔}|，
+其中括號內第一項可以省略，也可以寫已登錄的字體資源 ID；
+\texttt{font=} 用於指定可解析的字體族名稱，
+\texttt{file=} 用於指定字體檔案。這幾種字體來源的選擇
+在同一項設定內互斥。多項設定可在括號和群組之外用逗號分隔。
+其他可用選項包括 \texttt{stylemap=native|full}、
+\texttt{writing=horizontal|vertical}、\texttt{offset=}
+及 \texttt{italic=zhuque} 等字面覆寫。
+全域字體路由使用橫排；有支援的局部命令則可使用直排。
 
-共用漢字在中文、日文與韓文的地區字形間共用 Unicode 碼位。自動路由因此讓假名、
-諺文等語言專屬文字取得各自的字體族，
-而共用漢字仍留在文件的 CJK 字體族上。若明確需要日文或韓文的漢字字形，可以使用局部
-字體命令直接指定。
+\subsection{具名與臨時局部字體}
 
-這種區分是刻意的。自動路由處理明確的書寫系統範圍；共享漢字的地區字形由
-局部命令明確選用。
+\verb|\DeclareWriting{名稱}{設定}| 可儲存一組設定而不立即啟用；
+\verb|\Font{名稱}[覆寫]{文字}| 將其用於指定文字；
+\verb|\Writing{設定}{文字}| 則直接使用一組未命名的局部設定。
 
-\subsection{塑形與斷行}
+\begin{verbatim}
+\DeclareWriting{han-note}
+  {[shanggu,stylemap=full,italic=zhuque]chinese}
+\begin{document}
+\Font{han-note}{漢字}
+\Font{sanskrit}{संस्कृतम्}
+\Writing{[tiro]devanagari}{संस्कृतम्}
+\end{document}
+\end{verbatim}
 
-一般複雜文字的 OpenType 塑形，透過字體族登錄的文字、語言與功能設定表達。因此，
-印度系文字、阿拉伯文以及其他依賴塑形的文字，在文件層級仍然只是普通 Unicode 文字；
-IMPE 提供讓文字引擎正確塑形所需要的字體設定。
+局部字體選擇會將一套字體及文字處理方式套用到
+\emph{整個文字參數}，不會在參數內再次按 Unicode
+範圍自動分拆。內層明確指定的局部字體可以覆寫外層選擇。
+沒有特殊文字處理需求時，也可只用
+\texttt{font=} 或 \texttt{file=} 作局部設定。
 
-某些文字還需要超出普通空格的斷行行為。IMPE 為梵語天城文、藏文、泰文等情況
-提供文字感知的處理。字體與行為層提供適當的斷行機會，同時保護字形簇與文字專屬標點規則。
+\texttt{stylemap=native} 優先使用字體真正提供的樣式字面；
+\texttt{stylemap=full} 還可以使用已登錄的跨字體樣式代用。
+部分西文字體組預設使用後者。
+樣式缺失與某個字形缺失是兩種不同問題。
+完整選項可參閱 \texttt{docs/USEWRITING-1.0.5.md}；
+附錄另列出全部設定檔與字體資源識別碼。
 
-需要由右至左排寫的字體族，同樣會附帶相應的方向行為。即使底層段落或行內行為與
-左至右的拉丁字體族不同，公開的字體模型仍然保持一致。
+\subsection{全域優先級與缺字後備}
 
-\subsection{直排與外部渲染}
+標準類別預設 CMU；選用 \texttt{lang=zh} 時另有 Shanggu。
+\emph{使用者明確指定的全域字體優先於類別預設}。
+在同一優先級內，若多套拉丁字體競爭主字體位置，
+通常由最先登錄者取得。中文、日文、韓文的
+共用範圍則遵循中文先於日文、日文先於韓文的既有規則。
 
-少數書寫系統需要的機制超出標準橫排 OpenType 塑形。IMPE 因而提供一條內建的直排
-版面路徑，供已登錄的直排字體族使用；對某些更適合以小型輔助 \TeX{} 文件生成、
-再以 PDF 嵌回主文件的片段，也提供外部渲染路徑。
+\begin{verbatim}
+\UseGlobalFonts{cmu,libertinus}
+\end{verbatim}
 
-外部渲染透過可攜的 \texttt{texlua} 輔助程式實作。輔助程式從系統的
-\texttt{PATH} 解析需要的 \TeX{} 引擎，在 IMPE 快取目錄中生成結果，然後將 PDF
-交回主文件。這個機制被封裝在字體登錄層之後，由輔助程式替一般文件管理暫存檔與
-引擎路徑。
+這個例子裏，CMU 是第一套明確指定的拉丁主字體，
+後面的 Libertinus 不會自動取代它；
+但 \verb|\UseFont{libertinus}| 可以優先於類別隱含的 CMU。
 
-這些特殊路徑共用公開字體介面，讓需要超出單純
-\verb|\newfontfamily| 宣告行為的文字也能使用一致的公開字體模型。
+自動逐字形缺字後備目前用於 CJK 字體。
+IMPE 透過 xeCJK 檢查「襯線／無襯線」、
+「常規／粗體」、「正體／斜體」所組成的
+$2\times2\times2$ 樣式矩陣；
+先在目前字體資源中尋找，再查找同一書寫設定檔、
+最後查找其他 CJK 設定檔的已登錄資源。
+使用者明確登錄的字體排在類別隱含字體之前；
+後續載入的資源亦會更新後備鏈。
 
-\subsection{完整字體參考的位置}
+這與字體名稱無法解析時採用的整套代用字體有所不同。
+其他文字系統保留 OpenType 對連續文字的塑形處理，
+不執行逐碼位的自動缺字替換。
 
-完整的字體族目錄、登錄語法、樣式後備規則、全域路由模型、直排參數、外部渲染後端，
-以及各書寫系統的專門說明，都維護在 \texttt{docs/FONTS-zh.md}。需要新增字體族或
-調查字體路由行為的使用者，應將該文件視為技術參考。
+\subsection{Unicode 範圍與 CJK 路由}
+
+按書寫系統啟用的全域字體可以接管指定 Unicode 區塊，
+其餘文字仍沿用原有字體。局部命令在其參數內優先，
+結束後恢復原有全域路由。
+
+CJK 使用 xeCJK 的主要、無襯線與等寬字體通道。
+共用漢字保留文件已選定的 CJK 字體，
+假名與諺文可各自選擇字體範圍。
+若要顯示日文或韓文的漢字字形，
+可使用 \verb|\JP{...}|、\verb|\KR{...}|
+等局部命令。重合的全域設定檔仍遵循既有的路由優先級。
+
+\subsection{字形塑造、斷行與書寫方向}
+
+印度系文字、阿拉伯文等複雜文字的 OpenType 字形塑造，
+由 \XeTeX{} 和所用字體負責。
+IMPE 提供相應的文字與語言設定，以及梵語天城文的音節斷行、
+藏文按音節分隔點斷行、泰文依詞典斷行等處理。
+需要由右至左書寫的文字也有對應設定。
+蒙古文、滿文和回鶻文支援局部旋轉直排，
+與整頁書寫方向的變更不同。
+
+\subsection{XSR 1.3：聖書字、契丹小字與圖片字形}
+
+IMPE 隨附 XSR 1.3，提供埃及聖書字組合排版、
+契丹小字堆疊與行內圖片字形功能。
+相關文字由各自的字體預設啟用；圖片字形
+則由獨立的 \texttt{glyphs} 功能載入。
+
+\begin{description}
+  \item[埃及聖書字]
+    先載入 \verb|\UseFont{egyptian}|，
+    再使用對應的 Unicode 組合控制字元或
+    \verb|\IMPEEgyptianText{...}|。
+  \item[契丹小字]
+    載入 \verb|\UseFont{khitan_small}| 後，
+    使用 \verb|\KHS{...}| 進行原生 XSR 堆疊。
+    亦保留 \verb|\KHSstack| 與 \verb|\KHSstackblock|。
+    原有字簇分隔符與 U+16FE4 填充符會保留；
+    堆疊高度不同時會在文字行內對齊。
+  \item[圖片字形]
+    使用 \verb|\UseFeature{glyphs}| 載入功能，
+    以 \verb|\IMPEGlyphRegister| 登錄圖檔，
+    再以 \verb|\IMPEGlyph| 插入文字行。
+\end{description}
+
+動態渲染需要 Python 執行環境、
+XeLaTeX Shell Escape 或 XSR 預處理，
+以及可讀取的字體與圖檔。
+XSR 可透過 PDF 的 \texttt{/ActualText}
+保留聖書字組合和契丹小字字簇原本的線性 Unicode 序列；
+實際複製結果仍視 PDF 閱讀器而定。
+
+\subsection{更多字體文件}
+
+字體登錄、樣式對應、文字路由與特殊文字處理詳見
+\texttt{docs/FONTS.md} 及 \texttt{docs/USEWRITING-1.0.5.md}。
+展示冊收錄各種文字的實際排版效果。
 
 \section{版面與功能}
 
-\subsection{版面預設}
+\subsection{各類出版物的版面預設}
 
-版面描述文件層級的呈現方式。一個公開版面預設，是由頁面幾何、文字間距、頁眉行為、
-書籍行為或投影片行為等項目組成的結構化組合。各低階組件屬於內部實作；一般文件直接
-選擇完整的公開預設即可。
-
-IMPE 1.x 提供的公開預設為：
+版面預設統一決定紙張、版心、行距、頁眉與章節排版。
+IMPE 提供可直接使用的出版版面，作者需要細部修改時，
+仍可使用一般 \LaTeX{} 套件。
 
 \begin{description}
-  \item[\texttt{en\_doc}] 英文文章／報告版面。
-  \item[\texttt{zh\_doc}] 中文文章／報告版面。
-  \item[\texttt{en\_book}] 英文書籍／報告版面，帶有面向書籍的頁面與頁眉行為。
-  \item[\texttt{zh\_book}] 對應的中文書籍／報告版面。
-  \item[\texttt{beamer}] Beamer 簡報版面。
+  \item[\texttt{en\_doc}、\texttt{zh\_doc}]
+    A4 文章版面；左右各 29\,mm、上方 28\,mm、
+    下方 32\,mm。
+  \item[\texttt{en\_report}、\texttt{zh\_report}]
+    獨立的 A4 報告版面；左 31\,mm、右 29\,mm、
+    上 29\,mm、下 34\,mm，並有專用頁眉。
+  \item[\texttt{en\_book}、\texttt{zh\_book}]
+    ISO B5（176$\times$250\,mm）雙面書籍版面；
+    內側 19\,mm、外側 31\,mm，裝訂補償 3\,mm。
+  \item[\texttt{beamer}、\texttt{beamer\_zh}]
+    Madrid 主題的 4:3 簡報版面。
 \end{description}
 
-各預設會聲明自己支援哪些底層文件類別。IMPE 在套用前會先檢查相容性，並回報
-不相符的文件類別。
+文章與報告都有自己的 A4 版心和文字設定。
+另提供 \texttt{beamer\_clean} 與
+\texttt{beamer\_clean\_zh}，供需要簡潔型簡報的人選用。
+要製作寬螢幕簡報，可設定原生類別選項
+\texttt{aspectratio=169}。
 
-包裝類別會自動選擇對應的版面。直接使用標準類別，或希望讓報告採用書籍導向版面時，
-才需要明確指定，例如：
+\subsection{原生版面調整與局部設定}
+
+標準文章、報告和書籍類別已載入
+\texttt{geometry} 與 \texttt{fancyhdr}。
+若要精確調整頁邊距或頁眉，建議直接使用這兩套
+\LaTeX{} 套件的命令：
 
 \begin{verbatim}
-\UseLayout{en_book}
+\documentclass{impereport}
+\geometry{a4paper,left=30mm,right=30mm}
+\fancyhead[R]{頁眉短題}
 \end{verbatim}
 
-各組件的具體值與頁面幾何詳見 \texttt{docs/LAYOUTS-zh.md}。
+IMPE 也提供 \verb|\LayoutSetup| 和 \verb|\LayoutSet|
+設定已登錄的版面參數；
+\texttt{LayoutScope} 可在正文的一段範圍內使用局部設定。
+
+\begin{verbatim}
+\documentclass[lang=zh]{impeart}
+\LayoutSetup{page.inner=25mm,page.top=24mm}
+\begin{document}
+\begin{LayoutScope}{text.par-indent=2em}
+本段採用局部設定的段首縮排。
+\end{LayoutScope}
+\end{document}
+\end{verbatim}
+
+進階排版可繼續使用原生的頁面、頁眉與 Beamer 命令。
+需要重現早期 1.0.5 的版面參數時，可查閱
+第~\ref{sec:compatibility} 節的相容設定。
 
 \subsection{功能模組}
 
-\texttt{drawing} 載入 TikZ/PGF、pgfplots（compatibility 1.18）與 forest，
-直接使用原生圖形、函數圖與樹狀圖語法。
-
-\texttt{index} 會載入 hyperlinks；\verb|\Term| 的索引頁碼直接連到所記錄的
-正文位置，即使重設頁碼仍可區分。每個 key 記錄首次出現位置的語義保持不變。
-手動處理請在輸出目錄執行
-\texttt{texindy -L english -C utf8 -M <job>-impe <job>.idx}，再執行兩次 XeLaTeX。
-
-功能是扁平、可組合的模組。某個功能識別碼在第一次請求時載入相應的選用功能；
-後續重複請求沿用已載入的模組。
-
-目前的公開功能包括：
+各功能模組負責載入配套套件，使用者則可直接使用
+這些套件的一般 \LaTeX{} 命令：
 
 \begin{description}
-  \item[\texttt{math}] 標準數學套件、定理環境與選用的數學字體設定。
-  \item[\texttt{hyperlinks}] 超連結、PDF 書籤、穩定目標與程式碼倉庫連結預設。
-  \item[\texttt{citations}] 基於 \texttt{biblatex}/\texttt{biber} 的引用支援，
-    並提供可選的引用樣式預設。
-  \item[\texttt{index}] 索引生成以及 IMPE 的術語／索引輔助命令。
-  \item[\texttt{tables}] 表格套件、可重用欄類型與表格環境。
-  \item[\texttt{image}] 圖形、圖片與多面板輔助功能。
-  \item[\texttt{lists\_envs}] 可重用的 \texttt{ExampleBlock} 範例區塊格式。
-  \item[\texttt{headers}] 供文章、報告與書籍使用的可設定頁眉。
+  \item[\texttt{math}] 數學套件、定理環境與數學字體設定。
+  \item[\texttt{hyperlinks}] 超連結、PDF 書籤和穩定的跳轉目標。
+  \item[\texttt{citations}] 使用 \texttt{biblatex}／\texttt{biber}
+    的引文及參考書目。
+  \item[\texttt{index}] 使用 \texttt{imakeidx}／\texttt{xindy} 的原生索引。
+  \item[\texttt{tables}] 表格、\texttt{booktabs}、
+    \texttt{longtable} 及 \texttt{tabularx}。
+  \item[\texttt{image}] 圖片、圖說與子圖。
+  \item[\texttt{drawing}] TikZ／PGF、\texttt{pgfplots}
+    （相容版本 1.18）和 \texttt{forest}。
+  \item[\texttt{glyphs}] 以 XSR 登錄並插入行內圖片字形。
+  \item[\texttt{headers}] 使用 \texttt{fancyhdr} 設定頁眉。
 \end{description}
 
-文件可以載入任意所需的組合：
-
 \begin{verbatim}
-\UseFeatures{math,hyperlinks,tables,image}
+\UseFeatures{math,hyperlinks,tables,image,drawing,glyphs}
 \end{verbatim}
 
-或者：
+同一份文件可組合多項功能，重複載入同一功能時不會再次初始化。
 
-\begin{verbatim}
-\UseTemplateSet{
-  features = {citations,index,hyperlinks}
-}
-\end{verbatim}
+\subsection{數學與文獻引用}
 
-\subsection{數學}
-
-\texttt{math} 功能會載入以 AMS 套件為核心的標準數學組合，並定義包括
-\texttt{theorem}、\texttt{lemma}、\texttt{proposition}、
-\texttt{corollary}、\texttt{definition}、\texttt{example} 與
-\texttt{remark} 在內的定理類環境。載入文字字體族時，Computer Modern 數學字體
-仍為預設；明確選擇數學路徑則可切換數學字母。
-
-可在載入功能之前選擇另一個數學字體族。例如：
+\texttt{math} 提供 \texttt{theorem}、\texttt{lemma}、
+\texttt{proposition}、\texttt{corollary}、
+\texttt{definition}、\texttt{example}、
+\texttt{remark} 等定理類環境。
+若未另行指定，數學字體仍使用 Computer Modern；
+要使用 Libertinus Math，可在載入功能前設定：
 
 \begin{verbatim}
 \UseMathFont{libertinus}
 \UseFeature{math}
 \end{verbatim}
 
-會透過 \texttt{unicode-math} 使用 Libertinus Math。其他受支援路徑以及實際載入的
-套件組合，詳見 \texttt{docs/FEATURES-zh.md}。
+\texttt{citations} 使用原生 \texttt{biblatex}，
+因此可照常使用 \verb|\addbibresource|、
+\verb|\textcite|、\verb|\parencite|、
+\verb|\printbibliography| 等命令。
+\verb|\UseCitationStyle| 可以設定 APA、GB/T 7714、
+數字式及作者—年份式等引文樣式。
 
-\subsection{引用、索引、表格與圖片}
+\subsection{以原生命令建立索引}
 
-各功能模組提供實用預設，並保留原本的 \LaTeX{} 生態。例如，
-\texttt{citations} 功能使用 \texttt{biblatex} 與 \texttt{biber}；文件仍然照常使用
-\verb|\addbibresource|、\verb|\textcite| 與 \verb|\printbibliography| 等命令。
-APA、GB/T 7714、數字式或作者—年份式等引用預設，可在功能載入前選擇。
+新文件建議直接使用 \texttt{imakeidx} 的
+\verb|\makeindex|、\verb|\index|、
+\verb|\printindex|。若由 IMPE 建立預設索引，
+每一個一般 \verb|\index| 標記都會有獨立的 PDF
+跳轉目標；即使同一頁有多個標記，或文件曾重設頁碼，
+也能分別連到對應位置。
 
-\texttt{index} 功能建立在 \texttt{imakeidx} 之上，並加入
-\verb|\Term| 輔助命令，使術語排版與索引可以一起處理。\texttt{tables} 與
-\texttt{image} 功能同樣提供較高階的便利環境，同時仍保留原生
-\texttt{booktabs}、\texttt{graphicx} 及相關命令可直接使用。
+\begin{verbatim}
+\UseFeature{index}
+\begin{document}
+佛教\index{佛教}與大乘\index{佛教!大乘}。
+後文仍可再次標記佛教\index{佛教}。
+\printindex
+\end{document}
+\end{verbatim}
 
-整套功能系統減少重複設定，同時保留一般 \LaTeX{} 命令。
+若使用者已自行宣告預設索引，IMPE 會遵循其設定。
+也可以使用原生語法建立具名索引，例如
+\verb|\makeindex[name=people,title={人物},program=xindy]|，
+搭配 \verb|\index[people]{...}| 和
+\verb|\printindex[people]|。
+逐項獨立跳轉的保證範圍，是 IMPE 自行建立的
+預設索引中的普通索引標記；
+\texttt{see}、\texttt{seealso}、範圍標記、
+具名索引等進階語法仍遵循原生處理方式。
+
+IMPE 所建立的預設索引可在輸出目錄使用：
+
+\begin{verbatim}
+texindy -L english -C utf8 -M <job>-impe <job>.idx
+\end{verbatim}
+
+完成索引處理後，再執行兩次 \XeLaTeX{}。
+
+\subsection{表格、圖片、繪圖與行內字形}
+
+一般表格使用 \texttt{table}、\texttt{tabular}、
+\texttt{longtable}、\texttt{booktabs} 等原生環境與命令；
+圖片使用 \texttt{figure}、\verb|\includegraphics| 和子圖功能；
+繪圖則使用 \texttt{tikzpicture}、\texttt{axis}、
+\texttt{forest}。舊式的表格與圖片便利命令仍供既有文件使用。
+
+圖片字形的用法如下：
+
+\begin{verbatim}
+\UseFeature{glyphs}
+\IMPEGlyphRegister[logical={未編碼字形},description={拓片}]
+  {bs-042}{images/bs-042.svg}
+\begin{document}
+前文 \IMPEGlyph{bs-042} 後文。
+\IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
+\end{document}
+\end{verbatim}
+
+圖片路徑必須可以由渲染程式讀取。
+\texttt{logical} 與 \texttt{description} 用於描述字形；
+\texttt{trim} 裁切的是顯示範圍。
 
 \subsection{頁眉與超連結}
 
-\texttt{headers} 功能透過 \texttt{fancyhdr} 提供頁眉。預設情況下，它會從
-\verb|\title| 的第一行取得固定頁眉標題；若希望使用更短的形式，可以用
-\verb|\HeaderTitle{...}| 明確指定。文章類文件以節資訊作為變動頁眉，而報告與書籍類
-文件使用章資訊。
+\texttt{headers} 可以取 \verb|\title| 的第一行
+作為固定頁眉短題，也可以使用
+\verb|\HeaderTitle{...}| 另行指定。
+更細緻的頁眉變動可直接使用 \texttt{fancyhdr}。
 
-\texttt{hyperlinks} 功能會載入 \texttt{hyperref} 與 \texttt{bookmark}，並提供
-支援 Unicode 的 PDF 設定、隱藏連結邊框、可點擊的目錄結構與穩定目標。文件仍可照常
-使用 \verb|\label|、\verb|\ref|、\verb|\href| 與 \verb|\url|。
-
-功能專屬命令與環境的完整清單，請查閱 \texttt{docs/FEATURES-zh.md}；本節介紹
-主要用途。
+\texttt{hyperlinks} 載入 \texttt{hyperref} 與
+\texttt{bookmark}，提供支援 Unicode 的 PDF 設定、
+穩定的跳轉目標與可點選的目錄。
+文件依然使用原生 \verb|\label|、\verb|\ref|、
+\verb|\href|、\verb|\url| 命令。
+詳見 \texttt{docs/FEATURES.md}。
 
 \section{相容性與遷移}\label{sec:compatibility}
 
-IMPE 1.x 將 \texttt{impe*} 名稱確立為標準公開介面。因此，新文件應使用
-\texttt{impe.sty}、\texttt{impeart}、\texttt{impebook}、
-\texttt{impereport}、\texttt{impebeamer} 以及相應的中文版本。
+新文件統一使用 \texttt{impe.sty}、
+\texttt{impeart}、\texttt{impereport}、
+\texttt{impebook}、\texttt{impebeamer}，
+中文以 \texttt{lang=zh} 選擇設定。
+既有的 \texttt{impeart\_zh}、\texttt{impereport\_zh}、
+\texttt{impebook\_zh}、\texttt{impebeamer\_zh}
+分別等同於對應的標準類別加上 \texttt{lang=zh}；
+\texttt{next*} 舊類別及 \texttt{nextsystem.sty}
+亦繼續作為相容入口。
 
-較早的開發版本使用 \texttt{next*} 命名方式。這些入口在 1.x 中仍是受支援的相容
-包裝入口，並維持現有支援狀態。載入 \texttt{nextart} class 或
-\texttt{nextsystem} package 的既有文件仍可使用同一套底層實作正常編譯。相容層的目的，
-是保留舊文件的可用性；標準 \texttt{impe*} 入口供新文件使用。
+原有 \verb|\UseFont| 識別碼、局部字體縮寫及
+\texttt{[local]}／\texttt{[global]} 模式仍受支援；
+新的書寫設定檔與字體資源介面提供另一種組合方式。
 
-直接安裝器也能識別 \texttt{tex/latex/nextsystem/} 下由 0.1.x 系列建立的受管理
-安裝。遷移時，它會在 \texttt{tex/latex/impe/} 下安裝標準執行環境，在適當情況下
-遷移已識別的本機覆寫檔案，移除確定屬於舊受管理執行環境的檔案，同時保留與 IMPE
-無關的使用者檔案與子目錄。
+索引以 \verb|\index| 等原生命令為推薦方式。
+原有 \verb|\Term| 和 \verb|\IndexTitle|
+保留其格式與首次出現規則；
+一般 \verb|\index| 則能對每次出現的位置建立標記。
+需要真正的術語表時，可以直接使用
+\texttt{glossaries-extra}。
 
-因此，舊的 \texttt{nextsystem.local.tex} 可在遷移後作為本機覆寫繼續生效。
-新的本機設定應使用 \texttt{impe.local.tex}。
+舊式 \texttt{TableInlineFit}、\texttt{TableLong}、
+\texttt{TableBook}、\texttt{TableBookX}、
+\texttt{TableBookNotes}、\texttt{NiceBooktable*}、
+\texttt{OneImage}、\texttt{OneImageInline}、
+\texttt{PanelFigure}、\verb|\Panel| 等介面均保留。
+新文件優先使用 \LaTeX{} 的原生表格、圖片與子圖語法；
+\texttt{ExampleBlock} 也仍可供舊稿使用。
 
-使用舊包裝名稱撰寫的文件可透過相容執行環境繼續編譯。作者可以在方便時
-更新這些名稱。
+若要還原 1.0.5 的版面參數，可在標準類別之後使用
+\verb|\UseLegacyLayout|：
+
+\begin{verbatim}
+\documentclass[lang=zh]{impebook}
+\UseLegacyLayout
+\end{verbatim}
+
+舊式的 \texttt{report} 及 \texttt{legacy\_*}
+版面識別碼仍可使用。相容性保留的是公開命令與設定；
+字體或版式更新後，分頁可能有所改變。
+
+直接安裝程式能辨識 \texttt{tex/latex/nextsystem/}
+下的 0.1.x 系列安裝，並將目前套件放到
+\texttt{tex/latex/impe/}。遷移時會保留既有的使用者檔案，
+在適當情況下轉移本機設定，並清理已識別的舊套件檔案。
+新的本機設定檔應使用 \texttt{impe.local.tex}。
 
 \section{套件結構與擴充點}
 
@@ -652,9 +859,8 @@ docs/      詳細子系統文件
 \texttt{core/} 層包含供新增字體族、版面預設或功能使用的穩定共用機制。它負責
 實作字體登錄與路由機制、版面登錄與相容性檢查、功能載入器，以及其他共同行為。
 
-這項區分對維護十分重要。如果加入一個普通 OpenType 字體就必須修改字體路由引擎，
-或加入一項功能就必須修改通用功能載入器，代表擴充模型已經失敗。因此，穩定核心刻意
-與不斷增長的具體資源目錄分離。
+一般 OpenType 字體可透過登錄表新增，功能模組則由統一載入器管理。
+如此便能將共用機制與具體的字體、功能資料分開維護。
 
 \subsection{登錄表}
 
@@ -696,7 +902,7 @@ docs/      詳細子系統文件
     組件模型。
   \item[\texttt{docs/FEATURES-zh.md}] 公開功能識別碼，以及各模組提供的命令、
     環境、套件組合與編譯要求。
-  \item[\texttt{CHANGELOG-zh.md}] 已發行版本的變更記錄。
+  \item[\texttt{CHANGELOG.md}] 已發行版本的變更記錄。
   \item[展示冊] 完整視覺展示冊可由
     \href{\IMPEShowcaseURL}{專案程式碼倉庫}取得。
 \end{description}
@@ -718,82 +924,84 @@ docs/      詳細子系統文件
 IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的字體，也應盡可能區分
 「字體本身缺少字形」與「IMPE 路由錯誤」這兩類情況。
 
-英文手冊是權威手冊文本。其他語言版本可以依各自的技術書寫習慣調整行文與術語，
-但其中的命令、範例以及對 IMPE 行為的描述，都應與英文版保持同步。
+英文手冊是技術內容的參考底本。繁體中文版採用中文排版與文獻處理領域的
+自然術語，所有命令、範例及功能說明均與英文版對應。
 
 \appendix
 
-\section{快速參考}
-\label{app:quick-reference}
+\section{快速參考}\label{app:quick-reference}
 
-本附錄概述 IMPE 1.x 已記錄的公開介面，可與正文中的說明及 \texttt{docs/} 下更詳細的
-子系統文件配合查閱。內部實作命令，尤其是以 \texttt{\string\Next...} 開頭的命令，
-由其實作文件說明。
+本附錄依照 1.1.0 的實際公開介面編排：
+先列推薦的文件類別與命令，再列全部字體登錄識別碼，
+最後集中列出相容介面。技術識別碼與命令均保留原文，
+中文說明則採用一致的術語。
 
-\subsection{建議的字體載入模型}
+\subsection{標準文件類別與語言選項}
 
-一般使用時，請優先在 \texttt{\string\UseTemplateSet} 中使用
-\texttt{fonts = \{...\}}，或直接使用 \texttt{\string\UseFont\{...\}}。省略
-模式時，IMPE 會遵循字體族已登錄的行為：視實際設定而定，它可能建立局部命令、
-啟用文件全域字體，或安裝針對特定文字或範圍的自動路由。
+四個標準類別可使用 \texttt{lang=en}（預設）
+或 \texttt{lang=zh}。例如，
+\verb|\documentclass[lang=zh]{impeart}|
+即可建立中文文章。
 
-明確指定模式可依文件需求刻意覆寫自動行為：
+\begin{longtable}{@{}p{0.25\linewidth}p{0.33\linewidth}p{0.34\linewidth}@{}}
+\toprule
+\textbf{類別} & \textbf{英文預設} & \textbf{\texttt{lang=zh} 時} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{類別} & \textbf{英文預設} & \textbf{\texttt{lang=zh} 時} \\
+\midrule
+\endhead
+\texttt{impeart} & \texttt{en\_doc}；A4；CMU & \texttt{zh\_doc}；A4；CMU 與 Shanggu \\
+\texttt{impereport} & \texttt{en\_report}；A4；CMU & \texttt{zh\_report}；A4；CMU 與 Shanggu \\
+\texttt{impebook} & \texttt{en\_book}；B5；CMU & \texttt{zh\_book}；B5；CMU 與 Shanggu \\
+\texttt{impebeamer} & \texttt{beamer}；Madrid 4:3；CMU & \texttt{beamer\_zh}；Madrid 4:3；CMU 與 Shanggu \\
+\bottomrule
+\end{longtable}
+
+若文件類別已由期刊或出版社指定，
+可保留原有類別並載入 \verb|\usepackage{impe}|。
+
+\subsection{核心設定與字體預設}
+
+\begin{longtable}{@{}p{0.43\linewidth}p{0.49\linewidth}@{}}
+\toprule
+\textbf{命令} & \textbf{用途} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{命令} & \textbf{用途} \\
+\midrule
+\endhead
+\texttt{\string\UseTemplateSet} & 集中設定版面、字體與功能。 \\
+\texttt{\string\UseFont}、\texttt{\string\UseFonts} & 使用已登錄字體預設；可指定 \texttt{[local]} 或 \texttt{[global]}。 \\
+\texttt{\string\UseLocalFont}、\texttt{\string\UseLocalFonts} & 明確選擇局部字體。 \\
+\texttt{\string\UseGlobalFont}、\texttt{\string\UseGlobalFonts} & 明確登錄全域字體。 \\
+\texttt{\string\UseMainFont}、\texttt{\string\UseMainFonts} & 全域字體選擇的別名。 \\
+\texttt{\string\UseLayout}、\texttt{\string\UseLayouts} & 選擇已登錄版面。 \\
+\texttt{\string\UseFeature}、\texttt{\string\UseFeatures} & 載入功能模組。 \\
+\texttt{\string\SetCatalogFontRoot} & 指定本機字體根目錄。 \\
+\texttt{\string\subtitle} & 指定副標題。 \\
+\bottomrule
+\end{longtable}
+
+\verb|\UseTemplateSet| 的四個設定鍵為
+\texttt{layout}、\texttt{fonts}、
+\texttt{globalfonts}、\texttt{features}；
+\texttt{mainfonts} 是全域字體鍵的別名。
+使用者明確指定的全域字體優先於類別預設；
+同一優先級內，拉丁主字體通常按登錄先後決定。
+
+\subsection{書寫設定檔與局部文字}
 
 \begin{verbatim}
-\UseFont{sanskrit}          % 建議：使用已登錄的自動行為
-\UseFont{sanskrit}[local]   % 明確只使用局部模式
-\UseFont{sanskrit}[global]  % 明確使用全域／範圍全域模式
-
-\UseTemplateSet{
-  fonts = {sanskrit,tibetan,arabic},
-  features = {math,hyperlinks}
-}
+\UseWriting{[shanggu]chinese}
+\DeclareWriting{han-note}{[shanggu,italic=zhuque]chinese}
+\Font{han-note}{漢字}
+\Writing{[tiro]devanagari}{संस्कृतम्}
 \end{verbatim}
 
-便利命令 \texttt{\string\UseGlobalFont(s)} 與
-\texttt{\string\UseLocalFont(s)} 表達的是同一種明確區分。
-\texttt{globalfonts} 與 \texttt{mainfonts} 範本鍵同樣屬於明確全域覆寫，
-\texttt{fonts} 仍提供一般自動選擇。
-
-
-\subsection{文件類別與套件入口}
-
-\begin{longtable}{@{}p{0.31\linewidth}p{0.63\linewidth}@{}}
-\toprule
-\textbf{入口} & \textbf{用途} \\
-\midrule
-\endfirsthead
-\toprule
-\textbf{入口} & \textbf{用途} \\
-\midrule
-\endhead
-\texttt{impeart} &
-英文文章包裝類別；預設使用 \texttt{en\_doc}，並以 CMU 作為基礎全域字體。 \\
-\texttt{impeart\_zh} &
-中文文章包裝類別；預設使用 \texttt{zh\_doc}，並載入 CMU 與 Shanggu。 \\
-\texttt{impereport} &
-英文報告包裝類別；預設使用 \texttt{en\_doc}。 \\
-\texttt{impereport\_zh} &
-中文報告包裝類別；預設使用 \texttt{zh\_doc}。 \\
-\texttt{impebook} &
-英文書籍包裝類別；預設使用 \texttt{en\_book}。 \\
-\texttt{impebook\_zh} &
-中文書籍包裝類別；預設使用 \texttt{zh\_book}。 \\
-\texttt{impebeamer} &
-英文 Beamer 包裝類別；預設使用 \texttt{beamer} 版面。 \\
-\texttt{impebeamer\_zh} &
-中文 Beamer 包裝類別；預設使用 \texttt{beamer} 版面，並載入 CMU 與 Shanggu。 \\
-\texttt{impe.sty} &
-可在文件選用的一般 \LaTeX{} 類別下直接載入 IMPE。 \\
-\bottomrule
-\end{longtable}
-
-舊的 \texttt{next*} 套件與類別名稱在 1.x 中仍保留為相容別名，但新文件應使用
-標準的 \texttt{impe*} 入口。
-
-\subsection{核心設定命令}
-
-\begin{longtable}{@{}p{0.38\linewidth}p{0.56\linewidth}@{}}
+\begin{longtable}{@{}p{0.44\linewidth}p{0.48\linewidth}@{}}
 \toprule
 \textbf{命令} & \textbf{用途} \\
 \midrule
@@ -802,350 +1010,495 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 \textbf{命令} & \textbf{用途} \\
 \midrule
 \endhead
-\texttt{\string\UseTemplateSet\{...\}} &
-在一個宣告中設定版面、字體與功能。 \\
-\texttt{\string\UseFont\{id\}[mode]} &
-載入一個已登錄字體族；省略 \texttt{mode} 時採用建議的自動行為，也可明確指定
-\texttt{local} 或 \texttt{global}。 \\
-\texttt{\string\UseFonts\{ids\}[mode]} &
-以相同的選用模式載入多個已登錄字體族。 \\
-\texttt{\string\UseGlobalFont\{id\}} &
-明確要求一個字體族使用全域模式。 \\
-\texttt{\string\UseGlobalFonts\{ids\}} &
-明確要求多個字體族使用全域模式。 \\
-\texttt{\string\UseMainFont\{id\}} &
-\texttt{\string\UseGlobalFont} 的別名；保留作為面向文件設定的名稱。 \\
-\texttt{\string\UseMainFonts\{ids\}} &
-\texttt{\string\UseGlobalFonts} 的別名。 \\
-\texttt{\string\UseLocalFont\{id\}} &
-明確要求一個字體族使用局部模式。 \\
-\texttt{\string\UseLocalFonts\{ids\}} &
-明確要求多個字體族使用局部模式。 \\
-\texttt{\string\UseLayout\{id\}} &
-載入一個已登錄版面預設。 \\
-\texttt{\string\UseLayouts\{ids\}} &
-載入多個已登錄版面預設。 \\
-\texttt{\string\UseFeature\{id\}} &
-載入一個選用功能模組。 \\
-\texttt{\string\UseFeatures\{ids\}} &
-載入多個選用功能模組。 \\
-\texttt{\string\SetCatalogFontRoot\{path\}} &
-覆寫字體登錄表解析字體檔時使用的根目錄。 \\
-\texttt{\string\subtitle\{text\}} &
-設定 IMPE 標題區塊使用的副標題。 \\
-\texttt{\string\HeaderTitle\{text\}} &
-覆寫 \texttt{headers} 功能使用的固定頁眉標題。 \\
-\texttt{\string\HeaderStyle\{style\}} &
-選擇頁眉樣式；已記錄的值為 \texttt{running} 與 \texttt{title}。 \\
+\texttt{\string\UseWriting} & 啟用書寫設定檔與全域字體路由。 \\
+\texttt{\string\DeclareWriting} & 儲存具名字體設定。 \\
+\texttt{\string\Font} & 以具名字體設定作局部排版。 \\
+\texttt{\string\Writing} & 以未命名設定作局部排版。 \\
 \bottomrule
 \end{longtable}
 
-\subsection{範本組設定鍵}
+常見寫法是 \texttt{[字體資源,選項]設定檔}。
+選項鍵仍使用 \texttt{font=}、\texttt{file=}、
+\texttt{stylemap=native|full}、
+\texttt{writing=} 及各字面樣式選項。
+下方提供所有設定檔和資源別名清單。
 
-\begin{longtable}{@{}p{0.23\linewidth}p{0.69\linewidth}@{}}
+\subsection{版面與頁眉命令}
+
+\begin{longtable}{@{}p{0.35\linewidth}p{0.57\linewidth}@{}}
 \toprule
-\textbf{鍵} & \textbf{意義} \\
+\textbf{識別碼或命令} & \textbf{用途} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{鍵} & \textbf{意義} \\
+\textbf{識別碼或命令} & \textbf{用途} \\
 \midrule
 \endhead
-\texttt{layout} &
-選擇一個公開版面預設。 \\
-\texttt{fonts} &
-依照已登錄的自動行為載入一個或多個字體族；這是一般字體載入的建議設定鍵。 \\
-\texttt{globalfonts} &
-明確強制列出的字體族使用其全域模式或全域路由。 \\
-\texttt{mainfonts} &
-\texttt{globalfonts} 的別名。 \\
-\texttt{features} &
-載入一個或多個選用功能模組。 \\
+\texttt{en\_doc}、\texttt{zh\_doc} & A4 文章版面。 \\
+\texttt{en\_report}、\texttt{zh\_report} & 獨立的 A4 報告版面。 \\
+\texttt{en\_book}、\texttt{zh\_book} & ISO B5 書籍版面。 \\
+\texttt{beamer}、\texttt{beamer\_zh} & Madrid 4:3 簡報。 \\
+\texttt{beamer\_clean}、\texttt{beamer\_clean\_zh} & 選用的簡潔型簡報。 \\
+\texttt{\string\LayoutSetup}、\texttt{\string\LayoutSet} & 調整版面參數。 \\
+\texttt{LayoutScope} & 設定局部段落參數。 \\
+\texttt{\string\HeaderStyle}、\texttt{\string\HeaderTitle} & 選擇頁眉樣式及短題。 \\
 \bottomrule
 \end{longtable}
 
-\subsection{公開版面識別碼}
+精確調整頁邊距與頁眉時，優先使用
+\verb|\geometry| 和 \texttt{fancyhdr} 的原生命令。
 
-\begin{longtable}{@{}p{0.23\linewidth}p{0.69\linewidth}@{}}
+\subsection{功能識別碼與推薦接口}
+
+\begin{longtable}{@{}p{0.25\linewidth}p{0.68\linewidth}@{}}
 \toprule
-\textbf{ID} & \textbf{用途} \\
+\textbf{識別碼} & \textbf{推薦接口} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{ID} & \textbf{用途} \\
+\textbf{識別碼} & \textbf{推薦接口} \\
 \midrule
 \endhead
-\texttt{en\_doc} &
-採用 A4 頁面幾何與英文文字間距的英文文章／報告版面。 \\
-\texttt{zh\_doc} &
-採用 A4 頁面幾何與中文文字間距的中文文章／報告版面。 \\
-\texttt{report} &
-只適用於 report、並使用與 \texttt{zh\_doc} 相同頁面與正文 component 的相容 preset。 \\
-\texttt{en\_book} &
-採用書籍頁面幾何、頁眉與右頁開章的英文書籍／報告版面。 \\
-\texttt{zh\_book} &
-採用書籍頁面幾何、中文文字間距、頁眉與右頁開章的中文書籍／報告版面。 \\
-\texttt{beamer} &
-使用 IMPE Beamer 字體排印與導覽設定的簡報版面。 \\
+\texttt{math} & AMS 數學套件、定理環境與 \texttt{\string\UseMathFont}。 \\
+\texttt{hyperlinks} & \texttt{hyperref}、\texttt{bookmark}、原生引用。 \\
+\texttt{citations} & \texttt{biblatex} 引文與參考書目。 \\
+\texttt{index} & \texttt{\string\makeindex}、\texttt{\string\index}、\texttt{\string\printindex}。 \\
+\texttt{tables} & \texttt{tabular}、\texttt{booktabs}、\texttt{longtable}。 \\
+\texttt{image} & \texttt{\string\includegraphics} 與子圖。 \\
+\texttt{drawing} & TikZ、\texttt{axis}、\texttt{forest}。 \\
+\texttt{glyphs} & \texttt{\string\IMPEGlyphRegister}、\texttt{\string\IMPEGlyph}。 \\
+\texttt{headers} & 使用 \texttt{fancyhdr} 的頁眉。 \\
 \bottomrule
 \end{longtable}
 
-\subsection{公開功能識別碼}
+埃及聖書字和契丹小字的 XSR 排版，
+分別使用 \verb|\UseFont{egyptian}|
+與 \verb|\UseFont{khitan_small}| 載入相應文字功能。
 
-\begin{longtable}{@{}p{0.23\linewidth}p{0.69\linewidth}@{}}
+\subsection{已登錄字體預設及局部縮寫（59 項）}
+
+下表列出 \verb|\UseFont| 支援的 59 個既有預設。
+「自動」欄表示省略模式時的實際登錄行為：
+\texttt{G} 為全域字體，\texttt{L} 為局部字體，
+\texttt{L+G} 同時具備局部命令及全域候選，
+\texttt{L+R} 同時具備局部命令及 Unicode 範圍路由。
+實際主字體仍取決於優先級與登錄順序。
+
+\begingroup\small
+\begin{longtable}{@{}p{0.29\linewidth}p{0.10\linewidth}p{0.17\linewidth}p{0.33\linewidth}@{}}
 \toprule
-\textbf{ID} & \textbf{用途} \\
+\textbf{字體預設 ID} & \textbf{自動} & \textbf{局部命令} & \textbf{主要用途} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{ID} & \textbf{用途} \\
+\textbf{字體預設 ID} & \textbf{自動} & \textbf{局部命令} & \textbf{主要用途} \\
 \midrule
 \endhead
-\texttt{math} &
-載入 IMPE 數學套件組合與定理環境。 \\
-\texttt{hyperlinks} &
-載入超連結、PDF 書籤、可點擊標題與雙向腳註連結。 \\
-\texttt{citations} &
-載入 \texttt{biblatex}/\texttt{csquotes} 引用支援與 IMPE 引用樣式輔助功能。 \\
-\texttt{index} &
-載入索引支援與 \texttt{\string\Term} 輔助命令。 \\
-\texttt{tables} &
-載入表格套件組合、欄類型與 IMPE 表格環境。 \\
-\texttt{image} &
-載入圖片、圖說與多面板圖形輔助功能。 \\
-\texttt{lists\_envs} &
-載入 \texttt{ExampleBlock} 顯示環境。 \\
-\texttt{headers} &
-為文章、報告與書籍類文件載入可設定的頁眉。 \\
-\texttt{bib}、\texttt{header} &
-分別是 \texttt{citations} 與 \texttt{headers} 的相容別名。 \\
+\texttt{cmu} & G & --- & Computer Modern Unicode 基礎字體 \\
+\texttt{noto} & L+G & \texttt{\string\NOT} & 通用 Noto 拉丁字體 \\
+\texttt{times} & L+G & \texttt{\string\TIM} & Times、Arial、Consolas 字體組 \\
+\texttt{gentium} & L+G & \texttt{\string\GEN} & Gentium Plus \\
+\texttt{charis} & L+G & \texttt{\string\CHA} & Charis SIL \\
+\texttt{libertinus} & L+G & \texttt{\string\LIB} & Libertinus 襯線、無襯線與等寬字體 \\
+\texttt{mlmodern} & L & \texttt{\string\MLM} & MLModern 局部字體 \\
+\texttt{anatolian} & L & \texttt{\string\CA} & 卡里亞文 \\
+\texttt{coptic} & L & \texttt{\string\CO} & 科普特文 \\
+\texttt{bopomofo} & L & \texttt{\string\ZY} & 注音符號 \\
+\texttt{cuneiform} & L & \texttt{\string\CU} & 楔形文字 \\
+\texttt{glagolitic} & L & \texttt{\string\GL} & 格拉哥里字母 \\
+\texttt{italic} & L & \texttt{\string\OI} & 古義大利文字 \\
+\texttt{hungarian} & L & \texttt{\string\OH} & 古匈牙利文 \\
+\texttt{runic} & L & \texttt{\string\RU} & 如尼文字 \\
+\texttt{armenian} & L & \texttt{\string\HY} & 亞美尼亞文 \\
+\texttt{georgian} & L & \texttt{\string\KA} & 喬治亞文 \\
+\texttt{hindi} & L+R & \texttt{\string\HI} & 印地語天城文，支援範圍路由 \\
+\texttt{sanskrit} & L+R & \texttt{\string\SA} & 梵語天城文，支援音節斷行與範圍路由 \\
+\texttt{devanagari} & L & \texttt{\string\DEV} & 一般天城文 \\
+\texttt{tamil} & L & \texttt{\string\TA} & 泰米爾文 \\
+\texttt{brahmi} & L & \texttt{\string\BR} & 婆羅米文 \\
+\texttt{tibetan} & L+R & \texttt{\string\TI} & 藏文，支援音節分隔點斷行 \\
+\texttt{segoe} & L & \texttt{\string\SEG} & Segoe UI Historic \\
+\texttt{thai} & L & \texttt{\string\TH} & 泰文 \\
+\texttt{arabic} & L & \texttt{\string\AR} & 阿拉伯文及不同樣式字面 \\
+\texttt{urdu} & L & \texttt{\string\UR} & 烏爾都語波斯體 \\
+\texttt{aramaic} & L & \texttt{\string\IA} & 帝國亞拉姆文 \\
+\texttt{nabataean} & L & \texttt{\string\NB} & 納巴泰文 \\
+\texttt{hebrew} & L & \texttt{\string\HE} & 希伯來文 \\
+\texttt{syriac} & L & \texttt{\string\SY} & 敘利亞文 \\
+\texttt{syriac\_eastern} & L+R & \texttt{\string\SYE} & 東敘利亞文，支援範圍路由 \\
+\texttt{kharosthi} & L & \texttt{\string\KH} & 佉盧文 \\
+\texttt{egyptian} & L & \texttt{\string\EG} & 埃及聖書字與 XSR 組合排版 \\
+\texttt{khitan\_small} & L & \texttt{\string\KHS} & 契丹小字與 XSR 堆疊 \\
+\texttt{pahlavi\_parthian} & L+R & \texttt{\string\PAR} & 碑銘帕提亞文 \\
+\texttt{pahlavi\_inscriptional} & L+R & \texttt{\string\PAH} & 碑銘巴列維文 \\
+\texttt{pahlavi\_psalter} & L & \texttt{\string\PSP} & 詩篇巴列維文 \\
+\texttt{avestan} & L & \texttt{\string\AV} & 阿維斯陀文 \\
+\texttt{manichaean} & L & \texttt{\string\MA} & 摩尼文 \\
+\texttt{phoenician} & L & \texttt{\string\PH} & 腓尼基文 \\
+\texttt{samaritan} & L & \texttt{\string\SM} & 撒馬利亞文 \\
+\texttt{sogdian} & L & \texttt{\string\SG} & 粟特文 \\
+\texttt{sogdian\_old} & L+R & \texttt{\string\SGO} & 古粟特文，支援範圍路由 \\
+\texttt{chinese\_simplified} & L+R & \texttt{\string\SC} & 簡體中文 CJK 字體 \\
+\texttt{chinese\_traditional} & L+R & \texttt{\string\TC} & 繁體中文 CJK 字體 \\
+\texttt{japanese} & L+R & \texttt{\string\JP} & 日文與假名 \\
+\texttt{wenjin} & L+R & \texttt{\string\WJ} & 文津明朝體，支援 CJK 缺字後備 \\
+\texttt{shanggu} & G & --- & 上古字體，全域 CJK 設定 \\
+\texttt{sim} & G & --- & 簡體中文系統字體 \\
+\texttt{korean} & L+R & \texttt{\string\KR} & 韓文與諺文 \\
+\texttt{tangut} & L+R & \texttt{\string\TG} & 西夏文及 CJK 範圍路由 \\
+\texttt{mongolian} & L & \texttt{\string\MO} & 蒙古文，支援局部直排 \\
+\texttt{mongolian\_baiti} & L & \texttt{\string\MOb} & 蒙古文 Baiti 字體，支援直排 \\
+\texttt{manchu} & L & \texttt{\string\MC} & 滿文，支援局部直排 \\
+\texttt{turkic} & L & \texttt{\string\OT} & 古突厥文 \\
+\texttt{uyghur} & L & \texttt{\string\UY} & 回鶻文，支援局部旋轉直排 \\
+\texttt{vietnamese\_quocngu} & L & \texttt{\string\VI} & 越南國語字 \\
+\texttt{vietnamese\_hannom} & L & \texttt{\string\HN} & 越南漢喃文字 \\
 \bottomrule
 \end{longtable}
 
-\subsection{功能專屬命令與設定值}
+\endgroup
 
-\begin{longtable}{@{}p{0.51\linewidth}p{0.43\linewidth}@{}}
+\subsection{書寫設定檔識別碼（69 項）}
+\label{app:writing-profile-ids}
+
+書寫設定檔定義 Unicode 覆蓋範圍和文字處理規則。
+「預設字體資源」欄顯示未另行指定字體時的選擇；
+\texttt{---} 表示需要使用者提供字體資源或指定
+\texttt{font=}、\texttt{file=}。
+「覆蓋範圍鍵」列出實際登錄的 Unicode 範圍鍵；
+同一設定檔包含多個範圍時，會在儲存格內逐項換行。
+
+\begingroup\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.245\linewidth}>{\raggedright\arraybackslash}p{0.305\linewidth}>{\raggedright\arraybackslash}p{0.375\linewidth}@{}}
 \toprule
-\textbf{命令或設定} & \textbf{用途／已記錄的值} \\
+\textbf{設定檔 ID} & \textbf{預設字體資源} & \textbf{覆蓋範圍鍵} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{命令或設定} & \textbf{用途／已記錄的值} \\
+\textbf{設定檔 ID} & \textbf{預設字體資源} & \textbf{覆蓋範圍鍵} \\
 \midrule
 \endhead
-\texttt{\string\UseMathFont\{value\}} &
-在載入 \texttt{math} 前選擇數學字體路徑：
-\texttt{auto}、\texttt{libertinus}、\texttt{newcm}、\texttt{mlmodern}，
-或其他可傳給 \texttt{\string\setmathfont} 的字體名稱。 \\
-\texttt{\string\UseCitationStyle\{value\}} &
-在載入 \texttt{citations} 前選擇引用預設：
-\texttt{APA}、\texttt{GB}、\texttt{numeric} 或 \texttt{author-year}。 \\
-\texttt{\string\SetCitationBiblatexOptions\{...\}} &
-在載入 \texttt{citations} 前取代實際使用的 \texttt{biblatex} 選項清單。 \\
-\texttt{\string\HeaderTitle\{text\}} &
-設定頁眉使用的簡短固定標題。 \\
-\texttt{\string\HeaderStyle\{value\}} &
-選擇 \texttt{running} 或 \texttt{title}。 \\
-\texttt{\string\IndexTitle} &
-可選的索引標題覆寫；需在載入 \texttt{index} 前定義。 \\
-\texttt{\string\Term[options]\{display\}[description]} &
-以粗體排出術語並索引其第一次出現；選項包括
-\texttt{sort}、\texttt{key} 與 \texttt{parentheses}。 \\
-\texttt{\string\TablesSetup} &
-套用或重新套用 IMPE 表格設定。 \\
-\texttt{\string\Panel} &
-在 \texttt{PanelFigure} 或 \texttt{PanelFigure*} 中插入一個面板。 \\
-\texttt{\string\TemplateFigurePaths} &
-設定圖片功能使用的預設搜尋路徑。 \\
-\texttt{\string\OneImageDefaultWidth} &
-設定 \texttt{OneImage} 的預設寬度。 \\
-\texttt{\string\OneImageMaxHeight} &
-設定 \texttt{OneImage} 的最大預設圖片高度。 \\
-\texttt{\string\OneImageDefaultPlacement} &
-設定 \texttt{OneImage} 的預設浮動體位置選項。 \\
-\texttt{\string\PanelDefaultCols} &
-設定多面板圖形預設使用的欄數。 \\
-\texttt{\string\PanelDefaultHeight} &
-設定預設面板高度。 \\
-\texttt{\string\PanelDefaultMode} &
-設定預設面板版面模式。 \\
-\texttt{\string\PanelDefaultPlacement} &
-設定多面板圖形的預設浮動體位置選項。 \\
+\texttt{basic} & \texttt{basic} & \texttt{basic} \\
+\texttt{latin} & \texttt{basic} & \texttt{latin} \\
+\texttt{greek} & \texttt{basic} & \texttt{greek-only} \\
+\texttt{cyrillic} & \texttt{basic} & \texttt{cyrillic} \\
+\texttt{armenian} & \texttt{armenian} & \texttt{armenian} \\
+\texttt{georgian} & \texttt{georgian} & \texttt{georgian} \\
+\texttt{hebrew} & \texttt{hebrew} & \texttt{hebrew} \\
+\texttt{arabic} & \texttt{naskh} & \texttt{arabic} \\
+\texttt{syriac} & \texttt{syriac} & \texttt{syriac} \\
+\texttt{samaritan} & \texttt{samaritan} & \texttt{samaritan} \\
+\texttt{aramaic} & \texttt{aramaic} & \texttt{imperial-aramaic} \\
+\texttt{nabataean} & \texttt{nabataean} & \texttt{nabataean} \\
+\texttt{phoenician} & \texttt{phoenician} & \texttt{phoenician} \\
+\texttt{avestan} & \texttt{avestan} & \texttt{avestan} \\
+\texttt{pahlavi-parthian} & \texttt{pahlavi-parthian} & \texttt{inscriptional-parthian} \\
+\texttt{pahlavi-inscriptional} & \texttt{pahlavi-inscriptional} & \texttt{inscriptional-pahlavi} \\
+\texttt{pahlavi-psalter} & \texttt{pahlavi-psalter} & \texttt{psalter-pahlavi} \\
+\texttt{manichaean} & \texttt{manichaean} & \texttt{manichaean} \\
+\texttt{sogdian} & \texttt{sogdian} & \texttt{sogdian} \\
+\texttt{old-sogdian} & \texttt{old-sogdian} & \texttt{old-sogdian} \\
+\texttt{old-uyghur} & \texttt{old-uyghur} & \texttt{old-uyghur} \\
+\texttt{devanagari} & \texttt{devanagari} & \texttt{devanagari} \\
+\texttt{tamil} & \texttt{tamil} & \texttt{tamil} \\
+\texttt{thai} & \texttt{thai} & \texttt{thai} \\
+\texttt{brahmi} & \texttt{brahmi} & \texttt{brahmi} \\
+\texttt{kharoshthi} & \texttt{kharoshthi} & \texttt{kharoshthi} \\
+\texttt{tibetan} & \texttt{tibetan} & \texttt{tibetan} \\
+\texttt{coptic} & \texttt{coptic} & \shortstack[l]{\texttt{coptic-main},\\\texttt{coptic-legacy}} \\
+\texttt{glagolitic} & \texttt{glagolitic} & \texttt{glagolitic} \\
+\texttt{old-italic} & \texttt{old-italic} & \texttt{old-italic} \\
+\texttt{old-hungarian} & \texttt{old-hungarian} & \texttt{old-hungarian} \\
+\texttt{runic} & \texttt{runic} & \texttt{runic} \\
+\texttt{old-turkic} & \texttt{old-turkic} & \texttt{old-turkic} \\
+\texttt{carian} & \texttt{carian} & \texttt{carian} \\
+\texttt{cuneiform} & \texttt{cuneiform} & \texttt{cuneiform} \\
+\texttt{egyptian} & \texttt{egyptian} & \texttt{egyptian} \\
+\texttt{khitan-small} & \texttt{khitan-small} & \texttt{khitan-small} \\
+\texttt{tangut} & \texttt{tangut} & \texttt{tangut} \\
+\texttt{han} & \texttt{shanggu} & \texttt{han} \\
+\texttt{chinese} & \texttt{shanggu} & \texttt{chinese} \\
+\texttt{japanese} & \texttt{japanese} & \texttt{japanese} \\
+\texttt{korean} & \texttt{korean} & \texttt{korean} \\
+\texttt{kana} & \texttt{japanese} & \texttt{kana} \\
+\texttt{hangul} & \texttt{korean} & \texttt{hangul} \\
+\texttt{bopomofo} & \texttt{iming} & \texttt{bopomofo} \\
+\texttt{mongolian} & \texttt{mnglwhite} & \texttt{mongolian} \\
+\texttt{jurchen} & --- & \texttt{jurchen} \\
+\texttt{seal} & --- & \texttt{seal} \\
+\texttt{proto-cuneiform} & --- & \texttt{proto-cuneiform} \\
+\texttt{bengali} & --- & \shortstack[l]{\texttt{Bengali},\\\texttt{BengaliSupplement}} \\
+\texttt{gurmukhi} & --- & \texttt{Gurmukhi} \\
+\texttt{gujarati} & --- & \texttt{Gujarati} \\
+\texttt{oriya} & --- & \texttt{Oriya} \\
+\texttt{telugu} & --- & \texttt{Telugu} \\
+\texttt{kannada} & --- & \texttt{Kannada} \\
+\texttt{malayalam} & --- & \texttt{Malayalam} \\
+\texttt{sinhala} & --- & \texttt{Sinhala} \\
+\texttt{lao} & --- & \texttt{Lao} \\
+\texttt{myanmar} & --- & \shortstack[l]{\texttt{Myanmar},\\\texttt{MyanmarExtendedA},\\\texttt{MyanmarExtendedB}} \\
+\texttt{ethiopic} & --- & \shortstack[l]{\texttt{Ethiopic},\\\texttt{EthiopicExtended},\\\texttt{EthiopicExtendedA},\\\texttt{EthiopicExtendedB}} \\
+\texttt{khmer} & --- & \shortstack[l]{\texttt{Khmer},\\\texttt{KhmerSymbols}} \\
+\texttt{ogham} & --- & \texttt{Ogham} \\
+\texttt{cherokee} & --- & \shortstack[l]{\texttt{Cherokee},\\\texttt{CherokeeSupplement}} \\
+\texttt{nko} & --- & \texttt{NKo} \\
+\texttt{tifinagh} & --- & \texttt{Tifinagh} \\
+\texttt{yi} & --- & \shortstack[l]{\texttt{YiSyllables},\\\texttt{YiRadicals}} \\
+\texttt{adlam} & --- & \texttt{Adlam} \\
+\texttt{thaana} & --- & \texttt{Thaana} \\
+\texttt{mandaic} & --- & \texttt{Mandaic} \\
 \bottomrule
 \end{longtable}
 
-由功能所載入套件直接提供的標準命令，例如
-\texttt{\string\addbibresource}、\texttt{\string\printbibliography}、
-\texttt{\string\printindex}，或 \texttt{booktabs} 的橫線命令，仍使用原套件的
-正常 \LaTeX{} 語法。
+\endgroup
 
-\subsection{公開環境與表格欄類型}
+\texttt{kharoshthi} 是設定檔與資源別名的拼寫，
+原有的 \texttt{kharosthi} 則是保留的字體預設識別碼，
+兩者各屬不同登錄表。
 
-\begin{longtable}{@{}p{0.37\linewidth}p{0.57\linewidth}@{}}
+\subsection{字體資源與字體組別名（85 項）}
+\label{app:writing-resource-ids}
+
+這 85 個別名可在 \verb|\UseWriting|
+的中括號內選用；第二欄列出對應的字體登錄族。
+多個別名可能來自同一字體族，
+但選用不同字面或不同樣式。
+
+\begingroup\small
+\begin{longtable}{@{}p{0.43\linewidth}p{0.47\linewidth}@{}}
 \toprule
-\textbf{名稱} & \textbf{用途} \\
+\textbf{資源／字體組 ID} & \textbf{所屬字體族} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{名稱} & \textbf{用途} \\
+\textbf{資源／字體組 ID} & \textbf{所屬字體族} \\
 \midrule
 \endhead
-\texttt{theorem}, \texttt{lemma}, \texttt{proposition}, \texttt{corollary} &
-由 \texttt{math} 功能提供的帶編號定理類環境。 \\
-\texttt{definition}, \texttt{example}, \texttt{remark} &
-由 \texttt{math} 功能提供的其他定理樣式環境。 \\
-\texttt{TableInlineFit} &
-將緊湊表格配合可用寬度排版的環境。 \\
-\texttt{TableLong} &
-供內容跨頁使用的長表格環境。 \\
-\texttt{TableBook}, \texttt{TableBookX} &
-書籍樣式的表格環境。 \\
-\texttt{TableBookNotes} &
-帶附註的書籍樣式表格環境。 \\
-\texttt{NiceBooktable}, \texttt{NiceBooktableX}, \texttt{NiceBooktableNotes} &
-由 \texttt{tables} 功能提供的另一組書籍樣式表格輔助環境。 \\
-\texttt{L}, \texttt{C}, \texttt{R} &
-分別為右側不齊、置中與左側不齊的 \texttt{tabularx} 欄。 \\
-\texttt{P\{w\}}, \texttt{M\{w\}}, \texttt{B\{w\}} &
-分別採右側不齊、置中與左側不齊的固定寬度段落欄。 \\
-\texttt{OneImage} &
-單圖圖形環境；在 Beamer 下改為行內內容而非浮動體。 \\
-\texttt{OneImageInline} &
-置中的非浮動圖片。 \\
-\texttt{PanelFigure} &
-帶總圖說與子圖說的多面板圖形；在一般文件類別下使用。 \\
-\texttt{PanelFigure*} &
-無圖說的多面板圖形。 \\
-\texttt{ExampleBlock} &
-帶縮排的斜體顯示區塊，適合範例、引文、語言材料或教學內容。 \\
+\texttt{basic} & \texttt{noto} \\
+\texttt{cmu} & \texttt{cmu} \\
+\texttt{times} & \texttt{times} \\
+\texttt{gentium} & \texttt{gentium} \\
+\texttt{charis} & \texttt{charis} \\
+\texttt{libertinus} & \texttt{libertinus} \\
+\texttt{latinmodern} & \texttt{mlmodern} \\
+\texttt{chinese-simplified} & \texttt{chinese\_simplified} \\
+\texttt{chinese-traditional} & \texttt{chinese\_traditional} \\
+\texttt{japanese} & \texttt{japanese} \\
+\texttt{korean} & \texttt{korean} \\
+\texttt{wenjin} & \texttt{wenjin} \\
+\texttt{shanggu} & \texttt{shanggu} \\
+\texttt{armenian} & \texttt{armenian} \\
+\texttt{devanagari} & \texttt{devanagari} \\
+\texttt{tamil} & \texttt{tamil} \\
+\texttt{georgian} & \texttt{georgian} \\
+\texttt{tibetan} & \texttt{tibetan} \\
+\texttt{hebrew} & \texttt{hebrew} \\
+\texttt{arabic} & \texttt{arabic} \\
+\texttt{syriac} & \texttt{syriac} \\
+\texttt{syriac-eastern} & \texttt{syriac\_eastern} \\
+\texttt{syriac-western} & \texttt{syriac} \\
+\texttt{thai} & \texttt{thai} \\
+\texttt{thai-looped} & \texttt{thai} \\
+\texttt{naskh} & \texttt{arabic} \\
+\texttt{kufi} & \texttt{arabic} \\
+\texttt{nastaliq} & \texttt{urdu} \\
+\texttt{aref} & \texttt{arabic} \\
+\texttt{davidlibre} & \texttt{hebrew} \\
+\texttt{khawa} & \texttt{tibetan} \\
+\texttt{carian} & \texttt{anatolian} \\
+\texttt{coptic} & \texttt{coptic} \\
+\texttt{cuneiform} & \texttt{cuneiform} \\
+\texttt{glagolitic} & \texttt{glagolitic} \\
+\texttt{old-italic} & \texttt{italic} \\
+\texttt{old-hungarian} & \texttt{hungarian} \\
+\texttt{runic} & \texttt{runic} \\
+\texttt{brahmi} & \texttt{brahmi} \\
+\texttt{kharoshthi} & \texttt{kharosthi} \\
+\texttt{aramaic} & \texttt{aramaic} \\
+\texttt{nabataean} & \texttt{nabataean} \\
+\texttt{phoenician} & \texttt{phoenician} \\
+\texttt{avestan} & \texttt{avestan} \\
+\texttt{pahlavi-parthian} & \texttt{pahlavi\_parthian} \\
+\texttt{pahlavi-inscriptional} & \texttt{pahlavi\_inscriptional} \\
+\texttt{pahlavi-psalter} & \texttt{pahlavi\_psalter} \\
+\texttt{manichaean} & \texttt{manichaean} \\
+\texttt{samaritan} & \texttt{samaritan} \\
+\texttt{sogdian} & \texttt{sogdian} \\
+\texttt{old-sogdian} & \texttt{sogdian\_old} \\
+\texttt{old-turkic} & \texttt{turkic} \\
+\texttt{old-uyghur} & \texttt{uyghur} \\
+\texttt{egyptian} & \texttt{egyptian} \\
+\texttt{khitan-small} & \texttt{khitan\_small} \\
+\texttt{tangut} & \texttt{tangut} \\
+\texttt{mongolian} & \texttt{mongolian} \\
+\texttt{mnglwhite} & \texttt{mongolian} \\
+\texttt{mngltitle} & \texttt{mongolian} \\
+\texttt{mnglwriting} & \texttt{mongolian} \\
+\texttt{mnglart} & \texttt{mongolian} \\
+\texttt{monbaiti} & \texttt{mongolian\_baiti} \\
+\texttt{abxy} & \texttt{manchu} \\
+\texttt{segoeuihistoric} & \texttt{segoe} \\
+\texttt{tiro} & \texttt{sanskrit} \\
+\texttt{iming} & \texttt{bopomofo} \\
+\texttt{zhuque} & \texttt{shanggu} \\
+\texttt{simsun} & \texttt{sim} \\
+\texttt{simhei} & \texttt{sim} \\
+\texttt{simfang} & \texttt{sim} \\
+\texttt{simkai} & \texttt{sim} \\
+\texttt{arial} & \texttt{times} \\
+\texttt{consolas} & \texttt{times} \\
+\texttt{nomnatong} & \texttt{vietnamese\_hannom} \\
+\texttt{minhnguyen} & \texttt{vietnamese\_hannom} \\
+\texttt{gothicnguyen} & \texttt{vietnamese\_hannom} \\
+\texttt{syrcom} & \texttt{syriac} \\
+\texttt{syrcom-edessa} & \texttt{syriac} \\
+\texttt{syrcom-midyat} & \texttt{syriac} \\
+\texttt{syrcom-jerusalem} & \texttt{syriac} \\
+\texttt{syrcom-jerusalem-bold} & \texttt{syriac} \\
+\texttt{syrcom-adiabene} & \texttt{syriac\_eastern} \\
+\texttt{syrcom-ctesiphon} & \texttt{syriac\_eastern} \\
+\texttt{tangut-n4694} & \texttt{tangut} \\
+\texttt{new-tangut-std} & \texttt{tangut} \\
 \bottomrule
 \end{longtable}
 
-\subsection{已登錄字體族識別碼}
+\endgroup
 
-下表列出 IMPE 1.x 中可傳給 \texttt{\string\UseFont} 的字體族 ID。
-\textbf{自動}欄概括省略模式的 \texttt{\string\UseFont\{id\}} 一般會啟用的行為：
+這是 IMPE \emph{認得的字體資源名稱清單}，
+不是安裝包內實際附帶的字體檔清單。
+字體可來自 \TeX{} 發行版、作業系統或使用者提供的檔案。
+其中 \texttt{basic} 是通用 Noto 西文字體資源，
+\verb|\UseFont{noto}| 仍表示既有的字體預設。
 
-\begin{description}
-  \item[\texttt{G}] 文件全域字體族；
-  \item[\texttt{L}] 局部字體族／命令；
-  \item[\texttt{L+G}] 同時提供局部存取與完整文件全域啟用；
-  \item[\texttt{L+R}] 同時提供局部存取與依文字或範圍限制的自動全域路由。
-\end{description}
+\subsection{字面樣式縮寫（6 項）}
 
-自動路徑是建議使用的介面。明確的 \texttt{[local]} 或 \texttt{[global]} 會刻意繞過
-部分自動判斷，適合刻意覆寫時使用。
+以下六個別名已包含在 85 個資源別名中，
+也可用於 \texttt{italic=} 等樣式覆寫選項。
+本表列出實際對應的字體檔案。
 
-\begin{longtable}{@{}p{0.30\linewidth}p{0.11\linewidth}p{0.18\linewidth}p{0.31\linewidth}@{}}
+\begin{longtable}{@{}p{0.26\linewidth}p{0.66\linewidth}@{}}
 \toprule
-\textbf{字體族 ID} & \textbf{自動} & \textbf{局部命令} & \textbf{典型用途} \\
+\textbf{樣式別名} & \textbf{字體檔案} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{字體族 ID} & \textbf{自動} & \textbf{局部命令} & \textbf{典型用途} \\
+\textbf{樣式別名} & \textbf{字體檔案} \\
 \midrule
 \endhead
-\texttt{cmu} & G & --- & Computer Modern Unicode 基礎字體族。 \\
-\texttt{noto} & L+G & \texttt{\string\NOT} & 一般 Noto 拉丁字體族。 \\
-\texttt{times} & L+G & \texttt{\string\TIM} & Times／Arial／Consolas 系統字體族路徑。 \\
-\texttt{gentium} & L+G & \texttt{\string\GEN} & Gentium Plus。 \\
-\texttt{charis} & L+G & \texttt{\string\CHA} & Charis SIL。 \\
-\texttt{libertinus} & L+G & \texttt{\string\LIB} & Libertinus 襯線／無襯線／等寬字體族。 \\
-\texttt{mlmodern} & L & \texttt{\string\MLM} & Latin Modern／MLModern 局部路徑。 \\
-
-\texttt{anatolian} & L & \texttt{\string\CA} & 卡里亞文／安納托利亞文字材料。 \\
-\texttt{coptic} & L & \texttt{\string\CO} & 科普特文。 \\
-\texttt{bopomofo} & L & \texttt{\string\ZY} & 注音符號。 \\
-\texttt{cuneiform} & L & \texttt{\string\CU} & 楔形文字。 \\
-\texttt{glagolitic} & L & \texttt{\string\GL} & 格拉哥里字母。 \\
-\texttt{italic} & L & \texttt{\string\OI} & 古意大利字母。 \\
-\texttt{hungarian} & L & \texttt{\string\OH} & 古匈牙利字母。 \\
-\texttt{runic} & L & \texttt{\string\RU} & 盧恩文字。 \\
-\texttt{armenian} & L & \texttt{\string\HY} & 亞美尼亞文。 \\
-\texttt{georgian} & L & \texttt{\string\KA} & 格魯吉亞文。 \\
-
-\texttt{hindi} & L+R & \texttt{\string\HI} & 帶已登錄範圍路由的印地語天城文。 \\
-\texttt{sanskrit} & L+R & \texttt{\string\SA} & 帶梵語專用路由的天城文。 \\
-\texttt{devanagari} & L & \texttt{\string\DEV} & 通用天城文塑形。 \\
-\texttt{tamil} & L & \texttt{\string\TA} & 泰米爾文。 \\
-\texttt{brahmi} & L & \texttt{\string\BR} & 婆羅米文。 \\
-\texttt{tibetan} & L+R & \texttt{\string\TI} & 帶有按音節點感知斷行行為的藏文。 \\
-\texttt{segoe} & L & \texttt{\string\SEG} & Segoe Historic 局部路徑。 \\
-\texttt{thai} & L & \texttt{\string\TH} & 泰文。 \\
-
-\texttt{arabic} & L & \texttt{\string\AR} & 阿拉伯文；提供襯線、無襯線與替代樣式字面。 \\
-\texttt{urdu} & L & \texttt{\string\UR} & 烏爾都語納斯塔利克體。 \\
-\texttt{aramaic} & L & \texttt{\string\IA} & 帝國阿拉姆文。 \\
-\texttt{nabataean} & L & \texttt{\string\NB} & 納巴泰文。 \\
-\texttt{hebrew} & L & \texttt{\string\HE} & 希伯來文。 \\
-\texttt{syriac} & L & \texttt{\string\SY} & 敘利亞文。 \\
-\texttt{syriac\_eastern} & L+R & \texttt{\string\SYE} & 帶已登錄範圍路由的東部敘利亞文。 \\
-\texttt{kharosthi} & L & \texttt{\string\KH} & 佉盧文。 \\
-\texttt{khitan\_small} & L & \texttt{\string\KHS} & 使用專用組合器的契丹小字。 \\
-\texttt{pahlavi\_parthian} & L+R & \texttt{\string\PAR} & 銘文帕提亞文。 \\
-\texttt{pahlavi\_inscriptional} & L+R & \texttt{\string\PAH} & 銘文巴列維文。 \\
-\texttt{pahlavi\_psalter} & L & \texttt{\string\PSP} & 帶專門支援的詩篇巴列維文。 \\
-\texttt{avestan} & L & \texttt{\string\AV} & 阿維斯陀文。 \\
-\texttt{manichaean} & L & \texttt{\string\MA} & 摩尼文。 \\
-\texttt{phoenician} & L & \texttt{\string\PH} & 腓尼基文。 \\
-\texttt{samaritan} & L & \texttt{\string\SM} & 撒馬利亞文。 \\
-\texttt{sogdian} & L & \texttt{\string\SG} & 粟特文。 \\
-\texttt{sogdian\_old} & L+R & \texttt{\string\SGO} & 帶已登錄範圍路由的古粟特文。 \\
-
-\texttt{chinese\_simplified} & L+R & \texttt{\string\SC} & 簡體中文 CJK 字體族。 \\
-\texttt{chinese\_traditional} & L+R & \texttt{\string\TC} & 繁體中文 CJK 字體族。 \\
-\texttt{japanese} & L+R & \texttt{\string\JP} & 日文字體族；自動路由保留共用漢字的優先次序。 \\
-\texttt{wenjin} & L+R & \texttt{\string\WJ} & 帶 CJK 後備鏈的 WenJin Mincho。 \\
-\texttt{shanggu} & G & --- & 面向繁體中文的全域 CJK 字體族。 \\
-\texttt{sim} & G & --- & 面向簡體中文的系統 CJK 字體族。 \\
-\texttt{korean} & L+R & \texttt{\string\KR} & 韓文／諺文字體族。 \\
-\texttt{tangut} & L+R & \texttt{\string\TG} & 帶 CJK 感知自動路由的西夏文。 \\
-
-\texttt{mongolian} & L & \texttt{\string\MO} & 帶內建直排版面路徑的蒙古文。 \\
-\texttt{mongolian\_baiti} & L & \texttt{\string\MOb} & 帶直排版面路徑的 Mongolian Baiti。 \\
-\texttt{manchu} & L & \texttt{\string\MC} & 帶直排版面路徑的滿文。 \\
-\texttt{turkic} & L & \texttt{\string\OT} & 古突厥文。 \\
-\texttt{uyghur} & L & \texttt{\string\UY} & 帶直排／旋轉版面路徑的古維吾爾文。 \\
-
-\texttt{vietnamese\_quocngu} & L & \texttt{\string\VI} & 越南國語字。 \\
-\texttt{vietnamese\_hannom} & L & \texttt{\string\HN} & 越南漢喃文／CJK 文字。 \\
+\texttt{zhuque} & \texttt{ZhuqueFangsong-Regular.ttf} \\
+\texttt{simkai} & \texttt{simkai.ttf} \\
+\texttt{simfang} & \texttt{simfang.ttf} \\
+\texttt{aref} & \texttt{ArefRuqaa-Regular.ttf} \\
+\texttt{naskh} & \texttt{NotoNaskhArabic-Regular.ttf} \\
+\texttt{nastaliq} & \texttt{NotoNastaliqUrdu-Regular.ttf} \\
 \bottomrule
 \end{longtable}
+
+例如，
+\verb|\UseWriting{[shanggu,italic=zhuque]chinese}|
+會明確指定斜體字面所用的字體。
+
+\subsection{其他文字排版命令}
+
+除了各字體預設本身的局部縮寫外，
+下列命令可將相應文字局部旋轉直排：
+
+\begin{longtable}{@{}p{0.40\linewidth}p{0.51\linewidth}@{}}
+\toprule
+\textbf{命令} & \textbf{排版方式} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{命令} & \textbf{排版方式} \\
+\midrule
+\endhead
+\texttt{\string\MOv[offset]\{text\}} & 蒙古文，局部旋轉直排。 \\
+\texttt{\string\MObv[offset]\{text\}} & 蒙古文 Baiti 字體，局部直排。 \\
+\texttt{\string\MCv[offset]\{text\}} & 滿文，局部旋轉直排。 \\
+\texttt{\string\UYv[offset]\{text\}} & 回鶻文，局部旋轉直排。 \\
+\bottomrule
+\end{longtable}
+
+選用的位移量預設為 \texttt{0pt}。
+聖書字另有 \verb|\EG|、
+\verb|\IMPEEgyptianText|；
+契丹小字可使用 \verb|\KHS|、
+\verb|\KHSstack|、\verb|\KHSstackblock|。
+
+\subsection{相容類別、版面與功能名稱}
+
+以下名稱保留供既有文件繼續使用；
+新文件優先採用本附錄前面所列的標準入口。
+
+\begin{longtable}{@{}p{0.44\linewidth}p{0.46\linewidth}@{}}
+\toprule
+\textbf{相容名稱} & \textbf{現行推薦寫法} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{相容名稱} & \textbf{現行推薦寫法} \\
+\midrule
+\endhead
+\texttt{impeart\_zh} & \texttt{impeart} 加 \texttt{lang=zh} \\
+\texttt{impereport\_zh} & \texttt{impereport} 加 \texttt{lang=zh} \\
+\texttt{impebook\_zh} & \texttt{impebook} 加 \texttt{lang=zh} \\
+\texttt{impebeamer\_zh} & \texttt{impebeamer} 加 \texttt{lang=zh} \\
+\texttt{nextart}、\texttt{nextreport}、\texttt{nextbook}、\texttt{nextbeamer} & 對應的標準 \texttt{impe*} 類別 \\
+\texttt{next*\_zh} & 對應的標準類別加 \texttt{lang=zh} \\
+\texttt{nextsystem.sty} & \texttt{impe.sty} \\
+\bottomrule
+\end{longtable}
+
+舊式版面識別碼 \texttt{report}、\texttt{legacy\_*}，
+還原版面的 \verb|\UseLegacyLayout|，
+以及功能別名 \texttt{bib}、\texttt{header}、
+\texttt{lists\_envs} 仍受支援。
+
+\subsection{保留的舊式功能輔助介面}
+
+下列命令仍可供既有稿件使用；
+新文件建議優先使用相應套件的原生命令：
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.43\linewidth}>{\raggedright\arraybackslash}p{0.50\linewidth}@{}}
+\toprule
+\textbf{舊式介面} & \textbf{用途} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{舊式介面} & \textbf{用途} \\
+\midrule
+\endhead
+\shortstack[l]{\texttt{\string\Term[options]\{display\}}\\\texttt{[description]}} & 首次出現時加粗並建立舊式術語索引。 \\
+\texttt{\string\IndexTitle} & 設定原有預設索引標題。 \\
+\texttt{TableInlineFit}、\texttt{TableLong} & 舊式表格環境。 \\
+\shortstack[l]{\texttt{TableBook*}、\\\texttt{NiceBooktable*}} & 書籍式表格與表下注記。 \\
+\shortstack[l]{\texttt{OneImage*}、\texttt{PanelFigure*}、\\\texttt{\string\Panel}} & 圖片及多圖版輔助命令。 \\
+\texttt{ExampleBlock} & 舊式範例區塊。 \\
+\bottomrule
+\end{longtable}
+
+其他舊式欄位設定與圖片參數見
+\texttt{docs/FEATURES.md}。
 
 \subsection{進階擴充介面}
 
-下列命令供擴充 IMPE 使用。
-
-\begin{longtable}{@{}p{0.39\linewidth}p{0.55\linewidth}@{}}
-\toprule
-\textbf{命令} & \textbf{用途} \\
-\midrule
-\endfirsthead
-\toprule
-\textbf{命令} & \textbf{用途} \\
-\midrule
-\endhead
-\texttt{\string\FontRegisterFamily\{...\}} &
-註冊新的字體族及其局部／全域中繼資料。 \\
-\texttt{\string\LayoutPresetRegister\{...\}} &
-利用內部版面組件註冊一個結構化版面預設。 \\
-\texttt{\string\LayoutPresetDeclare\{...\}} &
-建置系統時使用的較低階版面預設宣告介面。 \\
-\bottomrule
-\end{longtable}
-
-完整的登錄語法與擴充規則，請參閱 \texttt{docs/FONTS-zh.md}、
-\texttt{docs/LAYOUTS-zh.md} 與 \texttt{docs/SYSTEM-zh.md}。
+開發者可透過 \verb|\FontRegisterFamily|、
+\verb|\LayoutPresetRegister| 和
+\verb|\LayoutPresetDeclare| 登錄新的字體或版面。
+詳細資料見 \texttt{docs/FONTS.md}、
+\texttt{docs/LAYOUTS.md}、
+\texttt{docs/SYSTEM.md} 及 \texttt{docs/EXTENDING.md}。
 
 \section{展示冊}\label{app:showcase}
 
-以下各頁完整收入標準 IMPE 展示冊。展示冊是參考手冊的視覺配套文件，
-用來展示多語字體路由、複雜塑形、由右至左文字、直排、CJK 地區字形，以及各種文件
-功能的組合效果。
+以下各頁收錄完整的 IMPE 展示冊，呈現不同書寫系統、
+複雜字形塑造、由右至左排寫、局部直排、中日韓地區字形，
+以及多種文件功能的組合效果。
 
-最新展示冊可由
-\href{\IMPEShowcaseURL}{目前主分支}取得；與本手冊對應的版本則由
-\href{\IMPETaggedShowcaseURL}{v\IMPEVersion{} 標籤}保存。
+\href{\IMPEShowcaseURL}{目前的展示冊}可由專案倉庫取得。
+正式發佈後，
+\href{\IMPETaggedShowcaseURL}{v\IMPEVersion{} 版本標籤}
+將保存與本手冊對應的版本。
 
 \IfFileExists{\IMPEShowcaseFile}
   {\includepdf[pages=1-3,pagecommand={}]{\IMPEShowcaseFile}%
