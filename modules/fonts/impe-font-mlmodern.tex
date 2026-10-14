@@ -33,13 +33,7 @@
     \exp_args:NVV \__font_define_public_command:nn
       \l__font_command_tl
       \l__font_name_tl
-    % Keep native \sffamily and \ttfamily as NFSS switches. For MLModern,
-    % only their local family defaults need changing: replacing the switches
-    % with indirect callbacks can reenter the mapper during textsf/texttt.
-    \cs_set_protected:cpn { __font_map_sf_\l__font_name_tl : }
-      { \cs_set:Npn \sfdefault { mlmss } }
-    \cs_set_protected:cpn { __font_map_tt_\l__font_name_tl : }
-      { \cs_set:Npn \ttdefault { mlmtt } }
+
   }
 
 \ExplSyntaxOff
