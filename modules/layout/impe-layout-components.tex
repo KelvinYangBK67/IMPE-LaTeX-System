@@ -17,6 +17,7 @@
 % Snapshot the base-class typography *before* publication defaults mutate it.
 % A legacy profile can then truly restore the 1.0.5 font/heading layer.
 \let\IMPELegacyBaseNormalSize\normalsize
+\let\IMPELegacyBaseSmallSize\small
 \let\IMPELegacyBaseFootnoteSize\footnotesize
 \let\IMPELegacyBaseSection\section
 \let\IMPELegacyBaseSubsection\subsection
@@ -27,6 +28,7 @@
 }
 \newcommand{\NextLayoutRestoreLegacyTypography}{%
   \let\normalsize\IMPELegacyBaseNormalSize
+  \let\small\IMPELegacyBaseSmallSize
   \let\footnotesize\IMPELegacyBaseFootnoteSize
   \let\section\IMPELegacyBaseSection
   \let\subsection\IMPELegacyBaseSubsection
@@ -327,22 +329,60 @@
 % --------------------------------------------------------------------------
 \makeatletter
 
+% Rebase an unmodified base-class size command onto the publication leading
+% ratio. Calling the original size command first preserves NFSS size selection,
+% math skips and the author's explicit 10pt/11pt/12pt class choice.
+\newcommand{\NextLayoutRebaseSize}[3]{%
+  #1%
+  \@setfontsize\@currsize{\f@size}{%
+    \fp_eval:n { \f@size * \dim_to_fp:n {#3} / \dim_to_fp:n {#2} }pt}%
+}
+\newif\ifIMPELayoutUseCuratedSize
 \newcommand{\NextLayoutTypeDefaults}[4]{%
   \RequirePackage{setspace}%
   \setstretch{1}%
-  % Respect explicit 11pt/12pt base-class options: only replace the 10pt
-  % class default with the curated IMPE font and baseline dimensions.
-  \ifnum\@ptsize=\z@
+  % An omitted font-size option uses the preset's curated size. Explicit
+  % 10pt/11pt/12pt always retain the requested base-class size, with their
+  % baseline, small text and footnotes adjusted by the preset's ratios.
+  \IMPELayoutUseCuratedSizetrue
+  \ifnum\@ptsize>\z@
+    \IMPELayoutUseCuratedSizefalse
+  \else
+    \@ifundefined{ifIMPEClassExplicitFontSize}{}{%
+      \ifIMPEClassExplicitFontSize
+        \IMPELayoutUseCuratedSizefalse
+      \fi
+    }%
+  \fi
+  \ifIMPELayoutUseCuratedSize
     \renewcommand{\normalsize}{%
+      \IMPELegacyBaseNormalSize
       \@setfontsize\normalsize{#1}{#2}%
       \abovedisplayskip 9pt plus 2pt minus 4pt%
       \belowdisplayskip \abovedisplayskip
       \abovedisplayshortskip 0pt plus 2pt%
       \belowdisplayshortskip 5pt plus 2pt minus 2pt%
     }%
-    \renewcommand{\footnotesize}{\@setfontsize\footnotesize{#3}{#4}}%
-    \normalsize
+    \renewcommand{\small}{%
+      \IMPELegacyBaseSmallSize
+      \@setfontsize\small{#3}{#4}%
+    }%
+    \renewcommand{\footnotesize}{%
+      \IMPELegacyBaseFootnoteSize
+      \@setfontsize\footnotesize{#3}{#4}%
+    }%
+  \else
+    \renewcommand{\normalsize}{%
+      \NextLayoutRebaseSize{\IMPELegacyBaseNormalSize}{#1}{#2}%
+    }%
+    \renewcommand{\small}{%
+      \NextLayoutRebaseSize{\IMPELegacyBaseSmallSize}{#3}{#4}%
+    }%
+    \renewcommand{\footnotesize}{%
+      \NextLayoutRebaseSize{\IMPELegacyBaseFootnoteSize}{#3}{#4}%
+    }%
   \fi
+  \normalsize
 }
 \newcommand{\NextLayoutBookSections}[2]{%
   \renewcommand{\section}{\@startsection{section}{1}{\z@}%
@@ -422,6 +462,7 @@
   {
     \use:c { __layout_component_text_zh: }
     \NextLayoutTypeDefaults{10.5pt}{16.5pt}{9pt}{13.5pt}
+    \renewcommand{\IMPEListLineStretch}{1}
     \setlength{\parindent}{2em}
     \setlength{\parskip}{0pt}
     \NextLayoutBookSections{14pt}{12pt}
@@ -438,6 +479,7 @@
   {
     \use:c { __layout_component_text_zh: }
     \NextLayoutTypeDefaults{11pt}{17.5pt}{9pt}{13.5pt}
+    \renewcommand{\IMPEListLineStretch}{1}
     \setlength{\parindent}{2em}
     \setlength{\parskip}{0pt}
     \NextLayoutPaperSections{15pt}{12.5pt}
@@ -454,6 +496,7 @@
   {
     \use:c { __layout_component_text_zh: }
     \NextLayoutTypeDefaults{11pt}{17.5pt}{9pt}{13.5pt}
+    \renewcommand{\IMPEListLineStretch}{1}
     \setlength{\parindent}{2em}
     \setlength{\parskip}{0pt}
     \NextLayoutPaperSections{14pt}{12.5pt}
@@ -508,6 +551,7 @@
   {
     \NextLayoutRestoreLegacyTypography
     \use:c { __layout_component_text_zh: }
+    \renewcommand{\IMPEListLineStretch}{1.35}
   }
 \cs_new_protected:cpn { __layout_component_text_legacy_en_book: }
   {
@@ -518,6 +562,7 @@
   {
     \NextLayoutRestoreLegacyTypography
     \use:c { __layout_component_text_zh: }
+    \renewcommand{\IMPEListLineStretch}{1.35}
   }
 \cs_new_protected:cpn { __layout_component_head_legacy_plain: }
   { \NextLayoutRestoreLegacyPlainStyle }
