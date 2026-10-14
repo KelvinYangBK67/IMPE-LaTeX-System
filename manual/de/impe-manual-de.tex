@@ -9,7 +9,7 @@
   ItalicFont=lmmono10-italic.otf,
   BoldItalicFont=lmmonolt10-boldoblique.otf
 ]{lmmono10-regular.otf}
-\UseFunktionen{hyperlinks,tables}
+\UseFeatures{hyperlinks,tables}
 
 \usepackage{catchfile}
 \usepackage{metalogo}
@@ -237,7 +237,7 @@ Ein kleiner Artikel kann daher beispielsweise so aussehen:
 \documentclass[11pt]{impeart}
 
 \UseFont{libertinus}
-\UseFunktionen{math,hyperlinks}
+\UseFeatures{math,hyperlinks}
 
 \title{Ein Beispieldokument}
 \subtitle{Gesetzt mit IMPE}
@@ -258,7 +258,7 @@ Der Aufruf \verb|\UseFont{libertinus}| registriert die lokale Auswahl
 \verb|\LIB| und zugleich eine ausdrücklich gewählte globale
 lateinische Schrift. Sie hat Vorrang vor der von der Klasse
 vorgegebenen CMU-Schrift,
-während \verb|\UseFunktionen| zwei optionale Funktionsmodule aktiviert. Der Rest
+während \verb|\UseFeatures| zwei optionale Funktionsmodule aktiviert. Der Rest
 ist gewöhnliches \LaTeX{}.
 
 Für ein Dokument, dessen Einrichtung sich besser als einzelne Deklaration
@@ -454,7 +454,7 @@ einzelnen Subsysteme:
 \UseGlobalFonts{libertinus}    % ausdrücklich global
 
 \UseFeature{hyperlinks}
-\UseFunktionen{math,hyperlinks,tables}
+\UseFeatures{math,hyperlinks,tables}
 \end{verbatim}
 
 Die Schriftformen mit ausgelassenem Modus sind die empfohlenen Kurzbefehle für den normalen
@@ -812,7 +812,7 @@ stellen deren reguläre \LaTeX{}-Befehle bereit:
 \end{description}
 
 \begin{verbatim}
-\UseFunktionen{math,hyperlinks,tables,image,drawing,glyphs}
+\UseFeatures{math,hyperlinks,tables,image,drawing,glyphs}
 \end{verbatim}
 
 Mehrere Funktionen können kombiniert werden.
@@ -1169,7 +1169,7 @@ geladen werden.
 \texttt{\string\UseGlobalFont}, \texttt{\string\UseGlobalFonts} & Ausdrücklich globale Schriftauswahl. \\
 \texttt{\string\UseMainFont}, \texttt{\string\UseMainFonts} & Synonyme der globalen Auswahl. \\
 \texttt{\string\UseLayout}, \texttt{\string\UseLayouts} & Eingetragene Satzspiegel wählen. \\
-\texttt{\string\UseFeature}, \texttt{\string\UseFunktionen} & Zusatzfunktionen aktivieren. \\
+\texttt{\string\UseFeature}, \texttt{\string\UseFeatures} & Zusatzfunktionen aktivieren. \\
 \texttt{\string\SetCatalogFontRoot} & Verzeichnis lokaler Schriftdateien festlegen. \\
 \texttt{\string\subtitle} & Untertitel des Dokuments setzen. \\
 \bottomrule
