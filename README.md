@@ -223,7 +223,7 @@ for final validation and [font-library policy](assets/README.md) for approved bi
 
 ## Maintainer
 
-Sikai Yang. Use [GitHub Issues](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues)
+YANG Sikai. Use [GitHub Issues](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues)
 for public contact and support.
 
 ## License
