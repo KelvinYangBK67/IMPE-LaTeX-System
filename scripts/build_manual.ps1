@@ -327,6 +327,14 @@ try {
         }
 
         if (-not (Test-Path -LiteralPath $stagedPdf)) {
+            Write-Host "TEMPORARY DIAGNOSTIC: XeLaTeX reported success without a PDF."
+            $passOutput | Select-Object -Last 120 | Out-Host
+            $logPath = [IO.Path]::ChangeExtension($stagedPdf, ".log")
+            if (Test-Path -LiteralPath $logPath) {
+                Get-Content -LiteralPath $logPath -Tail 120 | Out-Host
+            }
+            Get-ChildItem -LiteralPath $stagedManualRoot -File |
+                Select-Object Name,Length | Format-Table | Out-Host
             throw "Manual PDF was not produced: $stagedPdf"
         }
 
