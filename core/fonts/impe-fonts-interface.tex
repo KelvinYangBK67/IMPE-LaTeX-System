@@ -487,13 +487,25 @@
       }
       { \cs_set_protected:cpn { __font_space_policy_#2: } { } }
 
-    \cs_set_protected:cpn { __font_map_sf_#2: }
-      { \cs_set_protected:Npn \sffamily { \use:c { __fontsf_#2 } } }
-    \tl_if_blank:VTF \l__font_mono_tl
-      { \cs_set_protected:cpn { __font_map_tt_#2: } { } }
+    % MLModern uses NFSS Type1 faces. Its native family switches must
+    % remain intact; local family defaults select the registered sans/mono
+    % faces, and the outer group restores the document defaults.
+    \str_if_eq:VnTF \l__font_special_module_tl { mlmodern }
       {
+        \cs_set_protected:cpn { __font_map_sf_#2: }
+          { \cs_set:Npn \sfdefault { mlmss } }
         \cs_set_protected:cpn { __font_map_tt_#2: }
-          { \cs_set_protected:Npn \ttfamily { \use:c { __fonttt_#2 } } }
+          { \cs_set:Npn \ttdefault { mlmtt } }
+      }
+      {
+        \cs_set_protected:cpn { __font_map_sf_#2: }
+          { \cs_set_protected:Npn \sffamily { \use:c { __fontsf_#2 } } }
+        \tl_if_blank:VTF \l__font_mono_tl
+          { \cs_set_protected:cpn { __font_map_tt_#2: } { } }
+          {
+            \cs_set_protected:cpn { __font_map_tt_#2: }
+              { \cs_set_protected:Npn \ttfamily { \use:c { __fonttt_#2 } } }
+          }
       }
 
     % Preserve archaic Hangul grapheme clusters across LV+T, L+V+T,
