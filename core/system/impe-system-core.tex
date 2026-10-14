@@ -147,10 +147,9 @@
             \tl_set:Nx \l_tmpa_tl { \NextDefaultGlobalFonts }
             \tl_if_blank:VF \l_tmpa_tl
               {
-                \group_begin:
-                  \bool_set_true:N \g__font_registering_defaults_bool
-                  \exp_args:NV \UseFonts \l_tmpa_tl [global]
-                \group_end:
+                \bool_gset_true:N \g__font_registering_defaults_bool
+                \exp_args:NV \UseFonts \l_tmpa_tl [global]
+                \bool_gset_false:N \g__font_registering_defaults_bool
               }
           }
 
@@ -179,10 +178,9 @@
       {
         \bool_if:NTF \l__nextsystem_globalfonts_are_defaults_bool
           {
-            \group_begin:
-              \bool_set_true:N \g__font_registering_defaults_bool
-              \exp_args:NV \UseFonts \l__nextsystem_effective_globalfonts_tl [global]
-            \group_end:
+            \bool_gset_true:N \g__font_registering_defaults_bool
+            \exp_args:NV \UseFonts \l__nextsystem_effective_globalfonts_tl [global]
+            \bool_gset_false:N \g__font_registering_defaults_bool
           }
           { \exp_args:NV \UseFonts \l__nextsystem_effective_globalfonts_tl [global] }
       }
