@@ -1,0 +1,60 @@
+% First explicit global font wins; class defaults remain at the tail.
+% Both public APIs must contribute to the same ordered CJK fallback pool.
+\documentclass{impeart}
+\FontRegisterFamily{
+  id=priority-roman-a,defaultmode=global,
+  global={regular=lmroman10-regular.otf}
+}
+\FontRegisterFamily{
+  id=priority-roman-b,defaultmode=global,
+  global={regular=lmroman10-bold.otf}
+}
+\UseGlobalFonts{priority-roman-a,priority-roman-b}
+\ExplSyntaxOn
+\str_if_eq:eeF {\g__font_latin_main_resource_tl} {lmroman10-regular.otf}
+  { \PackageError{impe-test}{Later~Latin~global~font~replaced~first~user~choice}{} }
+\int_compare:nNnF {\g__font_latin_main_origin_int} = {2}
+  { \PackageError{impe-test}{Class~default~was~not~overridden~by~user}{} }
+\ExplSyntaxOff
+% Promote the preloaded CMU explicitly; it must *not* jump ahead of A/B.
+\UseGlobalFont{cmu}
+\ExplSyntaxOn
+\str_if_eq:eeF {\g__font_latin_main_resource_tl} {lmroman10-regular.otf}
+  { \PackageError{impe-test}{Promoted~CMU~reordered~existing~user~fonts}{} }
+\ExplSyntaxOff
+
+\UseWriting{[file=FandolHei-Regular.otf]chinese}
+\UseWriting{[file=FandolSong-Regular.otf]chinese}
+\ExplSyntaxOn
+\str_if_eq:eeF {\g__font_cjk_main_resource_tl} {FandolHei-Regular.otf}
+  { \PackageError{impe-test}{Later~Chinese~global~font~replaced~primary}{} }
+\int_new:N \l__impe_test_pool_position_int
+\int_new:N \l__impe_test_hei_position_int
+\int_new:N \l__impe_test_song_position_int
+\bool_new:N \l__impe_test_seen_default_bool
+\seq_map_inline:Nn \g__writing_pool_order_seq
+  {
+    \int_incr:N \l__impe_test_pool_position_int
+    \prop_get:NnN \g__writing_pool_origin_prop {##1} \l_tmpa_tl
+    \str_if_eq:VnTF \l_tmpa_tl {default}
+      { \bool_set_true:N \l__impe_test_seen_default_bool }
+      {
+        \bool_if:NT \l__impe_test_seen_default_bool
+          { \PackageError{impe-test}{Default~appears~before~user~fallback}{} }
+      }
+    \prop_get:NnN \g__writing_pool_font_prop {##1} \l_tmpb_tl
+    \str_if_eq:VnT \l_tmpb_tl {FandolHei-Regular.otf}
+      { \int_set_eq:NN \l__impe_test_hei_position_int \l__impe_test_pool_position_int }
+    \str_if_eq:VnT \l_tmpb_tl {FandolSong-Regular.otf}
+      { \int_set_eq:NN \l__impe_test_song_position_int \l__impe_test_pool_position_int }
+  }
+\int_compare:nNnF {\l__impe_test_hei_position_int} > {0}
+  { \PackageError{impe-test}{First~CJK~resource~missing~from~pool}{} }
+\int_compare:nNnF {\l__impe_test_song_position_int} >
+  {\l__impe_test_hei_position_int}
+  { \PackageError{impe-test}{CJK~pool~lost~first-in~first-out~order}{} }
+\ExplSyntaxOff
+\begin{document}
+Sample text and 漢字.
+\typeout{IMPE-TEST-GLOBAL-FONT-PRIORITY-PASS}
+\end{document}
