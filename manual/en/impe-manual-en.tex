@@ -478,10 +478,10 @@ font and layout subsystems remain responsible for the implementation details.
 
 \section{Fonts, Script Routing, and Multilingual Typesetting}
 
-IMPE provides a short preset interface for everyday documents and a separate
-Writing Profile interface for explicit multilingual configuration. Both are
-supported public APIs in 1.1.0; the newer model does not invalidate historical
-font IDs or their local commands.
+For font selection, IMPE offers registered presets and explicit
+Writing Profiles. Both are supported public APIs in 1.1.0:
+presets keep their familiar local shortcuts, while profiles pair
+Unicode coverage with independently selected font resources.
 
 \subsection{Simple registered font presets}
 
@@ -490,8 +490,8 @@ The easiest way to load an existing registered preset is
 \verb|\UseTemplateSet| accepts a list of the same IDs.
 Omitting the mode follows that preset's \emph{automatic dispatch}, which can
 enable a local command, a document-wide font binding, and/or Unicode-range
-routing. It is not equivalent to simply reading the catalog's
-\texttt{defaultmode} field.
+routing. The resulting behavior depends on the preset's complete registration,
+including its global capability and assigned Unicode ranges.
 
 \begin{verbatim}
 \UseFont{libertinus}       % automatic: local command plus global candidate
@@ -516,13 +516,13 @@ interface remain especially convenient for established editorial styles.
 
 \subsection{Writing Profiles and Font Resources}
 
-The explicit writing model separates four kinds of information:
-\emph{Unicode block data}, \emph{Writing Profiles} (codepoint coverage and
-script-dependent behavior), \emph{font resources/packs} (real font faces), and
-\emph{backward-compatible registered presets}. A profile is not a language
-name, a font family or a legacy preset. For example, \texttt{sanskrit} is a
-preset with historically established typography; \texttt{devanagari} is a
-Writing Profile to which a suitable font resource can be attached.
+The writing model maintains four registries: \emph{Unicode block data},
+\emph{Writing Profiles} (codepoint coverage and script behavior),
+\emph{font resources/packs} (real font faces and styles), and
+\emph{registered presets} (the familiar, complete font recipes).
+For example, the \texttt{sanskrit} preset specifies Sanskrit typography,
+while the \texttt{devanagari} profile identifies Unicode coverage and
+script behavior that can be paired with a chosen font resource.
 
 Version 1.1.0 provides 69 curated profiles, 85 resource aliases and all 59
 original registered preset IDs. The profile determines Unicode coverage and
@@ -540,14 +540,14 @@ A global writing declaration uses:
 \end{verbatim}
 
 The general syntax is \verb|\UseWriting{[pack,options]profile}|. Multiple
-entries may be comma-separated outside brackets and braces. A known pack name
-may appear first in brackets; \texttt{font=} selects a resolvable font family
-name, whereas \texttt{file=} selects a physical file path. These mutually
-exclusive resource selectors are distinct from the Writing Profile. Additional
-keys include \texttt{stylemap}, face overrides (for example
-\texttt{italic=} or \texttt{sansbold=}) and \texttt{writing=}.
-Use a global declaration only when its script coverage and rendering mode
-are appropriate. Global vertical writing is not supported.
+entries may be comma-separated outside brackets and braces. The optional
+first bracket item selects a registered resource alias; alternatively,
+\texttt{font=} names an installed family and \texttt{file=} identifies a font
+file. Select one of these resource forms per entry. Other keys include
+\texttt{stylemap=native|full}, \texttt{writing=horizontal|vertical},
+\texttt{offset=} and face overrides such as \texttt{italic=zhuque}.
+Global writing is horizontal; the vertical option is available in local
+rendering where the selected profile supports it.
 
 \subsection{Named and anonymous local writing}
 
@@ -578,9 +578,9 @@ faces; \texttt{stylemap=full} additionally permits the documented
 cross-family stylistic mappings. Several multi-face Western packs default
 to the full mapping. Style selection and missing-character recovery are
 separate operations: an available Bold face may still lack a particular
-character. See \texttt{docs/USEWRITING-1.0.5.md} for complete options
-and profile/resource names; the filename records the API's introduction,
-not its support ceiling.
+character. The complete option syntax and resource details appear in
+\texttt{docs/USEWRITING-1.0.5.md}; the appendix below includes
+the registered names.
 
 \subsection{Global precedence and automatic fallback}
 
@@ -616,11 +616,9 @@ implicit class defaults and maintains first-registration order within a tier.
 Candidates with a valid face but a missing glyph can be skipped; late
 registrations refresh the relevant fallback chains.
 
-This is different from the soft declaration fallback used when a font
-itself cannot be resolved. For non-CJK scripts IMPE deliberately does not
-replace missing glyphs one codepoint at a time, which could disrupt shaping
-and word structure. Ordinary Unicode text uses fontspec/OpenType shaping
-and the chosen script-specific behavior.
+When a font declaration cannot be resolved, IMPE's soft fallback
+supplies the configured substitute. Glyph-by-glyph automatic recovery
+is scoped to CJK, preserving whole-run OpenType shaping for other scripts.
 
 \subsection{Unicode-range and CJK routing}
 
@@ -633,9 +631,8 @@ For CJK, IMPE uses xeCJK main/sans/mono channels. Shared Han characters
 retain the active document CJK selection, while kana and Hangul can be
 claimed as distinct script ranges. Use local selection such as
 \verb|\JP{...}| or \verb|\KR{...}| when a regional form of a shared
-Han ideograph must be chosen explicitly. Unified conflict resolution for
-new, overlapping global Writing Profiles is not a language-detection
-engine; the existing routing and arbitration limits still apply.
+Han ideograph must be chosen explicitly. Shared-script profile overlap follows the existing route-ownership
+rules; regional Han forms should be selected explicitly where needed.
 
 \subsection{Shaping, line breaking and writing directions}
 
@@ -645,16 +642,16 @@ script, language and feature settings and selected script-specific breaking
 behavior: Sanskrit Devanagari akshara boundaries, Tibetan tsheg boundaries
 and Thai dictionary-based line breaks are supported in their documented
 routes. Right-to-left behavior is attached to appropriate presets and
-renderers. The built-in local rotation route provides Mongolian, Manchu
-and Old Uyghur-style \emph{local} vertical forms; it is not a general
-four-direction page-layout engine.
+renderers. For Mongolian, Manchu and Old Uyghur, IMPE supplies local rotated
+vertical forms; these are distinct from page-wide writing-direction
+changes.
 
 \subsection{XSR 1.3: Egyptian, Khitan and inline glyph images}
 
-XSR is vendored with IMPE rather than installed as a separate IMPE feature
-named \texttt{xsr}. Two font modules use its active Unicode detector and
-script backends; the independent \texttt{glyphs} feature uses its inline
-vector/image backend.
+IMPE bundles XSR 1.3 for Egyptian composition, Khitan Small Script
+stacking and inline image glyphs. The Egyptian and Khitan font presets
+activate their respective script backends; \texttt{glyphs} provides
+independent inline image registration.
 
 \begin{description}
   \item[Egyptian hieroglyphs] Load \verb|\UseFont{egyptian}|, then use the
@@ -668,21 +665,21 @@ vector/image backend.
     vertically centers stacks of differing heights.
   \item[Registered inline images] Load \verb|\UseFeature{glyphs}| and
     register glyph assets with \verb|\IMPEGlyphRegister|; insert them
-    through \verb|\IMPEGlyph|. This feature does not install the
-    Egyptian or Khitan detector merely by being loaded.
+    through \verb|\IMPEGlyph|. Its image rendering is independent
+    of Egyptian and Khitan script detection.
 \end{description}
 
-For dynamic rendering, provide Python 3.11+, the installed private XSR
-runtime or equivalent configured renderer, XeLaTeX shell escape (or XSR
-preprocessing), and readable source/font files. Do not attempt
-\verb|\UseFeature{xsr}|: there is no such feature identifier.
+Dynamic rendering requires Python 3.11+, the installed private XSR
+runtime or an equivalent configured renderer, XeLaTeX shell escape
+(or XSR preprocessing), and readable source/font files.
 
 XSR 1.1 and later can preserve the original linear Unicode source of
 Egyptian quadrats and Khitan clusters via PDF \texttt{/ActualText},
 including controls and separators, while drawing the stacked visual output.
-This is not an invisible duplicate text layer or a guarantee that every
-PDF reader copies identically. IMPE does not claim general LaTeX-source
-recovery for equations, tables or arbitrary image glyphs.
+This preserves Unicode source text alongside visual stacking;
+actual copy behavior depends on the PDF reader. The mechanism
+applies to these XSR text compositions, while ordinary equations
+and image glyphs retain their respective PDF text behavior.
 
 \subsection{Further font documentation}
 
@@ -696,9 +693,9 @@ the actual rendered output.
 
 \subsection{Publication layout presets}
 
-Layouts select coordinated page dimensions, text rhythm, headers and (where
-applicable) chapter-opening or Beamer behavior. IMPE supplies complete
-publication defaults without replacing native \LaTeX{} layout packages.
+Layouts coordinate page dimensions, text rhythm, headers and
+(where applicable) chapter-opening or Beamer behavior. They provide
+publication defaults that can be adjusted through native \LaTeX{} packages.
 The canonical presets are:
 
 \begin{description}
@@ -715,16 +712,15 @@ The canonical presets are:
     \texttt{aspectratio} class options remain effective.
 \end{description}
 
-Article and report share A4 paper but \emph{not} the same geometry or
-typography. The historical \texttt{report} identifier remains a
-compatibility alias for Chinese report settings, not the old
-article-derived preset. IMPE checks whether each preset supports the
-underlying document class.
+Article and report have independent A4 geometry and typography.
+The \texttt{report} compatibility identifier selects the Chinese
+report configuration. IMPE checks each preset against the underlying
+document class.
 
 The optional \texttt{beamer\_clean} and \texttt{beamer\_clean\_zh}
-presets keep the minimalist 1.0.6 presentation appearance; they are
-\emph{not} current defaults. Use \texttt{aspectratio=169} in the
-class options for widescreen Beamer slides.
+presets select the minimalist presentation appearance introduced in 1.0.6.
+The default \texttt{beamer} presets use Madrid 4:3; set
+\texttt{aspectratio=169} in the class options for widescreen slides.
 
 \subsection{Legacy layouts and native overrides}
 
@@ -738,9 +734,10 @@ before further author overrides:
 \geometry{a4paper,inner=32mm,outer=24mm,bindingoffset=4mm}
 \end{verbatim}
 
-Historical layout availability does not imply byte-identical old PDFs
-when fonts or external dependencies change. For new documents,
-publication defaults plus native adjustments are generally clearer.
+The legacy selection restores the documented layout parameters;
+font versions and other dependencies can still affect exact pagination.
+For new documents, publication defaults plus native adjustments
+are generally clearer.
 IMPE already loads \texttt{geometry} and \texttt{fancyhdr} in
 the canonical article/report/book presets. Apply native commands
 after the class and any explicit \verb|\UseLayout| call:
@@ -827,9 +824,10 @@ before the feature loads.
 
 \subsection{Indexes: native \texttt{imakeidx} first}
 
-New documents should use native \verb|\index|,
-\verb|\makeindex| and \verb|\printindex|. IMPE does not
-recommend a separate term-indexing language. When IMPE creates
+New documents use native \verb|\index|,
+\verb|\makeindex| and \verb|\printindex|,
+with IMPE adding stable destinations for ordinary entries in its
+default index. When IMPE creates
 its default index, each ordinary native \verb|\index|
 mark receives a unique PDF destination for that occurrence,
 even when page numbering has been reset or several marks fall
@@ -862,7 +860,7 @@ is limited to plain entries in IMPE's initialized default index.
 Native formatting encapsulators, \texttt{see}/\texttt{seealso},
 range delimiters and named indexes retain their own indexing and
 hyperlink semantics. \verb|\Term| and its first-use behavior
-remain available for old documents only.
+remain available for compatible first-use terminology workflows.
 
 \subsection{Tables, figures, drawings and inline glyphs}
 
@@ -926,11 +924,10 @@ interface adds options rather than altering the old
 preset namespace or rewriting its compatibility recipes.
 
 The recommended indexing interface is now native-first.
-The old \verb|\Term[options]{display}[description]|
-and \verb|\IndexTitle| retain their formatting and
-first-occurrence semantics for 1.x source compatibility.
-They do \emph{not} alter the repeated-occurrence behavior
-of ordinary native \verb|\index|. For new
+The \verb|\Term[options]{display}[description]|
+and \verb|\IndexTitle| helpers retain their formatting and
+first-occurrence semantics. Native \verb|\index| continues to
+register every ordinary occurrence. For new
 first-use terminology or glossary definitions, consider
 the separate \texttt{glossaries-extra} package directly.
 
@@ -961,9 +958,9 @@ belong to the old managed runtime, and preserves other
 user-created files. New persistent configuration should
 use \texttt{impe.local.tex}.
 
-Source compatibility does not guarantee pixel-identical
-PDFs or unchanged pagination after updates to fonts,
-layouts or upstream \LaTeX{} packages.
+Compatibility preserves public entry points and documented
+commands. Font and layout updates may change line breaks
+or pagination.
 
 \section{Package Structure and Extension Points}
 
@@ -1268,14 +1265,14 @@ Useful settings include \verb|\UseCitationStyle|,
 \verb|\UseMathFont|, and \verb|\HeaderStyle|.
 The indexer for IMPE's initialized default xindy index is
 \texttt{texindy -L english -C utf8 -M <job>-impe <job>.idx}.
-For the XSR-backed script renderers use the \texttt{egyptian}
-or \texttt{khitan\_small} font preset, not a nonexistent
-\texttt{xsr} feature.
+The \texttt{egyptian} and \texttt{khitan\_small} font presets
+activate their XSR script renderers.
 
 \subsection{Compatibility-only feature helpers}
 
-The following are retained to compile older sources, not as the
-recommended syntax for new authoring:
+These helpers remain available for existing documents.
+The native package interfaces listed above are recommended
+for new authoring:
 
 \begin{longtable}{@{}p{0.43\linewidth}p{0.50\linewidth}@{}}
 \toprule
@@ -1375,7 +1372,7 @@ become the effective primary font.
 \texttt{syriac} & L & \texttt{\string\SY} & Syriac. \\
 \texttt{syriac\_eastern} & L+R & \texttt{\string\SYE} & Eastern Syriac with registered range routing. \\
 \texttt{kharosthi} & L & \texttt{\string\KH} & Kharosthi. \\
-\texttt{egyptian} & L & --- & Egyptian hieroglyphic XSR composer (\texttt{\string\IMPEEgyptianText}). \\
+\texttt{egyptian} & L & \texttt{\string\EG} & Egyptian hieroglyphic composition (XSR; also \texttt{\string\IMPEEgyptianText}). \\
 \texttt{khitan\_small} & L & \texttt{\string\KHS} & Khitan Small Script with its specialized composer. \\
 \texttt{pahlavi\_parthian} & L+R & \texttt{\string\PAR} & Inscriptional Parthian. \\
 \texttt{pahlavi\_inscriptional} & L+R & \texttt{\string\PAH} & Inscriptional Pahlavi. \\
