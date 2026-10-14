@@ -1,7 +1,7 @@
 % !TeX program = xelatex
-\documentclass[11pt]{impeart_zh}
+\documentclass[11pt,lang=zh]{impeart}
 
-% 中文由 impeart_zh 的標準 Shanggu 路由處理；拉丁文字沿用 Libertinus。
+% 使用標準文件類別的 lang=zh 選項；中文用 Shanggu，拉丁文字用 Libertinus。
 \UseFont{libertinus}[global]
 \setmonofont[
   BoldFont=lmmonolt10-bold.otf,
@@ -59,7 +59,7 @@
 IMPE \LaTeX{} System 是一套模組化 \XeLaTeX{} 框架，提供可重用的版面、字體路由、
 多語排版與選用文件功能。
 
-IMPE 透過把系統拆分成可重用的部分來處理這個問題。對使用者而言，最重要的區分是
+IMPE 由三個可以獨立設定的部分組成：
 \emph{版面}、\emph{字體}與\emph{功能}。版面描述文件主要的視覺組織方式；字體族提供
 全域或局部的字體行為，必要時也包括依書寫系統進行的路由；功能模組則提供數學、
 超連結、引用、表格或圖片等選用功能。這些部分既可分別選擇，也可透過統一的範本介面
@@ -89,85 +89,106 @@ OpenType 字體、\texttt{fontspec} 以及 \XeTeX{} 的字元間機制，同時�
 
 \subsection{發行形式}
 
-IMPE 準備了三種發行形式，分別面向不同的使用情境。
+IMPE 1.1.0 準備了 \texttt{Full}、\texttt{Core} 與
+\texttt{CTAN} 三種發行形式。三者使用相同的核心
+\XeLaTeX{} 執行環境與標準文件類別，差別在於隨附字體及安裝程序。
 
-\emph{面向 CTAN 的發行版}是根目錄為 \texttt{impe-framework/} 的
-\texttt{impe-framework.zip}；它包含可攜的執行環境、公開文件與標準
-\texttt{impe*} 入口。本機字體庫另行管理。\emph{核心發行版}包含相同的系統
-邏輯，供希望直接從發行版安裝 IMPE、並自行管理字體的使用者使用。\emph{完整發行版}
-則可在字體再分發條件允許的範圍內，附帶一套準備好的本機字體庫。
+\begin{description}
+  \item[\texttt{Full}（完整包）]
+    包含核心、相容入口、XSR，以及經授權檢查且實際收入發行包的
+    可再分發字體檔。
+  \item[\texttt{Core}（核心包）]
+    包含核心、相容入口、XSR 與安裝工具。所需字體可由
+    \TeX{} Live、作業系統或使用者提供的字體檔解析。
+  \item[\texttt{CTAN}]
+    根目錄為 \texttt{impe-framework/} 的
+    \texttt{impe-framework.zip}，包含標準文件類別、
+    套件程式碼、XSR 原始碼及文件，但不附帶字體檔。
+    透過 CTAN 安裝不會自動執行 Python 套件安裝。
+\end{description}
 
-這項區分是刻意設計的。IMPE 文件執行環境保持可攜；不同電腦或使用者可透過獨立的
-字體資源層提供各自的大型字體庫。
+完整包實際包含哪些字體，依發行時經授權審核的清單決定。
+字體登錄表中的所有項目不一定都隨包附送。
 
-\subsection{安裝位置}
+\subsection{安裝完整包或核心包}
 
-直接安裝時，套件會放入使用者 TEXMF 樹中的
-
-\begin{verbatim}
-tex/latex/impe/
-\end{verbatim}
-
-因此套件與包裝類別都可透過標準 \TeX{} 搜尋路徑找到。標準公開入口為
-
-\begin{verbatim}
-impe.sty
-impeart.cls
-impebook.cls
-impereport.cls
-impebeamer.cls
-\end{verbatim}
-
-另有對應的 \texttt{\_zh} 包裝類別，提供面向中文文件的預設設定。直接從 GitHub
-取得的 full 與 core release 也會安裝較早的 \texttt{next*} 相容入口；CTAN 的
-\texttt{impe-framework} 發佈包含標準入口。詳見
-第~\ref{sec:compatibility} 節。
-
-若直接使用 IMPE 發行包，可透過隨附的安裝器把執行環境複製到使用者 TEXMF 樹。
-發行包可提供通常的 Windows 入口
+直接安裝會將套件放入使用者 TEXMF 樹的
+\texttt{TEXMFHOME/tex/latex/impe/}。標準公開入口為
+\texttt{impe.sty}、\texttt{impeart.cls}、
+\texttt{impereport.cls}、\texttt{impebook.cls}
+和 \texttt{impebeamer.cls}。
+舊式 \texttt{\_zh}、\texttt{next*} 名稱屬相容入口。
 
 \begin{verbatim}
-install.bat
+# Windows：已解壓的發行包
+.\install.bat
+# Windows：原始碼倉庫
+.\scripts\install.ps1
+
+# Unix：已解壓的發行包
+sh ./install.sh
+# Unix：原始碼倉庫
+sh ./scripts/install.sh
 \end{verbatim}
 
-該啟動程式會轉交 \texttt{install.ps1}；有進階需求的使用者也可用系統平常的腳本
-執行方式直接呼叫後者。
+Windows 安裝程式可使用 \texttt{-TexmfRoot} 和
+\texttt{-SkipXsrPython}；Unix 安裝程式可接受自訂 TEXMF 路徑。
+若安裝時未能更新 \TeX{} 檔名資料庫，可另外執行
+\texttt{mktexlsr}。透過 \TeX{} 發行版的套件管理器安裝時，
+則遵循該發行版的安裝流程。
 
-透過 \TeX{} 發行版安裝時，該發行版會依一般機制找到套件。
+\subsection{XSR 與 Python 執行環境}
+
+IMPE 隨附 XSR \textbf{1.3}。完整包與核心包的安裝程式
+通常會為 XSR 建立獨立的 Python 虛擬環境，不會直接修改
+使用者的全域 Python 套件。動態埃及聖書字排版、契丹小字堆疊、
+圖片字形處理可能需要 Python \textbf{3.11 以上}、
+\texttt{venv} 與 \texttt{pip}；首次安裝相依套件時也可能需要網路。
+
+如果只要安裝 \TeX{} 部分，可以略過 Python 環境設定：
+
+\begin{verbatim}
+# Windows
+.\scripts\install.ps1 -SkipXsrPython
+# Unix
+IMPE_SKIP_XSR_PYTHON=1 sh ./scripts/install.sh
+\end{verbatim}
+
+使用動態 XSR 功能時，需要允許 XeLaTeX 執行
+Shell Escape，或先行預處理 XSR 內容。渲染程式還必須能讀取
+實際 TTF／OTF 字體檔；只有系統字體名稱不足以讓 Python
+取得字形輪廓。
 
 \subsection{字體資源與本機設定}
 
-每個登錄字面先使用隨附檔案，再交由 fontspec 查找 TeX Live 或系統字體，
-最後才使用既有錯誤或回退設定。core 安裝可直接使用已可解析的字體。
-
-原始碼倉庫收錄執行環境；完整字體庫另行在本機管理。在本機安裝或完整發行版中，
-字體登錄表所指向的字體檔通常從 \texttt{assets/fonts/} 根目錄下解析。
-\texttt{\string\SetCatalogFontRoot} 可透過本機設定指定另一個位置。
-
-建議使用 \texttt{impe.local.tex} 作為持久設定方式。例如，本機設定可以包含
+IMPE 會先嘗試已登錄的本機字體檔，再向 \TeX{} 字體系統
+或作業系統尋找字體。已能直接解析的系統字體無須另外複製
+到 IMPE 目錄。新增字體檔通常放在
+\texttt{assets/fonts/} 下，亦可在 \texttt{impe.local.tex}
+內設定其他存放位置：
 
 \begin{verbatim}
 \SetCatalogFontRoot{D:/Fonts/IMPE}
 \end{verbatim}
 
-並將路徑改成實際使用的位置。若只需對單一文件作臨時覆寫，也可以直接在文件中使用
-同一命令。核心發行版與 CTAN 安裝可直接使用已可解析的系統或 TeX 字體；
-要求本機字體檔的功能則需要提供相應資源。
+此命令也可在單一文件的導言區使用。
+一般字體解析失敗時，IMPE 可以警告並採用代用字體；
+XSR 則須取得所用字體的實體檔案。
 
 \subsection{快速安裝檢查}
 
-安裝完成後，在提供 Libertinus 的系統上，下列文件應能以 \XeLaTeX{} 編譯：
+若系統提供 Libertinus，可用下面的最小文件確認類別、
+字體登錄與局部命令能正常工作：
 
 \begin{verbatim}
 \documentclass{impeart}
 \UseFont{libertinus}
-
 \begin{document}
-\LIB{IMPE is ready.}
+IMPE 已可使用。\LIB{Libertinus 局部文字。}
 \end{document}
 \end{verbatim}
 
-若編譯成功，即表示標準包裝類別、套件入口與自動字體載入介面均已能由 \TeX{} 找到。
+這項檢查針對一般 \XeLaTeX{} 編譯；XSR 和發行包另有測試。
 
 \section{快速開始}
 
@@ -197,7 +218,7 @@ install.bat
 \end{verbatim}
 
 這個類別已經提供一般的英文文章版面與基礎字體。省略模式的
-\verb|\UseFont{libertinus}| 會遵循該字體族登錄的自動行為：啟用其全域字體組合，
+\verb|\UseFont{libertinus}| 會遵循已登錄的自動行為：將 Libertinus 登錄為明確的全域拉丁字體候選，
 同時提供局部命令 \verb|\LIB|；\verb|\UseFeatures| 則啟用兩個選用功能模組。
 其餘部分都是一般的 \LaTeX{}。
 
@@ -223,7 +244,7 @@ IMPE 也可以作為套件載入到標準 \LaTeX{} 類別之下：
 
 \UseTemplateSet{
   layout = en_doc,
-  fonts = {cmu,libertinus},
+  fonts = {libertinus},
   features = {hyperlinks}
 }
 \end{verbatim}
