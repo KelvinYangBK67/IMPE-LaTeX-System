@@ -905,7 +905,7 @@ See \texttt{docs/FEATURES.md} for technical details.
 \section{Compatibility and Migration}\label{sec:compatibility}
 
 IMPE 1.x establishes \texttt{impe*} as the canonical
-public naming scheme. New documents should use
+public naming scheme. New documents use
 \texttt{impe.sty}, \texttt{impeart}, \texttt{impebook},
 \texttt{impereport} or \texttt{impebeamer}, with
 \texttt{lang=zh} where desired. Historical \texttt{next*}
@@ -1099,32 +1099,38 @@ Writing Profiles and font resources, native feature APIs, and
 compatibility-only helpers. Detailed parameter lists and extension
 contracts live under \texttt{docs/}.
 
-\subsection{Canonical document classes}
+\subsection{Canonical classes and language options}
 
-\begin{longtable}{@{}p{0.30\linewidth}p{0.63\linewidth}@{}}
+The same four wrapper classes serve English (\texttt{lang=en}, the
+default) and Chinese (\texttt{lang=zh}) documents. Use
+\verb|\documentclass[lang=zh]{impeart}|, for example, to select the
+Chinese article layout and implicit font defaults.
+
+\begin{longtable}{@{}p{0.25\linewidth}p{0.34\linewidth}p{0.33\linewidth}@{}}
 \toprule
-\textbf{Class} & \textbf{Default layout and global fonts} \\
+\textbf{Class} & \textbf{Default English} & \textbf{With \texttt{lang=zh}} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Class} & \textbf{Default layout and global fonts} \\
+\textbf{Class} & \textbf{Default English} & \textbf{With \texttt{lang=zh}} \\
 \midrule
 \endhead
-\texttt{impeart} & \texttt{en\_doc} (A4 article); implicit \texttt{cmu}. \\
-\texttt{impeart\_zh} & \texttt{zh\_doc}; implicit \texttt{cmu,shanggu}. \\
-\texttt{impereport} & \texttt{en\_report} (independent A4 report); implicit \texttt{cmu}. \\
-\texttt{impereport\_zh} & \texttt{zh\_report}; implicit \texttt{cmu,shanggu}. \\
-\texttt{impebook} & \texttt{en\_book} (ISO B5); implicit \texttt{cmu}. \\
-\texttt{impebook\_zh} & \texttt{zh\_book}; implicit \texttt{cmu,shanggu}. \\
-\texttt{impebeamer} & \texttt{beamer}, Madrid 4:3; implicit \texttt{cmu}. \\
-\texttt{impebeamer\_zh} & \texttt{beamer\_zh}, Madrid 4:3; implicit \texttt{cmu,shanggu}. \\
-\texttt{impe.sty} & Load IMPE under a user-selected standard \LaTeX{} class. \\
+\texttt{impeart} & \texttt{en\_doc}; A4; CMU &
+  \texttt{zh\_doc}; A4; CMU and Shanggu \\
+\texttt{impereport} & \texttt{en\_report}; A4; CMU &
+  \texttt{zh\_report}; A4; CMU and Shanggu \\
+\texttt{impebook} & \texttt{en\_book}; ISO B5; CMU &
+  \texttt{zh\_book}; ISO B5; CMU and Shanggu \\
+\texttt{impebeamer} & \texttt{beamer}; Madrid 4:3; CMU &
+  \texttt{beamer\_zh}; Madrid 4:3; CMU and Shanggu \\
 \bottomrule
 \end{longtable}
 
-Canonical wrapper classes also accept \texttt{lang=zh}. The historical
-\texttt{next*} entry points are retained for compatibility in
-direct Full/Core installations.
+For an externally supplied document class, load
+\verb|\usepackage{impe}| and declare the desired layout,
+fonts and features. The historical \texttt{impe*\_zh}
+and \texttt{next*} entry points are listed with the
+compatibility interfaces below.
 
 \subsection{Core setup and font presets}
 
@@ -1162,7 +1168,8 @@ direct Full/Core installations.
 \bottomrule
 \end{longtable}
 
-The four \verb|\UseTemplateSet| keys are
+For an overview of all four \verb|\UseTemplateSet| keys, see
+the Template Model section. The keys are
 \texttt{layout} (one preset), \texttt{fonts} (automatic
 preset dispatch), \texttt{globalfonts} (explicit global binding)
 and \texttt{features} (feature IDs). \texttt{mainfonts}
@@ -1230,10 +1237,6 @@ and~\ref{app:writing-resource-ids}; see
 \texttt{en\_book}, \texttt{zh\_book} & ISO B5 book presets. \\
 \texttt{beamer}, \texttt{beamer\_zh} & Madrid 4:3 presentation presets. \\
 \texttt{beamer\_clean}, \texttt{beamer\_clean\_zh} & Optional minimalist presentation look. \\
-\texttt{report} & Chinese report compatibility preset. \\
-\texttt{legacy\_*} & Historical 1.0.5 parameter snapshots. \\
-\texttt{\string\UseLegacyLayout} &
-  Select historical layout for current class/language in the preamble. \\
 \texttt{\string\LayoutSetup\{keys\}} &
   Adjust supported layout component keys. \\
 \texttt{\string\LayoutSet\{key\}\{value\}} &
@@ -1270,8 +1273,6 @@ and Beamer customization remain preferable for detailed overrides.
 \texttt{drawing} & \texttt{tikzpicture}, \texttt{axis}, \texttt{forest}. \\
 \texttt{glyphs} & \texttt{\string\IMPEGlyphRegister}, \texttt{\string\IMPEGlyph} for image glyphs. \\
 \texttt{headers} & Running headings and native \texttt{fancyhdr}. \\
-\texttt{lists\_envs} & Legacy \texttt{ExampleBlock} environment. \\
-\texttt{bib}, \texttt{header} & Historical aliases for \texttt{citations}, \texttt{headers}. \\
 \bottomrule
 \end{longtable}
 
@@ -1283,48 +1284,14 @@ The indexer for IMPE's initialized default xindy index is
 The \texttt{egyptian} and \texttt{khitan\_small} font presets
 activate their XSR script renderers.
 
-\subsection{Compatibility-only feature helpers}
+\subsection{Registered font preset identifiers and local commands (59)}
 
-These helpers remain available for existing documents.
-The native package interfaces listed above are recommended
-for new authoring:
-
-\begin{longtable}{@{}p{0.43\linewidth}p{0.50\linewidth}@{}}
-\toprule
-\textbf{Legacy interface} & \textbf{Supported purpose} \\
-\midrule
-\endfirsthead
-\toprule
-\textbf{Legacy interface} & \textbf{Supported purpose} \\
-\midrule
-\endhead
-\texttt{\string\Term[options]\{display\}[description]} &
-  Bold first-occurrence term and its historical index entry. \\
-\texttt{\string\IndexTitle} &
-  Original default index-title override. \\
-\texttt{TableInlineFit}, \texttt{TableLong} &
-  Old fixed-format table environments. \\
-\texttt{TableBook*}, \texttt{NiceBooktable*} &
-  Old book-style and annotated table helpers. \\
-\texttt{OneImage*}, \texttt{PanelFigure*}, \texttt{\string\Panel} &
-  Historical figure and multi-panel helpers. \\
-\texttt{ExampleBlock} &
-  Historical indented example display. \\
-\bottomrule
-\end{longtable}
-
-The old table/figure control commands, column types \texttt{L},
-\texttt{C}, \texttt{R}, \texttt{P}, \texttt{M}, \texttt{B}
-and original image defaults remain available as documented in
-\texttt{docs/FEATURES.md}. Prefer the native package commands
-above for new documents.
-
-\subsection{Registered preset identifiers}
-
-This table lists the historical \verb|\UseFont| IDs. The
-\textbf{Auto} column describes the \emph{automatic loader's}
-registered effects, \emph{not} an isolated interpretation of
-the catalog's \texttt{defaultmode} metadata:
+The 59 established \verb|\UseFont| IDs remain supported,
+and the mode-free preset API is recommended for straightforward
+font selection. The \textbf{Auto} column records the
+automatic loader's effects, which can include local commands,
+global candidates and Unicode routing beyond the catalog's
+\texttt{defaultmode} metadata:
 
 \begin{description}
   \item[\texttt{G}] Global font registration only.
@@ -1731,6 +1698,88 @@ is the normal stacked entry point;
 \verb|\KHSstack| and \verb|\KHSstackblock|
 offer explicit inline and paragraph-level stack forms.
 Their XSR rendering requirements are described in the Fonts section.
+
+\subsection{Compatibility class, layout and feature names}
+
+The following names are retained to support existing source documents.
+New documents use the canonical classes and features listed first
+in this appendix.
+
+\begin{longtable}{@{}p{0.43\linewidth}p{0.48\linewidth}@{}}
+\toprule
+\textbf{Compatibility class} & \textbf{Canonical replacement} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Compatibility class} & \textbf{Canonical replacement} \\
+\midrule
+\endhead
+\texttt{impeart\_zh} & \texttt{impeart} with \texttt{lang=zh} \\
+\texttt{impereport\_zh} & \texttt{impereport} with \texttt{lang=zh} \\
+\texttt{impebook\_zh} & \texttt{impebook} with \texttt{lang=zh} \\
+\texttt{impebeamer\_zh} & \texttt{impebeamer} with \texttt{lang=zh} \\
+\texttt{nextart}, \texttt{nextreport}, \texttt{nextbook},
+  \texttt{nextbeamer} & Matching canonical \texttt{impe*} wrapper \\
+\texttt{next*\_zh} & Matching canonical wrapper with \texttt{lang=zh} \\
+\texttt{nextsystem.sty} & \texttt{impe.sty} \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{@{}p{0.35\linewidth}p{0.57\linewidth}@{}}
+\toprule
+\textbf{Compatibility ID} & \textbf{Current role} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Compatibility ID} & \textbf{Current role} \\
+\midrule
+\endhead
+\texttt{report} & Historical Chinese-report layout alias. \\
+\texttt{legacy\_*} & Historical 1.0.5 layout parameter presets. \\
+\texttt{\string\UseLegacyLayout} & Select the 1.0.5 layout
+  for the current canonical class/language. \\
+\texttt{bib} & Feature alias for \texttt{citations}. \\
+\texttt{header} & Feature alias for \texttt{headers}. \\
+\texttt{lists\_envs} & Feature for the retained
+  \texttt{ExampleBlock} environment. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Compatibility-only feature helpers}
+
+These helpers remain available for existing documents.
+The native package interfaces listed above are recommended
+for new authoring:
+
+\begin{longtable}{@{}p{0.43\linewidth}p{0.50\linewidth}@{}}
+\toprule
+\textbf{Legacy interface} & \textbf{Supported purpose} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Legacy interface} & \textbf{Supported purpose} \\
+\midrule
+\endhead
+\texttt{\string\Term[options]\{display\}[description]} &
+  Bold first-occurrence term and its historical index entry. \\
+\texttt{\string\IndexTitle} &
+  Original default index-title override. \\
+\texttt{TableInlineFit}, \texttt{TableLong} &
+  Old fixed-format table environments. \\
+\texttt{TableBook*}, \texttt{NiceBooktable*} &
+  Old book-style and annotated table helpers. \\
+\texttt{OneImage*}, \texttt{PanelFigure*}, \texttt{\string\Panel} &
+  Historical figure and multi-panel helpers. \\
+\texttt{ExampleBlock} &
+  Historical indented example display. \\
+\bottomrule
+\end{longtable}
+
+The old table/figure control commands, column types \texttt{L},
+\texttt{C}, \texttt{R}, \texttt{P}, \texttt{M}, \texttt{B}
+and original image defaults remain available as documented in
+\texttt{docs/FEATURES.md}. Prefer the native package commands
+above for new documents.
 
 \subsection{Advanced extension interfaces}
 
