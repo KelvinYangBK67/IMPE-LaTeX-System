@@ -1715,12 +1715,17 @@
               { \__font_set_tibetan_tsheg_transitions:n { \l__font_name_tl } }
             \seq_map_inline:Nn \g__font_range_global_blocks_seq
               {
-                \prop_get:NnN \g__font_range_global_name_prop {##1} \l_tmpa_tl
-                \__font_set_range_cross_transition:nnnn
-                  {##1}
-                  {#1}
-                  { \l_tmpa_tl }
-                  { \l__font_name_tl }
+                % A promoted range is already present in this sequence.
+                % Never redefine its own intra-block shaping as a cross-run.
+                \str_if_eq:nnF {##1} {#1}
+                  {
+                    \prop_get:NnN \g__font_range_global_name_prop {##1} \l_tmpa_tl
+                    \__font_set_range_cross_transition:nnnn
+                      {##1}
+                      {#1}
+                      { \l_tmpa_tl }
+                      { \l__font_name_tl }
+                  }
               }
             \__font_set_devanagari_akshara_cross_for_block:nn
               {#1}
