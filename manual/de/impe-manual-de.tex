@@ -1116,83 +1116,83 @@ IMPE-Verhaltens sollen mit dieser Ausgabe synchron bleiben.
 
 \appendix
 
-\section{Kurzreferenz}
-\label{app:quick-reference}
+\section{Kurzreferenz}\label{app:quick-reference}
 
-Dieser Anhang fasst die dokumentierte öffentliche Schnittstelle von IMPE 1.x
-zusammen. Er ergänzt als Nachschlagewerk die Erläuterungen im Haupttext und
-die detaillierte Subsystemdokumentation unter \texttt{docs/}. Interne
-Implementierungsbefehle, darunter Befehle mit dem Präfix
-\texttt{\string\Next...}, werden bei ihrer Implementierung dokumentiert.
+Dieser Anhang enthält die in Version 1.1.0 verfügbaren
+öffentlichen Schnittstellen und Kennungen. Zunächst
+folgen die empfohlenen Klassen und Befehle,
+danach die Schriftverzeichnisse und zuletzt
+die Kompatibilitätseinträge.
 
-\subsection{Empfohlenes Modell zum Laden von Schriften}
+\subsection{Kanonische Dokumentklassen}
 
-Für den normalen Gebrauch sollte innerhalb von
-\texttt{\string\UseTemplateSet} vorzugsweise
-\texttt{fonts = \{...\}} oder direkt \texttt{\string\UseFont\{...\}} verwendet
-werden. Bei ausgelassenem Modus folgt IMPE dem registrierten Verhalten der
-Familie: Je nach Bedarf kann ein lokaler Befehl definiert, eine dokumentweite
-Schrift aktiviert oder ein skript- bzw. bereichsspezifisches automatisches
-Routing eingerichtet werden.
+Die vier Klassen verwenden \texttt{lang=en}
+(Standardeinstellung) oder \texttt{lang=zh}.
+Eine gesonderte Klasse für Chinesisch ist für
+neue Dokumente nicht erforderlich.
 
-Ein expliziter Modus überschreibt dieses automatische Verhalten gezielt:
+\begin{longtable}{@{}p{0.25\linewidth}p{0.33\linewidth}p{0.34\linewidth}@{}}
+\toprule
+\textbf{Klasse} & \textbf{Englisch} & \textbf{Mit \texttt{lang=zh}} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Klasse} & \textbf{Englisch} & \textbf{Mit \texttt{lang=zh}} \\
+\midrule
+\endhead
+\texttt{impeart} & \texttt{en\_doc}; A4; CMU & \texttt{zh\_doc}; A4; CMU und Shanggu \\
+\texttt{impereport} & \texttt{en\_report}; A4; CMU & \texttt{zh\_report}; A4; CMU und Shanggu \\
+\texttt{impebook} & \texttt{en\_book}; B5; CMU & \texttt{zh\_book}; B5; CMU und Shanggu \\
+\texttt{impebeamer} & \texttt{beamer}; Madrid 4:3; CMU & \texttt{beamer\_zh}; Madrid 4:3; CMU und Shanggu \\
+\bottomrule
+\end{longtable}
+
+Bei einer durch einen Verlag vorgegebenen
+Dokumentklasse kann stattdessen \verb|\usepackage{impe}|
+geladen werden.
+
+\subsection{Einrichtung und Schriftvoreinstellungen}
+
+\begin{longtable}{@{}p{0.43\linewidth}p{0.49\linewidth}@{}}
+\toprule
+\textbf{Befehl} & \textbf{Zweck} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Befehl} & \textbf{Zweck} \\
+\midrule
+\endhead
+\texttt{\string\UseTemplateSet} & Satzspiegel, Schriften und Funktionen zusammen auswählen. \\
+\texttt{\string\UseFont}, \texttt{\string\UseFonts} & Voreinstellungen automatisch oder mit \texttt{[local]} und \texttt{[global]} laden. \\
+\texttt{\string\UseLocalFont}, \texttt{\string\UseLocalFonts} & Ausschließlich lokale Schriftauswahl. \\
+\texttt{\string\UseGlobalFont}, \texttt{\string\UseGlobalFonts} & Ausdrücklich globale Schriftauswahl. \\
+\texttt{\string\UseMainFont}, \texttt{\string\UseMainFonts} & Synonyme der globalen Auswahl. \\
+\texttt{\string\UseLayout}, \texttt{\string\UseLayouts} & Eingetragene Satzspiegel wählen. \\
+\texttt{\string\UseFeature}, \texttt{\string\UseFeatures} & Zusatzfunktionen aktivieren. \\
+\texttt{\string\SetCatalogFontRoot} & Verzeichnis lokaler Schriftdateien festlegen. \\
+\texttt{\string\subtitle} & Untertitel des Dokuments setzen. \\
+\bottomrule
+\end{longtable}
+
+Die Schlüssel von \verb|\UseTemplateSet| heißen
+\texttt{layout}, \texttt{fonts}, \texttt{globalfonts}
+und \texttt{features}; \texttt{mainfonts} bezeichnet
+ebenfalls die globale Schriftauswahl.
+Ausdrückliche Benutzerwahlen stehen über
+Klassenstandards, innerhalb derselben Stufe
+ist bei lateinischen Hauptschriften die
+Anmeldereihenfolge maßgeblich.
+
+\subsection{Schreibprofile und lokale Texte}
 
 \begin{verbatim}
-\UseFont{sanskrit}          % recommended: registered automatic behavior
-\UseFont{sanskrit}[local]   % explicitly local only
-\UseFont{sanskrit}[global]  % explicitly global/range-global
-
-\UseTemplateSet{
-  fonts = {sanskrit,tibetan,arabic},
-  features = {math,hyperlinks}
-}
+\UseWriting{[shanggu]chinese}
+\DeclareWriting{han-note}{[shanggu,italic=zhuque]chinese}
+\Font{han-note}{漢字}
+\Writing{[tiro]devanagari}{संस्कृतम्}
 \end{verbatim}
 
-Die Komfortbefehle \texttt{\string\UseGlobalFont(s)} und
-\texttt{\string\UseLocalFont(s)} drücken dieselbe explizite Unterscheidung aus.
-Die Template-Schlüssel \texttt{globalfonts} und \texttt{mainfonts} sind
-ebenfalls ausdrückliche globale Überschreibungen; \texttt{fonts} bleibt
-der automatische Standard.
-
-\subsection{Dokumentklassen und Paket-Einstiegspunkte}
-
-\begin{longtable}{@{}p{0.31\linewidth}p{0.63\linewidth}@{}}
-\toprule
-\textbf{Einstiegspunkt} & \textbf{Zweck} \\
-\midrule
-\endfirsthead
-\toprule
-\textbf{Einstiegspunkt} & \textbf{Zweck} \\
-\midrule
-\endhead
-\texttt{impeart} &
-Englischer Artikel-Wrapper; verwendet standardmäßig \texttt{en\_doc} mit CMU als globaler Basisfamilie. \\
-\texttt{impeart\_zh} &
-Chinesischer Artikel-Wrapper; verwendet standardmäßig \texttt{zh\_doc} mit CMU und Shanggu. \\
-\texttt{impereport} &
-Englischer Report-Wrapper; verwendet standardmäßig \texttt{en\_doc}. \\
-\texttt{impereport\_zh} &
-Chinesischer Report-Wrapper; verwendet standardmäßig \texttt{zh\_doc}. \\
-\texttt{impebook} &
-Englischer Buch-Wrapper; verwendet standardmäßig \texttt{en\_book}. \\
-\texttt{impebook\_zh} &
-Chinesischer Buch-Wrapper; verwendet standardmäßig \texttt{zh\_book}. \\
-\texttt{impebeamer} &
-Englischer Beamer-Wrapper; verwendet standardmäßig das Layout \texttt{beamer}. \\
-\texttt{impebeamer\_zh} &
-Chinesischer Beamer-Wrapper; verwendet standardmäßig das Layout \texttt{beamer} mit CMU und Shanggu. \\
-\texttt{impe.sty} &
-Lädt IMPE unter einer vom Dokument gewählten gewöhnlichen \LaTeX{}-Klasse. \\
-\bottomrule
-\end{longtable}
-
-Die alten \texttt{next*}-Paket- und Klassennamen bleiben in Version 1.x
-Kompatibilitätsaliase; neue Dokumente sollten jedoch die kanonischen
-\texttt{impe*}-Einstiegspunkte verwenden.
-
-\subsection{Zentrale Konfigurationsbefehle}
-
-\begin{longtable}{@{}p{0.38\linewidth}p{0.56\linewidth}@{}}
+\begin{longtable}{@{}p{0.44\linewidth}p{0.48\linewidth}@{}}
 \toprule
 \textbf{Befehl} & \textbf{Zweck} \\
 \midrule
@@ -1201,340 +1201,516 @@ Kompatibilitätsaliase; neue Dokumente sollten jedoch die kanonischen
 \textbf{Befehl} & \textbf{Zweck} \\
 \midrule
 \endhead
-\texttt{\string\UseTemplateSet\{...\}} &
-Konfiguriert Layout, Schriften und Features in einer Deklaration. \\
-\texttt{\string\UseFont\{id\}[mode]} &
-Lädt eine registrierte Schriftfamilie; \texttt{mode} wird für das empfohlene automatische Verhalten weggelassen oder explizit als \texttt{local}/\texttt{global} angegeben. \\
-\texttt{\string\UseFonts\{ids\}[mode]} &
-Lädt mehrere registrierte Schriftfamilien mit demselben optionalen Modus. \\
-\texttt{\string\UseGlobalFont\{id\}} &
-Fordert ausdrücklich den globalen Modus einer Familie an. \\
-\texttt{\string\UseGlobalFonts\{ids\}} &
-Fordert ausdrücklich den globalen Modus mehrerer Familien an. \\
-\texttt{\string\UseMainFont\{id\}} &
-Alias von \texttt{\string\UseGlobalFont}; als dokumentorientierter Name beibehalten. \\
-\texttt{\string\UseMainFonts\{ids\}} &
-Alias von \texttt{\string\UseGlobalFonts}. \\
-\texttt{\string\UseLocalFont\{id\}} &
-Fordert ausdrücklich den lokalen Modus einer Familie an. \\
-\texttt{\string\UseLocalFonts\{ids\}} &
-Fordert ausdrücklich den lokalen Modus mehrerer Familien an. \\
-\texttt{\string\UseLayout\{id\}} &
-Lädt eine registrierte Layout-Voreinstellung. \\
-\texttt{\string\UseLayouts\{ids\}} &
-Lädt mehrere registrierte Layout-Voreinstellungen. \\
-\texttt{\string\UseFeature\{id\}} &
-Lädt ein optionales Feature-Modul. \\
-\texttt{\string\UseFeatures\{ids\}} &
-Lädt mehrere optionale Feature-Module. \\
-\texttt{\string\SetCatalogFontRoot\{path\}} &
-Überschreibt das Stammverzeichnis, aus dem katalogisierte Schriftdateien aufgelöst werden. \\
-\texttt{\string\subtitle\{text\}} &
-Setzt den Dokumentuntertitel, der vom IMPE-Titelblock verwendet wird. \\
-\texttt{\string\HeaderTitle\{text\}} &
-Überschreibt den festen Titel, den das Feature \texttt{headers} verwendet. \\
-\texttt{\string\HeaderStyle\{style\}} &
-Wählt den Kopfzeilenstil; dokumentierte Werte sind \texttt{running} und \texttt{title}. \\
+\texttt{\string\UseWriting} & Unicode-Bereiche einem Schreibprofil und einer Schriftressource zuweisen. \\
+\texttt{\string\DeclareWriting} & Benannte Konfiguration speichern. \\
+\texttt{\string\Font} & Benannte Voreinstellung oder Konfiguration lokal verwenden. \\
+\texttt{\string\Writing} & Unbenannte lokale Konfiguration anwenden. \\
 \bottomrule
 \end{longtable}
 
-\subsection{Schlüssel des Template-Sets}
+Die Konfiguration verwendet
+\texttt{[Ressource,Optionen]Profil}; die
+Optionsnamen bleiben unverändert:
+\texttt{font=}, \texttt{file=},
+\texttt{stylemap=native|full}, \texttt{writing=}
+und die einzelnen Schriftstilzuweisungen.
+Die vollständigen Profile und Ressourcen
+stehen in den Tabellen weiter unten.
 
-\begin{longtable}{@{}p{0.23\linewidth}p{0.69\linewidth}@{}}
+\subsection{Satzspiegel und Kolumnentitel}
+
+\begin{longtable}{@{}p{0.36\linewidth}p{0.56\linewidth}@{}}
 \toprule
-\textbf{Schlüssel} & \textbf{Bedeutung} \\
+\textbf{Kennung oder Befehl} & \textbf{Zweck} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Schlüssel} & \textbf{Bedeutung} \\
+\textbf{Kennung oder Befehl} & \textbf{Zweck} \\
 \midrule
 \endhead
-\texttt{layout} &
-Wählt eine öffentliche Layout-Voreinstellung. \\
-\texttt{fonts} &
-Lädt eine oder mehrere registrierte Familien mit ihrem automatischen registrierten Verhalten; dies ist der empfohlene Schlüssel für normales Schriftladen. \\
-\texttt{globalfonts} &
-Zwingt die aufgeführten Familien ausdrücklich durch ihren globalen Modus oder globalen Routing-Pfad. \\
-\texttt{mainfonts} &
-Alias von \texttt{globalfonts}. \\
-\texttt{features} &
-Lädt ein oder mehrere optionale Feature-Module. \\
+\texttt{en\_doc}, \texttt{zh\_doc} & A4-Artikelgestaltung. \\
+\texttt{en\_report}, \texttt{zh\_report} & Eigenständige A4-Berichtsgestaltung. \\
+\texttt{en\_book}, \texttt{zh\_book} & Bücher im ISO-B5-Format. \\
+\texttt{beamer}, \texttt{beamer\_zh} & Madrid, Folienformat 4:3. \\
+\texttt{beamer\_clean}, \texttt{beamer\_clean\_zh} & Wahlweise schlichte Foliengestaltung. \\
+\texttt{\string\LayoutSetup}, \texttt{\string\LayoutSet} & Registrierte Satzspiegelwerte festlegen. \\
+\texttt{LayoutScope} & Absatzbezogene Einstellungen. \\
+\texttt{\string\HeaderStyle}, \texttt{\string\HeaderTitle} & Form und festen Text von Kolumnentiteln einstellen. \\
 \bottomrule
 \end{longtable}
 
-\subsection{Öffentliche Layout-IDs}
+Für einzelne Ränder und Kolumnentitel werden
+gewöhnlich \verb|\geometry| und \texttt{fancyhdr}
+verwendet.
 
-\begin{longtable}{@{}p{0.23\linewidth}p{0.69\linewidth}@{}}
+\subsection{Kennungen der Zusatzfunktionen}
+
+\begin{longtable}{@{}p{0.25\linewidth}p{0.68\linewidth}@{}}
 \toprule
-\textbf{ID} & \textbf{Zweck} \\
+\textbf{Kennung} & \textbf{Reguläre Schnittstelle} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{ID} & \textbf{Zweck} \\
+\textbf{Kennung} & \textbf{Reguläre Schnittstelle} \\
 \midrule
 \endhead
-\texttt{en\_doc} &
-Englisches Artikel-/Report-Layout mit A4-Geometrie und englischen Textabständen. \\
-\texttt{zh\_doc} &
-Chinesisches Artikel-/Report-Layout mit A4-Geometrie und chinesischen Textabständen. \\
-\texttt{report} &
-Report-spezifische Kompatibilitätsvoreinstellung mit denselben Seiten- und Textkomponenten wie \texttt{zh\_doc}. \\
-\texttt{en\_book} &
-Englisches Buch-/Report-Layout mit Buchgeometrie, Kolumnentiteln und Kapitelbeginn auf rechten Seiten. \\
-\texttt{zh\_book} &
-Chinesisches Buch-/Report-Layout mit Buchgeometrie, chinesischen Textabständen, Kolumnentiteln und Kapitelbeginn auf rechten Seiten. \\
-\texttt{beamer} &
-Präsentationslayout mit IMPE-Beamer-Typographie und Navigationseinstellungen. \\
+\texttt{math} & AMS-Mathematik, Theoremumgebungen, \texttt{\string\UseMathFont}. \\
+\texttt{hyperlinks} & \texttt{hyperref}, \texttt{bookmark}, Verweise und Lesezeichen. \\
+\texttt{citations} & \texttt{biblatex}, Literaturverzeichnis. \\
+\texttt{index} & \texttt{\string\makeindex}, \texttt{\string\index}, \texttt{\string\printindex}. \\
+\texttt{tables} & \texttt{tabular}, \texttt{longtable}, \texttt{booktabs}. \\
+\texttt{image} & \texttt{\string\includegraphics}, Teilabbildungen. \\
+\texttt{drawing} & TikZ, \texttt{axis}, \texttt{forest}. \\
+\texttt{glyphs} & \texttt{\string\IMPEGlyphRegister}, \texttt{\string\IMPEGlyph}. \\
+\texttt{headers} & Kolumnentitel über \texttt{fancyhdr}. \\
 \bottomrule
 \end{longtable}
 
-\subsection{Öffentliche Feature-IDs}
+Schriften für ägyptische Hieroglyphen und die
+kleine Kitan-Schrift aktiviert man über
+\verb|\UseFont{egyptian}| beziehungsweise
+\verb|\UseFont{khitan_small}|.
 
-\begin{longtable}{@{}p{0.23\linewidth}p{0.69\linewidth}@{}}
+\subsection{Registrierte Schriftvoreinstellungen (59)}
+
+Die folgenden 59 Familienkennungen werden von
+\verb|\UseFont| erkannt. Der Eintrag unter
+\textbf{Auto} beschreibt die Wirkung
+bei ausgelassener Modusangabe:
+\texttt{G} steht für globale Anmeldung,
+\texttt{L} für lokale Befehle,
+\texttt{L+G} für beides und
+\texttt{L+R} für lokale Befehle mit
+Unicode-Bereichszuordnung. Die tatsächliche
+Hauptschrift hängt außerdem von Priorität
+und Anmeldereihenfolge ab.
+
+\begingroup\small
+\begin{longtable}{@{}p{0.285\linewidth}p{0.10\linewidth}p{0.17\linewidth}p{0.33\linewidth}@{}}
 \toprule
-\textbf{ID} & \textbf{Zweck} \\
+\textbf{Familienkennung} & \textbf{Auto} & \textbf{Lokaler Befehl} & \textbf{Verwendung} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{ID} & \textbf{Zweck} \\
+\textbf{Familienkennung} & \textbf{Auto} & \textbf{Lokaler Befehl} & \textbf{Verwendung} \\
 \midrule
 \endhead
-\texttt{math} &
-Lädt den IMPE-Mathematik-Stack und Theorem-Umgebungen. \\
-\texttt{hyperlinks} &
-Lädt Hyperlinks, PDF-Lesezeichen, verlinkte Überschriften und bidirektionale Fußnotenlinks. \\
-\texttt{citations} &
-Lädt Zitationsunterstützung mit \texttt{biblatex}/\texttt{csquotes} und IMPE-Helfer für Zitationsstile. \\
-\texttt{index} &
-Lädt Registerunterstützung und den Helfer \texttt{\string\Term}. \\
-\texttt{tables} &
-Lädt den Tabellen-Stack, Spaltentypen und IMPE-Tabellenumgebungen. \\
-\texttt{image} &
-Lädt Helfer für Bilder, Bildunterschriften und Panel-Abbildungen. \\
-\texttt{lists\_envs} &
-Lädt die Anzeigeumgebung \texttt{ExampleBlock}. \\
-\texttt{headers} &
-Lädt konfigurierbare Kolumnentitel für artikel-, report- und buchartige Dokumente. \\
-\texttt{bib}, \texttt{header} &
-Kompatibilitätsaliasnamen für \texttt{citations} und \texttt{headers}. \\
+\texttt{cmu} & G & --- & Computer Modern Unicode als Grundschrift \\
+\texttt{noto} & L+G & \texttt{\string\NOT} & Lateinische Noto-Schriftfamilie \\
+\texttt{times} & L+G & \texttt{\string\TIM} & Times mit Arial und Consolas \\
+\texttt{gentium} & L+G & \texttt{\string\GEN} & Gentium Plus \\
+\texttt{charis} & L+G & \texttt{\string\CHA} & Charis SIL \\
+\texttt{libertinus} & L+G & \texttt{\string\LIB} & Libertinus Serif, Sans und Mono \\
+\texttt{mlmodern} & L & \texttt{\string\MLM} & Lokale Schrift MLModern \\
+\texttt{anatolian} & L & \texttt{\string\CA} & Karische Schrift \\
+\texttt{coptic} & L & \texttt{\string\CO} & Koptische Schrift \\
+\texttt{bopomofo} & L & \texttt{\string\ZY} & Zhuyin-Lautzeichen \\
+\texttt{cuneiform} & L & \texttt{\string\CU} & Keilschrift \\
+\texttt{glagolitic} & L & \texttt{\string\GL} & Glagolitische Schrift \\
+\texttt{italic} & L & \texttt{\string\OI} & Altitalische Schrift \\
+\texttt{hungarian} & L & \texttt{\string\OH} & Altungarische Schrift \\
+\texttt{runic} & L & \texttt{\string\RU} & Runenschrift \\
+\texttt{armenian} & L & \texttt{\string\HY} & Armenische Schrift \\
+\texttt{georgian} & L & \texttt{\string\KA} & Georgische Schrift \\
+\texttt{hindi} & L+R & \texttt{\string\HI} & Devanagari mit Hindi-Zeilenumbruch \\
+\texttt{sanskrit} & L+R & \texttt{\string\SA} & Devanagari mit Sanskrit-Zeilenumbruch \\
+\texttt{devanagari} & L & \texttt{\string\DEV} & Allgemeines Devanagari \\
+\texttt{tamil} & L & \texttt{\string\TA} & Tamilische Schrift \\
+\texttt{brahmi} & L & \texttt{\string\BR} & Brahmi-Schrift \\
+\texttt{tibetan} & L+R & \texttt{\string\TI} & Tibetisch mit Tsheg-Umbruch \\
+\texttt{segoe} & L & \texttt{\string\SEG} & Segoe UI Historic \\
+\texttt{thai} & L & \texttt{\string\TH} & Thailändische Schrift \\
+\texttt{arabic} & L & \texttt{\string\AR} & Arabisch mit verschiedenen Schriftschnitten \\
+\texttt{urdu} & L & \texttt{\string\UR} & Urdu in Nastaliq \\
+\texttt{aramaic} & L & \texttt{\string\IA} & Reichsaramäische Schrift \\
+\texttt{nabataean} & L & \texttt{\string\NB} & Nabatäische Schrift \\
+\texttt{hebrew} & L & \texttt{\string\HE} & Hebräische Schrift \\
+\texttt{syriac} & L & \texttt{\string\SY} & Syrische Schrift \\
+\texttt{syriac\_eastern} & L+R & \texttt{\string\SYE} & Ostsyrische Schrift mit Bereichszuordnung \\
+\texttt{kharosthi} & L & \texttt{\string\KH} & Kharoshthi-Schrift \\
+\texttt{egyptian} & L & \texttt{\string\EG} & Ägyptische Hieroglyphen über XSR \\
+\texttt{khitan\_small} & L & \texttt{\string\KHS} & Kleine Kitan-Schrift mit XSR-Stapelung \\
+\texttt{pahlavi\_parthian} & L+R & \texttt{\string\PAR} & Inschriftenparthisch \\
+\texttt{pahlavi\_inscriptional} & L+R & \texttt{\string\PAH} & Inschriftenpahlavi \\
+\texttt{pahlavi\_psalter} & L & \texttt{\string\PSP} & Psalterpahlavi \\
+\texttt{avestan} & L & \texttt{\string\AV} & Avestische Schrift \\
+\texttt{manichaean} & L & \texttt{\string\MA} & Manichäische Schrift \\
+\texttt{phoenician} & L & \texttt{\string\PH} & Phönizische Schrift \\
+\texttt{samaritan} & L & \texttt{\string\SM} & Samaritanische Schrift \\
+\texttt{sogdian} & L & \texttt{\string\SG} & Sogdische Schrift \\
+\texttt{sogdian\_old} & L+R & \texttt{\string\SGO} & Altsogdische Schrift mit Bereichszuordnung \\
+\texttt{chinese\_simplified} & L+R & \texttt{\string\SC} & Vereinfachte chinesische Schrift \\
+\texttt{chinese\_traditional} & L+R & \texttt{\string\TC} & Traditionelle chinesische Schrift \\
+\texttt{japanese} & L+R & \texttt{\string\JP} & Japanische Schrift und Kana \\
+\texttt{wenjin} & L+R & \texttt{\string\WJ} & WenJin Mincho mit CJK-Glyphenersatz \\
+\texttt{shanggu} & G & --- & Globale CJK-Schrift Shanggu \\
+\texttt{sim} & G & --- & Globale Systemschrift für vereinfachtes Chinesisch \\
+\texttt{korean} & L+R & \texttt{\string\KR} & Koreanische Schrift und Hangul \\
+\texttt{tangut} & L+R & \texttt{\string\TG} & Tangutische Schrift mit CJK-Zuordnung \\
+\texttt{mongolian} & L & \texttt{\string\MO} & Mongolisch mit lokaler Senkrechtschrift \\
+\texttt{mongolian\_baiti} & L & \texttt{\string\MOb} & Mongolisch Baiti, senkrecht \\
+\texttt{manchu} & L & \texttt{\string\MC} & Mandschurisch, senkrecht \\
+\texttt{turkic} & L & \texttt{\string\OT} & Alttürkische Schrift \\
+\texttt{uyghur} & L & \texttt{\string\UY} & Altuigurische Schrift mit Drehung \\
+\texttt{vietnamese\_quocngu} & L & \texttt{\string\VI} & Vietnamesisch in lateinischer Schrift \\
+\texttt{vietnamese\_hannom} & L & \texttt{\string\HN} & Vietnamesische Han-Nom-Schrift \\
 \bottomrule
 \end{longtable}
 
-\subsection{Feature-spezifische Befehle und Werte}
+\endgroup
 
-\begin{longtable}{@{}p{0.51\linewidth}p{0.43\linewidth}@{}}
+\subsection{Schreibprofilkennungen (69)}
+\label{app:writing-profile-ids}
+
+Ein Schreibprofil legt die Unicode-Zeichenbereiche
+und die zugehörige Satzbehandlung fest.
+Die zweite Spalte zeigt seine voreingestellte
+Schriftressource. Ein Strich bedeutet, dass
+eine geeignete Schrift ausdrücklich gewählt
+werden muss, etwa durch \texttt{[Ressource]},
+\texttt{font=} oder \texttt{file=}.
+Die letzte Spalte nennt die registrierten
+Bereichsschlüssel. Bei mehreren Schlüsseln
+wird innerhalb der Zelle umbrochen.
+
+\begingroup\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.245\linewidth}>{\raggedright\arraybackslash}p{0.305\linewidth}>{\raggedright\arraybackslash}p{0.375\linewidth}@{}}
 \toprule
-\textbf{Befehl oder Einstellung} & \textbf{Zweck / dokumentierte Werte} \\
+\textbf{Profilkennung} & \textbf{Vorgabeschrift} & \textbf{Unicode-Bereichsschlüssel} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Befehl oder Einstellung} & \textbf{Zweck / dokumentierte Werte} \\
+\textbf{Profilkennung} & \textbf{Vorgabeschrift} & \textbf{Unicode-Bereichsschlüssel} \\
 \midrule
 \endhead
-\texttt{\string\UseMathFont\{value\}} &
-Wählt vor dem Laden von \texttt{math} die Mathematikschrift-Route: \texttt{auto}, \texttt{libertinus}, \texttt{newcm}, \texttt{mlmodern} oder einen anderen Schriftnamen, der an \texttt{\string\setmathfont} übergeben wird. \\
-\texttt{\string\UseCitationStyle\{value\}} &
-Wählt vor dem Laden von \texttt{citations} eine Zitationsvoreinstellung: \texttt{APA}, \texttt{GB}, \texttt{numeric} oder \texttt{author-year}. \\
-\texttt{\string\SetCitationBiblatexOptions\{...\}} &
-Ersetzt vor dem Laden von \texttt{citations} die wirksame \texttt{biblatex}-Optionsliste. \\
-\texttt{\string\HeaderTitle\{text\}} &
-Setzt einen kurzen festen Titel für Kolumnentitel. \\
-\texttt{\string\HeaderStyle\{value\}} &
-Wählt \texttt{running} oder \texttt{title}. \\
-\texttt{\string\IndexTitle} &
-Optionale Überschreibung des Registertitels, die vor dem Laden von \texttt{index} definiert wird. \\
-\texttt{\string\Term[options]\{display\}[description]} &
-Setzt einen Begriff fett und indiziert sein erstes Auftreten; Optionen umfassen \texttt{sort}, \texttt{key} und \texttt{parentheses}. \\
-\texttt{\string\TablesSetup} &
-Wendet die IMPE-Tabellenkonfiguration an oder erneut an. \\
-\texttt{\string\Panel} &
-Fügt ein Panel innerhalb von \texttt{PanelFigure} oder \texttt{PanelFigure*} ein. \\
-\texttt{\string\TemplateFigurePaths} &
-Konfiguriert die Standardsuchpfade des Image-Features. \\
-\texttt{\string\OneImageDefaultWidth} &
-Setzt die Standardbreite für \texttt{OneImage}. \\
-\texttt{\string\OneImageMaxHeight} &
-Setzt die maximale Standardbildhöhe für \texttt{OneImage}. \\
-\texttt{\string\OneImageDefaultPlacement} &
-Setzt die Standard-Float-Platzierung für \texttt{OneImage}. \\
-\texttt{\string\PanelDefaultCols} &
-Setzt die Standardzahl der Spalten für Panel-Abbildungen. \\
-\texttt{\string\PanelDefaultHeight} &
-Setzt die Standardhöhe eines Panels. \\
-\texttt{\string\PanelDefaultMode} &
-Setzt den Standardmodus des Panel-Layouts. \\
-\texttt{\string\PanelDefaultPlacement} &
-Setzt die Standard-Float-Platzierung für Panel-Abbildungen. \\
+\texttt{basic} & \texttt{basic} & \texttt{basic} \\
+\texttt{latin} & \texttt{basic} & \texttt{latin} \\
+\texttt{greek} & \texttt{basic} & \texttt{greek-only} \\
+\texttt{cyrillic} & \texttt{basic} & \texttt{cyrillic} \\
+\texttt{armenian} & \texttt{armenian} & \texttt{armenian} \\
+\texttt{georgian} & \texttt{georgian} & \texttt{georgian} \\
+\texttt{hebrew} & \texttt{hebrew} & \texttt{hebrew} \\
+\texttt{arabic} & \texttt{naskh} & \texttt{arabic} \\
+\texttt{syriac} & \texttt{syriac} & \texttt{syriac} \\
+\texttt{samaritan} & \texttt{samaritan} & \texttt{samaritan} \\
+\texttt{aramaic} & \texttt{aramaic} & \texttt{imperial-aramaic} \\
+\texttt{nabataean} & \texttt{nabataean} & \texttt{nabataean} \\
+\texttt{phoenician} & \texttt{phoenician} & \texttt{phoenician} \\
+\texttt{avestan} & \texttt{avestan} & \texttt{avestan} \\
+\texttt{pahlavi-parthian} & \texttt{pahlavi-parthian} & \texttt{inscriptional-parthian} \\
+\texttt{pahlavi-inscriptional} & \texttt{pahlavi-inscriptional} & \texttt{inscriptional-pahlavi} \\
+\texttt{pahlavi-psalter} & \texttt{pahlavi-psalter} & \texttt{psalter-pahlavi} \\
+\texttt{manichaean} & \texttt{manichaean} & \texttt{manichaean} \\
+\texttt{sogdian} & \texttt{sogdian} & \texttt{sogdian} \\
+\texttt{old-sogdian} & \texttt{old-sogdian} & \texttt{old-sogdian} \\
+\texttt{old-uyghur} & \texttt{old-uyghur} & \texttt{old-uyghur} \\
+\texttt{devanagari} & \texttt{devanagari} & \texttt{devanagari} \\
+\texttt{tamil} & \texttt{tamil} & \texttt{tamil} \\
+\texttt{thai} & \texttt{thai} & \texttt{thai} \\
+\texttt{brahmi} & \texttt{brahmi} & \texttt{brahmi} \\
+\texttt{kharoshthi} & \texttt{kharoshthi} & \texttt{kharoshthi} \\
+\texttt{tibetan} & \texttt{tibetan} & \texttt{tibetan} \\
+\texttt{coptic} & \texttt{coptic} & \shortstack[l]{\texttt{coptic-main},\\\texttt{coptic-legacy}} \\
+\texttt{glagolitic} & \texttt{glagolitic} & \texttt{glagolitic} \\
+\texttt{old-italic} & \texttt{old-italic} & \texttt{old-italic} \\
+\texttt{old-hungarian} & \texttt{old-hungarian} & \texttt{old-hungarian} \\
+\texttt{runic} & \texttt{runic} & \texttt{runic} \\
+\texttt{old-turkic} & \texttt{old-turkic} & \texttt{old-turkic} \\
+\texttt{carian} & \texttt{carian} & \texttt{carian} \\
+\texttt{cuneiform} & \texttt{cuneiform} & \texttt{cuneiform} \\
+\texttt{egyptian} & \texttt{egyptian} & \texttt{egyptian} \\
+\texttt{khitan-small} & \texttt{khitan-small} & \texttt{khitan-small} \\
+\texttt{tangut} & \texttt{tangut} & \texttt{tangut} \\
+\texttt{han} & \texttt{shanggu} & \texttt{han} \\
+\texttt{chinese} & \texttt{shanggu} & \texttt{chinese} \\
+\texttt{japanese} & \texttt{japanese} & \texttt{japanese} \\
+\texttt{korean} & \texttt{korean} & \texttt{korean} \\
+\texttt{kana} & \texttt{japanese} & \texttt{kana} \\
+\texttt{hangul} & \texttt{korean} & \texttt{hangul} \\
+\texttt{bopomofo} & \texttt{iming} & \texttt{bopomofo} \\
+\texttt{mongolian} & \texttt{mnglwhite} & \texttt{mongolian} \\
+\texttt{jurchen} & --- & \texttt{jurchen} \\
+\texttt{seal} & --- & \texttt{seal} \\
+\texttt{proto-cuneiform} & --- & \texttt{proto-cuneiform} \\
+\texttt{bengali} & --- & \shortstack[l]{\texttt{Bengali},\\\texttt{BengaliSupplement}} \\
+\texttt{gurmukhi} & --- & \texttt{Gurmukhi} \\
+\texttt{gujarati} & --- & \texttt{Gujarati} \\
+\texttt{oriya} & --- & \texttt{Oriya} \\
+\texttt{telugu} & --- & \texttt{Telugu} \\
+\texttt{kannada} & --- & \texttt{Kannada} \\
+\texttt{malayalam} & --- & \texttt{Malayalam} \\
+\texttt{sinhala} & --- & \texttt{Sinhala} \\
+\texttt{lao} & --- & \texttt{Lao} \\
+\texttt{myanmar} & --- & \shortstack[l]{\texttt{Myanmar},\\\texttt{MyanmarExtendedA},\\\texttt{MyanmarExtendedB}} \\
+\texttt{ethiopic} & --- & \shortstack[l]{\texttt{Ethiopic},\\\texttt{EthiopicExtended},\\\texttt{EthiopicExtendedA},\\\texttt{EthiopicExtendedB}} \\
+\texttt{khmer} & --- & \shortstack[l]{\texttt{Khmer},\\\texttt{KhmerSymbols}} \\
+\texttt{ogham} & --- & \texttt{Ogham} \\
+\texttt{cherokee} & --- & \shortstack[l]{\texttt{Cherokee},\\\texttt{CherokeeSupplement}} \\
+\texttt{nko} & --- & \texttt{NKo} \\
+\texttt{tifinagh} & --- & \texttt{Tifinagh} \\
+\texttt{yi} & --- & \shortstack[l]{\texttt{YiSyllables},\\\texttt{YiRadicals}} \\
+\texttt{adlam} & --- & \texttt{Adlam} \\
+\texttt{thaana} & --- & \texttt{Thaana} \\
+\texttt{mandaic} & --- & \texttt{Mandaic} \\
 \bottomrule
 \end{longtable}
 
-Standardbefehle, die unmittelbar von Paketen bereitgestellt werden, welche ein
-Feature lädt --- etwa \texttt{\string\addbibresource},
-\texttt{\string\printbibliography}, \texttt{\string\printindex} oder die
-Regelbefehle von \texttt{booktabs} --- behalten ihre normale Paketsyntax und
-behalten ihre gewöhnliche \LaTeX{}-Syntax.
+\endgroup
 
-\subsection{Öffentliche Umgebungen und Tabellenspaltentypen}
+Die Bezeichnungen \texttt{kharoshthi} für
+Schreibprofil und Ressource sowie
+\texttt{kharosthi} für die frühere
+Voreinstellung sind beide gültig,
+gehören aber zu unterschiedlichen Namensräumen.
 
-\begin{longtable}{@{}p{0.37\linewidth}p{0.57\linewidth}@{}}
+\subsection{Schriftressourcen und Pakete (85)}
+\label{app:writing-resource-ids}
+
+Die Kennungen dienen innerhalb von
+\verb|\UseWriting| als auswählbare
+Schriftressourcen. Die zweite Spalte nennt
+die zugehörige Katalogfamilie. Mehrere
+Kennungen können auf dieselbe Familie
+und verschiedene ihrer Schnitte verweisen.
+
+\begingroup\small
+\begin{longtable}{@{}p{0.43\linewidth}p{0.47\linewidth}@{}}
 \toprule
-\textbf{Name} & \textbf{Zweck} \\
+\textbf{Ressourcenkennung} & \textbf{Quellfamilie} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Name} & \textbf{Zweck} \\
+\textbf{Ressourcenkennung} & \textbf{Quellfamilie} \\
 \midrule
 \endhead
-\texttt{theorem}, \texttt{lemma}, \texttt{proposition}, \texttt{corollary} &
-Nummerierte theoremartige Umgebungen des Features \texttt{math}. \\
-\texttt{definition}, \texttt{example}, \texttt{remark} &
-Weitere Theorem-Umgebungen des Features \texttt{math}. \\
-\texttt{TableInlineFit} &
-Kompakte Tabellenumgebung, die eine Inline-Tabelle an die verfügbare Breite anpassen soll. \\
-\texttt{TableLong} &
-Longtable-Umgebung für Material, das sich über mehrere Seiten erstrecken kann. \\
-\texttt{TableBook}, \texttt{TableBookX} &
-Tabellenumgebungen im Buchstil. \\
-\texttt{TableBookNotes} &
-Tabellenumgebung im Buchstil mit Anmerkungen. \\
-\texttt{NiceBooktable}, \texttt{NiceBooktableX}, \texttt{NiceBooktableNotes} &
-Alternative Tabellenhelfer im Buchstil des Features \texttt{tables}. \\
-\texttt{L}, \texttt{C}, \texttt{R} &
-Linksbündige, zentrierte und rechtsbündige \texttt{tabularx}-Spalten. \\
-\texttt{P\{w\}}, \texttt{M\{w\}}, \texttt{B\{w\}} &
-Absatzspalten fester Breite mit linksbündiger, zentrierter und rechtsbündiger Ausrichtung. \\
-\texttt{OneImage} &
-Einzelbild-Abbildung; unter Beamer inline. \\
-\texttt{OneImageInline} &
-Zentriertes, nicht schwebendes Bild. \\
-\texttt{PanelFigure} &
-Beschriftete Mehrfachpanel-Abbildung mit Unterbeschriftungen außerhalb von Beamer. \\
-\texttt{PanelFigure*} &
-Unbeschriftete Mehrfachpanel-Abbildung. \\
-\texttt{ExampleBlock} &
-Eingerückter kursiver Anzeige-Block für Beispiele, Zitate, linguistische Daten oder Lehrmaterial. \\
+\texttt{basic} & \texttt{noto} \\
+\texttt{cmu} & \texttt{cmu} \\
+\texttt{times} & \texttt{times} \\
+\texttt{gentium} & \texttt{gentium} \\
+\texttt{charis} & \texttt{charis} \\
+\texttt{libertinus} & \texttt{libertinus} \\
+\texttt{latinmodern} & \texttt{mlmodern} \\
+\texttt{chinese-simplified} & \texttt{chinese\_simplified} \\
+\texttt{chinese-traditional} & \texttt{chinese\_traditional} \\
+\texttt{japanese} & \texttt{japanese} \\
+\texttt{korean} & \texttt{korean} \\
+\texttt{wenjin} & \texttt{wenjin} \\
+\texttt{shanggu} & \texttt{shanggu} \\
+\texttt{armenian} & \texttt{armenian} \\
+\texttt{devanagari} & \texttt{devanagari} \\
+\texttt{tamil} & \texttt{tamil} \\
+\texttt{georgian} & \texttt{georgian} \\
+\texttt{tibetan} & \texttt{tibetan} \\
+\texttt{hebrew} & \texttt{hebrew} \\
+\texttt{arabic} & \texttt{arabic} \\
+\texttt{syriac} & \texttt{syriac} \\
+\texttt{syriac-eastern} & \texttt{syriac\_eastern} \\
+\texttt{syriac-western} & \texttt{syriac} \\
+\texttt{thai} & \texttt{thai} \\
+\texttt{thai-looped} & \texttt{thai} \\
+\texttt{naskh} & \texttt{arabic} \\
+\texttt{kufi} & \texttt{arabic} \\
+\texttt{nastaliq} & \texttt{urdu} \\
+\texttt{aref} & \texttt{arabic} \\
+\texttt{davidlibre} & \texttt{hebrew} \\
+\texttt{khawa} & \texttt{tibetan} \\
+\texttt{carian} & \texttt{anatolian} \\
+\texttt{coptic} & \texttt{coptic} \\
+\texttt{cuneiform} & \texttt{cuneiform} \\
+\texttt{glagolitic} & \texttt{glagolitic} \\
+\texttt{old-italic} & \texttt{italic} \\
+\texttt{old-hungarian} & \texttt{hungarian} \\
+\texttt{runic} & \texttt{runic} \\
+\texttt{brahmi} & \texttt{brahmi} \\
+\texttt{kharoshthi} & \texttt{kharosthi} \\
+\texttt{aramaic} & \texttt{aramaic} \\
+\texttt{nabataean} & \texttt{nabataean} \\
+\texttt{phoenician} & \texttt{phoenician} \\
+\texttt{avestan} & \texttt{avestan} \\
+\texttt{pahlavi-parthian} & \texttt{pahlavi\_parthian} \\
+\texttt{pahlavi-inscriptional} & \texttt{pahlavi\_inscriptional} \\
+\texttt{pahlavi-psalter} & \texttt{pahlavi\_psalter} \\
+\texttt{manichaean} & \texttt{manichaean} \\
+\texttt{samaritan} & \texttt{samaritan} \\
+\texttt{sogdian} & \texttt{sogdian} \\
+\texttt{old-sogdian} & \texttt{sogdian\_old} \\
+\texttt{old-turkic} & \texttt{turkic} \\
+\texttt{old-uyghur} & \texttt{uyghur} \\
+\texttt{egyptian} & \texttt{egyptian} \\
+\texttt{khitan-small} & \texttt{khitan\_small} \\
+\texttt{tangut} & \texttt{tangut} \\
+\texttt{mongolian} & \texttt{mongolian} \\
+\texttt{mnglwhite} & \texttt{mongolian} \\
+\texttt{mngltitle} & \texttt{mongolian} \\
+\texttt{mnglwriting} & \texttt{mongolian} \\
+\texttt{mnglart} & \texttt{mongolian} \\
+\texttt{monbaiti} & \texttt{mongolian\_baiti} \\
+\texttt{abxy} & \texttt{manchu} \\
+\texttt{segoeuihistoric} & \texttt{segoe} \\
+\texttt{tiro} & \texttt{sanskrit} \\
+\texttt{iming} & \texttt{bopomofo} \\
+\texttt{zhuque} & \texttt{shanggu} \\
+\texttt{simsun} & \texttt{sim} \\
+\texttt{simhei} & \texttt{sim} \\
+\texttt{simfang} & \texttt{sim} \\
+\texttt{simkai} & \texttt{sim} \\
+\texttt{arial} & \texttt{times} \\
+\texttt{consolas} & \texttt{times} \\
+\texttt{nomnatong} & \texttt{vietnamese\_hannom} \\
+\texttt{minhnguyen} & \texttt{vietnamese\_hannom} \\
+\texttt{gothicnguyen} & \texttt{vietnamese\_hannom} \\
+\texttt{syrcom} & \texttt{syriac} \\
+\texttt{syrcom-edessa} & \texttt{syriac} \\
+\texttt{syrcom-midyat} & \texttt{syriac} \\
+\texttt{syrcom-jerusalem} & \texttt{syriac} \\
+\texttt{syrcom-jerusalem-bold} & \texttt{syriac} \\
+\texttt{syrcom-adiabene} & \texttt{syriac\_eastern} \\
+\texttt{syrcom-ctesiphon} & \texttt{syriac\_eastern} \\
+\texttt{tangut-n4694} & \texttt{tangut} \\
+\texttt{new-tangut-std} & \texttt{tangut} \\
 \bottomrule
 \end{longtable}
 
-\subsection{Registrierte Schriftfamilien-IDs}
+\endgroup
 
-Die folgende Tabelle listet die von \texttt{\string\UseFont} in IMPE 1.x
-akzeptierten Schriftfamilien-IDs auf. Die Spalte \textbf{Auto} fasst zusammen,
-was ein Aufruf von \texttt{\string\UseFont\{id\}} mit ausgelassenem Modus normalerweise
-aktiviert:
+Die Tabelle beschreibt verfügbare
+\emph{Ressourcennamen}, nicht den Lieferumfang
+der heruntergeladenen Schriftdateien.
+Je nach Installation werden vorhandene
+Systemschriften oder eigens bereitgestellte
+Schriftdateien verwendet. \texttt{basic}
+bezeichnet die westliche Noto-Ressource;
+\verb|\UseFont{noto}| bleibt die
+historische Schriftvoreinstellung.
 
-\begin{description}
-  \item[\texttt{G}] dokumentweite globale Familie;
-  \item[\texttt{L}] lokale Familie/lokaler Befehl;
-  \item[\texttt{L+G}] lokaler Zugriff plus vollständige dokumentweite globale Aktivierung;
-  \item[\texttt{L+R}] lokaler Zugriff plus automatisches skript- oder bereichsbeschränktes globales Routing.
-\end{description}
+\subsection{Kurzkennungen einzelner Schriftschnitte (6)}
 
-Die automatische Route ist die empfohlene Schnittstelle. Eine ausdrückliche
-Anforderung \texttt{[local]} oder \texttt{[global]} umgeht bewusst einen Teil
-dieser automatischen Entscheidung und dient gezielten Überschreibungen.
+Diese sechs Namen sind zugleich Teil der
+85 Ressourcenkennungen und können als Werte
+von Schriftstiloptionen wie
+\texttt{italic=} verwendet werden.
+Sie bezeichnen bestimmte Schriftdateien.
 
-\begin{longtable}{@{}p{0.30\linewidth}p{0.11\linewidth}p{0.18\linewidth}p{0.31\linewidth}@{}}
+\begin{longtable}{@{}p{0.26\linewidth}p{0.66\linewidth}@{}}
 \toprule
-\textbf{Familien-ID} & \textbf{Auto} & \textbf{Lokaler Befehl} & \textbf{Typische Verwendung} \\
+\textbf{Stilkennung} & \textbf{Schriftdatei} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Familien-ID} & \textbf{Auto} & \textbf{Lokaler Befehl} & \textbf{Typische Verwendung} \\
+\textbf{Stilkennung} & \textbf{Schriftdatei} \\
 \midrule
 \endhead
-\texttt{cmu} & G & --- & Computer-Modern-Unicode-Basisfamilie. \\
-\texttt{noto} & L+G & \texttt{\string\NOT} & Allgemeine Noto-Lateinfamilie. \\
-\texttt{times} & L+G & \texttt{\string\TIM} & Systemfamilien-Route für Times/Arial/Consolas. \\
-\texttt{gentium} & L+G & \texttt{\string\GEN} & Gentium Plus. \\
-\texttt{charis} & L+G & \texttt{\string\CHA} & Charis SIL. \\
-\texttt{libertinus} & L+G & \texttt{\string\LIB} & Libertinus-Familie für Serif/Sans/Mono. \\
-\texttt{mlmodern} & L & \texttt{\string\MLM} & Lokale Route für Latin Modern / MLModern. \\
-
-\texttt{anatolian} & L & \texttt{\string\CA} & Karisches / anatolisches Schriftmaterial. \\
-\texttt{coptic} & L & \texttt{\string\CO} & Koptisch. \\
-\texttt{bopomofo} & L & \texttt{\string\ZY} & Bopomofo. \\
-\texttt{cuneiform} & L & \texttt{\string\CU} & Keilschrift. \\
-\texttt{glagolitic} & L & \texttt{\string\GL} & Glagolitisch. \\
-\texttt{italic} & L & \texttt{\string\OI} & Altitalisch. \\
-\texttt{hungarian} & L & \texttt{\string\OH} & Altungarisch. \\
-\texttt{runic} & L & \texttt{\string\RU} & Runenschrift. \\
-\texttt{armenian} & L & \texttt{\string\HY} & Armenisch. \\
-\texttt{georgian} & L & \texttt{\string\KA} & Georgisch. \\
-
-\texttt{hindi} & L+R & \texttt{\string\HI} & Hindi-Devanagari mit registriertem Bereichs-Routing. \\
-\texttt{sanskrit} & L+R & \texttt{\string\SA} & Sanskrit-Devanagari mit Sanskrit-bewusstem Routing. \\
-\texttt{devanagari} & L & \texttt{\string\DEV} & Generisches Devanagari-Shaping. \\
-\texttt{tamil} & L & \texttt{\string\TA} & Tamil. \\
-\texttt{brahmi} & L & \texttt{\string\BR} & Brahmi. \\
-\texttt{tibetan} & L+R & \texttt{\string\TI} & Tibetisch mit Tsheg-bewusstem Zeilenumbruch. \\
-\texttt{segoe} & L & \texttt{\string\SEG} & Lokale Route für Segoe Historic. \\
-\texttt{thai} & L & \texttt{\string\TH} & Thai. \\
-
-\texttt{arabic} & L & \texttt{\string\AR} & Arabisch; Serif/Sans und alternative Stilvarianten. \\
-\texttt{urdu} & L & \texttt{\string\UR} & Urdu-Nastaliq. \\
-\texttt{aramaic} & L & \texttt{\string\IA} & Reichsaramäisch. \\
-\texttt{nabataean} & L & \texttt{\string\NB} & Nabatäisch. \\
-\texttt{hebrew} & L & \texttt{\string\HE} & Hebräisch. \\
-\texttt{syriac} & L & \texttt{\string\SY} & Syrisch. \\
-\texttt{syriac\_eastern} & L+R & \texttt{\string\SYE} & Ostsyrisch mit registriertem Bereichs-Routing. \\
-\texttt{kharosthi} & L & \texttt{\string\KH} & Kharoshthi. \\
-\texttt{khitan\_small} & L & \texttt{\string\KHS} & Kleine Khitan-Schrift mit ihrem spezialisierten Kompositor. \\
-\texttt{pahlavi\_parthian} & L+R & \texttt{\string\PAR} & Inschriftliches Parthisch. \\
-\texttt{pahlavi\_inscriptional} & L+R & \texttt{\string\PAH} & Inschriftliches Pahlavi. \\
-\texttt{pahlavi\_psalter} & L & \texttt{\string\PSP} & Psalter-Pahlavi mit spezialisierter Unterstützung. \\
-\texttt{avestan} & L & \texttt{\string\AV} & Avestisch. \\
-\texttt{manichaean} & L & \texttt{\string\MA} & Manichäisch. \\
-\texttt{phoenician} & L & \texttt{\string\PH} & Phönizisch. \\
-\texttt{samaritan} & L & \texttt{\string\SM} & Samaritanisch. \\
-\texttt{sogdian} & L & \texttt{\string\SG} & Sogdisch. \\
-\texttt{sogdian\_old} & L+R & \texttt{\string\SGO} & Altsogdisch mit registriertem Bereichs-Routing. \\
-
-\texttt{chinese\_simplified} & L+R & \texttt{\string\SC} & CJK-Familie für vereinfachtes Chinesisch. \\
-\texttt{chinese\_traditional} & L+R & \texttt{\string\TC} & CJK-Familie für traditionelles Chinesisch. \\
-\texttt{japanese} & L+R & \texttt{\string\JP} & Japanisch; automatisches Routing erhält die Priorität gemeinsamer Han-Zeichen. \\
-\texttt{wenjin} & L+R & \texttt{\string\WJ} & WenJin Mincho mit CJK-Fallback-Kette. \\
-\texttt{shanggu} & G & --- & Global orientierte CJK-Familie für traditionelles Chinesisch. \\
-\texttt{sim} & G & --- & System-CJK-Familie für vereinfachtes Chinesisch. \\
-\texttt{korean} & L+R & \texttt{\string\KR} & Koreanische/Hangul-Familie. \\
-\texttt{tangut} & L+R & \texttt{\string\TG} & Tangut mit CJK-bewusstem automatischem Routing. \\
-
-\texttt{mongolian} & L & \texttt{\string\MO} & Mongolisch mit eingebauter vertikaler Layout-Route. \\
-\texttt{mongolian\_baiti} & L & \texttt{\string\MOb} & Mongolian Baiti mit vertikaler Layout-Route. \\
-\texttt{manchu} & L & \texttt{\string\MC} & Mandschurisch mit vertikaler Layout-Route. \\
-\texttt{turkic} & L & \texttt{\string\OT} & Alttürkisch. \\
-\texttt{uyghur} & L & \texttt{\string\UY} & Altuigurisch mit vertikaler/gedrehter Layout-Route. \\
-
-\texttt{vietnamese\_quocngu} & L & \texttt{\string\VI} & Vietnamesisches Quốc Ngữ. \\
-\texttt{vietnamese\_hannom} & L & \texttt{\string\HN} & Vietnamesisches Hán-Nôm / CJK-Text. \\
+\texttt{zhuque} & \texttt{ZhuqueFangsong-Regular.ttf} \\
+\texttt{simkai} & \texttt{simkai.ttf} \\
+\texttt{simfang} & \texttt{simfang.ttf} \\
+\texttt{aref} & \texttt{ArefRuqaa-Regular.ttf} \\
+\texttt{naskh} & \texttt{NotoNaskhArabic-Regular.ttf} \\
+\texttt{nastaliq} & \texttt{NotoNastaliqUrdu-Regular.ttf} \\
 \bottomrule
 \end{longtable}
 
-\subsection{Erweiterungsschnittstellen für Fortgeschrittene}
+Beispielsweise wählt
+\verb|\UseWriting{[shanggu,italic=zhuque]chinese}|
+eine ausdrücklich angegebene kursive
+Ersatzschrift für den entsprechenden Schnitt.
 
-Diese Befehle dienen der Erweiterung von IMPE.
+\subsection{Weitere lokale Satzbefehle}
 
-\begin{longtable}{@{}p{0.39\linewidth}p{0.55\linewidth}@{}}
+Zusätzlich zu den Kurzbefehlen der
+Familientabelle werden für senkrecht
+gesetzte Schriften folgende Befehle bereitgestellt:
+
+\begin{longtable}{@{}p{0.40\linewidth}p{0.51\linewidth}@{}}
 \toprule
-\textbf{Befehl} & \textbf{Zweck} \\
+\textbf{Befehl} & \textbf{Darstellung} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Befehl} & \textbf{Zweck} \\
+\textbf{Befehl} & \textbf{Darstellung} \\
 \midrule
 \endhead
-\texttt{\string\FontRegisterFamily\{...\}} &
-Registriert eine neue Schriftfamilie und ihre lokalen/globalen Metadaten. \\
-\texttt{\string\LayoutPresetRegister\{...\}} &
-Registriert eine strukturierte Layout-Voreinstellung aus internen Layout-Komponenten. \\
-\texttt{\string\LayoutPresetDeclare\{...\}} &
-Niedrigere Schnittstelle zur Deklaration von Layout-Voreinstellungen, die beim Aufbau des Systems verwendet wird. \\
+\texttt{\string\MOv[offset]\{text\}} & Mongolisch, lokal gedreht. \\
+\texttt{\string\MObv[offset]\{text\}} & Mongolisch Baiti, lokal gedreht. \\
+\texttt{\string\MCv[offset]\{text\}} & Mandschurisch, lokal gedreht. \\
+\texttt{\string\UYv[offset]\{text\}} & Altuigurisch, lokal gedreht. \\
 \bottomrule
 \end{longtable}
 
-Die vollständige Registrierungssyntax und die Erweiterungsregeln sind in
-\texttt{docs/FONTS.md}, \texttt{docs/LAYOUTS.md} und
-\texttt{docs/SYSTEM.md} beschrieben.
+Der optionale Versatz ist zunächst
+\texttt{0pt}. Weitere Satzbefehle sind
+\verb|\EG| beziehungsweise
+\verb|\IMPEEgyptianText| für Ägyptisch
+sowie \verb|\KHS|, \verb|\KHSstack|
+und \verb|\KHSstackblock| für Kitan.
+
+\subsection{Kompatible Klassen, Satzspiegel und Funktionen}
+
+Die folgenden Einträge stehen für
+bereits bestehende Quelldokumente bereit:
+
+\begin{longtable}{@{}p{0.44\linewidth}p{0.46\linewidth}@{}}
+\toprule
+\textbf{Bisheriger Name} & \textbf{Kanonische Form} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Bisheriger Name} & \textbf{Kanonische Form} \\
+\midrule
+\endhead
+\texttt{impeart\_zh} & \texttt{impeart} mit \texttt{lang=zh} \\
+\texttt{impereport\_zh} & \texttt{impereport} mit \texttt{lang=zh} \\
+\texttt{impebook\_zh} & \texttt{impebook} mit \texttt{lang=zh} \\
+\texttt{impebeamer\_zh} & \texttt{impebeamer} mit \texttt{lang=zh} \\
+\texttt{nextart}, \texttt{nextreport}, \texttt{nextbook}, \texttt{nextbeamer} & Entsprechende \texttt{impe*}-Klasse \\
+\texttt{next*\_zh} & Entsprechende Klasse mit \texttt{lang=zh} \\
+\texttt{nextsystem.sty} & \texttt{impe.sty} \\
+\bottomrule
+\end{longtable}
+
+Die früheren Layoutkennungen \texttt{report}
+und \texttt{legacy\_*}, der Befehl
+\verb|\UseLegacyLayout| und die
+Funktionskennungen \texttt{bib}, \texttt{header}
+und \texttt{lists\_envs} bleiben verfügbar.
+
+\subsection{Kompatible Hilfsbefehle für Zusatzfunktionen}
+
+Die bisherigen Befehle und Umgebungen
+können in älteren Dokumenten weiter benutzt werden.
+Für neue Dokumente stehen die regulären
+\LaTeX{}-Paketbefehle im Vordergrund:
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.43\linewidth}>{\raggedright\arraybackslash}p{0.50\linewidth}@{}}
+\toprule
+\textbf{Bisheriger Befehl} & \textbf{Aufgabe} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Bisheriger Befehl} & \textbf{Aufgabe} \\
+\midrule
+\endhead
+\shortstack[l]{\texttt{\string\Term[options]\{display\}}\\\texttt{[description]}} & Erstmaliges Hervorheben und Eintragen eines Begriffs. \\
+\texttt{\string\IndexTitle} & Bisherige Registerüberschrift einstellen. \\
+\texttt{TableInlineFit}, \texttt{TableLong} & Ältere Tabellenumgebungen. \\
+\shortstack[l]{\texttt{TableBook*},\\\texttt{NiceBooktable*}} & Tabellengestaltung mit Anmerkungen. \\
+\shortstack[l]{\texttt{OneImage*}, \texttt{PanelFigure*},\\\texttt{\string\Panel}} & Abbildungs- und Mehrfeldhilfen. \\
+\texttt{ExampleBlock} & Früherer Beispielblock. \\
+\bottomrule
+\end{longtable}
+
+Weitere Kompatibilitätsdetails enthält
+\texttt{docs/FEATURES.md}.
+
+\subsection{Erweiterungsschnittstellen}
+
+Für die Registrierung eigener Schriften,
+Satzspiegel und Funktionen stehen
+\verb|\FontRegisterFamily|,
+\verb|\LayoutPresetRegister| und
+\verb|\LayoutPresetDeclare| zur Verfügung.
+Weitere Angaben bieten
+\texttt{docs/FONTS.md}, \texttt{docs/LAYOUTS.md},
+\texttt{docs/SYSTEM.md} und \texttt{docs/EXTENDING.md}.
 
 \section{Showcase}\label{app:showcase}
 
