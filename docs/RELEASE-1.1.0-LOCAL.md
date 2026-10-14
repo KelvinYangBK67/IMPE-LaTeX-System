@@ -27,8 +27,10 @@ or create a GitHub Release until every applicable release gate succeeds.
    alone.
 6. Run `tests/run_regressions.ps1 -PublicFonts` and the full local-font suite,
    and then `scripts/build_release.ps1` with local approved fonts. The release
-   builder independently rebuilds the Showcase and compares its SHA-256 against
-   the tracked PDF. Verify full, core, CTAN archives and installed-only behavior.
+   builder clears the disposable `dist/` output, recompiles the Showcase from
+   source, and builds every manual against that freshly generated Showcase PDF.
+   It packages those new PDFs without overwriting the tracked PDFs. Review the
+   resulting PDFs, then verify full, core, CTAN archives and installed-only behavior.
 7. Merge final publication files and test results, check the final main-branch
    CI, then create `v1.1.0` and (if desired) the public GitHub Release.
 

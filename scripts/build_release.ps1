@@ -53,6 +53,19 @@ if ($Manuals.Count -eq 0) {
 
 $ManualLanguages = @($Manuals.Keys)
 
+# Release inputs come from source, not previously built/committed PDFs.
+$ShowcaseSource = Join-Path $RepoRoot "manual/showcase/impe-showcase.tex"
+$ShowcaseBibliography = Join-Path $RepoRoot "manual/showcase/references.bib"
+foreach ($requiredShowcaseFile in @($ShowcaseSource, $ShowcaseBibliography)) {
+    if (-not (Test-Path -LiteralPath $requiredShowcaseFile -PathType Leaf)) {
+        throw "Canonical Showcase source is missing: $requiredShowcaseFile"
+    }
+}
+$showcaseSourceText = Get-Content -LiteralPath $ShowcaseSource -Raw -Encoding UTF8
+if (-not $showcaseSourceText.Contains("\date{v$Version}")) {
+    throw "Canonical Showcase source does not declare release version v$Version."
+}
+
 $DefaultSourceDateEpoch = [DateTimeOffset]::Parse("2026-09-29T00:00:00Z").ToUnixTimeSeconds()
 if ($env:SOURCE_DATE_EPOCH) {
     if ($env:SOURCE_DATE_EPOCH -notmatch '^\d+$') {
@@ -95,8 +108,20 @@ $LegacyCompatibilityFiles = @(
     "nextsystem.local.example.tex"
 )
 
-if (-not $OutputRoot) {
-    $OutputRoot = Join-Path $RepoRoot "dist"
+# The default dist/ is disposable by design: a release always begins clean.
+# Custom -OutputRoot locations retain their prior non-destructive behavior;
+# never recursively delete an arbitrary user-selected directory.
+$DefaultOutputRoot = [IO.Path]::GetFullPath((Join-Path $RepoRoot "dist"))
+if (-not $OutputRoot) { $OutputRoot = $DefaultOutputRoot }
+$OutputRoot = [IO.Path]::GetFullPath($OutputRoot)
+if ([string]::Equals($OutputRoot, $DefaultOutputRoot, [StringComparison]::OrdinalIgnoreCase) -and
+    (Test-Path -LiteralPath $OutputRoot)) {
+    $existingOutput = Get-Item -LiteralPath $OutputRoot -Force
+    if (-not $existingOutput.PSIsContainer -or
+        ($existingOutput.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+        throw "Refusing to clean dist because it is not an ordinary directory: $OutputRoot"
+    }
+    Remove-Item -LiteralPath $OutputRoot -Recurse -Force
 }
 New-Item -ItemType Directory -Force -Path $OutputRoot | Out-Null
 $OutputRoot = (Resolve-Path -LiteralPath $OutputRoot).Path
@@ -580,27 +605,17 @@ function New-CtanPackage {
     }
 }
 
-$ShowcaseSource = Join-Path $RepoRoot "manual/showcase/impe-showcase.tex"
-$ShowcasePdf = Join-Path $RepoRoot "manual/showcase/impe-showcase.pdf"
-$ShowcaseBibliography = Join-Path $RepoRoot "manual/showcase/references.bib"
-foreach ($requiredShowcaseFile in @($ShowcaseSource, $ShowcasePdf, $ShowcaseBibliography)) {
-    if (-not (Test-Path -LiteralPath $requiredShowcaseFile)) {
-        throw "Canonical showcase resource is missing: $requiredShowcaseFile"
-    }
+# Compile the current Showcase once; the same validated PDF feeds the
+# Manual appendices, the CTAN archive and the versioned release asset.
+# The tracked canonical PDF is left untouched for separate human review.
+$ShowcaseBuildRoot = Join-Path $OutputRoot ".showcase-build"
+& (Join-Path $ScriptRoot "build_showcase.ps1") -OutputRoot $ShowcaseBuildRoot
+if ($LASTEXITCODE -ne 0) { throw "Canonical Showcase build failed." }
+$ShowcasePdf = Join-Path $ShowcaseBuildRoot "impe-showcase.pdf"
+if (-not (Test-Path -LiteralPath $ShowcasePdf -PathType Leaf) -or
+    (Get-Item -LiteralPath $ShowcasePdf).Length -eq 0) {
+    throw "Freshly built Showcase PDF is missing or empty: $ShowcasePdf"
 }
-$showcaseSourceText = Get-Content -LiteralPath $ShowcaseSource -Raw
-if (-not $showcaseSourceText.Contains("\date{v$Version}")) {
-    throw "Canonical showcase source does not declare release version v$Version."
-}
-if ((Get-Item -LiteralPath $ShowcasePdf).Length -eq 0) {
-    throw "Canonical showcase PDF is empty."
-}
-
-# The showcase is part of every public archive and every manual appendix.
-# Rebuild it independently from source and require the tracked PDF to match.
-$ShowcaseVerificationDir = Join-Path $OutputRoot ".showcase-verification"
-& (Join-Path $ScriptRoot "build_showcase.ps1") -OutputRoot $ShowcaseVerificationDir -VerifyTracked
-if ($LASTEXITCODE -ne 0) { throw "Canonical showcase source/PDF verification failed." }
 
 $ManualBuildPrimary = Join-Path $OutputRoot ".manual-primary"
 $ManualBuildSecondary = Join-Path $OutputRoot ".manual-secondary"
@@ -613,6 +628,7 @@ foreach ($manualBuildRoot in @($ManualBuildPrimary, $ManualBuildSecondary)) {
 & (Join-Path $ScriptRoot "build_manual.ps1") `
     -Language $ManualLanguages `
     -OutputRoot $ManualBuildPrimary `
+    -ShowcasePdf $ShowcasePdf `
     -NoUpdateTracked
 if ($LASTEXITCODE -ne 0) {
     throw "Primary manual construction failed."
@@ -622,6 +638,7 @@ if (-not $SkipManualReproducibility) {
     & (Join-Path $ScriptRoot "build_manual.ps1") `
         -Language $ManualLanguages `
         -OutputRoot $ManualBuildSecondary `
+        -ShowcasePdf $ShowcasePdf `
         -NoUpdateTracked
     if ($LASTEXITCODE -ne 0) {
         throw "Independent manual construction failed."
@@ -669,6 +686,11 @@ foreach ($manualBuildRoot in @($ManualBuildPrimary, $ManualBuildSecondary)) {
     if (Test-Path -LiteralPath $manualBuildRoot) {
         Remove-Item -LiteralPath $manualBuildRoot -Recurse -Force
     }
+}
+# Keep only the final public assets; the newly compiled Showcase has already
+# been copied to the versioned PDF and packaged into CTAN.
+if (Test-Path -LiteralPath $ShowcaseBuildRoot) {
+    Remove-Item -LiteralPath $ShowcaseBuildRoot -Recurse -Force
 }
 
 Write-Host "GitHub release assets:"
