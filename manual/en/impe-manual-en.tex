@@ -1410,7 +1410,7 @@ resource to an explicit \texttt{[pack]}, \texttt{font=} or
 user-provided font.
 
 \begingroup\small
-\begin{longtable}{@{}p{0.265\linewidth}p{0.205\linewidth}p{0.455\linewidth}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.245\linewidth}>{\raggedright\arraybackslash}p{0.305\linewidth}>{\raggedright\arraybackslash}p{0.375\linewidth}@{}}
 \toprule
 \textbf{Profile ID} & \textbf{Default resource} & \textbf{Coverage key(s)} \\
 \midrule
@@ -1446,7 +1446,7 @@ user-provided font.
 \texttt{brahmi} & \texttt{brahmi} & \texttt{brahmi} \\
 \texttt{kharoshthi} & \texttt{kharoshthi} & \texttt{kharoshthi} \\
 \texttt{tibetan} & \texttt{tibetan} & \texttt{tibetan} \\
-\texttt{coptic} & \texttt{coptic} & \texttt{coptic-main}, \texttt{coptic-legacy} \\
+\texttt{coptic} & \texttt{coptic} & \shortstack[l]{\texttt{coptic-main},\\\texttt{coptic-legacy}} \\
 \texttt{glagolitic} & \texttt{glagolitic} & \texttt{glagolitic} \\
 \texttt{old-italic} & \texttt{old-italic} & \texttt{old-italic} \\
 \texttt{old-hungarian} & \texttt{old-hungarian} & \texttt{old-hungarian} \\
@@ -1468,7 +1468,7 @@ user-provided font.
 \texttt{jurchen} & --- & \texttt{jurchen} \\
 \texttt{seal} & --- & \texttt{seal} \\
 \texttt{proto-cuneiform} & --- & \texttt{proto-cuneiform} \\
-\texttt{bengali} & --- & \texttt{Bengali}, \texttt{BengaliSupplement} \\
+\texttt{bengali} & --- & \shortstack[l]{\texttt{Bengali},\\\texttt{BengaliSupplement}} \\
 \texttt{gurmukhi} & --- & \texttt{Gurmukhi} \\
 \texttt{gujarati} & --- & \texttt{Gujarati} \\
 \texttt{oriya} & --- & \texttt{Oriya} \\
@@ -1477,14 +1477,14 @@ user-provided font.
 \texttt{malayalam} & --- & \texttt{Malayalam} \\
 \texttt{sinhala} & --- & \texttt{Sinhala} \\
 \texttt{lao} & --- & \texttt{Lao} \\
-\texttt{myanmar} & --- & \texttt{Myanmar}, \texttt{MyanmarExtendedA}, \texttt{MyanmarExtendedB} \\
-\texttt{ethiopic} & --- & \texttt{Ethiopic}, \texttt{EthiopicExtended}, \texttt{EthiopicExtendedA}, \texttt{EthiopicExtendedB} \\
-\texttt{khmer} & --- & \texttt{Khmer}, \texttt{KhmerSymbols} \\
+\texttt{myanmar} & --- & \shortstack[l]{\texttt{Myanmar},\\\texttt{MyanmarExtendedA},\\\texttt{MyanmarExtendedB}} \\
+\texttt{ethiopic} & --- & \shortstack[l]{\texttt{Ethiopic},\\\texttt{EthiopicExtended},\\\texttt{EthiopicExtendedA},\\\texttt{EthiopicExtendedB}} \\
+\texttt{khmer} & --- & \shortstack[l]{\texttt{Khmer},\\\texttt{KhmerSymbols}} \\
 \texttt{ogham} & --- & \texttt{Ogham} \\
-\texttt{cherokee} & --- & \texttt{Cherokee}, \texttt{CherokeeSupplement} \\
+\texttt{cherokee} & --- & \shortstack[l]{\texttt{Cherokee},\\\texttt{CherokeeSupplement}} \\
 \texttt{nko} & --- & \texttt{NKo} \\
 \texttt{tifinagh} & --- & \texttt{Tifinagh} \\
-\texttt{yi} & --- & \texttt{YiSyllables}, \texttt{YiRadicals} \\
+\texttt{yi} & --- & \shortstack[l]{\texttt{YiSyllables},\\\texttt{YiRadicals}} \\
 \texttt{adlam} & --- & \texttt{Adlam} \\
 \texttt{thaana} & --- & \texttt{Thaana} \\
 \texttt{mandaic} & --- & \texttt{Mandaic} \\
@@ -1751,7 +1751,7 @@ These helpers remain available for existing documents.
 The native package interfaces listed above are recommended
 for new authoring:
 
-\begin{longtable}{@{}p{0.43\linewidth}p{0.50\linewidth}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.43\linewidth}>{\raggedright\arraybackslash}p{0.50\linewidth}@{}}
 \toprule
 \textbf{Legacy interface} & \textbf{Supported purpose} \\
 \midrule
@@ -1760,15 +1760,15 @@ for new authoring:
 \textbf{Legacy interface} & \textbf{Supported purpose} \\
 \midrule
 \endhead
-\texttt{\string\Term[options]\{display\}[description]} &
+\shortstack[l]{\texttt{\string\Term[options]\{display\}}\\\texttt{[description]}} &
   Bold first-occurrence term and its historical index entry. \\
 \texttt{\string\IndexTitle} &
   Original default index-title override. \\
 \texttt{TableInlineFit}, \texttt{TableLong} &
   Old fixed-format table environments. \\
-\texttt{TableBook*}, \texttt{NiceBooktable*} &
+\shortstack[l]{\texttt{TableBook*},\\\texttt{NiceBooktable*}} &
   Old book-style and annotated table helpers. \\
-\texttt{OneImage*}, \texttt{PanelFigure*}, \texttt{\string\Panel} &
+\shortstack[l]{\texttt{OneImage*}, \texttt{PanelFigure*},\\\texttt{\string\Panel}} &
   Historical figure and multi-panel helpers. \\
 \texttt{ExampleBlock} &
   Historical indented example display. \\
