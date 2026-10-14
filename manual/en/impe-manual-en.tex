@@ -248,10 +248,12 @@ A small article can therefore look like this:
 \end{verbatim}
 
 The class already supplies the normal English article layout and base font.
-The mode-free \verb|\UseFont{libertinus}| call follows that family's registered
-automatic behavior, applying its global stack and making its local \verb|\LIB|
-command available, while \verb|\UseFeatures| activates two optional feature
-modules.  The rest is ordinary \LaTeX{}.
+The mode-free \verb|\UseFont{libertinus}| call uses its preset's
+automatic dispatcher: it defines the local \verb|\LIB| command and
+registers a global Latin font candidate. An explicit user font takes
+precedence over the implicit CMU class default. Meanwhile,
+\verb|\UseFeatures| activates optional modules. The remainder
+is ordinary \LaTeX{}.
 
 For a document whose setup is better expressed as a single declaration, the
 same idea can be written through \verb|\UseTemplateSet|:
@@ -277,7 +279,7 @@ IMPE can also be loaded as a package underneath a standard \LaTeX{} class:
 
 \UseTemplateSet{
   layout = en_doc,
-  fonts = {cmu,libertinus},
+  fonts = {libertinus},
   features = {hyperlinks}
 }
 \end{verbatim}
@@ -326,18 +328,21 @@ system:
     is \texttt{en\_doc} and its default global family is \texttt{cmu}.
   \item[\texttt{impebook}] English-oriented book wrapper.  Its normal layout
     is \texttt{en\_book} and its default global family is \texttt{cmu}.
-  \item[\texttt{impereport}] English-oriented report wrapper.  It uses the
-    \texttt{en\_doc} layout and \texttt{cmu} by default.
-  \item[\texttt{impebeamer}] Presentation wrapper.  It selects the
-    \texttt{beamer} layout and \texttt{cmu} by default.
+  \item[\texttt{impereport}] English-oriented report wrapper. It uses
+    the independent \texttt{en\_report} A4 layout and \texttt{cmu}.
+  \item[\texttt{impebeamer}] Presentation wrapper. It selects the
+    \texttt{beamer} (Madrid 4:3) layout and \texttt{cmu} by default.
 \end{description}
 
 Chinese-oriented counterparts are provided as \texttt{impeart\_zh},
 \texttt{impebook\_zh}, \texttt{impereport\_zh}, and
-\texttt{impebeamer\_zh}.  These select the corresponding Chinese document
-settings and include \texttt{shanggu} in the default global font configuration
-alongside \texttt{cmu}. This default configuration supports multilingual
-content in either wrapper family.
+\texttt{impebeamer\_zh}, using \texttt{zh\_doc},
+\texttt{zh\_book}, \texttt{zh\_report}, and
+\texttt{beamer\_zh}, respectively. These include
+\texttt{shanggu} alongside \texttt{cmu} as implicit global
+font defaults. The \texttt{lang=zh} option on a canonical
+class selects the corresponding Chinese settings without requiring
+a separate \texttt{\_zh} wrapper.
 
 Unknown class options are passed through to the underlying standard class.  A
 normal option such as
@@ -393,7 +398,10 @@ model is intentionally small:
 }
 \end{verbatim}
 
-The four keys have different roles.
+The four keys have different roles. Global declarations made explicitly
+by the author have precedence over wrapper-provided defaults;
+when several user fonts compete for the same primary slot,
+their declaration order can matter.
 
 \begin{description}
   \item[\texttt{layout}] selects a public layout preset appropriate to the
