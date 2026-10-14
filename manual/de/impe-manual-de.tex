@@ -9,7 +9,7 @@
   ItalicFont=lmmono10-italic.otf,
   BoldItalicFont=lmmonolt10-boldoblique.otf
 ]{lmmono10-regular.otf}
-\UseFeatures{hyperlinks,tables}
+\UseFunktionen{hyperlinks,tables}
 
 \usepackage{catchfile}
 \usepackage{metalogo}
@@ -67,16 +67,16 @@ konfigurieren lassen: Aus Sicht des Benutzers ist die wichtigste Unterscheidung 
 zwischen \emph{Satzspiegeln}, \emph{Schriften} und \emph{Zusatzfunktionen}. Ein Layout
 beschreibt die grundlegende visuelle Organisation eines Dokuments.
 Schriftfamilien stellen globales oder lokales Schriftverhalten bereit,
-einschließlich schriftsystembewussten Routings, wo dies erforderlich ist.
-Features stellen optionale Funktionen wie Mathematik, Hyperlinks, Zitate,
+einschließlich schriftsystembewussten Zuordnungs, wo dies erforderlich ist.
+Funktionen stellen optionale Funktionen wie Mathematik, Hyperlinks, Zitate,
 Tabellen oder Bilder bereit. Diese Teile können unabhängig voneinander
-ausgewählt oder über eine einheitliche Template-Schnittstelle kombiniert
+ausgewählt oder über eine einheitliche Einrichtungsschnittstelle kombiniert
 werden.
 
 Die normale Verwendung von IMPE ist bewusst knapp gehalten. Eine Wrapper-Klasse
 kann ein sinnvolles Dokumentlayout und eine globale Standardschriftkonfiguration
 festlegen; anschließend lädt der Benutzer die zusätzlichen Familien oder
-Features, die das Dokument benötigt. Wenn eine explizitere Kontrolle gewünscht
+Funktionen, die das Dokument benötigt. Wenn eine explizitere Kontrolle gewünscht
 ist, lassen sich dieselben Komponenten in einem einzigen Aufruf von
 \verb|\UseTemplateSet| deklarieren.
 
@@ -89,7 +89,7 @@ XSR-Darstellung verfügbar. IMPE-Dokumente werden mit \XeLaTeX{} übersetzt.
 Dieses Handbuch ist eine benutzerorientierte Einführung. Detaillierte
 Dokumentation der Subsysteme wird im
 Repository unter \texttt{docs/} gepflegt. Insbesondere die Dokumente zu
-Schriften, Layouts, Features und Systemarchitektur beschreiben
+Schriften, Layouts, Funktionen und Systemarchitektur beschreiben
 Registrierungsfelder und Implementierungsdetails, deren Wiederholung hier
 unnötig wäre. Das englische Handbuch ist die Referenzausgabe; übersetzte
 Handbücher sollen seiner Struktur und seinem technischen Inhalt folgen.
@@ -224,7 +224,7 @@ für XSR und Veröffentlichung gibt es gesonderte Prüfungen.
 \section{Schnellstart}
 
 Der einfachste IMPE-Arbeitsablauf besteht darin, eine Wrapper-Klasse zu wählen,
-die gewünschten Schriftfamilien oder Features auszuwählen und das Dokument
+die gewünschten Schriftfamilien oder Funktionen auszuwählen und das Dokument
 anschließend wie gewohnt zu schreiben. IMPE ergänzt die gewöhnliche
 \LaTeX{}-Dokumentstruktur um eine wiederverwendbare Einrichtungsschicht.
 
@@ -234,7 +234,7 @@ Ein kleiner Artikel kann daher beispielsweise so aussehen:
 \documentclass[11pt]{impeart}
 
 \UseFont{libertinus}
-\UseFeatures{math,hyperlinks}
+\UseFunktionen{math,hyperlinks}
 
 \title{A Sample Document}
 \subtitle{Typeset with IMPE}
@@ -255,7 +255,7 @@ Der Aufruf \verb|\UseFont{libertinus}| registriert die lokale Auswahl
 \verb|\LIB| und zugleich eine ausdrücklich gewählte globale
 lateinische Schrift. Sie hat Vorrang vor der von der Klasse
 vorgegebenen CMU-Schrift,
-während \verb|\UseFeatures| zwei optionale Feature-Module aktiviert. Der Rest
+während \verb|\UseFunktionen| zwei optionale Funktionsmodule aktiviert. Der Rest
 ist gewöhnliches \LaTeX{}.
 
 Für ein Dokument, dessen Einrichtung sich besser als einzelne Deklaration
@@ -272,7 +272,7 @@ werden:
 \end{verbatim}
 
 Ein Template-Set kann außerdem ein Layout und zusätzliche Schriftfamilien
-auswählen. In der Praxis liefern Wrapper-Klassen bereits ein geeignetes
+auswählen. In der Praxis liefern IMPE-Klassen bereits ein geeignetes
 Standardlayout, sodass die meisten Dokumente jene Einstellungen angeben,
 die davon abweichen.
 
@@ -292,7 +292,7 @@ geladen werden:
 
 Diese Form ist nützlich, wenn die zugrunde liegende Klasse ausdrücklich
 beibehalten werden muss oder wenn jede IMPE-Komponente manuell ausgewählt werden
-soll. Wrapper-Klassen und das rohe Paket verwenden dasselbe zugrunde liegende
+soll. IMPE-Klassen und das rohe Paket verwenden dasselbe zugrunde liegende
 System.
 
 \section{Einsatzbereite Vorlagen}
@@ -366,7 +366,7 @@ ihre Zuordnung steht in Abschnitt~\ref{sec:compatibility}.
 
 \subsection{\texttt{impe.sty} direkt verwenden}
 
-Die Wrapper-Klassen teilen sich eine Implementierung und bieten komfortable
+Die IMPE-Klassen teilen sich eine Implementierung und bieten komfortable
 Standards. Ein Benutzer kann auch eine Standardklasse
 beibehalten und
 
@@ -375,14 +375,14 @@ beibehalten und
 \end{verbatim}
 
 laden, gefolgt von einer expliziten Konfiguration für Layout, Schriften und
-Features. Dies ist der empfohlene Weg, wenn die Dokumentklasse von einer
+Funktionen. Dies ist der empfohlene Weg, wenn die Dokumentklasse von einer
 Zeitschrift, einem Verlag oder einem anderen Paket vorgegeben wird und als
 Dokumentklasse bestehen bleiben muss.
 
 \subsection{Titel und Untertitel}
 
 IMPE unterstützt \verb|\subtitle{...}| neben den Standardbefehlen
-\verb|\title| und \verb|\author|. Wrapper-Klassen wenden ihre eigenen
+\verb|\title| und \verb|\author|. IMPE-Klassen wenden ihre eigenen
 Standardwerte für den Titelblock an, während der gewöhnliche
 \LaTeX{}-Titelmechanismus erkennbar bleibt. Ein typischer Vorspann lautet
 einfach:
@@ -419,9 +419,9 @@ Die vier Schlüssel haben unterschiedliche Aufgaben.
   \item[\texttt{fonts}] lädt Familien über ihr registriertes automatisches
     Verhalten. Dies ist die normale Wahl: Eine Familie kann einen lokalen
     Befehl definieren, eine dokumentweite Schrift anwenden oder
-    bereichsspezifisches Routing einrichten.
+    bereichsspezifisches Zuordnung einrichten.
   \item[\texttt{globalfonts}] zwingt die aufgeführten Familien ausdrücklich
-    durch ihren globalen Modus oder ihren globalen Routing-Pfad.
+    durch ihren globalen Modus oder ihren globalen Zuordnung-Pfad.
   \item[\texttt{features}] lädt optionale Funktionsmodule.
 \end{description}
 
@@ -429,8 +429,8 @@ Die vier Schlüssel haben unterschiedliche Aufgaben.
 Schlüssel bieten explizite globale Überschreibungen; \texttt{fonts} bietet die
 automatische Schnittstelle.
 
-Die Template-Schnittstelle bietet einen vorhersehbaren Ort für die vollständige
-Konfiguration. Wrapper-Klassen wenden bereits ihre eigenen Layout- und globalen
+Die Einrichtungsschnittstelle bietet einen vorhersehbaren Ort für die vollständige
+Konfiguration. IMPE-Klassen wenden bereits ihre eigenen Layout- und globalen
 Schriftstandards an; ein Dokument kann daher allein eine zusätzliche
 Feature-Liste angeben.
 
@@ -451,7 +451,7 @@ einzelnen Subsysteme:
 \UseGlobalFonts{libertinus}    % explicit global override
 
 \UseFeature{hyperlinks}
-\UseFeatures{math,hyperlinks,tables}
+\UseFunktionen{math,hyperlinks,tables}
 \end{verbatim}
 
 Die Font-Formen mit ausgelassenem Modus sind die empfohlenen Kurzbefehle für den normalen
@@ -470,7 +470,7 @@ Dokumentfunktionen erhalten bleiben. Diese Komposition ist das zentrale
 Gestaltungsprinzip der öffentlichen Schnittstelle.
 
 Die folgenden Deklarationen beschreiben beispielsweise zwei sehr
-unterschiedliche Dokumente mit derselben Template-Schnittstelle:
+unterschiedliche Dokumente mit derselben Einrichtungsschnittstelle:
 
 \begin{verbatim}
 % Englischer Artikel: en_doc und CMU sind voreingestellt
@@ -809,7 +809,7 @@ stellen deren reguläre \LaTeX{}-Befehle bereit:
 \end{description}
 
 \begin{verbatim}
-\UseFeatures{math,hyperlinks,tables,image,drawing,glyphs}
+\UseFunktionen{math,hyperlinks,tables,image,drawing,glyphs}
 \end{verbatim}
 
 Mehrere Funktionen können kombiniert werden.
@@ -1004,54 +1004,53 @@ Das Repository trennt öffentliche Einstiegspunkte, stabile Mechanismen,
 Registrierungen, spezialisierte Implementierungen und lokale Ressourcen:
 
 \begin{verbatim}
-package/   public package and class entry points
-core/      stable subsystem mechanisms
-catalog/   public ids and registration data
-modules/   extendable or specialized implementations
-assets/    local runtime resources such as fonts
-scripts/   installation and release tooling
-manual/    manual sources
-docs/      detailed subsystem documentation
+package/   öffentliche Paket- und Klasseneinstiege
+core/      gemeinsame Mechanismen
+catalog/   Kennungen und Registrierungsdaten
+modules/   besondere Implementierungen
+assets/    lokale Ressourcen wie Schriften
+scripts/   Installation und Veröffentlichung
+manual/    Handbuchquellen
+docs/      ausführliche Systemdokumentation
 \end{verbatim}
 
 \subsection{Der stabile Kern}
 
 Die Schicht \texttt{core/} enthält stabile gemeinsame Mechanismen für neue
-Schriftfamilien, Layout-Voreinstellungen und Features. Sie implementiert die
+Schriftfamilien, Layout-Voreinstellungen und Funktionen. Sie implementiert die
 Schriftregistrierung und
-Routing-Mechanik, die Layout-Registrierung und Kompatibilitätsprüfungen, den
-Feature-Loader und damit verbundenes gemeinsames Verhalten.
+Zuordnung-Mechanik, die Layout-Registrierung und Kompatibilitätsprüfungen, den
+Funktionslader und damit verbundenes gemeinsames Verhalten.
 
-Diese Unterscheidung ist für die Wartung wichtig. Wenn das Hinzufügen einer
-gewöhnlichen OpenType-Schrift eine Änderung an der Font-Routing-Engine erfordert
-oder das Hinzufügen eines Features den generischen Feature-Loader verändern
-muss, ist das Erweiterungsmodell gescheitert. Der Kern ist daher bewusst vom
-wachsenden Katalog konkreter Ressourcen getrennt.
+Gewöhnliche OpenType-Schriften lassen sich über den Katalog
+anmelden und zusätzliche Funktionen mit dem zentralen
+Lademechanismus verbinden. Dadurch bleibt der Kern
+von den konkreten Schrift- und Funktionsdaten getrennt.
 
 \subsection{Kataloge}
 
 Die Schicht \texttt{catalog/} vergibt öffentliche IDs und Metadaten. Sie enthält
-die zentralen Registrierungen für Schriften, Layouts und Features. Für viele
+die zentralen Registrierungen für Schriften, Layouts und Funktionen. Für viele
 Erweiterungen ist dies der richtige Ausgangspunkt.
 
 Eine gewöhnliche Schriftfamilie mit standardmäßigem
-\texttt{fontspec}-Shaping benötigt, kann in der Regel vollständig als
+\texttt{fontspec}-Schriftformung benötigt, kann in der Regel vollständig als
 Katalogregistrierung ausgedrückt werden. Ebenso wird eine öffentliche
 Layout-Voreinstellung aus vorhandenen internen Komponenten zusammengesetzt,
-und eine Feature-ID verweist auf ihr Implementierungsmodul. Die zentrale
+und eine Funktionskennung verweist auf ihr Implementierungsmodul. Die zentrale
 Ablage dieser Deklarationen macht die öffentliche Oberfläche an einem Ort
 überprüfbar.
 
 \subsection{Module}
 
 Die Schicht \texttt{modules/} ist Funktionalität vorbehalten, die tatsächlich
-eine eigene Implementierung benötigt: Feature-Module, spezialisierte
+eine eigene Implementierung benötigt: Funktionsmodule, spezialisierte
 Schriftsystemunterstützung oder wiederverwendbare interne Layout-Komponenten.
 Ein neues Modul sollte daher eine echte Verhaltenserweiterung darstellen;
 Schriftnamen gehören in Katalogregistrierungen.
 
 Diese Regel ist für mehrsprachige Unterstützung besonders wichtig. Die meisten
-Schriftsysteme sollten gewöhnliches OpenType-Shaping und Katalogmetadaten
+Schriftsysteme sollten gewöhnliches OpenType-Schriftformung und Katalogmetadaten
 verwenden. Spezialisierte Module dienen Schriftsystemen oder
 Rendering-Strategien mit Verhalten über den generischen Kern hinaus.
 
@@ -1076,12 +1075,12 @@ eine vollständige Referenz benötigen oder das System erweitern möchten.
   \item[\texttt{docs/SYSTEM.md}] Architektur, öffentliche Einstiegsschichten,
     Template-Konfiguration, Release-Modell und Erweiterungsgrenzen.
   \item[\texttt{docs/FONTS.md}] Familienregistrierung, lokale und globale Modi,
-    Routing, Fallback, Shaping, Schreibverhalten, vertikale Unterstützung und
-    externalisiertes Rendering.
+    Zuordnung, Ersatz, Schriftformung, Schreibverhalten, vertikale Unterstützung und
+    externe Darstellung.
   \item[\texttt{docs/LAYOUTS.md}] öffentliche Layout-Voreinstellungen,
     Kompatibilitätsziele und das Komponentenmodell, aus dem Voreinstellungen
     aufgebaut werden.
-  \item[\texttt{docs/FEATURES.md}] öffentliche Feature-IDs sowie Befehle,
+  \item[\texttt{docs/FEATURES.md}] öffentliche Funktionskennungen sowie Befehle,
     Umgebungen, Paket-Stacks und Kompilierungsanforderungen der einzelnen
     Module.
   \item[\texttt{CHANGELOG.md}] Änderungen in veröffentlichten Versionen.
@@ -1095,7 +1094,7 @@ Das Projekt-Repository ist erreichbar unter
 \href{\IMPERepo}{\texttt{github.com/KelvinYangBK67/IMPE-LaTeX-System}}
 \end{center}
 
-Fehlerberichte, Feature-Wünsche, Dokumentationskorrekturen,
+Fehlerberichte, Funktionswünsche, Dokumentationskorrekturen,
 Portabilitätsberichte und andere konkrete Rückmeldungen sind über GitHub Issues
 willkommen:
 
@@ -1107,12 +1106,11 @@ Bei der Meldung eines Satzproblems ist es hilfreich, eine minimale Quelldatei,
 die \TeX{}-Engine und \TeX{}-Live-Version, die IMPE-Version und die relevanten
 Schriftinformationen anzugeben. Berichte zu einer lokalen oder privat
 bereitgestellten Schrift sollten, soweit möglich, außerdem zwischen einem
-Problem der Glyphenabdeckung und einem IMPE-Routing-Problem unterscheiden.
+Problem der Glyphenabdeckung und einem IMPE-Zuordnung-Problem unterscheiden.
 
-Das englische Handbuch ist der maßgebliche Handbuchtext. Ausgaben in anderen
-Sprachen dürfen Prosa und Terminologie an die jeweiligen technischen
-Konventionen anpassen, doch ihre Befehle, Beispiele und die Beschreibung des
-IMPE-Verhaltens sollen mit dieser Ausgabe synchron bleiben.
+Das englische Handbuch dient als fachliche Referenz. Die deutsche
+Fassung verwendet die in der deutschsprachigen Satztechnik üblichen
+Bezeichnungen; Befehle und ihre Funktionsweise entsprechen der Referenzausgabe.
 
 \appendix
 
@@ -1168,7 +1166,7 @@ geladen werden.
 \texttt{\string\UseGlobalFont}, \texttt{\string\UseGlobalFonts} & Ausdrücklich globale Schriftauswahl. \\
 \texttt{\string\UseMainFont}, \texttt{\string\UseMainFonts} & Synonyme der globalen Auswahl. \\
 \texttt{\string\UseLayout}, \texttt{\string\UseLayouts} & Eingetragene Satzspiegel wählen. \\
-\texttt{\string\UseFeature}, \texttt{\string\UseFeatures} & Zusatzfunktionen aktivieren. \\
+\texttt{\string\UseFeature}, \texttt{\string\UseFunktionen} & Zusatzfunktionen aktivieren. \\
 \texttt{\string\SetCatalogFontRoot} & Verzeichnis lokaler Schriftdateien festlegen. \\
 \texttt{\string\subtitle} & Untertitel des Dokuments setzen. \\
 \bottomrule
@@ -1716,7 +1714,7 @@ Weitere Angaben bieten
 
 Die folgenden Seiten geben den vollständigen kanonischen IMPE-Showcase wieder.
 Der Showcase ist ein visueller Begleiter des Referenzhandbuchs,
-der mehrsprachiges Font-Routing, komplexes Shaping, rechts-nach-links laufende
+der mehrsprachiges Font-Zuordnung, komplexes Schriftformung, rechts-nach-links laufende
 Schriften, vertikales Schreiben, regionale CJK-Formen und Kombinationen von
 Dokumentfeatures demonstriert.
 
