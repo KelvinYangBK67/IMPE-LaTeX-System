@@ -213,6 +213,25 @@
 \cs_new_protected:cpn { __layout_component_book_blankpage_empty: }
   { \NextLayoutBookBlankPageEmpty }
 
+% The Beamer built-in 'frame number' footer uses beamercolorbox.
+% With XeTeX bidi/xeCJK this can unbalance direction groups while measuring
+% Chinese metadata at \begin{document}. Keep the simple 1.0.5 visual footer
+% (just the number), but implement it without a beamercolorbox.
+\cs_new_protected:cpn { __layout_component_slides_madrid_zh_footer: }
+  {
+    \setbeamertemplate{footline}
+      {
+        \leavevmode
+        \hbox to \paperwidth
+          {
+            \hfill
+            { \usebeamerfont{page number in head/foot}\insertframenumber
+              \hspace*{3mm} }
+          }
+        \vskip 2mm
+      }
+  }
+
 \cs_new_protected:cpn { __layout_component_slides_madrid_nav: }
   {
     \RequirePackage{etoolbox}
@@ -223,7 +242,7 @@
     \ifdefined\NextSystemUiTag
       \def\NextLayoutZhTag{zh}%
       \ifx\NextSystemUiTag\NextLayoutZhTag
-        \setbeamertemplate{footline}[frame number]%
+        \use:c { __layout_component_slides_madrid_zh_footer: }
       \fi
     \fi
     \providecommand{\NextBeamerAuthorShape}{\upshape}
@@ -243,7 +262,7 @@
 \cs_new_protected:cpn { __layout_component_slides_madrid_nav_zh: }
   {
     \use:c { __layout_component_slides_madrid_nav: }
-    \setbeamertemplate{footline}[frame number]
+    \use:c { __layout_component_slides_madrid_zh_footer: }
   }
 
 % Beamer convenience interfaces are separate from theme/layout configuration.
