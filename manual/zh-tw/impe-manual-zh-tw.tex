@@ -198,26 +198,26 @@ IMPE 已可使用。\LIB{Libertinus 局部文字。}
 因此，一份簡短文章可以寫成：
 
 \begin{verbatim}
-\documentclass[11pt]{impeart}
+\documentclass[11pt,lang=zh]{impeart}
 
 \UseFont{libertinus}
 \UseFeatures{math,hyperlinks}
 
-\title{A Sample Document}
-\subtitle{Typeset with IMPE}
-\author{Author Name}
+\title{一份排版示例}
+\subtitle{使用 IMPE 排版}
+\author{作者姓名}
 
 \begin{document}
 
 \maketitle
 
-\section{Introduction}
-\LIB{Hello, world.}
+\section{引言}
+本文件使用 IMPE 排版。\LIB{Hello, world.}
 
 \end{document}
 \end{verbatim}
 
-這個類別已經提供一般的英文文章版面與基礎字體。省略模式的
+這個類別已提供中文文章版面，以及 CMU、Shanggu 等基礎字體。省略模式的
 \verb|\UseFont{libertinus}| 會遵循已登錄的自動行為：將 Libertinus 登錄為明確的全域拉丁字體候選，
 同時提供局部命令 \verb|\LIB|；\verb|\UseFeatures| 則啟用兩個選用功能模組。
 其餘部分都是一般的 \LaTeX{}。
@@ -333,9 +333,9 @@ IMPE 也可以作為套件載入到標準 \LaTeX{} 類別之下：
 標題機制仍保持熟悉的形式。典型的導言區可以簡單寫成
 
 \begin{verbatim}
-\title{Main Title}
-\subtitle{A More Specific Description}
-\author{Author Name}
+\title{主標題}
+\subtitle{更具體的副標題}
+\author{作者姓名}
 \end{verbatim}
 
 並在正文中呼叫 \verb|\maketitle|。
