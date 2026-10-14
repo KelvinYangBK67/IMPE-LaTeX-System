@@ -18,6 +18,7 @@ with fitz.open(pdf) as doc:
     found = {s['text']: s['font'] for page in doc
              for b in page.get_text('dict')['blocks']
              for line in b.get('lines', []) for s in line['spans']}
+print("IMPE-MLMODERN-ACTUAL-FACES", repr(found), flush=True)
 for text, font in expected.items():
     assert found.get(text) == font, (text, font, found.get(text))
 print('IMPE-TEST-MLMODERN-PDF-PASS')
