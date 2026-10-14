@@ -1,6 +1,6 @@
-# IMPE 內附 XSR 1.2：本地驗收清單
+# IMPE 內附 XSR 1.3：本地驗收清單
 
-狀態：IMPE 1.1.0 遠端收口候選版內附 XSR 1.2；1.0.8 已有 Git Tag，
+狀態：IMPE 1.1.0 遠端收口候選版內附 XSR 1.3；1.0.8 已有 Git Tag，
 1.1.0 的正式 Tag／Release 則留待本地手冊、Showcase 及發行驗收完成後再建立。
 這份清單專門驗證 GitHub CI 無法替使用者確認的本地安裝環境。
 CI 綠燈不代表已在使用者自己的電腦上完成本地安裝驗證。
@@ -30,7 +30,7 @@ CI 綠燈不代表已在使用者自己的電腦上完成本地安裝驗證。
 
 預期：來源校驗通過；兩個 kpsewhich 路徑均指向同一份新安裝的
 TEXMF（其中 xsr-core.sty 位於 tex/latex/impe/xsr/）；XSR Python
-版本為 1.2，路徑位於專用 xsr-venv，不是全域 site-packages。
+版本為 1.3，路徑位於專用 xsr-venv，不是全域 site-packages。
 自定義 -TexmfRoot 時請相應替換以上路徑。
 
 同時檢查安裝器生成的
