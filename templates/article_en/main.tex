@@ -1,74 +1,49 @@
 % !TeX program = xelatex
-\documentclass[12pt]{impeart}
+\documentclass{impeart}
 
 \UseTemplateSet{
   features = {tables,image,citations,hyperlinks}
 }
-
 \addbibresource{references.bib}
 
-\title{English Article Template}
-\subtitle{A concise subtitle below the main title}
+\title{Article Title}
 \author{Author Name}
 \date{\today}
 
 \begin{document}
-
 \maketitle
 
 \begin{abstract}
-This practical IMPE LaTeX System article starter includes a title block,
-abstract, section structure, and a
-few common document elements that can be rewritten directly into a real paper.
+A brief statement of the question, sources, method, and principal finding.
 \end{abstract}
 
-\section{Background}
+\section{Introduction}
 
-Use this section to introduce the topic, research context, and source
-materials. It is also a natural place to define the document scope and clarify
-what kind of contribution the paper aims to make. A narrative citation can be
-written with \textcite{sample2026}; a parenthetical citation can be written as
-\parencite{sample2026}.
+Introduce the subject and its sources. Cite a sample reference with
+\textcite{sample2026} or \parencite{sample2026}; replace the sample
+entry in \texttt{references.bib} with your own bibliography.
 
-\section{Research Questions}
+\section{Analysis}
 
-Typical framing questions might include:
-
-\begin{enumerate}
-  \item What is the textual or linguistic problem under discussion?
-  \item How does the existing scholarship approach it?
-  \item What new analysis or organization does this paper provide?
-\end{enumerate}
-
-\section{Sample Table}
+Write the argument here. Footnotes use the standard
+LaTeX command.\footnote{A sample note.}
 
 \begin{table}[htbp]
   \centering
-  \begin{tabular}{lll}
+  \caption{Sample comparison}
+  \begin{tabular}{ll}
     \toprule
-    Item & Description & Note \\
+    Source & Observation \\
     \midrule
-    Sources & Primary material & Replace as needed \\
-    Method & Analysis and comparison & Expand later \\
-    Result & Working observation & Refine in draft \\
+    A & First reading \\
+    B & Second reading \\
     \bottomrule
   \end{tabular}
-  \caption{Basic table example}
 \end{table}
-
-\section{Sample Figure}
-
-\begin{figure}[htbp]
-  \centering
-  \rule{0.7\linewidth}{0.28\linewidth}
-  \caption{Figure placeholder}
-\end{figure}
 
 \section{Conclusion}
 
-The goal of this template is to provide a real writing starter with enough
-structure to begin drafting immediately.
+Summarize the result and its implications.
 
 \printbibliography
-
 \end{document}

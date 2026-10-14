@@ -1,43 +1,31 @@
-# Templates
+# Starter Templates
 
 [繁體中文](README-zh.md)
 
-This directory contains ready-to-use starter templates for IMPE LaTeX System.
+The six starter documents use IMPE 1.1.0's canonical classes and their
+default typography and page layouts:
 
-The maintained repository surfaces have distinct roles:
+| Directory | Class | Default layout |
+| --- | --- | --- |
+| `article_en/`, `article_zh/` | `impeart` | A4 article |
+| `book_en/`, `book_zh/` | `impebook` | ISO B5 book |
+| `beamer_en/`, `beamer_zh/` | `impebeamer` | 16:9 slides |
 
-- `templates/` contains user-facing starter documents
-- `tests/` contains maintained regression fixtures
-- `manual/` contains the manuals and canonical showcase
-- `docs/` contains technical reference material
+Copy one directory to start a document. These templates assume IMPE is
+installed in TEXMF, so they use no source-checkout paths. Chinese documents
+select the canonical class with `lang=zh`. Class options such as `12pt`
+can be added when a different size is needed; leaving them out uses IMPE's
+language-specific defaults. Use native LaTeX packages and commands for
+further customization; see [Layouts](../docs/LAYOUTS.md) and
+[Fonts and Writing](../docs/FONTS.md).
 
-Temporary development probes belong in local scratch work; `templates/`
-contains the public starter documents. IMPE 1.0.6 defaults use ISO B5 for books, A4 for papers/reports and 16:9 for Beamer; add `\UseLegacyLayout` for 1.0.5 geometry and typography.
+Compile the article templates from their own directories with XeLaTeX and
+Biber, including the supplied sample bibliography:
 
-These templates are intentionally written in the installed-package style:
+`xelatex main.tex` → `biber main` → `xelatex main.tex` → `xelatex main.tex`
 
-- they use canonical `impeart`, `impebook`, `impebeamer`, and their `_zh` counterparts
-- New documents can use `lang=en` / `lang=zh` on canonical classes; historical `_zh` wrappers remain supported
-- they are meant to be used after IMPE LaTeX System has been installed into `texmf`
-- repository regression and smoke coverage belongs under `tests/`
-
-Current starter templates:
-
-- `article_zh/`
-- `article_en/`
-- `book_zh/`
-- `book_en/`
-- `beamer_zh/`
-- `beamer_en/`
-
-Each template includes:
-
-- an installed-package IMPE LaTeX System loading pattern
-- title / author / date metadata
-- a realistic body skeleton
-- sample headings and text blocks
-- basic table / figure or slide examples where appropriate
-
-The six public starter documents are compiled as smoke tests by
-`tests/run_regressions.ps1`. The Chinese starters use canonical
-`lang=zh` class options rather than the retained `*_zh` compatibility aliases.
+For book or Beamer, run `xelatex main.tex` (run it again to settle the table
+of contents and references, if present). The repository's
+`tests/run_regressions.ps1` compiles all six templates, including the article
+bibliographies, using CI-safe fonts. Replace sample titles, prose and
+bibliography entries with your own content.

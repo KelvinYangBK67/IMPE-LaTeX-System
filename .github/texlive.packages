@@ -7,6 +7,7 @@ adjustbox
 beamer
 biblatex
 biblatex-apa
+biber
 bidi
 booktabs
 catchfile
@@ -25,6 +26,7 @@ forest
 import
 libertinus-fonts
 metalogo
+mlmodern
 multirow
 pdfpages
 pdflscape

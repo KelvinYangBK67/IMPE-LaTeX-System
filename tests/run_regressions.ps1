@@ -26,7 +26,9 @@ $ReleaseDateTeX = $ReleaseDateIso.Replace('-', '/')
 # but do not generate falsely versioned public ZIP/PDF assets from an older
 # showcase edition. The actual release builder retains its strict version
 # gate, and release checks resume automatically after documentation catches up.
-$RunFormalReleaseChecks = -not $SkipRelease
+# Public-font fixtures intentionally lack the private font library needed for
+# canonical Showcase/archive builds. CI must validate runtime/templates only.
+$RunFormalReleaseChecks = -not $SkipRelease -and -not $PublicFonts
 $ShowcaseSourceForRelease = Join-Path $RepoRoot 'manual/showcase/impe-showcase.tex'
 if (-not (Test-Path -LiteralPath $ShowcaseSourceForRelease)) {
     throw "Required canonical showcase source is missing: $ShowcaseSourceForRelease"
@@ -260,28 +262,40 @@ try {
     }
     & python (Join-Path $TestRoot 'test_bounded_command.py')
     if ($LASTEXITCODE -ne 0) { throw 'Build timeout/cancellation cleanup regression failed.' }
-    # The native NFSS local mapper previously recursed forever on textsf.
-    # Include XDV-to-PDF conversion inside the deadline, not merely TeX success.
-    & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') `
-        --timeout 30 --log (Join-Path $BuildRoot 'mlmodern-styles-command.log') -- `
-        $xelatex.Source -interaction=nonstopmode -halt-on-error `
-        "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex'
+    # Verify actual MLModern faces, including the former sans/mono recursion.
+    # Keep the full XeLaTeX-to-PDF pipeline inside a bounded subprocess.
+    & python (Join-Path $RepoRoot 'scripts/run_bounded_command.py') --timeout 40 --log (Join-Path $BuildRoot 'mlmodern-styles-command.log') -- $xelatex.Source -interaction=nonstopmode -halt-on-error "-output-directory=$BuildRoot" 'tests/mlmodern-styles.tex'
     if ($LASTEXITCODE -ne 0) { throw 'MLModern end-to-end PDF build failed or timed out.' }
     & python (Join-Path $TestRoot 'check_mlmodern_styles.py') (Join-Path $BuildRoot 'mlmodern-styles.pdf')
     if ($LASTEXITCODE -ne 0) { throw 'MLModern PDF used incorrect faces.' }
-    # Compile public starter templates against the latest canonical entries.
+
+    # Exercise all starter documents, including their default PDF page sizes.
+    # Article samples must resolve references via Biber, not merely compile
+    # the first pass with unresolved citations.
     foreach ($template in @(
         "article_en", "article_zh", "book_en", "book_zh",
         "beamer_en", "beamer_zh"
     )) {
         $templateFile = "templates/$template/main.tex"
+        $templateJob = "template-$template"
         Write-Host "Running starter-template smoke test: $template"
-        & $xelatex.Source -interaction=nonstopmode -halt-on-error `
-            "-jobname=template-$template" "-output-directory=$BuildRoot" `
-            $templateFile | Out-Host
+        & $xelatex.Source -interaction=nonstopmode -halt-on-error "-jobname=$templateJob" "-output-directory=$BuildRoot" $templateFile | Out-Host
         if ($LASTEXITCODE -ne 0) {
             throw "Starter template did not compile: $template"
         }
+        if ($template -like 'article_*') {
+            # Supply the local bibliography to Biber in the regression output
+            # directory; copied starters can compile from their own folder.
+            Copy-Item -LiteralPath (Join-Path $RepoRoot "templates/$template/references.bib") -Destination (Join-Path $BuildRoot "references.bib") -Force
+            & biber "--input-directory=$BuildRoot" "--output-directory=$BuildRoot" $templateJob | Out-Host
+            if ($LASTEXITCODE -ne 0) { throw "Starter template Biber failed: $template" }
+            foreach ($pass in 1..2) {
+                & $xelatex.Source -interaction=nonstopmode -halt-on-error "-jobname=$templateJob" "-output-directory=$BuildRoot" $templateFile | Out-Host
+                if ($LASTEXITCODE -ne 0) { throw "Starter template post-Biber pass $pass failed: $template" }
+            }
+        }
+        & python (Join-Path $TestRoot 'check_starter_templates.py') $template (Join-Path $BuildRoot "$templateJob.pdf")
+        if ($LASTEXITCODE -ne 0) { throw "Starter template PDF validation failed: $template" }
     }
 
     $layoutNegativeTests = @{

@@ -1,62 +1,36 @@
 % !TeX program = xelatex
-\documentclass[12pt]{impebook}
+\documentclass{impebook}
 
 \UseTemplateSet{
-  features = {image}
+  features = {image,hyperlinks}
 }
 
-\title{English Book Template}
-\subtitle{A concise subtitle below the main title}
+\title{Book Title}
 \author{Author Name}
 \date{\today}
 
 \begin{document}
-
 \frontmatter
 \maketitle
-
 \chapter*{Preface}
 
-This template is intended for book-length writing, lecture notes, or extended
-research manuscripts. The preface can explain motivation, scope, and overall
-chapter design.
-
+Introduce the scope and organization of the book.
 \tableofcontents
 
 \mainmatter
-
 \chapter{Introduction}
+\section{Sources}
 
-\section{Research Context}
+Describe the primary materials and the questions they raise.
 
-Use this section to introduce the broader context, the existing conversation,
-and the reason the book is organized in its present form.
+\chapter{Analysis}
+\section{A Sample Section}
 
-\section{Sources and Method}
-
-This section can describe the corpus, primary materials, editorial choices, or
-analytical approach used throughout the manuscript.
-
-\chapter{Sample Chapter}
-
-\section{Long-Form Structure}
-
-Unlike a short article starter, a book template should already assume chapter
-progression and a longer reading arc. This file keeps that skeleton in place.
-
-\section{Figure Placeholder}
-
-\begin{figure}[htbp]
-  \centering
-  \rule{0.7\linewidth}{0.28\linewidth}
-  \caption{Chapter figure placeholder}
-\end{figure}
+Develop the argument across chapters. Notes can be added
+as ordinary footnotes.\footnote{A sample note.}
 
 \backmatter
-
 \chapter*{Afterword}
 
-This can be replaced with a conclusion, an afterword, or a note on future
-development.
-
+State the final conclusions.
 \end{document}

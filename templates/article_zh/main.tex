@@ -1,65 +1,48 @@
 % !TeX program = xelatex
-\documentclass[12pt,lang=zh]{impeart}
+\documentclass[lang=zh]{impeart}
 
+\UseCitationStyle{numeric}
 \UseTemplateSet{
-  features = {tables,image}
+  features = {tables,image,citations,hyperlinks}
 }
+\addbibresource{references.bib}
 
-\title{中文論文模板示例}
+\title{論文題目}
 \author{作者姓名}
 \date{\today}
 
 \begin{document}
-
 \maketitle
 
 \begin{abstract}
-本文示範 IMPE LaTeX System 中文論文模板的基本起稿方式。它提供標題、摘要、章節結構、
-表格與圖片佔位等常見元素，方便後續直接改寫成實際文稿。
+簡述研究問題、材料、方法及主要結論。
 \end{abstract}
 
-\section{研究背景}
+\section{引言}
 
-這一節可用來簡述研究背景、問題意識與材料來源。若需要中外文混排，也可以直接
-在正文中混用 English terms、專有名詞與引文說明。
+交代研究對象與材料範圍。文獻引用可使用
+\cite{sample2026}，並在 \texttt{references.bib} 中管理書目資料。
 
-\section{研究問題}
+\section{分析}
 
-本文可圍繞以下幾點展開：
-
-\begin{enumerate}
-  \item 研究對象的文本特徵與語言背景。
-  \item 現有研究的整理與不足。
-  \item 本文希望提出的方法與觀察。
-\end{enumerate}
-
-\section{示例表格}
+在此展開論證，也可以使用一般的 \LaTeX{} 腳註。\footnote{腳註示例。}
 
 \begin{table}[htbp]
   \centering
-  \begin{tabular}{lll}
+  \caption{材料比較示例}
+  \begin{tabular}{ll}
     \toprule
-    項目 & 說明 & 備註 \\
+    材料 & 觀察 \\
     \midrule
-    材料 & 文本樣本 & 可替換 \\
-    方法 & 描寫與比較 & 可擴展 \\
-    結果 & 初步觀察 & 可細化 \\
+    甲 & 第一種讀法 \\
+    乙 & 第二種讀法 \\
     \bottomrule
   \end{tabular}
-  \caption{基本表格示例}
 \end{table}
 
-\section{示例圖片}
+\section{結論}
 
-\begin{figure}[htbp]
-  \centering
-  \rule{0.7\linewidth}{0.28\linewidth}
-  \caption{圖片佔位示例}
-\end{figure}
+總結分析結果。
 
-\section{結語}
-
-這份模板提供可直接開始撰寫的中文論文骨架。
-後續可在此基礎上加入引文、腳註、參考文獻與更多 feature。
-
+\printbibliography
 \end{document}
