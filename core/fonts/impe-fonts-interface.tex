@@ -487,15 +487,20 @@
       }
       { \cs_set_protected:cpn { __font_space_policy_#2: } { } }
 
-    % MLModern uses NFSS Type1 faces. Its native family switches must
-    % remain intact; local family defaults select the registered sans/mono
-    % faces, and the outer group restores the document defaults.
+    % MLModern uses NFSS Type1 faces. Select explicit encoding and family
+    % for local sans/mono commands; the outer group restores all switches.
     \str_if_eq:VnTF \l__font_special_module_tl { mlmodern }
       {
         \cs_set_protected:cpn { __font_map_sf_#2: }
-          { \cs_set:Npn \sfdefault { mlmss } }
+          {
+            \cs_set_protected:Npn \sffamily
+              { \fontencoding{T1}\fontfamily{mlmss}\selectfont }
+          }
         \cs_set_protected:cpn { __font_map_tt_#2: }
-          { \cs_set:Npn \ttdefault { mlmtt } }
+          {
+            \cs_set_protected:Npn \ttfamily
+              { \fontencoding{T1}\fontfamily{mlmtt}\selectfont }
+          }
       }
       {
         \cs_set_protected:cpn { __font_map_sf_#2: }
