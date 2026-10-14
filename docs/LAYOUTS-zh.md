@@ -38,9 +38,15 @@ Book／Report 的章首頁使用 `plain`：不顯示頁眉，但**保留頁腳�
 | Report | 11/15.5pt；不縮排、段後 0.35em | 11/17.5pt；縮排 2em、段後 0 |
 | Beamer | Madrid 原生字號及間距 | Madrid 原生字號及間距 |
 
-`10pt` Class 默認會採用 IMPE 校準後的字號及基線距；
-使用者顯式選擇 `11pt`／`12pt`，則尊重底層類別的字號，
-也可自行使用 `\fontsize` 或 `\setstretch` 覆寫。
+未指定字號選項時，IMPE 使用上表經校準的字號及絕對基線距。
+顯式指定 `10pt`、`11pt` 或 `12pt` 時，保留底層類別的正文字號，
+但仍按出版預設的「基線距／字號」比例設定行距；英文與中文
+Article、Report、Book 均遵循這項規則，不再因指定字號而意外退回
+LaTeX 較緊湊的原生行距。`\small`、`\footnotesize` 亦使用對應的
+小字／註腳行距比例。中文出版預設的列表行距跟隨正文；可使用
+`text.list-line-stretch` 覆寫，引用區塊則使用小字的相應行距。
+使用者仍可藉由 `\fontsize`、`\setstretch` 或
+`\LayoutSetup{text.line-stretch=...}` 自訂。
 Book 章題 18pt、節題英文 13.5pt／中文 14pt；
 Article 節題英文 14pt／中文 15pt；
 Report 章題 18pt。
@@ -65,7 +71,7 @@ Report 章題 18pt。
 設定，也會照原樣恢復。Beamer 目前已重新以 Madrid 主題及 4:3 為預設，
 仍不覆蓋使用者明確指定的 `aspectratio=...`。
 
-舊版 Profile 包括紙張、版心、原本的正文字號與腳註字號、章節
+舊版 Profile 包括紙張、版心、原本的正文／小字／腳註字號與列表倍率、章節
 標題、行距、段間距、頁眉頁腳，以及章節首頁的 `plain` 樣式；
 Beamer 也恢復舊主題字號。若要使用 1.0.6 的極簡風格，可另用
 `\UseLayout{beamer_clean}`（中文可用 `beamer_clean_zh`）；寬螢幕時請在

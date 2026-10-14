@@ -41,9 +41,16 @@ setspace stretch factor; paragraph spacing is additional to baseline skip.
 | report | 11/15.5pt; 0; .35em | 11/17.5pt; 2em; 0 |
 | beamer | Madrid's native font sizing and spacing | Madrid's native font sizing and spacing |
 
-Normal class sizes are installed for the default 10pt base-class option.
-Explicit `11pt` or `12pt` class options take precedence and retain their
-native sizing; users can also change fonts with `\fontsize` or `\setstretch`.
+With no class size option, IMPE applies the curated font sizes and absolute
+baseline skips shown above. An explicit `10pt`, `11pt` or `12pt` preserves the
+base class's font size and scales the baseline to the publication preset's
+leading-to-font-size ratio. This applies equally to en and zh article, report
+and book, so explicit sizes no longer silently fall back to the compact native
+LaTeX baseline. `\small` and `\footnotesize` use the corresponding preset
+small-text/footnote leading ratio. Chinese publication lists use body leading
+by default (override with `text.list-line-stretch`); quotes use the smaller
+text's matching leading. Authors may still use native `\fontsize`, `\setstretch`
+and `\LayoutSetup{text.line-stretch=...}` for intentional overrides.
 Book headings default to 18pt chapters, 13.5/14pt sections and 11.5/12pt
 subsections (en/zh). Article sections are 14/15pt. Report chapters are 18pt.
 Standard native overrides and normal font-size commands remain available.
@@ -70,7 +77,7 @@ en/zh profiles; report restores the old article-derived report layout.
 Beamer already defaults to Madrid and 4:3 again. An explicit native
 `aspectratio=...` option remains authoritative, including 16:9.
 
-The legacy snapshot restores geometry, base-class normal/footnote font sizes,
+The legacy snapshot restores geometry, base-class normal/small/footnote font sizes,
 chapter/section heading definitions, baseline stretch, paragraph spacing,
 and historical running-head, footer and chapter-opening `plain` behavior.
 The Beamer profile also resets its theme fonts. The 1.0.6 minimal
