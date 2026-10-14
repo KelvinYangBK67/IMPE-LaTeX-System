@@ -509,8 +509,10 @@ Libertinus as an explicit global Latin candidate. In a wrapper document it
 can replace the implicit CMU primary according to the precedence rules below.
 An explicit \texttt{[local]} confines the request to the local declaration.
 An explicit \texttt{[global]} requires a global-capable preset. The
-\verb|\UseLocalFont(s)|, \verb|\UseGlobalFont(s)| and
-\verb|\UseMainFont(s)| aliases give the corresponding deliberate overrides.
+singular and plural \verb|\UseLocalFont| and
+\verb|\UseGlobalFont| forms provide explicit overrides;
+\verb|\UseMainFont| is an alias for global selection.
+Their plural forms accept comma-separated ID lists.
 
 A local command, such as \verb|\SA{...}|, applies to its text argument,
 preserving the script's shaping and special renderer. The generic
@@ -910,12 +912,12 @@ public naming scheme. New documents use
 \texttt{impereport} or \texttt{impebeamer}, with
 \texttt{lang=zh} where desired. Historical \texttt{next*}
 names and \texttt{\_zh} wrappers remain usable.
-Their exact class mappings are:
-\texttt{impeart\_zh} $\to$ \texttt{impeart[lang=zh]},
-\texttt{impereport\_zh} $\to$ \texttt{impereport[lang=zh]},
-\texttt{impebook\_zh} $\to$ \texttt{impebook[lang=zh]},
-and \texttt{impebeamer\_zh} $\to$
-\texttt{impebeamer[lang=zh]}. The \texttt{nextart},
+Their exact mappings are to the corresponding canonical class
+with the \texttt{lang=zh} option: for example,
+\verb|\documentclass{impeart_zh}| becomes
+\verb|\documentclass[lang=zh]{impeart}|. The same
+mapping applies to \texttt{impereport\_zh},
+\texttt{impebook\_zh} and \texttt{impebeamer\_zh}. The \texttt{nextart},
 \texttt{nextreport}, \texttt{nextbook},
 \texttt{nextbeamer}, \texttt{nextsystem} and their
 available \texttt{\_zh} variants are legacy package/class names
@@ -954,7 +956,6 @@ canonical document class, before author overrides:
 \begin{verbatim}
 \documentclass[lang=zh]{impebook}
 \UseLegacyLayout
-\geometry{a4paper,inner=32mm,outer=24mm,bindingoffset=4mm}
 \end{verbatim}
 
 This compatibility helper chooses the historical layout for
@@ -998,11 +999,10 @@ families, layout presets, and features. It implements
 the font registry and routing machinery, the layout registry and compatibility
 checks, the feature loader, and related shared behavior.
 
-This distinction matters for maintenance.  If adding one ordinary OpenType
-font requires editing the font-routing engine, or adding one feature requires
-changing the generic feature loader, the extension model has failed.  The core
-is therefore intentionally separated from the growing catalog of concrete
-resources.
+This structure allows new ordinary OpenType fonts to be registered
+through catalog data and new features to be connected through the
+feature catalog, while the shared routing and loading mechanisms
+stay centralized in the core.
 
 \subsection{Catalogs}
 
@@ -1020,13 +1020,12 @@ makes the public surface auditable in one place.
 
 The \texttt{modules/} layer is reserved for functionality that genuinely needs
 its own implementation: feature modules, specialized script support, or
-reusable internal layout components.  A new module should therefore represent a
-real behavioral extension; font names belong in catalog registrations.
+reusable internal layout components.  Specialized modules implement behaviors that need dedicated code;
+font names and face declarations belong in catalog registrations.
 
-This rule is particularly important for multilingual support.  Most scripts
-should use ordinary OpenType shaping and catalog metadata.  Specialized modules
-serve writing systems or rendering strategies requiring behavior beyond the
-generic core.
+This rule is particularly important for multilingual support.  Ordinary OpenType shaping and catalog metadata cover the majority
+of scripts; specialized modules serve writing systems and rendering
+strategies with additional requirements.
 
 \subsection{Extending IMPE}
 
@@ -1036,9 +1035,8 @@ interfaces in
 \texttt{docs/FONTS.md}, \texttt{docs/LAYOUTS.md}, or
 \texttt{docs/FEATURES.md}.
 
-The general rule is simple: prefer a registration over a new mechanism, and
-prefer a specialized module over a change to the stable core when the behavior
-is genuinely exceptional.
+Choose a catalog registration for ordinary additions and a
+specialized module for behavior that needs its own implementation.
 
 \section{Further Documentation and Feedback}
 
@@ -1149,9 +1147,10 @@ compatibility interfaces below.
   Registered preset: Auto when omitted, or explicit \texttt{local}/\texttt{global}. \\
 \texttt{\string\UseFonts\{ids\}[mode]} &
   The same operation for a comma-separated preset list. \\
-\texttt{\string\UseGlobalFont(s)} &
-  Explicit global preset binding; \texttt{\string\UseMainFont(s)} is an alias. \\
-\texttt{\string\UseLocalFont(s)} &
+\texttt{\string\UseGlobalFont}, \texttt{\string\UseGlobalFonts} &
+  Explicit global preset binding; \texttt{\string\UseMainFont} and
+  \texttt{\string\UseMainFonts} are aliases. \\
+\texttt{\string\UseLocalFont}, \texttt{\string\UseLocalFonts} &
   Explicit local-only preset loading. \\
 \texttt{\string\UseLayout\{id\}} &
   Select a class-compatible layout preset. \\
@@ -1279,8 +1278,9 @@ and Beamer customization remain preferable for detailed overrides.
 Useful settings include \verb|\UseCitationStyle|,
 \verb|\SetCitationBiblatexOptions|,
 \verb|\UseMathFont|, and \verb|\HeaderStyle|.
-The indexer for IMPE's initialized default xindy index is
-\texttt{texindy -L english -C utf8 -M <job>-impe <job>.idx}.
+For IMPE's initialized default xindy index, run
+\texttt{texindy -L english -C utf8 -M <job>-impe <job>.idx}
+between XeLaTeX passes.
 The \texttt{egyptian} and \texttt{khitan\_small} font presets
 activate their XSR script renderers.
 
