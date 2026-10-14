@@ -1,41 +1,132 @@
 % !TeX program = xelatex
-\documentclass[lang=zh]{impebeamer} % IMPE 預設 16:9。
-
-\UseTemplateSet{
-  features = {tables,image}
-}
-
-\title{報告題目}
+% IMPE 的 Beamer 全域預設恢復 Madrid 主題與 4:3 畫布。
+\documentclass[lang=zh]{impebeamer}
+\UseTemplateSet{features={tables,image}}
+\title{寫本文獻的異文比較}
+\subtitle{從錄文到校訂判斷}
 \author{作者姓名}
 \date{\today}
-
 \begin{document}
 \begin{frame}
   \titlepage
 \end{frame}
 
 \section{研究問題}
-\begin{frame}{研究問題}
+\begin{frame}{報告提綱}
+  \tableofcontents
+  \medskip
+  \begin{block}{報告目的}
+    以三件完全虛構的寫本為例，說明材料描述、
+    異文比較與暫定校訂結論如何相互連接。
+  \end{block}
+\end{frame}
+
+\begin{frame}{核心問題}
   \begin{itemize}
-    \item 核心問題是甚麼？
-    \item 主要使用哪些材料？
+    \item 面對不同寫本的異文，應如何呈現證據？
+    \item 哪些屬於材料本身，哪些屬於編者推測？
+    \item 選擇一種讀法，必須交代哪些理由？
   \end{itemize}
+  \begin{alertblock}{關鍵區分}
+    寫本實際保存的文字，並不必然等於校訂文採用的文字。
+  \end{alertblock}
 \end{frame}
 
 \section{材料}
-\begin{frame}{材料比較}
-  \begin{tabular}{ll}
-    \toprule
-    材料 & 觀察 \\
-    \midrule
-    甲 & 第一種讀法 \\
-    乙 & 第二種讀法 \\
-    \bottomrule
-  \end{tabular}
+\begin{frame}{三件假設寫本}
+  \begin{description}
+    \item[甲本] 相對較早，保存簡短的語句。
+    \item[乙本] 年代稍晚，在相應位置多出修飾字。
+    \item[丙本] 關鍵字位殘損，不能確定原文。
+  \end{description}
+  \medskip
+  這些名稱只是識別符號，並不表示可信程度。
+  正式研究還須交代形制、收藏地與年代依據。
+\end{frame}
+
+\begin{frame}{錄文的三個層次}
+  \begin{enumerate}
+    \item 記錄可見的文字、筆畫與標點；
+    \item 標示殘損、增補與塗改等情況；
+    \item 另行說明編者補字與通讀處理。
+  \end{enumerate}
+  \medskip
+  \begin{block}{基本原則}
+    不把推測內容不加說明地當作寫本上實際存在的文字。
+  \end{block}
+\end{frame}
+
+\begin{frame}{異文對照}
+  \begin{table}
+    \centering
+    \begin{tabular}{lll}
+      \toprule
+      寫本 & 假設文字 & 材料狀態 \\
+      \midrule
+      甲 & 謹守其書 & 完整 \\
+      乙 & 敬謹守其書 & 多一修飾字 \\
+      丙 & 謹……其書 & 中段殘缺 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  \medskip
+  丙本的闕文不構成對甲本短句的直接支持；
+  它只表示這一位置尚無充分證據。
+\end{frame}
+
+\section{分析}
+\begin{frame}{兩種可能的傳抄過程}
+  \begin{columns}[T]
+    \begin{column}{.47\textwidth}
+      \begin{block}{增字假說}
+        乙本抄手為使文義完整，
+        可能加入「敬」字。
+      \end{block}
+    \end{column}
+    \begin{column}{.47\textwidth}
+      \begin{block}{省字假說}
+        甲本也可能在傳抄中
+        省略原有的修飾字。
+      \end{block}
+    \end{column}
+  \end{columns}
+  \medskip
+  僅憑寫本年代，還不足以決定何者為是。
+\end{frame}
+
+\begin{frame}{如何檢驗假說}
+  \begin{itemize}
+    \item 尋找流傳系統獨立的平行材料；
+    \item 考察同篇的用語習慣與共同訛誤；
+    \item 指出哪種新證據可能改變目前的判斷。
+  \end{itemize}
+  \begin{exampleblock}{可修正的研究結論}
+    若獨立寫本也保存乙本的長句，
+    應重新評估增字假說的可信度。
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{校訂文如何呈現}
+  假如採用便於閱讀的通讀本，可以暫印甲本短句。
+  \begin{block}{校記需要交代}
+    \begin{itemize}
+      \item 乙本在對應位置多出的文字；
+      \item 丙本的殘缺與無法確定之處；
+      \item 編者選擇甲本的暫定理由。
+    \end{itemize}
+  \end{block}
+  若研究重點是傳本差異，也可以並列各本錄文。
 \end{frame}
 
 \section{結論}
-\begin{frame}{結論}
-  簡述主要結論及其意義。
+\begin{frame}{報告結論}
+  \begin{enumerate}
+    \item 先描述寫本，再進行異文判斷；
+    \item 區分可見材料與編者的解釋；
+    \item 保存異文、闕文及可檢驗的理由。
+  \end{enumerate}
+  \medskip
+  \centering
+  \textbf{方便閱讀的校訂本，也應方便後人覆核。}
 \end{frame}
 \end{document}
