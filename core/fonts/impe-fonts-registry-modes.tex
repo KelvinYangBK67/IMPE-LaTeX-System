@@ -286,6 +286,9 @@
       {
         \__font_family_append_range_chain:nn {#1} {#2}
         \prop_gput:Nnn \g__font_range_key_owner_prop {#2} {#1}
+        \bool_if:NTF \g__font_registering_defaults_bool
+          { \prop_gput:Nnn \g__font_range_key_origin_prop {#2} {default} }
+          { \prop_gput:Nnn \g__font_range_key_origin_prop {#2} {user} }
         \prop_get:NnNT \g__font_range_key_blocks_prop {#2} \l_tmpa_tl
           {
             \prop_if_in:NnF \g__font_family_loaded_prop { #1 / auto-range / #2 }
