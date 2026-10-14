@@ -423,108 +423,192 @@ IMPE 的範本由可重用的元件組成。某個版面可以與不同字體選
 \texttt{layout=}。
 
 
-\section{字體、文字路由與多語排版}
+\section{字體、書寫系統路由與多語排版}
 
-通用局部命令為 \verb|\Font{family-id}{content}|，例如
-\verb|\Font{hindi}{...}|。它共用家族命令的字重、字形、局部路由覆寫與文字系統處理。
-\verb|\UseFont| 保持載入／啟用的原意。局部宣告按需載入；需要額外套件的家族
-請先在導言區載入。
+IMPE 提供兩種公開字體選擇方式：簡單的已登錄字體預設，
+以及可以自行組合的書寫設定檔與字體資源。兩者都屬 1.1.0
+正式支援的介面；既有的字體縮寫命令亦繼續保留。
 
-\subsection{作為已登錄能力的字體族}
+\subsection{已登錄字體預設}
 
-IMPE 將字體族連同塑形與路由行為一起登錄。字體族會在中央登錄表中登記
-正確使用它們所需的資訊：可用字體樣式、路徑或系統字體名稱、OpenType 的文字與語言設定、
-局部命令的中繼資料、全域路由行為，以及必要時的特殊版面或渲染路徑。
-
-這套模型使簡單的拉丁字體族與複雜文字字體族能共享同一套公開載入介面，即使它們內部
-需要的機制各有差異。共同的抽象單位是「已登錄的字體族」；每種書寫系統保留適合的實作。
-
-\subsection{自動、全域與局部載入}
-
-一般使用時，載入字體族可省略模式。IMPE 會遵循該字體族已登錄的行為；這種
-行為可能是局部、全域，或針對特定文字範圍。\texttt{fonts} 範本鍵對一組字體族套用
-相同的自動規則。
-
-\emph{全域}字體族參與文件層級的字體選擇。對一般拉丁字體族而言，這可能表示替換主要
-襯線體、無襯線體與等寬字體通道。對專門服務特定書寫系統的字體族而言，則可能只負責
-某些 Unicode 範圍，而拉丁文、漢字與其他文字保持原有字體路由。
-
-\emph{局部}字體族則供明確呼叫。當某一段文字需要特定文字字體、地區字形，或編輯者
-刻意選擇的字體，並希望維持文件全域路由時，局部選擇特別有用。
-
-例如，可以使用
+一般情況下，使用 \verb|\UseFont{id}| 載入既有字體預設；
+\verb|\UseTemplateSet| 的 \texttt{fonts} 鍵可以一次指定多個。
+省略模式時，IMPE 依完整的登錄規則自動處理：建立局部字體命令、
+登錄全域候選字體，或接管指定 Unicode 範圍。
 
 \begin{verbatim}
 \UseFont{libertinus}
 \UseFonts{sanskrit,tibetan,arabic}
-
-\UseFont{libertinus}[global]   % 刻意的全域覆寫
-\UseLocalFonts{sanskrit}       % 刻意的局部覆寫
+\UseFont{libertinus}[local]
+\UseFont{libertinus}[global]
 \end{verbatim}
 
-也可以透過 \verb|\UseTemplateSet| 中對應的鍵完成相同設定。
-\verb|\UseGlobalFont(s)| 與 \verb|\UseLocalFont(s)| 都是明確覆寫；省略模式
-是一般情況的建議形式。各局部字體族所建立的公開命令由其登錄資訊定義；完整清單見字體
-參考文件。
+第一個命令既提供 \verb|\LIB|，也把 Libertinus
+登錄為使用者明確指定的全域拉丁字體候選。
+因此，它可以取代文件類別預設的 CMU。
+\texttt{[local]} 只建立局部設定；
+\texttt{[global]} 明確要求全域模式。
+\verb|\UseLocalFont|、\verb|\UseGlobalFont|
+及各自的複數形式，可用來明確指定模式；
+\verb|\UseMainFont| 是全域選擇的另一名稱。
 
-當某個明確的局部字體命令正在作用時，它在該作用域內會優先於自動的全域範圍路由。
-離開局部作用域後，原有全域路由狀態會恢復。即使一份文件大量依賴自動文字選擇，
-作者的明確選擇仍可保持可預期。
+像 \verb|\SA{...}| 這類既有命令，
+可在文字參數內套用相應字體及專用排版處理。
+也可以直接寫 \verb|\Font{sanskrit}{...}|，
+不必預先呼叫 \verb|\UseFont|。
+全部 59 個原有字體預設及其局部命令列於附錄。
 
-\subsection{Unicode 範圍路由}
+\subsection{書寫設定檔與字體資源}
 
-某些全域字體族負責指定範圍。例如，天城文字體族以全域模式載入時，可接管其
-Unicode 區塊，而拉丁主字體維持原有角色。多個已登錄字體族因此可在同一份文件中
-分別負責各自的文字範圍。
+字體系統區分四類登錄資訊：
+\emph{Unicode 區塊資料}、
+\emph{書寫設定檔}（碼位覆蓋範圍與文字處理規則）、
+\emph{字體資源／字體組}（實際字面與樣式），
+以及\emph{已登錄字體預設}。
+例如，\texttt{sanskrit} 是包含梵語排版行為的舊式字體預設，
+\texttt{devanagari} 則是可以搭配不同字體資源的書寫設定檔。
 
-這種路由對真正的多語正文尤其有用：作者照常輸入 Unicode 文字，當文字進入某個已設定
-的書寫系統範圍時，IMPE 自動選擇相應的已登錄字體族。範圍路由負責協助字體選擇；
-塑形仍由 \XeTeX{}、\texttt{fontspec} 與所選字體自身的 OpenType 資料處理。
+1.1.0 提供 69 個書寫設定檔、85 個字體資源別名，
+並保留原有 59 個字體預設。書寫設定檔決定
+Unicode 範圍及文字處理方式，字體資源決定字形來源；
+更換字體不會改變該設定檔的碼位範圍。
+\texttt{chinese}、\texttt{japanese} 與
+\texttt{korean} 的漢字範圍互有重合，
+需要時應明確指定相應的地區字形。
 
-\subsection{CJK 處理}
+\begin{verbatim}
+\UseWriting{[shanggu]chinese}
+\UseWriting{[tiro]devanagari}
+\UseWriting{[naskh]arabic}
+\end{verbatim}
 
-CJK 字體與一般 Unicode 範圍切換略有不同。IMPE 透過 xeCJK 路徑處理 CJK 全域字體族，
-使主要、無襯線與等寬的 CJK 字體通道能以真正的 CJK 字體方式統一管理。
+一般寫法為 \verb|\UseWriting{[字體資源,選項]設定檔}|，
+其中括號內第一項可以省略，也可以寫已登錄的字體資源 ID；
+\texttt{font=} 用於指定可解析的字體族名稱，
+\texttt{file=} 用於指定字體檔案。這幾種字體來源的選擇
+在同一項設定內互斥。多項設定可在括號和群組之外用逗號分隔。
+其他可用選項包括 \texttt{stylemap=native|full}、
+\texttt{writing=horizontal|vertical}、\texttt{offset=}
+及 \texttt{italic=zhuque} 等字面覆寫。
+全域字體路由使用橫排；有支援的局部命令則可使用直排。
 
-共用漢字在中文、日文與韓文的地區字形間共用 Unicode 碼位。自動路由因此讓假名、
-諺文等語言專屬文字取得各自的字體族，
-而共用漢字仍留在文件的 CJK 字體族上。若明確需要日文或韓文的漢字字形，可以使用局部
-字體命令直接指定。
+\subsection{具名與臨時局部字體}
 
-這種區分是刻意的。自動路由處理明確的書寫系統範圍；共享漢字的地區字形由
-局部命令明確選用。
+\verb|\DeclareWriting{名稱}{設定}| 可儲存一組設定而不立即啟用；
+\verb|\Font{名稱}[覆寫]{文字}| 將其用於指定文字；
+\verb|\Writing{設定}{文字}| 則直接使用一組未命名的局部設定。
 
-\subsection{塑形與斷行}
+\begin{verbatim}
+\DeclareWriting{han-note}
+  {[shanggu,stylemap=full,italic=zhuque]chinese}
+\begin{document}
+\Font{han-note}{漢字}
+\Font{sanskrit}{संस्कृतम्}
+\Writing{[tiro]devanagari}{संस्कृतम्}
+\end{document}
+\end{verbatim}
 
-一般複雜文字的 OpenType 塑形，透過字體族登錄的文字、語言與功能設定表達。因此，
-印度系文字、阿拉伯文以及其他依賴塑形的文字，在文件層級仍然只是普通 Unicode 文字；
-IMPE 提供讓文字引擎正確塑形所需要的字體設定。
+局部字體選擇會將一套字體及文字處理方式套用到
+\emph{整個文字參數}，不會在參數內再次按 Unicode
+範圍自動分拆。內層明確指定的局部字體可以覆寫外層選擇。
+沒有特殊文字處理需求時，也可只用
+\texttt{font=} 或 \texttt{file=} 作局部設定。
 
-某些文字還需要超出普通空格的斷行行為。IMPE 為梵語天城文、藏文、泰文等情況
-提供文字感知的處理。字體與行為層提供適當的斷行機會，同時保護字形簇與文字專屬標點規則。
+\texttt{stylemap=native} 優先使用字體真正提供的樣式字面；
+\texttt{stylemap=full} 還可以使用已登錄的跨字體樣式代用。
+部分西文字體組預設使用後者。
+樣式缺失與某個字形缺失是兩種不同問題。
+完整選項可參閱 \texttt{docs/USEWRITING-1.0.5.md}；
+附錄另列出全部設定檔與字體資源識別碼。
 
-需要由右至左排寫的字體族，同樣會附帶相應的方向行為。即使底層段落或行內行為與
-左至右的拉丁字體族不同，公開的字體模型仍然保持一致。
+\subsection{全域優先級與缺字後備}
 
-\subsection{直排與外部渲染}
+標準類別預設 CMU；選用 \texttt{lang=zh} 時另有 Shanggu。
+\emph{使用者明確指定的全域字體優先於類別預設}。
+在同一優先級內，若多套拉丁字體競爭主字體位置，
+通常由最先登錄者取得。中文、日文、韓文的
+共用範圍則遵循中文先於日文、日文先於韓文的既有規則。
 
-少數書寫系統需要的機制超出標準橫排 OpenType 塑形。IMPE 因而提供一條內建的直排
-版面路徑，供已登錄的直排字體族使用；對某些更適合以小型輔助 \TeX{} 文件生成、
-再以 PDF 嵌回主文件的片段，也提供外部渲染路徑。
+\begin{verbatim}
+\UseGlobalFonts{cmu,libertinus}
+\end{verbatim}
 
-外部渲染透過可攜的 \texttt{texlua} 輔助程式實作。輔助程式從系統的
-\texttt{PATH} 解析需要的 \TeX{} 引擎，在 IMPE 快取目錄中生成結果，然後將 PDF
-交回主文件。這個機制被封裝在字體登錄層之後，由輔助程式替一般文件管理暫存檔與
-引擎路徑。
+這個例子裏，CMU 是第一套明確指定的拉丁主字體，
+後面的 Libertinus 不會自動取代它；
+但 \verb|\UseFont{libertinus}| 可以優先於類別隱含的 CMU。
 
-這些特殊路徑共用公開字體介面，讓需要超出單純
-\verb|\newfontfamily| 宣告行為的文字也能使用一致的公開字體模型。
+自動逐字形缺字後備目前用於 CJK 字體。
+IMPE 透過 xeCJK 檢查「襯線／無襯線」、
+「常規／粗體」、「正體／斜體」所組成的
+$2\times2\times2$ 樣式矩陣；
+先在目前字體資源中尋找，再查找同一書寫設定檔、
+最後查找其他 CJK 設定檔的已登錄資源。
+使用者明確登錄的字體排在類別隱含字體之前；
+後續載入的資源亦會更新後備鏈。
 
-\subsection{完整字體參考的位置}
+這與字體名稱無法解析時採用的整套代用字體有所不同。
+其他文字系統保留 OpenType 對連續文字的塑形處理，
+不執行逐碼位的自動缺字替換。
 
-完整的字體族目錄、登錄語法、樣式後備規則、全域路由模型、直排參數、外部渲染後端，
-以及各書寫系統的專門說明，都維護在 \texttt{docs/FONTS-zh.md}。需要新增字體族或
-調查字體路由行為的使用者，應將該文件視為技術參考。
+\subsection{Unicode 範圍與 CJK 路由}
+
+按書寫系統啟用的全域字體可以接管指定 Unicode 區塊，
+其餘文字仍沿用原有字體。局部命令在其參數內優先，
+結束後恢復原有全域路由。
+
+CJK 使用 xeCJK 的主要、無襯線與等寬字體通道。
+共用漢字保留文件已選定的 CJK 字體，
+假名與諺文可各自選擇字體範圍。
+若要顯示日文或韓文的漢字字形，
+可使用 \verb|\JP{...}|、\verb|\KR{...}|
+等局部命令。重合的全域設定檔仍遵循既有的路由優先級。
+
+\subsection{字形塑造、斷行與書寫方向}
+
+印度系文字、阿拉伯文等複雜文字的 OpenType 字形塑造，
+由 \XeTeX{} 和所用字體負責。
+IMPE 提供相應的文字與語言設定，以及梵語天城文的音節斷行、
+藏文按音節分隔點斷行、泰文依詞典斷行等處理。
+需要由右至左書寫的文字也有對應設定。
+蒙古文、滿文和回鶻文支援局部旋轉直排，
+與整頁書寫方向的變更不同。
+
+\subsection{XSR 1.3：聖書字、契丹小字與圖片字形}
+
+IMPE 隨附 XSR 1.3，提供埃及聖書字組合排版、
+契丹小字堆疊與行內圖片字形功能。
+相關文字由各自的字體預設啟用；圖片字形
+則由獨立的 \texttt{glyphs} 功能載入。
+
+\begin{description}
+  \item[埃及聖書字]
+    先載入 \verb|\UseFont{egyptian}|，
+    再使用對應的 Unicode 組合控制字元或
+    \verb|\IMPEEgyptianText{...}|。
+  \item[契丹小字]
+    載入 \verb|\UseFont{khitan_small}| 後，
+    使用 \verb|\KHS{...}| 進行原生 XSR 堆疊。
+    亦保留 \verb|\KHSstack| 與 \verb|\KHSstackblock|。
+    原有字簇分隔符與 U+16FE4 填充符會保留；
+    堆疊高度不同時會在文字行內對齊。
+  \item[圖片字形]
+    使用 \verb|\UseFeature{glyphs}| 載入功能，
+    以 \verb|\IMPEGlyphRegister| 登錄圖檔，
+    再以 \verb|\IMPEGlyph| 插入文字行。
+\end{description}
+
+動態渲染需要 Python 執行環境、
+XeLaTeX Shell Escape 或 XSR 預處理，
+以及可讀取的字體與圖檔。
+XSR 可透過 PDF 的 \texttt{/ActualText}
+保留聖書字組合和契丹小字字簇原本的線性 Unicode 序列；
+實際複製結果仍視 PDF 閱讀器而定。
+
+\subsection{更多字體文件}
+
+字體登錄、樣式對應、文字路由與特殊文字處理詳見
+\texttt{docs/FONTS.md} 及 \texttt{docs/USEWRITING-1.0.5.md}。
+展示冊收錄各種文字的實際排版效果。
 
 \section{版面與功能}
 
