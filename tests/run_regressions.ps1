@@ -168,6 +168,7 @@ try {
         "canonical-entry",
         "legacy-entry",
         "font-mode-aliases",
+        "global-font-priority",
         "usewriting-api",
         "usewriting-local-first-use",
         "fallback-native",
