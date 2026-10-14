@@ -90,7 +90,7 @@ See [Feature reference](docs/FEATURES.md#index-native-first).
 | Document engine | XeLaTeX |
 | LuaLaTeX | No supported runtime backend |
 | Unicode-range global routing | XeLaTeX |
-| Optional XSR integration | Bundled XSR 1.2, Python and XeLaTeX shell-escape/preprocess |
+| Optional XSR integration | Bundled XSR 1.3, Python and XeLaTeX shell-escape/preprocess |
 | TeX Live | 2026 tested |
 | Windows | CI tested |
 | Linux | CI tested |
@@ -135,7 +135,7 @@ documentation resources.
 
 `fonts={egyptian,khitan_small}` loads the script-specific XSR renderers;
 `features={glyphs}` enables independently registered inline image glyphs.
-`\KHS{...}` uses native Khitan stacking. IMPE bundles **XSR 1.2** under
+`\KHS{...}` uses native Khitan stacking. IMPE bundles **XSR 1.3** under
 `vendor/xsr/`; the full/core installer installs its Python code and dependencies
 into a private virtual environment.
 
