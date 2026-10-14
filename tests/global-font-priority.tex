@@ -35,16 +35,14 @@
 \seq_map_inline:Nn \g__writing_pool_order_seq
   {
     \int_incr:N \l__impe_test_pool_position_int
-    \prop_get:NnN \g__writing_pool_origin_prop {##1} \l_tmpa_tl
+    \prop_get:NnN \g__writing_pool_origin_prop {#1} \l_tmpa_tl
     \str_if_eq:VnTF \l_tmpa_tl {default}
       { \bool_set_true:N \l__impe_test_seen_default_bool }
       {
         \bool_if:NT \l__impe_test_seen_default_bool
           { \PackageError{impe-test}{Default~appears~before~user~fallback}{} }
       }
-    \prop_get:NnN \g__writing_pool_font_prop {##1} \l_tmpb_tl
-    \typeout{IMPE-PRIORITY-POOL:~##1~font=[\tl_to_str:V\l_tmpb_tl]~
-      origin=[\tl_to_str:V\l_tmpa_tl]}
+    \prop_get:NnN \g__writing_pool_font_prop {#1} \l_tmpb_tl
     \str_if_eq:VnT \l_tmpb_tl {FandolHei-Regular.otf}
       { \int_set_eq:NN \l__impe_test_hei_position_int \l__impe_test_pool_position_int }
     \str_if_eq:VnT \l_tmpb_tl {FandolSong-Regular.otf}
