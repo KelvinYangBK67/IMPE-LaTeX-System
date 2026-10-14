@@ -60,9 +60,8 @@
 The IMPE \LaTeX{} System is a modular \XeLaTeX{} framework for reusable layouts,
 font routing, multilingual typesetting, and optional document features.
 
-IMPE addresses this by separating the system into reusable parts.  From the
-user's point of view, the most important distinction is between \emph{layouts},
-\emph{fonts}, and \emph{features}.  A layout describes the principal visual
+The system has three principal author-facing components:
+\emph{layouts}, \emph{fonts}, and \emph{features}.  A layout describes the principal visual
 organization of a document.  Font families provide global or local font
 behavior, including script-aware routing where necessary.  Features provide
 optional functionality such as mathematics, hyperlinks, citations, tables, or
@@ -78,9 +77,9 @@ single \verb|\UseTemplateSet| call.
 \XeLaTeX{} is the primary document engine for IMPE.  This choice allows the system
 to rely on Unicode text, OpenType fonts, \texttt{fontspec}, and \XeTeX{}'s
 inter-character mechanisms while retaining the familiar \LaTeX{} document model.
-Some specialized internal routes may invoke other engines where a particular
-script or renderer requires them, but ordinary IMPE documents are intended to
-be compiled with \XeLaTeX{}.
+Specialized writing systems can additionally use the bundled XSR renderer,
+which runs from the \XeLaTeX{} workflow. Compile IMPE documents with
+\XeLaTeX{}.
 
 This manual is a user-oriented introduction. Detailed subsystem documentation is maintained in the
 repository under \texttt{docs/}.  In particular, the font, layout, feature, and
@@ -88,11 +87,12 @@ system documents describe registration fields and implementation details that
 would be unnecessarily repetitive here.  This English manual is the reference
 edition: translated manuals should follow its structure and technical content.
 
-A visual survey of the system is available in the project showcase at
-\href{\IMPEShowcaseURL}{the current IMPE showcase PDF}.  The edition frozen
-with this manual is available from the
-\href{\IMPETaggedShowcaseURL}{version tag}.  That canonical repository PDF is
-also reproduced in Appendix~\ref{app:showcase}.  It is intended to demonstrate
+A visual survey is available in the
+\href{\IMPEShowcaseURL}{repository Showcase PDF}.
+The corresponding release snapshot is identified by
+\href{\IMPETaggedShowcaseURL}{the v\IMPEVersion{} tag}
+when that tag is published. The Showcase PDF is also
+embedded in Appendix~\ref{app:showcase}.  It is intended to demonstrate
 the range of scripts, writing directions, layouts, and feature combinations
 that motivated the system.
 
@@ -299,11 +299,11 @@ The current starter templates are:
 
 \begin{description}
   \item[\texttt{article\_en/}] English article starter using \texttt{impeart}.
-  \item[\texttt{article\_zh/}] Chinese article starter using \texttt{impeart\_zh}.
+  \item[\texttt{article\_zh/}] Chinese article starter using \texttt{impeart} with \texttt{lang=zh}.
   \item[\texttt{book\_en/}] English book starter using \texttt{impebook}.
-  \item[\texttt{book\_zh/}] Chinese book starter using \texttt{impebook\_zh}.
+  \item[\texttt{book\_zh/}] Chinese book starter using \texttt{impebook} with \texttt{lang=zh}.
   \item[\texttt{beamer\_en/}] English presentation starter using \texttt{impebeamer}.
-  \item[\texttt{beamer\_zh/}] Chinese presentation starter using \texttt{impebeamer\_zh}.
+  \item[\texttt{beamer\_zh/}] Chinese presentation starter using \texttt{impebeamer} with \texttt{lang=zh}.
 \end{description}
 
 Each template follows the installed-package style and contains realistic
@@ -318,41 +318,42 @@ show normal user-facing practice. Development fixtures live under
 
 \section{Document Classes and Public Entry Points}
 
-\subsection{Wrapper classes}
+\subsection{Canonical wrapper classes and language selection}
 
-IMPE provides wrapper classes for the four principal document forms used by the
-system:
-
-\begin{description}
-  \item[\texttt{impeart}] English-oriented article wrapper.  Its normal layout
-    is \texttt{en\_doc} and its default global family is \texttt{cmu}.
-  \item[\texttt{impebook}] English-oriented book wrapper.  Its normal layout
-    is \texttt{en\_book} and its default global family is \texttt{cmu}.
-  \item[\texttt{impereport}] English-oriented report wrapper. It uses
-    the independent \texttt{en\_report} A4 layout and \texttt{cmu}.
-  \item[\texttt{impebeamer}] Presentation wrapper. It selects the
-    \texttt{beamer} (Madrid 4:3) layout and \texttt{cmu} by default.
-\end{description}
-
-Chinese-oriented counterparts are provided as \texttt{impeart\_zh},
-\texttt{impebook\_zh}, \texttt{impereport\_zh}, and
-\texttt{impebeamer\_zh}, using \texttt{zh\_doc},
-\texttt{zh\_book}, \texttt{zh\_report}, and
-\texttt{beamer\_zh}, respectively. These include
-\texttt{shanggu} alongside \texttt{cmu} as implicit global
-font defaults. The \texttt{lang=zh} option on a canonical
-class selects the corresponding Chinese settings without requiring
-a separate \texttt{\_zh} wrapper.
-
-Unknown class options are passed through to the underlying standard class.  A
-normal option such as
+Four wrapper classes are the standard entry points for new documents:
+\texttt{impeart}, \texttt{impereport}, \texttt{impebook} and
+\texttt{impebeamer}. Each class accepts \texttt{lang=en} (the default)
+or \texttt{lang=zh}. Use the same class name for both languages:
 
 \begin{verbatim}
+% English article
 \documentclass[12pt,twoside]{impeart}
+
+% Chinese article
+\documentclass[lang=zh,12pt]{impeart}
+
+% Chinese book
+\documentclass[lang=zh]{impebook}
+
+% Chinese presentation
+\documentclass[lang=zh]{impebeamer}
 \end{verbatim}
 
-therefore continues to control the underlying \texttt{article} class in the
-usual way.
+The underlying classes are \texttt{article}, \texttt{report},
+\texttt{book} and \texttt{beamer}, respectively. English layouts are
+\texttt{en\_doc}, \texttt{en\_report}, \texttt{en\_book} and
+\texttt{beamer}; \texttt{lang=zh} selects \texttt{zh\_doc},
+\texttt{zh\_report}, \texttt{zh\_book} and \texttt{beamer\_zh}.
+The English default font is CMU; Chinese documents add Shanggu
+to the implicit font defaults. An explicit author font selection
+can override the class defaults.
+
+Other class options, such as \texttt{12pt}, \texttt{twoside}
+and the native Beamer \texttt{aspectratio} option, are passed
+through to the underlying class. The historical
+\texttt{impe*\_zh} and \texttt{next*} class names remain
+supported as compatibility entry points; they are listed
+separately in Section~\ref{sec:compatibility}.
 
 \subsection{Using \texttt{impe.sty} directly}
 
@@ -458,23 +459,26 @@ For example, the following declarations compose two different documents
 from the same template interface:
 
 \begin{verbatim}
-% English article
+% English article: the class provides en_doc and CMU
+\documentclass{impeart}
 \UseTemplateSet{
-  layout = en_doc,
   fonts = {libertinus},
   features = {math,hyperlinks}
 }
 
-% Chinese book with additional script support
+% Chinese book: the class provides zh_book, CMU and Shanggu
+\documentclass[lang=zh]{impebook}
 \UseTemplateSet{
-  layout = zh_book,
-  fonts = {cmu,shanggu,sanskrit,tibetan},
+  fonts = {sanskrit,tibetan},
   features = {citations,index,hyperlinks}
 }
 \end{verbatim}
 
-The second example states the families and features it needs; the internal
-font and layout subsystems remain responsible for the implementation details.
+These are alternative preambles for separate documents.
+The wrappers already select their language-specific layout and
+implicit fonts; each author declaration adds only the required
+fonts and features. Use \texttt{layout=} when selecting a different
+registered layout explicitly.
 
 \section{Fonts, Script Routing, and Multilingual Typesetting}
 
@@ -584,7 +588,7 @@ the registered names.
 
 \subsection{Global precedence and automatic fallback}
 
-A wrapper's implicit CMU (and, in Chinese wrappers, Shanggu) setup supplies
+A wrapper's implicit CMU (and, for \texttt{lang=zh}, Shanggu) setup supplies
 the default font pool, but \emph{explicit user declarations take priority}
 over those class defaults. Within one priority tier, the first declared
 Latin global primary normally remains primary. A later global registration
@@ -1738,10 +1742,10 @@ demonstrating multilingual font routing, complex shaping, right-to-left
 scripts, vertical writing, CJK regional forms, and combinations of document
 features.
 
-The latest showcase can be obtained from the
-\href{\IMPEShowcaseURL}{current main branch}; the edition belonging to this
-manual is preserved by the
-\href{\IMPETaggedShowcaseURL}{v\IMPEVersion{} tag}.
+The source repository provides the
+\href{\IMPEShowcaseURL}{current Showcase}.
+The \href{\IMPETaggedShowcaseURL}{v\IMPEVersion{} release tag}
+will provide its versioned snapshot once published.
 
 \IfFileExists{\IMPEShowcaseFile}
   {\includepdf[pages=1-3,pagecommand={}]{\IMPEShowcaseFile}%
