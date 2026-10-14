@@ -22,8 +22,7 @@
     \cs_set:Npx \sfdefault {\exp_not:V \l__font_mlmodern_sfdefault_tl}
     \cs_set:Npx \ttdefault {\exp_not:V \l__font_mlmodern_ttdefault_tl}
     \cs_set:Npx \bfdefault {\exp_not:V \l__font_mlmodern_bfdefault_tl}
-    % The local mapper rebinds sffamily/ttfamily to these callbacks. Calling
-    % those switches here recurses forever. Select the Type1 NFSS faces directly.
+    % Select Type1 NFSS faces directly inside the caller's local group.
     \cs_set_protected:cpn { __fontrm_\l__font_name_tl }
       { \fontencoding{T1}\fontfamily{mlmr}\selectfont }
     \cs_set_protected:cpn { __fontsf_\l__font_name_tl }
@@ -34,6 +33,13 @@
     \exp_args:NVV \__font_define_public_command:nn
       \l__font_command_tl
       \l__font_name_tl
+    % Keep native \sffamily and \ttfamily as NFSS switches. For MLModern,
+    % only their local family defaults need changing: replacing the switches
+    % with indirect callbacks can reenter the mapper during textsf/texttt.
+    \cs_set_protected:cpn { __font_map_sf_\l__font_name_tl : }
+      { \cs_set:Npn \sfdefault { mlmss } }
+    \cs_set_protected:cpn { __font_map_tt_\l__font_name_tl : }
+      { \cs_set:Npn \ttdefault { mlmtt } }
   }
 
 \ExplSyntaxOff
