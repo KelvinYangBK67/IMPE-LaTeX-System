@@ -635,8 +635,8 @@ For CJK, IMPE uses xeCJK main/sans/mono channels. Shared Han characters
 retain the active document CJK selection, while kana and Hangul can be
 claimed as distinct script ranges. Use local selection such as
 \verb|\JP{...}| or \verb|\KR{...}| when a regional form of a shared
-Han ideograph must be chosen explicitly. Shared-script profile overlap follows the existing route-ownership
-rules; regional Han forms should be selected explicitly where needed.
+Han ideograph must be chosen explicitly. Overlapping global
+Writing Profiles follow the existing route-ownership rules.
 
 \subsection{Shaping, line breaking and writing directions}
 
@@ -717,34 +717,21 @@ The canonical presets are:
 \end{description}
 
 Article and report have independent A4 geometry and typography.
-The \texttt{report} compatibility identifier selects the Chinese
-report configuration. IMPE checks each preset against the underlying
-document class.
+IMPE checks each preset against the underlying document class.
+The historical \texttt{report} layout ID is recorded in the
+compatibility section.
 
 The optional \texttt{beamer\_clean} and \texttt{beamer\_clean\_zh}
 presets select the minimalist presentation appearance introduced in 1.0.6.
 The default \texttt{beamer} presets use Madrid 4:3; set
 \texttt{aspectratio=169} in the class options for widescreen slides.
 
-\subsection{Legacy layouts and native overrides}
+\subsection{Native layout overrides and local settings}
 
-To restore the \emph{1.0.5 layout parameters} for the active
-wrapper and language, use \verb|\UseLegacyLayout| in the preamble
-before further author overrides:
-
-\begin{verbatim}
-\documentclass[lang=zh]{impebook}
-\UseLegacyLayout
-\geometry{a4paper,inner=32mm,outer=24mm,bindingoffset=4mm}
-\end{verbatim}
-
-The legacy selection restores the documented layout parameters;
-font versions and other dependencies can still affect exact pagination.
-For new documents, publication defaults plus native adjustments
-are generally clearer.
-IMPE already loads \texttt{geometry} and \texttt{fancyhdr} in
-the canonical article/report/book presets. Apply native commands
-after the class and any explicit \verb|\UseLayout| call:
+The canonical article, report and book classes load
+\texttt{geometry} and \texttt{fancyhdr}. For detailed page geometry
+and running heads, use their normal \LaTeX{} interfaces after the class
+and any explicit \verb|\UseLayout| declaration:
 
 \begin{verbatim}
 \documentclass{impereport}
@@ -752,23 +739,26 @@ after the class and any explicit \verb|\UseLayout| call:
 \fancyhead[R]{A short running title}
 \end{verbatim}
 
-For small adjustments the existing \verb|\LayoutSetup| and
-\verb|\LayoutSet| commands remain supported. The
-\texttt{LayoutScope} environment allows local text adjustments:
+IMPE also provides \verb|\LayoutSetup| and \verb|\LayoutSet|
+for registered component settings. Use \texttt{LayoutScope} for
+paragraph-local text adjustments, within the document body:
 
 \begin{verbatim}
+\documentclass{impeart}
 \LayoutSetup{page.inner=25mm,page.top=24mm}
+\begin{document}
 \begin{LayoutScope}{text.par-indent=2em}
 A paragraph with a scoped indentation setting.
 \end{LayoutScope}
+\end{document}
 \end{verbatim}
 
-Use native \verb|\geometry| for detailed page changes and native
-\texttt{fancyhdr} or Beamer commands for running heads and slides.
 The header presets support \texttt{running}, \texttt{title},
 \texttt{classic}, \texttt{minimal} and \texttt{report}.
-See \texttt{docs/LAYOUTS.md} for typography, further size
-settings and historical IDs.
+Native Beamer configuration remains available for slides.
+For historical 1.0.5 layout parameters, see the compatibility
+section, Section~\ref{sec:compatibility}, and
+\texttt{docs/LAYOUTS.md}.
 
 \subsection{Feature modules}
 
@@ -793,17 +783,18 @@ The public feature IDs in IMPE 1.1.0 are:
     via XSR's vector backend, separate from script font detectors.
   \item[\texttt{headers}] Configurable running heads using
     \texttt{fancyhdr}.
-  \item[\texttt{lists\_envs}] Legacy-compatible
-    \texttt{ExampleBlock} environment.
 \end{description}
+
+The retained \texttt{lists\_envs} feature provides the
+\texttt{ExampleBlock} environment for existing documents;
+the aliases \texttt{bib} and \texttt{header} are also supported.
+See Section~\ref{sec:compatibility} for these compatibility APIs.
 
 \begin{verbatim}
 \UseFeatures{math,hyperlinks,tables,image,drawing,glyphs}
 \end{verbatim}
 
-Feature modules compose freely; repeated activation is ignored.
-Aliases \texttt{bib} and \texttt{header} are retained for
-compatibility.
+Feature modules can be combined; repeated activation is ignored.
 
 \subsection{Mathematics and citations}
 
@@ -919,6 +910,16 @@ public naming scheme. New documents should use
 \texttt{impereport} or \texttt{impebeamer}, with
 \texttt{lang=zh} where desired. Historical \texttt{next*}
 names and \texttt{\_zh} wrappers remain usable.
+Their exact class mappings are:
+\texttt{impeart\_zh} $\to$ \texttt{impeart[lang=zh]},
+\texttt{impereport\_zh} $\to$ \texttt{impereport[lang=zh]},
+\texttt{impebook\_zh} $\to$ \texttt{impebook[lang=zh]},
+and \texttt{impebeamer\_zh} $\to$
+\texttt{impebeamer[lang=zh]}. The \texttt{nextart},
+\texttt{nextreport}, \texttt{nextbook},
+\texttt{nextbeamer}, \texttt{nextsystem} and their
+available \texttt{\_zh} variants are legacy package/class names
+in Full/Core installations.
 
 The existing \verb|\UseFont| IDs, local shorthand
 commands (for example \verb|\SA|, \verb|\JP|,
@@ -935,7 +936,7 @@ register every ordinary occurrence. For new
 first-use terminology or glossary definitions, consider
 the separate \texttt{glossaries-extra} package directly.
 
-The earlier \texttt{TableInlineFit}, \texttt{TableLong},
+The compatible table helpers \texttt{TableInlineFit}, \texttt{TableLong},
 \texttt{TableBook}, \texttt{TableBookX},
 \texttt{TableBookNotes}, \texttt{NiceBooktable*},
 \texttt{OneImage}, \texttt{OneImageInline},
@@ -946,12 +947,20 @@ subfigures in new sources. The \texttt{lists\_envs}
 \texttt{ExampleBlock} environment is also retained
 for compatibility.
 
-\verb|\UseLegacyLayout| restores class- and
-language-specific 1.0.5 layout defaults when
-appearance preservation is necessary. Older public
-layout preset and component IDs remain available;
-current publication defaults can intentionally change
-visual results without removing API support.
+For a document that needs the 1.0.5 layout parameters,
+select \verb|\UseLegacyLayout| immediately after the
+canonical document class, before author overrides:
+
+\begin{verbatim}
+\documentclass[lang=zh]{impebook}
+\UseLegacyLayout
+\geometry{a4paper,inner=32mm,outer=24mm,bindingoffset=4mm}
+\end{verbatim}
+
+This compatibility helper chooses the historical layout for
+the active class and language. The earlier \texttt{report}
+layout ID and \texttt{legacy\_*} layout IDs remain available;
+font versions and other dependencies can still affect pagination.
 
 The direct installer recognizes managed installations
 from the 0.1.x series under \texttt{tex/latex/nextsystem/}.
