@@ -1,0 +1,19 @@
+\documentclass[lang=zh]{impeart}
+\UseLegacyLayout
+\begin{document}
+\makeatletter
+\ifx\small\IMPELegacyBaseSmallSize\else
+  \PackageError{layout-test}{Legacy small font command was not restored}{}%
+\fi
+\ifx\normalsize\IMPELegacyBaseNormalSize\else
+  \PackageError{layout-test}{Legacy normal font command was not restored}{}%
+\fi
+\ifx\footnotesize\IMPELegacyBaseFootnoteSize\else
+  \PackageError{layout-test}{Legacy footnote font command was not restored}{}%
+\fi
+\ifdim\IMPEListLineStretch pt=1.35pt\relax\else
+  \PackageError{layout-test}{Legacy Chinese list stretch was not restored}{}%
+\fi
+\makeatother
+\typeout{IMPE-TEST-LAYOUT-PUBLICATION-TYPOGRAPHY-LEGACY-ZH-PASS}
+\end{document}

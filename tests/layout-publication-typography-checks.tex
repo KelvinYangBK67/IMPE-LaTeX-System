@@ -1,0 +1,39 @@
+% Strict publication typography dimensions; 0.4pt catches regressions masked
+% by the geometry-only \IMPECheckDim tolerance (0.8mm).
+\makeatletter
+\newcommand{\IMPECheckTypeDim}[2]{%
+  \ifdim#1<\dimexpr#2-0.4pt\relax
+    \PackageError{layout-test}{Typography dimension below #2}{Check font size and baseline.}%
+  \fi
+  \ifdim#1>\dimexpr#2+0.4pt\relax
+    \PackageError{layout-test}{Typography dimension above #2}{Check font size and baseline.}%
+  \fi
+}
+% Body font, leading, small font, leading, footnote font, leading.
+\newcommand{\IMPECheckPublicationType}[6]{%
+  \IMPECheckTypeDim{\f@size pt}{#1}%
+  \IMPECheckTypeDim{\baselineskip}{#2}%
+  {\small
+    \IMPECheckTypeDim{\f@size pt}{#3}%
+    \IMPECheckTypeDim{\baselineskip}{#4}}%
+  {\footnotesize
+    \IMPECheckTypeDim{\f@size pt}{#5}%
+    \IMPECheckTypeDim{\baselineskip}{#6}}%
+  % setspace normally resets spacing in actual footnotes; our curated
+  % footnote baseline must remain correct inside the insertion as well.
+  Text\footnote{\IMPECheckTypeDim{\baselineskip}{#6}Footnote text.}%
+}
+% Publication lists should follow body leading; quotes should use the curated
+% small text baseline, while explicit LayoutSetup may still override both.
+\newcommand{\IMPECheckChineseEnvironments}[2]{%
+  \begin{itemize}
+    \item \IMPECheckTypeDim{\baselineskip}{#1} Item text.
+  \end{itemize}
+  \begin{enumerate}
+    \item \IMPECheckTypeDim{\baselineskip}{#1} Item text.
+  \end{enumerate}
+  \begin{quote}
+    \IMPECheckTypeDim{\baselineskip}{#2} Quote text.
+  \end{quote}
+}
+\makeatother

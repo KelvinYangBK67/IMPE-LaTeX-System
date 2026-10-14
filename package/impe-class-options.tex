@@ -5,6 +5,7 @@
 \def\IMPEClassDirection{horizontal-ltr}
 \def\IMPEZhTag{zh}
 \newif\ifIMPEClassLangSeen
+\newif\ifIMPEClassExplicitFontSize
 \newif\ifIMPEClassDirectionSeen
 \newif\ifIMPEClassAspectSeen
 \newcommand{\IMPEClassChooseLanguage}[1]{%
@@ -28,6 +29,12 @@
     \fi
   \fi
 }
+% Distinguish an explicitly requested 10pt from the implicit base-class
+% default, so publication presets may retain their curated default size while
+% honoring all three explicitly requested standard sizes.
+\DeclareOption{10pt}{\IMPEClassExplicitFontSizetrue\PassOptionsToClass{10pt}{\IMPEClassBase}}
+\DeclareOption{11pt}{\IMPEClassExplicitFontSizetrue\PassOptionsToClass{11pt}{\IMPEClassBase}}
+\DeclareOption{12pt}{\IMPEClassExplicitFontSizetrue\PassOptionsToClass{12pt}{\IMPEClassBase}}
 \DeclareOption{lang=en}{\IMPEClassChooseLanguage{en}}
 \DeclareOption{lang=zh}{\IMPEClassChooseLanguage{zh}}
 \DeclareOption{direction=horizontal-ltr}{\IMPEClassChooseDirection{horizontal-ltr}}
