@@ -73,8 +73,8 @@ if ($ListLanguages) {
 
 # Accept either:
 #   -Language de
-#   -Language en,zh-tw
-#   -Language en -Language zh-tw   (depending on caller syntax)
+#   -Language en,zh
+#   -Language en -Language zh   (depending on caller syntax)
 #   -Language all
 #
 # Comma-separated values are normalized here as well.
