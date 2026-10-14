@@ -1754,29 +1754,35 @@
     \__font_apply_script_line_breaking:
     \__font_resolve_style_fallbacks:
     \bool_set_false:N \l__font_use_latex_fallback_bool
-    \__font_all_faces_exist:TF
-      { }
+    % MLModern is an NFSS Type1 package, not an OpenType fontspec resource.
+    % Its named catalog faces are descriptive; their availability is checked
+    % by the package's NFSS declarations, not the OpenType face resolver.
+    \str_if_eq:VnF \l__font_special_module_tl { mlmodern }
       {
-        \str_if_eq:VnTF \l__font_fallback_mode_tl { soft }
+        \__font_all_faces_exist:TF
+          { }
           {
-            \tl_if_blank:VTF \l__font_name_tl
-              { \tl_set_eq:NN \l__font_name_tl \l__font_command_tl }
-              { }
-            \str_if_eq:VnTF \l__font_scope_tl { global }
+            \str_if_eq:VnTF \l__font_fallback_mode_tl { soft }
               {
-                \__font_warn_soft_fallback:
-                \bool_set_true:N \l__font_use_latex_fallback_bool
-              }
-              {
-                \tl_if_blank:VTF \l__font_command_tl
-                  { \PackageError{font-defaults}{Missing~command~field}{Set~command~=...~for~local~scope.} }
+                \tl_if_blank:VTF \l__font_name_tl
+                  { \tl_set_eq:NN \l__font_name_tl \l__font_command_tl }
                   { }
-                \__font_warn_soft_fallback:
-                \__font_define_local_families_fallback:
-                \bool_set_true:N \l__font_use_latex_fallback_bool
+                \str_if_eq:VnTF \l__font_scope_tl { global }
+                  {
+                    \__font_warn_soft_fallback:
+                    \bool_set_true:N \l__font_use_latex_fallback_bool
+                  }
+                  {
+                    \tl_if_blank:VTF \l__font_command_tl
+                      { \PackageError{font-defaults}{Missing~command~field}{Set~command~=...~for~local~scope.} }
+                      { }
+                    \__font_warn_soft_fallback:
+                    \__font_define_local_families_fallback:
+                    \bool_set_true:N \l__font_use_latex_fallback_bool
+                  }
               }
+              { \__font_error_missing_faces: }
           }
-          { \__font_error_missing_faces: }
       }
 
     \str_if_eq:VnTF \l__font_scope_tl { global }
