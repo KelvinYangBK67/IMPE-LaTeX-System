@@ -305,11 +305,11 @@ Die derzeitigen Startervorlagen sind:
 
 \begin{description}
   \item[\texttt{article\_en/}] Englische Artikelvorlage mit \texttt{impeart}.
-  \item[\texttt{article\_zh/}] Chinesische Artikelvorlage mit \texttt{impeart\_zh}.
+  \item[\texttt{article\_zh/}] Chinesische Artikelvorlage mit \texttt{impeart} und \texttt{lang=zh}.
   \item[\texttt{book\_en/}] Englische Buchvorlage mit \texttt{impebook}.
-  \item[\texttt{book\_zh/}] Chinesische Buchvorlage mit \texttt{impebook\_zh}.
+  \item[\texttt{book\_zh/}] Chinesische Buchvorlage mit \texttt{impebook} und \texttt{lang=zh}.
   \item[\texttt{beamer\_en/}] Englische Präsentationsvorlage mit \texttt{impebeamer}.
-  \item[\texttt{beamer\_zh/}] Chinesische Präsentationsvorlage mit \texttt{impebeamer\_zh}.
+  \item[\texttt{beamer\_zh/}] Chinesische Präsentationsvorlage mit \texttt{impebeamer} und \texttt{lang=zh}.
 \end{description}
 
 Jede Vorlage folgt dem Stil eines installierten Pakets und enthält realistische
@@ -325,39 +325,44 @@ liegen unter \texttt{tests/}.
 
 \section{Dokumentklassen und öffentliche Einstiegspunkte}
 
-\subsection{Wrapper-Klassen}
+\subsection{Kanonische Klassen und Sprachwahl}
 
-IMPE stellt Wrapper-Klassen für die vier wichtigsten Dokumentformen des Systems
-bereit:
-
-\begin{description}
-  \item[\texttt{impeart}] Englisch orientierter Artikel-Wrapper. Das normale
-    Layout ist \texttt{en\_doc}, die globale Standardfamilie ist \texttt{cmu}.
-  \item[\texttt{impebook}] Englisch orientierter Buch-Wrapper. Das normale
-    Layout ist \texttt{en\_book}, die globale Standardfamilie ist \texttt{cmu}.
-  \item[\texttt{impereport}] Englisch orientierter Report-Wrapper. Er verwendet
-    standardmäßig das Layout \texttt{en\_doc} und \texttt{cmu}.
-  \item[\texttt{impebeamer}] Präsentations-Wrapper. Er wählt standardmäßig das
-    Layout \texttt{beamer} und \texttt{cmu}.
-\end{description}
-
-Chinesisch orientierte Gegenstücke werden als \texttt{impeart\_zh},
-\texttt{impebook\_zh}, \texttt{impereport\_zh} und
-\texttt{impebeamer\_zh} bereitgestellt. Sie wählen die entsprechenden
-chinesischen Dokumenteinstellungen und nehmen neben \texttt{cmu} auch
-\texttt{shanggu} in die globale Standardschriftkonfiguration auf. Die
-Unterscheidung betrifft die Standardkonfiguration und lässt die Sprachwahl
-im Dokument offen.
-
-Unbekannte Klassenoptionen werden an die zugrunde liegende Standardklasse
-weitergereicht. Eine normale Option wie
+Für neue Dokumente stehen vier Klassen zur Verfügung:
+\texttt{impeart}, \texttt{impereport}, \texttt{impebook}
+und \texttt{impebeamer}. Die Option \texttt{lang=en}
+(Standardeinstellung) oder \texttt{lang=zh} wählt die
+Spracheinstellungen, ohne den Klassennamen zu ändern.
 
 \begin{verbatim}
+% Englischer Artikel
 \documentclass[12pt,twoside]{impeart}
+
+% Chinesischer Artikel
+\documentclass[lang=zh,12pt]{impeart}
+
+% Chinesisches Buch
+\documentclass[lang=zh]{impebook}
+
+% Chinesische Präsentation
+\documentclass[lang=zh]{impebeamer}
 \end{verbatim}
 
-steuert daher weiterhin wie gewohnt die zugrunde liegende Klasse
-\texttt{article}.
+Den Klassen liegen \texttt{article}, \texttt{report},
+\texttt{book} und \texttt{beamer} zugrunde.
+Auf Englisch verwenden sie \texttt{en\_doc},
+\texttt{en\_report}, \texttt{en\_book} und
+\texttt{beamer}; auf Chinesisch \texttt{zh\_doc},
+\texttt{zh\_report}, \texttt{zh\_book} und
+\texttt{beamer\_zh}. CMU gehört zu den voreingestellten
+Schriften; bei \texttt{lang=zh} kommt Shanggu hinzu.
+Ausdrücklich vom Autor gewählte Schriften haben Vorrang.
+
+Gewöhnliche Klassenoptionen wie \texttt{12pt},
+\texttt{twoside} oder \texttt{aspectratio=169}
+werden an die jeweilige Grundklasse weitergeleitet.
+Die bisherigen \texttt{impe*\_zh}- und
+\texttt{next*}-Klassennamen sind Kompatibilitätseinträge;
+ihre Zuordnung steht in Abschnitt~\ref{sec:compatibility}.
 
 \subsection{\texttt{impe.sty} direkt verwenden}
 
@@ -468,24 +473,25 @@ Die folgenden Deklarationen beschreiben beispielsweise zwei sehr
 unterschiedliche Dokumente mit derselben Template-Schnittstelle:
 
 \begin{verbatim}
-% English article
+% Englischer Artikel: en_doc und CMU sind voreingestellt
+\documentclass{impeart}
 \UseTemplateSet{
-  layout = en_doc,
   fonts = {libertinus},
   features = {math,hyperlinks}
 }
 
-% Chinese book with additional script support
+% Chinesisches Buch: zh_book, CMU und Shanggu
+\documentclass[lang=zh]{impebook}
 \UseTemplateSet{
-  layout = zh_book,
-  fonts = {cmu,shanggu,sanskrit,tibetan},
+  fonts = {sanskrit,tibetan},
   features = {citations,index,hyperlinks}
 }
 \end{verbatim}
 
-Das zweite Beispiel nennt die Familien und Features, die es benötigt; für
-die Implementierungsdetails bleiben die internen Schrift- und Layout-Subsysteme
-zuständig.
+Die Beispiele sind getrennte Dokumentvorspänne. Die Klassen
+wählen bereits Satzspiegel und Standardschriften; angegeben werden
+nur weitere Schriften und Funktionen. Für abweichende Satzspiegel
+steht der Schlüssel \texttt{layout=} zur Verfügung.
 
 \section{Schriften, Schriftsystem-Routing und mehrsprachiger Satz}
 
@@ -535,7 +541,7 @@ Familien werden beispielsweise so geladen:
 \end{verbatim}
 
 oder über die entsprechenden Schlüssel in \verb|\UseTemplateSet|. Die Aliase
-\verb|\UseGlobalFont(s)| und \verb|\UseLocalFont(s)| sind explizite
+\verb|\UseGlobalFont| und \verb|\UseLocalFont| sind explizite
 Überschreibungen; der Aufruf mit ausgelassenem Modus bleibt die
 Standardempfehlung. Öffentliche Befehle, die für
 einzelne lokale Familien erzeugt werden, sind in deren Katalogregistrierungen
