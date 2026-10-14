@@ -6,14 +6,14 @@ or create a GitHub Release until every applicable release gate succeeds.
 
 ## Local-only work
 
-1. Audit the actual local font library, verify redistribution licenses and
-   required notices, and add only individually approved font paths to
-   `font_licenses/approved-public-fonts.txt`. Unlisted fonts are **never**
-   copied into a public full archive. Review the resulting full ZIP contents.
-2. Rewrite `manual/showcase/impe-showcase.tex` against the frozen public API:
-   current XSR 1.2 Egyptian/Khitan stacks, native-first `imakeidx`, Writing
-   Profiles, style fallback, publication layouts and Unicode extraction
-   limitations. Update all version strings and PDF metadata.
+1. Recheck the actual local font library against the reviewed
+   `font_licenses/approved-public-fonts.txt` manifest and required license
+   notices. Only individually approved, locally present files enter the
+   public Full archive. Inspect the resulting ZIP contents.
+2. Review the updated 1.1.0 `manual/showcase/impe-showcase.tex` source against
+   the frozen public API: XSR 1.2 Egyptian/Khitan stacks, native-first
+   `imakeidx`, Writing Profiles, style fallback, publication layouts and
+   Unicode extraction behavior. Confirm version strings and PDF metadata.
 3. Build a new Showcase from the canonical TeX, then replace the tracked
    `manual/showcase/impe-showcase.pdf` after visual review. Use
    `scripts/build_showcase.ps1 -OutputRoot dist/showcase` to produce a copy

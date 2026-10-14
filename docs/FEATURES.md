@@ -8,8 +8,8 @@ Features load curated LaTeX packages and expose their native interfaces.
 Use the standard environments provided by `tables`, `image` and `drawing`.
 Legacy `Table*`, `NiceBooktable*`, `OneImage*`, `PanelFigure*` and
 `ExampleBlock` commands remain supported in IMPE 1.x; `lists_envs` serves
-compatibility documents. Class-specific header defaults belong to the layout
-presets; the proposed ownership change is tracked in issue #16.
+compatibility documents. Layout presets set class-specific header defaults;
+the `headers` feature provides the running-head controls.
 
 ## Structure
 

@@ -8,7 +8,7 @@ Feature 負責載入按用途組合的 LaTeX 套件，並提供原生套件介�
 使用 `tables`、`image`、`drawing` 時，推薦其標準表格、圖片及繪圖環境。
 舊有 `Table*`、`NiceBooktable*`、`OneImage*`、`PanelFigure*` 及
 `ExampleBlock` 在 IMPE 1.x 仍受支援；`lists_envs` 供相容文件使用。
-各類別的頁眉默認值屬版面 Preset；日後轉交 `headers` 管理的提案見 #16。
+各類別的頁眉預設值由版面 Preset 設定；`headers` 功能提供頁眉控制。
 
 ## 結構
 
@@ -205,8 +205,8 @@ See Section~\ref{sec:intro}.
 
 \addbibresource{references.bib}
 
-See \textcite{doe2026} for a narrative citation, or use
-\parencite{doe2026} for a parenthetical citation.
+可用 \textcite{doe2026} 作敘述式引用，
+或用 \parencite{doe2026} 作括號式引用。
 
 \printbibliography
 ```

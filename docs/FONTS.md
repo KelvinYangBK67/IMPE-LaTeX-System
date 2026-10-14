@@ -119,7 +119,7 @@ Current modules:
 - `impe-font-egyptian.tex`
   Egyptian Hieroglyphs font and automatic Unicode composition
 - `impe-font-khitan_small.tex`
-  Khitan Small Script linear and explicit stacked rendering commands
+  Khitan Small Script native XSR stacking and explicit stack commands
 - `impe-font-mlmodern.tex`
   NFSS/package integration for the `mlmodern` family
 
