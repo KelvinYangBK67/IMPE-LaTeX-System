@@ -144,7 +144,7 @@ CTAN 分發原始碼，但 TeX Live 安裝程序不會自動執行 `pip`。
 ## 文件
 
 - [英文手冊](manual/en/impe-manual-en.pdf)——技術參考版
-- [繁體中文手冊](manual/zh-tw/impe-manual-zh-tw.pdf)
+- [繁體中文手冊](manual/zh/impe-manual-zh.pdf)
 - [德文手冊](manual/de/impe-manual-de.pdf)
 - [標準展示 PDF](manual/showcase/impe-showcase.pdf) 與
   [原始碼](manual/showcase/impe-showcase.tex)
@@ -158,8 +158,8 @@ CTAN 分發原始碼，但 TeX Live 安裝程序不會自動執行 `pip`。
 scripts\build_manual.ps1
 ```
 
-可用 `-Language en`、`-Language de` 或 `-Language zh-tw` 選擇單一語言建置。
-`manual/en/` 與 `manual/zh-tw/` 中的 `.latexmkrc` 可供 XeLaTeX 直接建置。
+可用 `-Language en`、`-Language de` 或 `-Language zh` 選擇單一語言建置。
+`manual/en/` 與 `manual/zh/` 中的 `.latexmkrc` 可供 XeLaTeX 直接建置。
 
 ## 倉庫結構
 

@@ -52,6 +52,20 @@ jobs:
             throw 'Public font manifest is missing approvals or contains duplicate paths.'
           }
 
+      - name: Verify canonical Chinese manual language ID
+        shell: pwsh
+        run: |
+          $ids = @(Get-ChildItem -LiteralPath manual -Directory | ForEach-Object {
+            $id = $_.Name
+            if (Test-Path -LiteralPath (Join-Path $_.FullName "impe-manual-$id.tex")) { $id }
+          })
+          if ($ids -notcontains 'zh' -or $ids -contains 'zh-tw' -or
+              (Test-Path -LiteralPath 'manual/zh-tw') -or
+              -not (Test-Path -LiteralPath 'manual/zh/impe-manual-zh.pdf')) {
+            throw "Chinese manual must use the canonical zh directory and file ID. Found: $($ids -join ', ')"
+          }
+          ./scripts/build_manual.ps1 -ListLanguages
+
       - name: Run public regression suite
         shell: pwsh
         run: ./tests/run_regressions.ps1 -PublicFonts

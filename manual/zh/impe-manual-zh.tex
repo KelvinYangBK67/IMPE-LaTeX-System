@@ -21,7 +21,7 @@
   {\CatchFileEdef{\IMPEVersion}{\IMPEVersionFile}{\endlinechar=-1\relax}}
   {\PackageError{impe-manual}
      {缺少必要的程式碼倉庫資源 ../../VERSION}
-     {請從 manual/zh-tw 編譯，或在程式碼倉庫根目錄執行 scripts/build_manual.ps1。}}
+     {請從 manual/zh 編譯，或在程式碼倉庫根目錄執行 scripts/build_manual.ps1。}}
 
 % SOURCE_DATE_EPOCH 固定時，保持生成的手冊可重現。
 \ifdefined\XeTeXversion
@@ -30,7 +30,7 @@
     <031bcc35a4934255e3bb21323efc4efc>
   ]}
 \else\ifdefined\pdftrailerid
-  \expandafter\pdftrailerid\expandafter{IMPE-\IMPEVersion-manual-zh-tw}
+  \expandafter\pdftrailerid\expandafter{IMPE-\IMPEVersion-manual-zh}
 \fi
 \fi
 
@@ -1506,6 +1506,6 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
    \includepdf[pages=7-,pagecommand={}]{\IMPEShowcaseFile}}
   {\PackageError{impe-manual}
      {缺少必要的程式碼倉庫資源 ../showcase/impe-showcase.pdf}
-     {請從 manual/zh-tw 編譯，或在程式碼倉庫根目錄執行 scripts/build_manual.ps1。}}
+     {請從 manual/zh 編譯，或在程式碼倉庫根目錄執行 scripts/build_manual.ps1。}}
 
 \end{document}

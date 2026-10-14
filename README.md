@@ -155,7 +155,7 @@ See [Fonts](docs/FONTS.md) and the [XSR verification checklist](docs/XSR-INSTALL
 ## Documentation
 
 - [English manual](manual/en/impe-manual-en.pdf) — reference technical edition
-- [Traditional Chinese manual](manual/zh-tw/impe-manual-zh-tw.pdf)
+- [Traditional Chinese manual](manual/zh/impe-manual-zh.pdf)
 - [German manual](manual/de/impe-manual-de.pdf)
 - [Canonical showcase](manual/showcase/impe-showcase.pdf) and
   [source](manual/showcase/impe-showcase.tex)
@@ -169,8 +169,8 @@ Build every manual with:
 scripts\build_manual.ps1
 ```
 
-Use `-Language en`, `-Language de`, or `-Language zh-tw` for one edition.
-Direct builds from `manual/en/` and `manual/zh-tw/` use their `.latexmkrc`
+Use `-Language en`, `-Language de`, or `-Language zh` for one edition.
+Direct builds from `manual/en/` and `manual/zh/` use their `.latexmkrc`
 files and XeLaTeX.
 
 ## Repository Layout

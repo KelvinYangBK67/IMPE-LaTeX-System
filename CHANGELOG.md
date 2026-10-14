@@ -16,6 +16,7 @@ Release preparation (remote closure). This entry records the source/API freeze c
 * Add an isolated Showcase build-and-compare gate to the release pipeline. The existing publication check remains deferred until the Showcase/manual sources and PDFs are synchronized.
 * Vendor XSR 1.3 with ordinary Khitan word spacing and centered mixed-height stacks, retaining the 1.2 host-paragraph alignment and 1.1 Unicode extraction behavior.
 * Harmonize current technical Markdown with the implementation and remove a stale direction-version error message.
+* Use `zh` as the Chinese manual distribution language ID (`manual/zh/impe-manual-zh.tex`); retain Traditional Chinese contents and the public `lang=zh` class option.
 
 ## [1.0.8] - 2026-10-11
 
