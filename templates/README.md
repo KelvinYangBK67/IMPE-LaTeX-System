@@ -11,6 +11,12 @@ default typography and page layouts:
 | `book_en/`, `book_zh/` | `impebook` | ISO B5 book |
 | `beamer_en/`, `beamer_zh/` | `impebeamer` | Madrid 4:3 slides |
 
+The article examples develop an invented three-witness textual comparison with
+an abstract, footnotes, citations, a table and a bibliography. The books
+provide continuous three-chapter sample monographs with front and back matter.
+The Beamer examples contain ten Madrid slides. All source witnesses and sample
+bibliographic entries are explicitly fictional.
+
 Copy one directory to start a document. These templates assume IMPE is
 installed in TEXMF, so they use no source-checkout paths. Chinese documents
 select the canonical class with `lang=zh`. Class options such as `12pt`

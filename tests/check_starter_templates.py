@@ -13,6 +13,8 @@ with fitz.open(pdf_path) as pdf:
     mm_to_pt = 72 / 25.4
     assert abs(first.width - expected_mm[0] * mm_to_pt) < 2, (template, first.width, expected_mm)
     assert abs(first.height - expected_mm[1] * mm_to_pt) < 2, (template, first.height, expected_mm)
+    if template.startswith("beamer_"):
+        assert len(pdf) == 10, f"{template}: expected ten complete frames, got {len(pdf)}"
     if template.startswith("article_"):
         body = "\n".join(page.get_text() for page in pdf)
         assert "Example Press" in body, f"{template}: bibliography missing from compiled PDF"
