@@ -58,48 +58,51 @@
 
 \section{Einführung}
 
-Das IMPE \LaTeX{} System ist ein modulares \XeLaTeX{}-System für
-wiederverwendbare Layouts, Schriftrouting, mehrsprachigen Satz und optionale
-Dokumentfunktionen.
+IMPE ist ein modulares \XeLaTeX{}-System für
+wiederverwendbare Satzspiegel, Schriftzuordnung,
+mehrsprachigen Satz und zusätzliche Dokumentfunktionen.
 
-Das System unterscheidet drei Bereiche, die sich unabhängig voneinander
-konfigurieren lassen: Aus Sicht des Benutzers ist die wichtigste Unterscheidung die
-zwischen \emph{Satzspiegeln}, \emph{Schriften} und \emph{Zusatzfunktionen}. Ein Layout
-beschreibt die grundlegende visuelle Organisation eines Dokuments.
-Schriftfamilien stellen globales oder lokales Schriftverhalten bereit,
-einschließlich schriftsystembewussten Zuordnungs, wo dies erforderlich ist.
-Funktionen stellen optionale Funktionen wie Mathematik, Hyperlinks, Zitate,
-Tabellen oder Bilder bereit. Diese Teile können unabhängig voneinander
-ausgewählt oder über eine einheitliche Einrichtungsschnittstelle kombiniert
-werden.
+Bei der Einrichtung unterscheidet IMPE drei Bereiche:
+\emph{Satzspiegel}, \emph{Schriften} und
+\emph{Zusatzfunktionen}. Ein Satzspiegel legt die
+Grundgestaltung des Dokuments fest. Die Schriftauswahl
+regelt sowohl die Hauptschrift als auch die Behandlung
+einzelner Schriftsysteme. Zusatzfunktionen ermöglichen
+etwa mathematischen Satz, Verknüpfungen,
+Literaturangaben, Register, Tabellen und Abbildungen.
+Alle drei Bereiche lassen sich einzeln oder gemeinsam
+über \verb|\UseTemplateSet| konfigurieren.
 
-Die normale Verwendung von IMPE ist bewusst knapp gehalten. Eine Wrapper-Klasse
-kann ein sinnvolles Dokumentlayout und eine globale Standardschriftkonfiguration
-festlegen; anschließend lädt der Benutzer die zusätzlichen Familien oder
-Funktionen, die das Dokument benötigt. Wenn eine explizitere Kontrolle gewünscht
-ist, lassen sich dieselben Komponenten in einem einzigen Aufruf von
-\verb|\UseTemplateSet| deklarieren.
+Die vier regulären IMPE-Klassen bieten bereits
+passende Satzspiegel und Grundschriften.
+Für einen üblichen Text genügt es daher, die
+benötigten zusätzlichen Schriften und Funktionen
+anzugeben. Die Dokumentstruktur bleibt die
+gewöhnliche \LaTeX{}-Struktur.
 
-\XeLaTeX{} ist die primäre Dokument-Engine für IMPE. Diese Wahl ermöglicht es
-dem System, sich auf Unicode-Text, OpenType-Schriften, \texttt{fontspec} und die
-Inter-Character-Mechanismen von \XeTeX{} zu stützen und zugleich das vertraute
-\LaTeX{}-Dokumentmodell beizubehalten. Für besondere Schriftsysteme ist zusätzlich die integrierte
-XSR-Darstellung verfügbar. IMPE-Dokumente werden mit \XeLaTeX{} übersetzt.
+Die Dokumente werden mit \XeLaTeX{} gesetzt.
+Unicode-Text und OpenType-Schriften werden
+mithilfe von \texttt{fontspec} und den
+Zeichenklassen von \XeTeX{} verarbeitet.
+Bei besonderen Schriftaufgaben kommt die
+mitgelieferte XSR-Darstellung hinzu.
 
-Dieses Handbuch ist eine benutzerorientierte Einführung. Detaillierte
-Dokumentation der Subsysteme wird im
-Repository unter \texttt{docs/} gepflegt. Insbesondere die Dokumente zu
-Schriften, Layouts, Funktionen und Systemarchitektur beschreiben
-Registrierungsfelder und Implementierungsdetails, deren Wiederholung hier
-unnötig wäre. Das englische Handbuch ist die Referenzausgabe; übersetzte
-Handbücher sollen seiner Struktur und seinem technischen Inhalt folgen.
+Das Handbuch erläutert die öffentlichen Befehle
+und ihre Verwendung. Weiterführende Angaben
+zu den einzelnen Teilsystemen enthält das
+Verzeichnis \texttt{docs/}. Die englische
+Ausgabe dient als fachliche Referenz;
+die deutsche Fassung verwendet die
+hier üblichen Bezeichnungen.
 
-Eine visuelle Übersicht über das System bietet der Projekt-Showcase unter
-\href{\IMPEShowcaseURL}{dem aktuellen IMPE-Showcase-PDF}. Der zugehörige Stand wird nach der Veröffentlichung unter dem
-\href{\IMPETaggedShowcaseURL}{Versionstag v\IMPEVersion{}} bereitgestellt. Dieses kanonische
-Repository-PDF wird außerdem in Anhang~\ref{app:showcase} wiedergegeben. Es soll
-die Bandbreite an Schriftsystemen, Schreibrichtungen, Layouts und
-Feature-Kombinationen demonstrieren, aus denen das System hervorgegangen ist.
+Die \href{\IMPEShowcaseURL}{Satzbeispiele im Showcase}
+zeigen verschiedene Schriften, Schreibrichtungen,
+Satzspiegel und Kombinationen der Zusatzfunktionen.
+Die Fassung zum jeweiligen Veröffentlichungsstand
+wird unter dem
+\href{\IMPETaggedShowcaseURL}{Versionstag v\IMPEVersion{}}
+zugänglich sein. Der Showcase ist auch in
+Anhang~\ref{app:showcase} enthalten.
 
 \section{Installation}
 
@@ -223,7 +226,7 @@ für XSR und Veröffentlichung gibt es gesonderte Prüfungen.
 
 \section{Schnellstart}
 
-Der einfachste IMPE-Arbeitsablauf besteht darin, eine Wrapper-Klasse zu wählen,
+Der einfachste IMPE-Arbeitsablauf besteht darin, eine IMPE-Klasse zu wählen,
 die gewünschten Schriftfamilien oder Funktionen auszuwählen und das Dokument
 anschließend wie gewohnt zu schreiben. IMPE ergänzt die gewöhnliche
 \LaTeX{}-Dokumentstruktur um eine wiederverwendbare Einrichtungsschicht.
@@ -271,7 +274,7 @@ werden:
 }
 \end{verbatim}
 
-Ein Template-Set kann außerdem ein Layout und zusätzliche Schriftfamilien
+Ein Konfigurationssatz kann außerdem ein Layout und zusätzliche Schriftfamilien
 auswählen. In der Praxis liefern IMPE-Klassen bereits ein geeignetes
 Standardlayout, sodass die meisten Dokumente jene Einstellungen angeben,
 die davon abweichen.
@@ -395,7 +398,7 @@ einfach:
 
 gefolgt von \verb|\maketitle| im Dokumentkörper.
 
-\section{Das Template-Modell}
+\section{Das Konfigurationsmodell}
 
 \subsection{Vier Konfigurationsschlüssel}
 
@@ -432,7 +435,7 @@ automatische Schnittstelle.
 Die Einrichtungsschnittstelle bietet einen vorhersehbaren Ort für die vollständige
 Konfiguration. IMPE-Klassen wenden bereits ihre eigenen Layout- und globalen
 Schriftstandards an; ein Dokument kann daher allein eine zusätzliche
-Feature-Liste angeben.
+Funktionsliste angeben.
 
 \subsection{Spezialisierte Kurzbefehle}
 
@@ -460,11 +463,11 @@ das registrierte Verhalten einer Familie bewusst überschreibt. Die
 vereinheitlichte und die spezialisierte Schnittstelle sind zwei Ansichten
 desselben öffentlichen Modells.
 
-\subsection{Komponierbare Templates}
+\subsection{Kombinierbare Vorlagen}
 
-Ein IMPE-Template kombiniert wiederverwendbare Komponenten. Ein Layout kann mit
+Eine IMPE-Vorlage kombiniert wiederverwendbare Komponenten. Ein Layout kann mit
 unterschiedlichen Schriftauswahlen wiederverwendet werden, dieselbe
-Feature-Menge kann in einem Artikel oder Buch zum Einsatz kommen, und eine
+Funktionsauswahl kann in einem Artikel oder Buch zum Einsatz kommen, und eine
 schriftspezifische Schriftfamilie kann ergänzt werden, während andere
 Dokumentfunktionen erhalten bleiben. Diese Komposition ist das zentrale
 Gestaltungsprinzip der öffentlichen Schnittstelle.
@@ -1073,7 +1076,7 @@ eine vollständige Referenz benötigen oder das System erweitern möchten.
 
 \begin{description}
   \item[\texttt{docs/SYSTEM.md}] Architektur, öffentliche Einstiegsschichten,
-    Template-Konfiguration, Release-Modell und Erweiterungsgrenzen.
+    Vorlageneinstellungen, Veröffentlichungsmodell und Erweiterungsgrenzen.
   \item[\texttt{docs/FONTS.md}] Familienregistrierung, lokale und globale Modi,
     Zuordnung, Ersatz, Schriftformung, Schreibverhalten, vertikale Unterstützung und
     externe Darstellung.
