@@ -694,165 +694,276 @@ the actual rendered output.
 
 \section{Layouts and Features}
 
-\subsection{Layout presets}
+\subsection{Publication layout presets}
 
-Layouts describe document-level presentation.  A public layout preset is a
-structured bundle of page geometry, text spacing, header behavior, book
-behavior, or slide behavior.  The individual low-level components are internal;
-normal documents select the public preset as a whole.
-
-The public presets in IMPE 1.x are:
+Layouts select coordinated page dimensions, text rhythm, headers and (where
+applicable) chapter-opening or Beamer behavior. IMPE supplies complete
+publication defaults without replacing native \LaTeX{} layout packages.
+The canonical presets are:
 
 \begin{description}
-  \item[\texttt{en\_doc}] English article/report layout.
-  \item[\texttt{zh\_doc}] Chinese article/report layout.
-  \item[\texttt{en\_book}] English book/report layout with book-oriented page
-    and running-head behavior.
-  \item[\texttt{zh\_book}] Chinese book/report counterpart.
-  \item[\texttt{beamer}] presentation layout for Beamer documents.
+  \item[\texttt{en\_doc} / \texttt{zh\_doc}] English/Chinese article:
+    A4, 29\,mm left/right, 28\,mm top and 32\,mm bottom margins.
+  \item[\texttt{en\_report} / \texttt{zh\_report}] English/Chinese
+    report: A4, 31\,mm left, 29\,mm right, 29\,mm top and
+    34\,mm bottom margins, with independent report running heads.
+  \item[\texttt{en\_book} / \texttt{zh\_book}] English/Chinese
+    book: ISO B5 (176$\times$250\,mm), two-sided with 19\,mm
+    inner, 31\,mm outer and 3\,mm binding offset.
+  \item[\texttt{beamer} / \texttt{beamer\_zh}] Madrid
+    theme, 4:3 canvas, no navigation symbols; explicit native
+    \texttt{aspectratio} class options remain effective.
 \end{description}
 
-Presets declare which underlying document classes they support.  IMPE checks
-that compatibility before applying the preset and reports mismatched document
-classes.
+Article and report share A4 paper but \emph{not} the same geometry or
+typography. The historical \texttt{report} identifier remains a
+compatibility alias for Chinese report settings, not the old
+article-derived preset. IMPE checks whether each preset supports the
+underlying document class.
 
-Wrapper classes select the corresponding layout automatically.  Explicit
-selection is useful with raw standard classes or when a report should use a
-book-oriented preset:
+The optional \texttt{beamer\_clean} and \texttt{beamer\_clean\_zh}
+presets keep the minimalist 1.0.6 presentation appearance; they are
+\emph{not} current defaults. Use \texttt{aspectratio=169} in the
+class options for widescreen Beamer slides.
+
+\subsection{Legacy layouts and native overrides}
+
+To restore the \emph{1.0.5 layout parameters} for the active
+wrapper and language, use \verb|\UseLegacyLayout| in the preamble
+before further author overrides:
 
 \begin{verbatim}
-\UseLayout{en_book}
+\documentclass[lang=zh]{impebook}
+\UseLegacyLayout
+\geometry{a4paper,inner=32mm,outer=24mm,bindingoffset=4mm}
 \end{verbatim}
 
-The exact component values and geometry are documented in
-\texttt{docs/LAYOUTS.md}.
+Historical layout availability does not imply byte-identical old PDFs
+when fonts or external dependencies change. For new documents,
+publication defaults plus native adjustments are generally clearer.
+IMPE already loads \texttt{geometry} and \texttt{fancyhdr} in
+the canonical article/report/book presets. Apply native commands
+after the class and any explicit \verb|\UseLayout| call:
+
+\begin{verbatim}
+\documentclass{impereport}
+\geometry{a4paper,left=30mm,right=30mm}
+\fancyhead[R]{A short running title}
+\end{verbatim}
+
+For small adjustments the existing \verb|\LayoutSetup| and
+\verb|\LayoutSet| commands remain supported. The
+\texttt{LayoutScope} environment allows local text adjustments:
+
+\begin{verbatim}
+\LayoutSetup{page.inner=25mm,page.top=24mm}
+\begin{LayoutScope}{text.par-indent=2em}
+A paragraph with a scoped indentation setting.
+\end{LayoutScope}
+\end{verbatim}
+
+Use native \verb|\geometry| for detailed page changes and native
+\texttt{fancyhdr} or Beamer commands for running heads and slides.
+The header presets support \texttt{running}, \texttt{title},
+\texttt{classic}, \texttt{minimal} and \texttt{report}.
+See \texttt{docs/LAYOUTS.md} for typography, further size
+settings and historical IDs.
 
 \subsection{Feature modules}
 
-Features are flat, composable modules. Each feature has its own
-second preset layer.  A feature id simply loads the corresponding optional
-functionality the first time it is requested; repeated requests are ignored.
-
-The public feature set currently consists of:
+Features load curated packages and retain their familiar native interfaces.
+The public feature IDs in IMPE 1.1.0 are:
 
 \begin{description}
-  \item[\texttt{math}] standard mathematics packages, theorem environments,
-    and optional math-font selection.
-  \item[\texttt{hyperlinks}] hyperlinks, PDF bookmarks, stable destinations,
-    and repository hyperlink defaults.
-  \item[\texttt{citations}] \texttt{biblatex}/\texttt{biber} citation support
-    with selectable citation-style presets.
-  \item[\texttt{index}] index generation and IMPE term/index helpers.
-  \item[\texttt{tables}] table packages, reusable column types, and table
-    environments.
-  \item[\texttt{image}] figure, image, and multi-panel helpers.
-  \item[\texttt{lists\_envs}] reusable example-block formatting.
-  \item[\texttt{headers}] configurable running heads for article-, report-,
-    and book-like documents.
+  \item[\texttt{math}] AMS-oriented mathematics, theorem environments,
+    optional math-font selection.
+  \item[\texttt{hyperlinks}] Unicode-aware links and PDF bookmarks,
+    stable destinations and footnote links.
+  \item[\texttt{citations}] \texttt{biblatex}/\texttt{biber}
+    citations and citation-style presets.
+  \item[\texttt{index}] Native-first \texttt{imakeidx}/\texttt{xindy}
+    indexing and exact occurrence links in IMPE's default index.
+  \item[\texttt{tables}] Standard tables with \texttt{booktabs},
+    \texttt{longtable}, \texttt{tabularx} and related packages.
+  \item[\texttt{image}] \texttt{graphicx}, captions, subfigures.
+  \item[\texttt{drawing}] TikZ/PGF, pgfplots (compatibility 1.18)
+    and forest for diagrams, plots and trees.
+  \item[\texttt{glyphs}] Standalone inline image glyph registration
+    via XSR's vector backend, separate from script font detectors.
+  \item[\texttt{headers}] Configurable running heads using
+    \texttt{fancyhdr}.
+  \item[\texttt{lists\_envs}] Legacy-compatible
+    \texttt{ExampleBlock} environment.
 \end{description}
 
-A document loads any combination it requires:
-
 \begin{verbatim}
-\UseFeatures{math,hyperlinks,tables,image}
+\UseFeatures{math,hyperlinks,tables,image,drawing,glyphs}
 \end{verbatim}
 
-or
+Feature modules compose freely; repeated activation is ignored.
+Aliases \texttt{bib} and \texttt{header} are retained for
+compatibility.
 
-\begin{verbatim}
-\UseTemplateSet{
-  features = {citations,index,hyperlinks}
-}
-\end{verbatim}
+\subsection{Mathematics and citations}
 
-\subsection{Mathematics}
-
-The \texttt{math} feature loads the standard AMS-oriented mathematics stack and
-defines theorem-like environments including \texttt{theorem}, \texttt{lemma},
+The \texttt{math} feature defines \texttt{theorem}, \texttt{lemma},
 \texttt{proposition}, \texttt{corollary}, \texttt{definition},
-\texttt{example}, and \texttt{remark}. Computer Modern mathematics remains the
-default when a text family is loaded; an explicit math route selects another
-math alphabet.
-
-A different math family can be selected before the feature is loaded.  For
-example,
+\texttt{example} and \texttt{remark}. Computer Modern mathematics
+remains the default when only a text family is selected. To choose
+another math alphabet before loading the feature:
 
 \begin{verbatim}
 \UseMathFont{libertinus}
 \UseFeature{math}
 \end{verbatim}
 
-uses Libertinus Math through \texttt{unicode-math}.  Other supported routes and
-the exact package stack are listed in \texttt{docs/FEATURES.md}.
+This selects Libertinus Math through \texttt{unicode-math}.
+The \texttt{citations} feature uses native \texttt{biblatex}
+commands including \verb|\addbibresource|, \verb|\textcite|,
+\verb|\parencite| and \verb|\printbibliography|.
+The \verb|\UseCitationStyle| presets include APA, GB/T 7714,
+numeric and author--year. Citation options are configured
+before the feature loads.
 
-\subsection{Citations, indexes, tables, and figures}
+\subsection{Indexes: native \texttt{imakeidx} first}
 
-The feature modules provide useful defaults while retaining access to the
-underlying \LaTeX{} ecosystem. The \texttt{citations} feature, for example, uses
-\texttt{biblatex} and \texttt{biber}; documents still use ordinary commands
-such as \verb|\addbibresource|, \verb|\textcite|, and
-\verb|\printbibliography|.  Citation presets such as APA, GB/T 7714, numeric,
-or author--year may be selected before the feature is loaded.
+New documents should use native \verb|\index|,
+\verb|\makeindex| and \verb|\printindex|. IMPE does not
+recommend a separate term-indexing language. When IMPE creates
+its default index, each ordinary native \verb|\index|
+mark receives a unique PDF destination for that occurrence,
+even when page numbering has been reset or several marks fall
+on the same physical page.
 
-The \texttt{drawing} feature loads TikZ/PGF, pgfplots (compatibility 1.18), and
-forest for their ordinary diagram, plot and tree syntax.
+\begin{verbatim}
+\UseFeature{index}
+\begin{document}
+Buddhism\index{Buddhism} and
+Mahayana\index{Buddhism!Mahayana} are discussed here.
+Later Buddhism\index{Buddhism} can be marked again.
+\printindex
+\end{document}
+\end{verbatim}
 
-The \texttt{index} feature loads hyperlinks, builds on \texttt{imakeidx} and adds the
-\verb|\Term| helper for typesetting and indexing a term together. Its printed
-index page number links to the recorded occurrence even after page-number
-resets. First-occurrence-per-key semantics are unchanged. For manual processing,
-run \texttt{texindy -L english -C utf8 -M <job>-impe <job>.idx} in the output
-directory, then rerun XeLaTeX twice. The
-\texttt{tables} and \texttt{image} features similarly provide convenient
-higher-level environments while leaving native \texttt{booktabs},
-\texttt{graphicx}, and related commands available.
+If no native default index already exists, the feature initializes
+one using xindy. Run the indexer in the document output directory
+and then XeLaTeX twice:
 
-Throughout the feature system, IMPE reduces repetitive setup while preserving
-ordinary \LaTeX{} commands.
+\begin{verbatim}
+texindy -L english -C utf8 -M <job>-impe <job>.idx
+\end{verbatim}
+
+IMPE respects a pre-existing user default index. Named indexes
+use standard declarations such as
+\verb|\makeindex[name=people,title={People},program=xindy]|
+with \verb|\index[people]{...}| and
+\verb|\printindex[people]|. The exact occurrence-link guarantee
+is limited to plain entries in IMPE's initialized default index.
+Native formatting encapsulators, \texttt{see}/\texttt{seealso},
+range delimiters and named indexes retain their own indexing and
+hyperlink semantics. \verb|\Term| and its first-use behavior
+remain available for old documents only.
+
+\subsection{Tables, figures, drawings and inline glyphs}
+
+Write new tables using \texttt{table}, \texttt{tabular},
+\texttt{longtable}, \texttt{booktabs} rules and
+\texttt{tabularx} columns; use \texttt{figure},
+\verb|\includegraphics| and \texttt{subfigure}
+for images. The former \texttt{TableBook*}, \texttt{OneImage*}
+and \texttt{PanelFigure*} convenience layers remain
+supported for existing documents. For native vector diagrams,
+use \texttt{tikzpicture}, \texttt{axis} or \texttt{forest}
+after loading \texttt{drawing}.
+
+The independent image glyph interface is:
+
+\begin{verbatim}
+\UseFeature{glyphs}
+\IMPEGlyphRegister[logical={unencoded sign},description={rubbing}]
+  {bs-042}{images/bs-042.svg}
+\begin{document}
+Before \IMPEGlyph{bs-042} after.
+\IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
+\end{document}
+\end{verbatim}
+
+The image path must exist and be available to the renderer.
+The optional \texttt{logical} and \texttt{description}
+metadata do not insert invisible duplicate PDF text;
+\texttt{trim} clips the placed box, not the source asset.
 
 \subsection{Headers and hyperlinks}
 
-The \texttt{headers} feature supplies running heads through
-\texttt{fancyhdr}.  By default it derives a fixed running title from the first
-line of \verb|\title|; \verb|\HeaderTitle{...}| can be used when a shorter form
-is preferable.  Article-like documents use section information for the moving
-head, while report- and book-like documents use chapter information.
+The \texttt{headers} feature can derive a running title from
+the first line of \verb|\title|, with
+\verb|\HeaderTitle{...}| for a shorter fixed form.
+The selected style determines the use of section/chapter
+running information. Complex overrides should use native
+\texttt{fancyhdr} commands.
 
-The \texttt{hyperlinks} feature loads \texttt{hyperref} and
-\texttt{bookmark} with Unicode-aware PDF settings, hidden link borders, linked
-table-of-contents structures, and stable destinations.  Documents may still use
-ordinary \verb|\label|, \verb|\ref|, \verb|\href|, and \verb|\url| commands.
-
-For the full list of feature-specific commands and environments, consult
-\texttt{docs/FEATURES.md}; this section introduces their main uses.
+The \texttt{hyperlinks} feature loads \texttt{hyperref}
+and \texttt{bookmark} with Unicode-aware PDF settings,
+stable destinations and linked contents. Native
+\verb|\label|, \verb|\ref|, \verb|\href| and
+\verb|\url| remain the standard interfaces.
+See \texttt{docs/FEATURES.md} for technical details.
 
 \section{Compatibility and Migration}\label{sec:compatibility}
 
-IMPE 1.x establishes the \texttt{impe*} names as the canonical public
-interface.  New documents should therefore use \texttt{impe.sty},
-\texttt{impeart}, \texttt{impebook}, \texttt{impereport},
-\texttt{impebeamer}, and their Chinese variants.
+IMPE 1.x establishes \texttt{impe*} as the canonical
+public naming scheme. New documents should use
+\texttt{impe.sty}, \texttt{impeart}, \texttt{impebook},
+\texttt{impereport} or \texttt{impebeamer}, with
+\texttt{lang=zh} where desired. Historical \texttt{next*}
+names and \texttt{\_zh} wrappers remain usable.
 
-Earlier development releases used the \texttt{next*} naming scheme.  Those
-entry points remain supported compatibility wrappers in 1.x, with their
-existing status maintained. Existing documents that load the
-\texttt{nextart} class or \texttt{nextsystem} package continue to compile
-against the same underlying implementation.
-The compatibility layer preserves old documents; canonical \texttt{impe*}
-entries serve new work.
+The existing \verb|\UseFont| IDs, local shorthand
+commands (for example \verb|\SA|, \verb|\JP|,
+\verb|\MOv|), and explicit \texttt{[local|global]}
+modes are supported. The Writing Profile/Resource
+interface adds options rather than altering the old
+preset namespace or rewriting its compatibility recipes.
 
-The direct installer also recognizes a managed installation from the 0.1.x
-series under \texttt{tex/latex/nextsystem/}.  During migration it installs the
-canonical runtime under \texttt{tex/latex/impe/}, migrates recognized local
-override files when appropriate, removes files known to belong to the old
-managed runtime, and leaves unrelated user-created files or subdirectories in
-place.
+The recommended indexing interface is now native-first.
+The old \verb|\Term[options]{display}[description]|
+and \verb|\IndexTitle| retain their formatting and
+first-occurrence semantics for 1.x source compatibility.
+They do \emph{not} alter the repeated-occurrence behavior
+of ordinary native \verb|\index|. For new
+first-use terminology or glossary definitions, consider
+the separate \texttt{glossaries-extra} package directly.
 
-A legacy \texttt{nextsystem.local.tex} can therefore survive migration as a
-local override. New local configuration should use \texttt{impe.local.tex}.
+The earlier \texttt{TableInlineFit}, \texttt{TableLong},
+\texttt{TableBook}, \texttt{TableBookX},
+\texttt{TableBookNotes}, \texttt{NiceBooktable*},
+\texttt{OneImage}, \texttt{OneImageInline},
+\texttt{PanelFigure}, \texttt{PanelFigure*},
+and \verb|\Panel| helpers remain available.
+Prefer native \LaTeX{} tables, figures and
+subfigures in new sources. The \texttt{lists\_envs}
+\texttt{ExampleBlock} environment is also retained
+for compatibility.
 
-Documents written with old wrapper names continue to compile through the
-compatibility runtime. Authors may update those names when convenient.
+\verb|\UseLegacyLayout| restores class- and
+language-specific 1.0.5 layout defaults when
+appearance preservation is necessary. Older public
+layout preset and component IDs remain available;
+current publication defaults can intentionally change
+visual results without removing API support.
+
+The direct installer recognizes managed installations
+from the 0.1.x series under \texttt{tex/latex/nextsystem/}.
+It installs the canonical runtime under
+\texttt{tex/latex/impe/}, migrates recognized local
+overrides when appropriate, removes only files known to
+belong to the old managed runtime, and preserves other
+user-created files. New persistent configuration should
+use \texttt{impe.local.tex}.
+
+Source compatibility does not guarantee pixel-identical
+PDFs or unchanged pagination after updates to fonts,
+layouts or upstream \LaTeX{} packages.
 
 \section{Package Structure and Extension Points}
 
