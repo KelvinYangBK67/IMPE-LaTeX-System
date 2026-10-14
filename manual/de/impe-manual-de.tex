@@ -710,169 +710,293 @@ Vertiefende Angaben stehen in \texttt{docs/FONTS.md}
 und \texttt{docs/USEWRITING-1.0.5.md}.
 Die Bildbeispiele enthält der Showcase.
 
-\section{Layouts und Features}
+\section{Satzspiegel und Zusatzfunktionen}
 
-\subsection{Layout-Voreinstellungen}
+\subsection{Satzspiegel für unterschiedliche Veröffentlichungen}
 
-Layouts beschreiben die Darstellung auf Dokumentebene. Eine öffentliche
-Layout-Voreinstellung ist ein strukturiertes Bündel aus Seitengeometrie,
-Textabständen, Kopfzeilenverhalten, Buchverhalten oder Folienverhalten. Die
-einzelnen Low-Level-Komponenten sind intern; gewöhnliche Dokumente wählen die
-öffentliche Voreinstellung als Ganzes.
-
-Die öffentlichen Voreinstellungen in IMPE 1.x sind:
+Ein Satzspiegel legt Seitenmaße, Schriftgrößen,
+Abstände und Kolumnentitel fest. IMPE bietet
+für jede Dokumentart abgestimmte Einstellungen,
+die sich mit gewöhnlichen \LaTeX{}-Paketen
+weiter anpassen lassen.
 
 \begin{description}
-  \item[\texttt{en\_doc}] Englisches Artikel-/Report-Layout.
-  \item[\texttt{zh\_doc}] Chinesisches Artikel-/Report-Layout.
-  \item[\texttt{en\_book}] Englisches Buch-/Report-Layout mit buchorientiertem
-    Seiten- und Kolumnentitelverhalten.
-  \item[\texttt{zh\_book}] Chinesisches Gegenstück für Buch/Report.
-  \item[\texttt{beamer}] Präsentationslayout für Beamer-Dokumente.
+  \item[\texttt{en\_doc}, \texttt{zh\_doc}]
+    Artikel auf A4 mit 29\,mm Seitenrand,
+    28\,mm oben und 32\,mm unten.
+  \item[\texttt{en\_report}, \texttt{zh\_report}]
+    Eigenständige A4-Berichtsgestaltung mit
+    31\,mm links, 29\,mm rechts, 29\,mm oben,
+    34\,mm unten und eigenen Kolumnentiteln.
+  \item[\texttt{en\_book}, \texttt{zh\_book}]
+    Bücher im Format ISO B5 (176$\times$250\,mm),
+    beidseitig, mit 19\,mm innerem und 31\,mm
+    äußerem Rand sowie 3\,mm Bundstegzugabe.
+  \item[\texttt{beamer}, \texttt{beamer\_zh}]
+    Beamer mit dem Thema Madrid im Verhältnis 4:3.
 \end{description}
 
-Voreinstellungen deklarieren, welche zugrunde liegenden Dokumentklassen sie
-unterstützen. IMPE prüft diese Kompatibilität vor der Anwendung und meldet
-unpassende Dokumentklassen.
+Die Berichtsvorlagen haben eigene Seiteneinstellungen
+und unterscheiden sich von den Artikelvorlagen.
+Die wahlweise verfügbaren Satzspiegel
+\texttt{beamer\_clean} und \texttt{beamer\_clean\_zh}
+stellen die schlichte Präsentationsgestaltung
+aus Version 1.0.6 bereit. Für Breitbildfolien kann
+die Klassenoption \texttt{aspectratio=169} verwendet werden.
 
-Wrapper-Klassen wählen das entsprechende Layout automatisch. Eine explizite
-Auswahl ist bei rohen Standardklassen oder dann nützlich, wenn ein Report eine
-buchorientierte Voreinstellung verwenden soll:
+\subsection{Änderungen mit vorhandenen LaTeX-Befehlen}
+
+Die kanonischen Artikel-, Berichts- und Buchklassen
+laden \texttt{geometry} und \texttt{fancyhdr}.
+Seitenränder und Kolumnentitel lassen sich
+mit deren gewöhnlichen Befehlen nach der
+Klassendeklaration anpassen:
 
 \begin{verbatim}
-\UseLayout{en_book}
+\documentclass{impereport}
+\geometry{a4paper,left=30mm,right=30mm}
+\fancyhead[R]{Kurzer Kolumnentitel}
 \end{verbatim}
 
-Die genauen Komponentenwerte und die Geometrie sind in
-\texttt{docs/LAYOUTS.md} dokumentiert.
+Für einzelne registrierte Gestaltungswerte
+dienen \verb|\LayoutSetup| und \verb|\LayoutSet|.
+Mit \texttt{LayoutScope} können Absatzwerte
+innerhalb des Dokuments vorübergehend geändert werden:
 
-\subsection{Feature-Module}
+\begin{verbatim}
+\documentclass{impeart}
+\LayoutSetup{page.inner=25mm,page.top=24mm}
+\begin{document}
+\begin{LayoutScope}{text.par-indent=2em}
+Ein Absatz mit lokalem Einzug.
+\end{LayoutScope}
+\end{document}
+\end{verbatim}
 
-Features sind flache, kombinierbare Module. Eine Feature-ID lädt beim ersten Anfordern
-einfach die entsprechende optionale Funktionalität; wiederholte Anforderungen
-werden ignoriert.
+Für die Seitengestaltung sind die regulären
+\texttt{geometry}-Befehle, für Kolumnentitel
+\texttt{fancyhdr} und für Folien die Beamer-Befehle
+die bevorzugten Werkzeuge. Frühere Satzspiegel
+lassen sich über die Kompatibilitätseinstellungen
+in Abschnitt~\ref{sec:compatibility} auswählen.
 
-Die öffentliche Feature-Menge besteht derzeit aus:
+\subsection{Verfügbare Zusatzfunktionen}
+
+Zusatzfunktionen laden abgestimmte Pakete und
+stellen deren reguläre \LaTeX{}-Befehle bereit:
 
 \begin{description}
-  \item[\texttt{math}] Standardpakete für Mathematik, Theorem-Umgebungen und
-    optionale Auswahl der Mathematikschrift.
-  \item[\texttt{hyperlinks}] Hyperlinks, PDF-Lesezeichen, stabile Ziele und
-    Repository-Hyperlink-Standards.
-  \item[\texttt{citations}] Unterstützung für Zitate mit
-    \texttt{biblatex}/\texttt{biber} und auswählbaren
-    Zitationsstil-Voreinstellungen.
-  \item[\texttt{index}] Registererzeugung und IMPE-Helfer für Begriffe und
-    Register.
-  \item[\texttt{tables}] Tabellenpakete, wiederverwendbare Spaltentypen und
-    Tabellenumgebungen.
-  \item[\texttt{image}] Helfer für Abbildungen, Bilder und Mehrfachpanels.
-  \item[\texttt{lists\_envs}] wiederverwendbare Formatierung für Beispielblöcke.
-  \item[\texttt{headers}] konfigurierbare Kolumnentitel für artikel-, report-
-    und buchartige Dokumente.
+  \item[\texttt{math}] Mathematischer Satz, AMS-Pakete,
+    Theoremumgebungen und Schriftwahl für Formeln.
+  \item[\texttt{hyperlinks}] Verweise, PDF-Lesezeichen
+    und stabile Sprungziele.
+  \item[\texttt{citations}] Literaturverwaltung
+    mit \texttt{biblatex} und \texttt{biber}.
+  \item[\texttt{index}] Sachregister mit
+    \texttt{imakeidx} und \texttt{xindy}.
+  \item[\texttt{tables}] Tabellen mit
+    \texttt{booktabs}, \texttt{longtable} und
+    \texttt{tabularx}.
+  \item[\texttt{image}] Abbildungen, Beschriftungen
+    und Teilabbildungen.
+  \item[\texttt{drawing}] Zeichnungen mit TikZ/PGF,
+    \texttt{pgfplots} (Kompatibilitätsstufe 1.18)
+    und \texttt{forest}.
+  \item[\texttt{glyphs}] Registrierung und Satz
+    einzelner Bildzeichen über XSR.
+  \item[\texttt{headers}] Einstellbare Kolumnentitel
+    mit \texttt{fancyhdr}.
 \end{description}
 
-Ein Dokument lädt jede benötigte Kombination:
-
 \begin{verbatim}
-\UseFeatures{math,hyperlinks,tables,image}
+\UseFeatures{math,hyperlinks,tables,image,drawing,glyphs}
 \end{verbatim}
 
-oder
+Mehrere Funktionen können kombiniert werden.
+Bereits aktivierte Funktionen werden nicht
+ein zweites Mal geladen.
 
-\begin{verbatim}
-\UseTemplateSet{
-  features = {citations,index,hyperlinks}
-}
-\end{verbatim}
+\subsection{Mathematik und Literaturangaben}
 
-\subsection{Mathematik}
-
-Das Feature \texttt{math} lädt den standardmäßigen AMS-orientierten
-Mathematik-Stack und definiert theoremartige Umgebungen wie \texttt{theorem},
-\texttt{lemma}, \texttt{proposition}, \texttt{corollary},
-\texttt{definition}, \texttt{example} und \texttt{remark}. Das Laden einer
-Textschrift belässt Computer-Modern-Mathematik als Standard; eine ausdrücklich
-gewählte Mathematikroute aktiviert ein anderes mathematisches Alphabet.
-
-Eine andere Mathematikfamilie kann vor dem Laden des Features ausgewählt
-werden. Zum Beispiel
+Die Funktion \texttt{math} stellt
+\texttt{theorem}, \texttt{lemma},
+\texttt{proposition}, \texttt{corollary},
+\texttt{definition}, \texttt{example}
+und \texttt{remark} bereit.
+Die Formelschrift bleibt standardmäßig
+Computer Modern; für Libertinus Math
+kann vor dem Laden angegeben werden:
 
 \begin{verbatim}
 \UseMathFont{libertinus}
 \UseFeature{math}
 \end{verbatim}
 
-verwendet Libertinus Math über \texttt{unicode-math}. Weitere unterstützte
-Routen und der genaue Paket-Stack sind in \texttt{docs/FEATURES.md}
-aufgeführt.
+Literaturangaben verwenden die gewohnten
+\texttt{biblatex}-Befehle
+\verb|\addbibresource|, \verb|\textcite|,
+\verb|\parencite| und \verb|\printbibliography|.
+Über \verb|\UseCitationStyle| lassen sich
+APA, GB/T 7714, numerische oder
+Autor-Jahr-Zitierweisen einstellen.
 
-\subsection{Zitate, Register, Tabellen und Abbildungen}
+\subsection{Sachregister mit den ursprünglichen Befehlen}
 
-Die Feature-Module stellen nützliche Standards bereit und erhalten den Zugang
-zum zugrunde liegenden \LaTeX{}-Ökosystem. Das Feature
-\texttt{citations} verwendet beispielsweise \texttt{biblatex} und
-\texttt{biber}; Dokumente verwenden weiterhin gewöhnliche Befehle wie
-\verb|\addbibresource|, \verb|\textcite| und \verb|\printbibliography|.
-Zitations-Voreinstellungen wie APA, GB/T 7714, numerisch oder Autor--Jahr können
-vor dem Laden des Features gewählt werden.
+Für neue Dokumente sind die regulären
+\texttt{imakeidx}-Befehle \verb|\makeindex|,
+\verb|\index| und \verb|\printindex|
+vorgesehen. IMPE vergibt im selbst eingerichteten
+Standardregister für jeden gewöhnlichen
+\verb|\index|-Eintrag ein eigenes PDF-Sprungziel,
+auch bei wiederholter Seitennummer oder mehreren
+Einträgen auf einer Seite.
 
-Das Feature \texttt{index} baut auf \texttt{imakeidx} auf und ergänzt den
-Helfer \verb|\Term|, um einen Begriff zugleich zu setzen und zu indizieren.
-Die Features \texttt{tables} und \texttt{image} stellen auf ähnliche Weise
-praktische höherstufige Umgebungen bereit, während native Befehle von
-\texttt{booktabs}, \texttt{graphicx} und verwandten Paketen verfügbar bleiben.
+\begin{verbatim}
+\UseFeature{index}
+\begin{document}
+Buddhismus\index{Buddhismus} und
+Mahayana\index{Buddhismus!Mahayana}.
+Später nochmals Buddhismus\index{Buddhismus}.
+\printindex
+\end{document}
+\end{verbatim}
 
-Im gesamten Feature-System reduziert IMPE wiederholte Einrichtung und
-bewahrt die gewöhnlichen \LaTeX{}-Befehle.
+Hat der Benutzer bereits ein eigenes Standardregister
+eingerichtet, bleibt dessen Konfiguration maßgeblich.
+Weitere benannte Register können wie üblich
+mit \verb|\makeindex[name=people,title={Personen},program=xindy]|
+angelegt und durch \verb|\index[people]{...}|
+gefüllt werden. Die individuellen Sprungziele
+gelten für gewöhnliche Einträge im von IMPE
+eingerichteten Standardregister. Besondere
+Registersyntax wie \texttt{see}, \texttt{seealso},
+Bereichsmarkierungen und benannte Register
+behält ihre normalen Eigenschaften.
 
-\subsection{Kopfzeilen und Hyperlinks}
+Der Aufruf für das von IMPE eingerichtete
+Standardregister lautet im Ausgabeverzeichnis:
 
-Das Feature \texttt{headers} stellt über \texttt{fancyhdr} Kolumnentitel
-bereit. Standardmäßig leitet es aus der ersten Zeile von \verb|\title| einen
-festen Kurztitel ab; \verb|\HeaderTitle{...}| kann verwendet werden, wenn eine
-kürzere Form bevorzugt wird. Artikelartige Dokumente verwenden
-Abschnittsinformationen für den wechselnden Kolumnentitel, report- und
-buchartige Dokumente Kapitelinformationen.
+\begin{verbatim}
+texindy -L english -C utf8 -M <job>-impe <job>.idx
+\end{verbatim}
 
-Das Feature \texttt{hyperlinks} lädt \texttt{hyperref} und
-\texttt{bookmark} mit Unicode-tauglichen PDF-Einstellungen, ausgeblendeten
-Linkrahmen, verlinkten Inhaltsverzeichnisstrukturen und stabilen Zielen.
-Dokumente können weiterhin gewöhnliche Befehle wie \verb|\label|, \verb|\ref|,
-\verb|\href| und \verb|\url| verwenden.
+Danach wird \XeLaTeX{} zweimal ausgeführt.
 
-Die vollständige Liste der feature-spezifischen Befehle und Umgebungen steht
-in \texttt{docs/FEATURES.md}; dieser Abschnitt führt in die wichtigsten
-Funktionen ein.
+\subsection{Tabellen, Abbildungen und Bildzeichen}
+
+Neue Tabellen verwenden \texttt{table},
+\texttt{tabular}, \texttt{longtable} und
+die Befehle von \texttt{booktabs};
+Abbildungen verwenden \texttt{figure},
+\verb|\includegraphics| und
+\texttt{subfigure}. Für Zeichnungen
+stehen \texttt{tikzpicture},
+\texttt{axis} und \texttt{forest}
+bereit. Ältere Hilfsumgebungen für
+Tabellen und Abbildungen bleiben in
+bestehenden Dokumenten verwendbar.
+
+\begin{verbatim}
+\UseFeature{glyphs}
+\IMPEGlyphRegister[logical={Zeichen},description={Abreibung}]
+  {bs-042}{images/bs-042.svg}
+\begin{document}
+Vor \IMPEGlyph{bs-042} nach.
+\IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
+\end{document}
+\end{verbatim}
+
+Die Bilddatei muss für die Darstellung verfügbar sein.
+Die Metadaten \texttt{logical} und \texttt{description}
+beschreiben das Zeichen; die Option \texttt{trim}
+beschneidet den sichtbaren Ausschnitt.
+
+\subsection{Kolumnentitel und Verknüpfungen}
+
+\texttt{headers} kann einen verkürzten
+Kolumnentitel aus der ersten Zeile von
+\verb|\title| ableiten. Mit
+\verb|\HeaderTitle{...}| wird ein
+fester Titel angegeben; weitere
+Einstellungen erfolgen über \texttt{fancyhdr}.
+
+\texttt{hyperlinks} lädt \texttt{hyperref}
+und \texttt{bookmark} mit Unicode-fähigen
+PDF-Einstellungen. Die Befehle \verb|\label|,
+\verb|\ref|, \verb|\href| und \verb|\url|
+bleiben die reguläre Schnittstelle.
+Weitere Einzelheiten stehen in
+\texttt{docs/FEATURES.md}.
 
 \section{Kompatibilität und Migration}\label{sec:compatibility}
 
-IMPE 1.x etabliert die \texttt{impe*}-Namen als kanonische öffentliche
-Schnittstelle. Neue Dokumente sollten daher \texttt{impe.sty},
-\texttt{impeart}, \texttt{impebook}, \texttt{impereport},
-\texttt{impebeamer} und ihre chinesischen Varianten verwenden.
+Neue Dokumente verwenden die Klassen
+\texttt{impeart}, \texttt{impereport},
+\texttt{impebook}, \texttt{impebeamer}
+oder das Paket \texttt{impe.sty};
+für Chinesisch wird \texttt{lang=zh}
+angegeben. Die früheren Klassen
+\texttt{impeart\_zh}, \texttt{impereport\_zh},
+\texttt{impebook\_zh} und \texttt{impebeamer\_zh}
+entsprechen den jeweiligen kanonischen Klassen
+mit \texttt{lang=zh}. Ebenso bleiben
+\texttt{next*}-Klassen und \texttt{nextsystem.sty}
+als Kompatibilitätseinträge verfügbar.
 
-Frühere Entwicklungsversionen verwendeten das Namensschema \texttt{next*}.
-Diese Einstiegspunkte bleiben in 1.x als Kompatibilitäts-Wrapper mit ihrem
-bisherigen Status unterstützt. Bestehende Dokumente,
-die die Klasse \texttt{nextart} oder das Paket \texttt{nextsystem} laden,
-können weiterhin gegen dieselbe zugrunde liegende Implementierung kompiliert
-werden. Die Kompatibilitätsschicht bewahrt alte Dokumente; die kanonischen
-\texttt{impe*}-Einstiegspunkte dienen neuen Arbeiten.
+Die vorhandenen \verb|\UseFont|-Kennungen,
+lokalen Befehle und ausdrücklich gewählten
+Modi gelten weiterhin. Die neuen Schreibprofile
+und Ressourcen sind eine zusätzliche,
+eigenständige Auswahlmöglichkeit.
 
-Der direkte Installer erkennt außerdem eine verwaltete Installation der
-0.1.x-Reihe unter \texttt{tex/latex/nextsystem/}. Bei der Migration installiert
-er die kanonische Laufzeitumgebung unter \texttt{tex/latex/impe/}, migriert
-erkannte lokale Override-Dateien, wo dies angemessen ist, entfernt Dateien, die
-bekanntermaßen zur alten verwalteten Laufzeit gehören, und bewahrt
-benutzererstellte Dateien oder Unterverzeichnisse.
+Für Sachregister werden die ursprünglichen
+\verb|\index|-Befehle empfohlen.
+\verb|\Term| und \verb|\IndexTitle|
+bewahren ihre bisherigen Formatierungs-
+und Erstvorkommnisregeln; gewöhnliche
+\verb|\index|-Aufrufe können dagegen
+jedes Vorkommen verzeichnen. Für eigentliche
+Glossare kann das Paket \texttt{glossaries-extra}
+direkt verwendet werden.
 
-Eine alte \texttt{nextsystem.local.tex} kann die Migration daher als lokaler
-Override überstehen. Neue lokale Konfiguration sollte \texttt{impe.local.tex}
-verwenden.
+Auch die älteren Tabellen- und Abbildungshilfen
+\texttt{TableInlineFit}, \texttt{TableLong},
+\texttt{TableBook}, \texttt{TableBookX},
+\texttt{TableBookNotes}, \texttt{NiceBooktable*},
+\texttt{OneImage}, \texttt{OneImageInline},
+\texttt{PanelFigure} und \verb|\Panel|
+bleiben erhalten. Für neue Arbeiten sind
+reguläre \LaTeX{}-Tabellen und Abbildungen
+die erste Wahl; \texttt{ExampleBlock}
+wird ebenfalls weiterhin unterstützt.
 
-Dokumente mit alten Wrapper-Namen werden über die Kompatibilitäts-Laufzeit
-weiterhin kompiliert. Autoren können diese Namen bei Gelegenheit aktualisieren.
+Mit \verb|\UseLegacyLayout| lassen sich
+die Satzspiegelwerte von Version 1.0.5
+für die jeweilige Klasse und Sprache
+wiederherstellen:
+
+\begin{verbatim}
+\documentclass[lang=zh]{impebook}
+\UseLegacyLayout
+\end{verbatim}
+
+Daneben bleiben die älteren
+\texttt{report}- und \texttt{legacy\_*}-
+Satzspiegelkennungen verfügbar.
+Unterschiedliche Schriftversionen und
+Paketstände können den Seitenumbruch
+weiterhin beeinflussen.
+
+Das Installationsprogramm erkennt
+verwaltete Installationen der Reihe 0.1.x
+unter \texttt{tex/latex/nextsystem/}.
+Es legt die aktuelle Laufzeit unter
+\texttt{tex/latex/impe/} ab,
+übernimmt bekannte lokale Einstellungen
+und entfernt ausschließlich erkannte
+Altdateien der verwalteten Installation.
+Für neue Einstellungen dient
+\texttt{impe.local.tex}.
 
 \section{Paketstruktur und Erweiterungspunkte}
 
