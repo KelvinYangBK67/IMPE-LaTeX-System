@@ -9,7 +9,7 @@ default typography and page layouts:
 | --- | --- | --- |
 | `article_en/`, `article_zh/` | `impeart` | A4 article |
 | `book_en/`, `book_zh/` | `impebook` | ISO B5 book |
-| `beamer_en/`, `beamer_zh/` | `impebeamer` | 16:9 slides |
+| `beamer_en/`, `beamer_zh/` | `impebeamer` | Madrid 4:3 slides |
 
 Copy one directory to start a document. These templates assume IMPE is
 installed in TEXMF, so they use no source-checkout paths. Chinese documents

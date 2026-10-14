@@ -41,7 +41,7 @@ paragraph-local parameters; see [Layouts](docs/LAYOUTS.md).
 ## Layout
 
 Book defaults to ISO B5; article and report use distinct A4 layouts;
-Beamer defaults to a clean academic 16:9 theme. English and Chinese body
+Beamer defaults to the traditional Madrid 4:3 theme; native `aspectratio=169` selects widescreen. English and Chinese body
 typography, running heads, footer numbers and chapter-opening pages are
 independently calibrated. Existing public layout API remains available,
 but default PDF pagination is not frozen.

@@ -35,7 +35,7 @@
 \DeclareOption{direction=vertical-ltr}{\IMPEClassChooseDirection{vertical-ltr}}
 \DeclareOption{direction=vertical-rtl}{\IMPEClassChooseDirection{vertical-rtl}}
 % Forward unrecognized options to the base class. Track an explicit Beamer
-% aspectratio so the IMPE 16:9 default never defeats the author's choice.
+% aspectratio so the Madrid geometry respects the author's native choice.
 \newcommand{\IMPEClassForwardOption}[1]{%
   \in@{aspectratio=}{#1}%
   \ifin@\IMPEClassAspectSeentrue\fi
@@ -43,11 +43,6 @@
 }
 \DeclareOption*{\expandafter\IMPEClassForwardOption\expandafter{\CurrentOption}}
 \ProcessOptions*\relax
-\ifx\IMPEClassBase\IMPEClassBeamerTag
-  \ifIMPEClassAspectSeen\else
-    \PassOptionsToClass{aspectratio=169}{beamer}%
-  \fi
-\fi
 \edef\NextSystemUiTag{\IMPEClassLang}
 \ifx\IMPEClassLang\IMPEZhTag
   \edef\NextDefaultLayout{\IMPEClassLayoutZh}

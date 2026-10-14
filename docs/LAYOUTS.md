@@ -22,7 +22,7 @@ The book's 3mm binding offset is additional to its 19mm inner margin.
 | impebook, en/zh | ISO B5 (176×250), twoside, openright | inner 19, outer 31, binding 3, top 22, bottom 32 | 123×196 | book title even / chapter odd; page number centered in footer |
 | impeart, en/zh | A4 (210×297), oneside | left/right 29, top 28, bottom 32 | 152×237 | no running head; centered footer page number |
 | impereport, en/zh | A4, oneside, openany | left 31, right 29, top 29, bottom 34 | 150×234 | short report title / current chapter; centered footer page number |
-| impebeamer, en/zh | 16:9 (160×90 mm logical canvas) | horizontal content margins 9mm | Beamer-managed | no headline or navigation, slide number at bottom right |
+| impebeamer, en/zh | 4:3 (128×96 mm logical canvas) | Beamer/Madrid theme-managed | Beamer-managed | Madrid heading and footer; navigation symbols hidden |
 
 For book/report, chapter-opening `plain` pages retain their page number and
 omit the running header. Filler blank pages use `empty` (no visible number).
@@ -39,7 +39,7 @@ setspace stretch factor; paragraph spacing is additional to baseline skip.
 | book | 10.5/14.5pt; 1.3em; 0 | 10.5/16.5pt; 2em; 0 |
 | article | 11/15.5pt; 1.3em; 0 | 11/17.5pt; 2em; 0 |
 | report | 11/15.5pt; 0; .35em | 11/17.5pt; 2em; 0 |
-| beamer | 12/16.5pt; Beamer paragraph style | 12/18.5pt; Beamer paragraph style |
+| beamer | Madrid's native font sizing and spacing | Madrid's native font sizing and spacing |
 
 Normal class sizes are installed for the default 10pt base-class option.
 Explicit `11pt` or `12pt` class options take precedence and retain their
@@ -67,13 +67,16 @@ For the pre-redesign defaults, place the following command just after the class:
 `\UseLegacyLayout` automatically selects the historical 1.0.5 default based
 on the active class and language. Book and article restore their historical
 en/zh profiles; report restores the old article-derived report layout.
-Beamer restores Madrid and the old 4:3 default unless an explicit native
-`aspectratio=...` option was supplied.
+Beamer already defaults to Madrid and 4:3 again. An explicit native
+`aspectratio=...` option remains authoritative, including 16:9.
 
 The legacy snapshot restores geometry, base-class normal/footnote font sizes,
 chapter/section heading definitions, baseline stretch, paragraph spacing,
 and historical running-head, footer and chapter-opening `plain` behavior.
-The Beamer profile also resets its theme fonts. Exact PDF bytes, changes
+The Beamer profile also resets its theme fonts. The 1.0.6 minimal
+presentation style remains opt-in via `\UseLayout{beamer_clean}` (or
+`beamer_clean_zh`); specify `aspectratio=169` explicitly if widescreen is
+wanted. Exact PDF bytes, changes
 in external fonts and package versions are outside the compatibility contract.
 The command is preamble-only, idempotent and should precede explicit native
 overrides. Existing named `legacy_*` presets remain available.

@@ -41,7 +41,7 @@ Hello, IMPE.
 ## 版面設定
 
 Book 預設 ISO B5；Article 與 Report 有各自的 A4 版式；
-Beamer 預設簡潔學術主題與 16:9 畫布。中英文正文、頁眉、
+Beamer 預設傳統 Madrid 主題及 4:3 畫布；可使用原生 `aspectratio=169` 切換寬螢幕。中英文正文、頁眉、
 頁腳頁碼與章節首頁分別調整。既有公開 API 保持相容，
 但新默認可能改變舊文件的 PDF 外觀及分頁。
 

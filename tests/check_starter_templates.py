@@ -6,7 +6,7 @@ from pathlib import Path
 import fitz
 
 template, pdf_path = sys.argv[1], Path(sys.argv[2])
-expected_mm = (210, 297) if template.startswith("article_") else (176, 250) if template.startswith("book_") else (160, 90)
+expected_mm = (210, 297) if template.startswith("article_") else (176, 250) if template.startswith("book_") else (128, 96)
 with fitz.open(pdf_path) as pdf:
     assert len(pdf) > 0, f"{template}: empty PDF"
     first = pdf[0].rect

@@ -1,0 +1,12 @@
+% Chinese Beamer defaults to Madrid and 4:3 as well.
+\documentclass[lang=zh]{impebeamer}
+\input{tests/layout-publication-assert.tex}
+\IMPECheckDim{\paperwidth}{128mm}
+\IMPECheckDim{\paperheight}{96mm}
+\makeatletter
+\@ifpackageloaded{beamerthemeMadrid}{}{\PackageError{impe-test}{Madrid theme was not loaded}{}}
+\makeatother
+\begin{document}
+\begin{frame}{中文示例}預設主題與版面比例。\end{frame}
+\typeout{IMPE-TEST-LAYOUT-PUBLICATION-BEAMER-ZH-PASS}
+\end{document}

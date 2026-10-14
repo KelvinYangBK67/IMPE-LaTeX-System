@@ -133,10 +133,10 @@ an explicit `\UseTemplateSet` to select every component manually.
 ## Layout and legacy snapshot (1.0.6)
 
 The canonical layout defaults are book: ISO B5; article/report: distinct A4
-geometries; and Beamer: clean 16:9. Each class selects the appropriate
+geometries; and Beamer: Madrid 4:3. Each class selects the appropriate
 `lang=en` or `lang=zh` typography. A single preamble `\UseLegacyLayout`
-restores the class/language-specific 1.0.5 layout (including Beamer Madrid
-and 4:3 if no explicit aspect ratio is given). Native paper overrides use
+restores the class/language-specific 1.0.5 layout (Beamer now defaults to
+Madrid and 4:3 again, unless an explicit native aspect ratio is given). Native paper overrides use
 `\geometry{...}` and native page-style overrides use `fancyhdr`; both
 are already loaded by canonical paper layouts. See [Layouts](LAYOUTS.md).
 

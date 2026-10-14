@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | `article_en/`、`article_zh/` | `impeart` | A4 論文 |
 | `book_en/`、`book_zh/` | `impebook` | ISO B5 書籍 |
-| `beamer_en/`、`beamer_zh/` | `impebeamer` | 16:9 簡報 |
+| `beamer_en/`、`beamer_zh/` | `impebeamer` | Madrid 4:3 簡報 |
 
 複製整個目錄即可起稿。模板採用已安裝至 TEXMF 的 IMPE，
 無須引用原始碼倉庫路徑。中文模板透過標準類別的 `lang=zh`
