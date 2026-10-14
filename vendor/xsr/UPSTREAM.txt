@@ -1,6 +1,6 @@
 xetex-stack-renderer 1.3
 Origin: https://github.com/KelvinYangBK67/xetex-stack-renderer
-Source commit: 89413e38a66a0aaffd738b5c55b22eec4625a412
+Source commit: 5e1b78b24e0b2268ae439f6377f480d60f99bb20
 License: MIT; retained in vendor/xsr/LICENSE
 Vendored runtime: src/, tex/, pyproject.toml and README.md
 The exact upstream blob mapping is recorded in UPSTREAM.json and verified by scripts/check_xsr_vendor.py.
