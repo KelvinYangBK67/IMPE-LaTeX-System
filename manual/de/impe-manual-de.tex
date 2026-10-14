@@ -62,9 +62,9 @@ Das IMPE \LaTeX{} System ist ein modulares \XeLaTeX{}-Framework für
 wiederverwendbare Layouts, Schriftrouting, mehrsprachigen Satz und optionale
 Dokumentfunktionen.
 
-IMPE begegnet diesem Problem, indem das System in wiederverwendbare Teile
-aufgeteilt wird. Aus Sicht des Benutzers ist die wichtigste Unterscheidung die
-zwischen \emph{Layouts}, \emph{Schriften} und \emph{Features}. Ein Layout
+Das System unterscheidet drei Bereiche, die sich unabhängig voneinander
+konfigurieren lassen: Aus Sicht des Benutzers ist die wichtigste Unterscheidung die
+zwischen \emph{Satzspiegeln}, \emph{Schriften} und \emph{Zusatzfunktionen}. Ein Layout
 beschreibt die grundlegende visuelle Organisation eines Dokuments.
 Schriftfamilien stellen globales oder lokales Schriftverhalten bereit,
 einschließlich schriftsystembewussten Routings, wo dies erforderlich ist.
@@ -83,10 +83,8 @@ ist, lassen sich dieselben Komponenten in einem einzigen Aufruf von
 \XeLaTeX{} ist die primäre Dokument-Engine für IMPE. Diese Wahl ermöglicht es
 dem System, sich auf Unicode-Text, OpenType-Schriften, \texttt{fontspec} und die
 Inter-Character-Mechanismen von \XeTeX{} zu stützen und zugleich das vertraute
-\LaTeX{}-Dokumentmodell beizubehalten. Einige spezialisierte interne Routen
-können andere Engines aufrufen, wenn ein bestimmtes Schriftsystem oder ein
-bestimmter Renderer dies erfordert; gewöhnliche IMPE-Dokumente sind jedoch zur
-Kompilierung mit \XeLaTeX{} vorgesehen.
+\LaTeX{}-Dokumentmodell beizubehalten. Für besondere Schriftsysteme ist zusätzlich die integrierte
+XSR-Darstellung verfügbar. IMPE-Dokumente werden mit \XeLaTeX{} übersetzt.
 
 Dieses Handbuch ist eine benutzerorientierte Einführung. Detaillierte
 Dokumentation der Subsysteme wird im
@@ -97,122 +95,138 @@ unnötig wäre. Das englische Handbuch ist die Referenzausgabe; übersetzte
 Handbücher sollen seiner Struktur und seinem technischen Inhalt folgen.
 
 Eine visuelle Übersicht über das System bietet der Projekt-Showcase unter
-\href{\IMPEShowcaseURL}{dem aktuellen IMPE-Showcase-PDF}. Die mit diesem
-Handbuch eingefrorene Ausgabe ist über den
-\href{\IMPETaggedShowcaseURL}{Versions-Tag} verfügbar. Dieses kanonische
+\href{\IMPEShowcaseURL}{dem aktuellen IMPE-Showcase-PDF}. Der zugehörige Stand wird nach der Veröffentlichung unter dem
+\href{\IMPETaggedShowcaseURL}{Versionstag v\IMPEVersion{}} bereitgestellt. Dieses kanonische
 Repository-PDF wird außerdem in Anhang~\ref{app:showcase} wiedergegeben. Es soll
 die Bandbreite an Schriftsystemen, Schreibrichtungen, Layouts und
 Feature-Kombinationen demonstrieren, aus denen das System hervorgegangen ist.
 
 \section{Installation}
 
-\subsection{Distributionsformen}
+\subsection{Ausgabeformen}
 
-IMPE wird in drei Distributionsformen vorbereitet, die jeweils für einen
-anderen Anwendungsfall vorgesehen sind.
+IMPE 1.1.0 wird als \texttt{Full}, \texttt{Core} und
+\texttt{CTAN} vorbereitet. Alle drei Ausgaben stellen die
+kanonischen \XeLaTeX{}-Klassen und dieselbe Kernfunktion bereit;
+ihr Lieferumfang unterscheidet sich bei den Schriftdateien und
+der Installation.
 
-Die \emph{CTAN-orientierte Distribution} ist das Archiv
-\texttt{impe-framework.zip} mit dem Wurzelverzeichnis
-\texttt{impe-framework/}. Sie enthält die portable Laufzeitumgebung, die
-öffentliche Dokumentation und kanonische \texttt{impe*}-Einstiegspunkte.
-Die lokale Schriftbibliothek wird separat verwaltet. Die
-\emph{Core-Distribution} enthält dieselbe
-Systemlogik für Benutzer, die IMPE lieber direkt aus einem Release installieren
-und ihre Schriften separat verwalten. Die \emph{Full-Distribution} kann eine
-vorbereitete lokale Schriftbibliothek hinzufügen, soweit der
-Weiterverteilungsstatus der einzelnen Schriften dies erlaubt.
+\begin{description}
+  \item[\texttt{Full}] Enthält Laufzeit, Kompatibilitätseinträge,
+    XSR und die ausdrücklich zur Weitergabe freigegebenen
+    Schriftdateien des jeweiligen Pakets.
+  \item[\texttt{Core}] Enthält Laufzeit, Kompatibilitätseinträge,
+    XSR und Installationsprogramme. Schriften werden über
+    \TeX{} Live, das Betriebssystem oder lokale Dateien aufgelöst.
+  \item[\texttt{CTAN}] Das Archiv \texttt{impe-framework.zip} mit
+    dem Verzeichnis \texttt{impe-framework/} umfasst die
+    kanonischen Klassen, Laufzeit, XSR-Quellen und Unterlagen.
+    Die Schriftdateien werden gesondert bereitgestellt.
+\end{description}
 
-Diese Unterscheidung ist beabsichtigt. Die Dokument-Laufzeitumgebung bleibt
-portabel; verschiedene Rechner und Benutzer können über die separate
-Schriftressourcenschicht ihre eigenen großen Schriftbibliotheken bereitstellen.
+Der Inhalt eines öffentlichen Full-Archivs richtet sich nach
+einer geprüften Liste weitergabefähiger Schriftdateien.
 
-\subsection{Installationsort}
+\subsection{Full und Core installieren}
 
-Eine direkte Installation legt das Paket im TEXMF-Baum des Benutzers unter
-
-\begin{verbatim}
-tex/latex/impe/
-\end{verbatim}
-
-ab, sodass Paket und Wrapper-Klassen über den normalen \TeX{}-Suchpfad
-verfügbar sind. Die kanonischen öffentlichen Einstiegspunkte sind
-
-\begin{verbatim}
-impe.sty
-impeart.cls
-impebook.cls
-impereport.cls
-impebeamer.cls
-\end{verbatim}
-
-mit entsprechenden \texttt{\_zh}-Wrapper-Klassen für chinesisch orientierte
-Dokumentstandards. Direkte Full- und Core-Releases von GitHub installieren
-zusätzlich die früheren \texttt{next*}-Kompatibilitätseinstiege; die
-CTAN-Distribution \texttt{impe-framework} enthält die kanonischen
-Einstiegspunkte. Siehe
-Abschnitt~\ref{sec:compatibility}.
-
-Bei Verwendung eines direkten IMPE-Releases kann der mitgelieferte Installer
-die Laufzeitumgebung in den TEXMF-Baum des Benutzers kopieren. Ein
-Release-Archiv kann den üblichen Windows-Einstiegspunkt
+Das Installationsprogramm legt die verwaltete Laufzeit unter
+\texttt{TEXMFHOME/tex/latex/impe/} ab. Als Einstiegspunkte
+dienen \texttt{impe.sty}, \texttt{impeart.cls},
+\texttt{impereport.cls}, \texttt{impebook.cls} und
+\texttt{impebeamer.cls}. Die älteren Klassennamen stehen
+in direkten Full/Core-Installationen weiterhin zur Verfügung.
 
 \begin{verbatim}
-install.bat
+# Windows, entpacktes Release:
+.\install.bat
+# Windows, Quellverzeichnis:
+.\scripts\install.ps1
+
+# Unix, entpacktes Release:
+sh ./install.sh
+# Unix, Quellverzeichnis:
+sh ./scripts/install.sh
 \end{verbatim}
 
-bereitstellen. Der Launcher delegiert an \texttt{install.ps1}; fortgeschrittene
-Benutzer können dieses Skript mit dem üblichen Skript-Runner ihres Systems
-direkt aufrufen.
+Unter Windows akzeptiert das Installationsskript
+\texttt{-TexmfRoot} und \texttt{-SkipXsrPython}; unter
+Unix kann ein abweichender TEXMF-Pfad als Argument angegeben
+werden. Falls die Aktualisierung der \TeX{}-Dateidatenbank
+unterbleibt, kann \texttt{mktexlsr} nachträglich ausgeführt
+werden. Bei einer Paketinstallation durch die jeweilige
+\TeX{}-Distribution gelten deren eigene Verfahren.
 
-Bei Installation über eine \TeX{}-Distribution übernimmt diese die
-Paketerkennung auf dem üblichen Weg.
+\subsection{XSR und die Python-Laufzeit}
 
-\subsection{Schriftressourcen und lokale Konfiguration}
+IMPE liefert XSR \textbf{1.3} mit. Die direkten
+Installationsprogramme richten normalerweise eine eigene
+virtuelle Python-Umgebung für die externe Darstellung ein.
+Für dynamische ägyptische Hieroglyphen, die Stapelung
+der kleinen Kitan-Schrift und Bildglyphen können
+Python \textbf{3.11 oder neuer}, \texttt{venv} und
+\texttt{pip} erforderlich sein. Die erstmalige Einrichtung
+kann einen Internetzugang benötigen.
 
-Das Quell-Repository enthält die Laufzeitumgebung; die vollständige
-Schriftbibliothek wird lokal verwaltet.
-Bei einer lokalen oder Full-Installation werden katalogisierte Schriftdateien
-normalerweise unterhalb eines Stammverzeichnisses \texttt{assets/fonts/}
-aufgelöst. \texttt{\string\SetCatalogFontRoot} wählt über lokale Konfiguration
-einen anderen Ort.
+Eine reine \TeX{}-Installation überspringt die
+Python-Einrichtung:
 
-Der bevorzugte dauerhafte Mechanismus ist \texttt{impe.local.tex}. Eine lokale
-Konfiguration kann beispielsweise Folgendes enthalten:
+\begin{verbatim}
+# Windows:
+.\scripts\install.ps1 -SkipXsrPython
+# Unix:
+IMPE_SKIP_XSR_PYTHON=1 sh ./scripts/install.sh
+\end{verbatim}
+
+Für die dynamische XSR-Ausgabe benötigt \XeLaTeX{} einen
+zulässigen Shell-Escape-Aufruf oder die vorgeschaltete
+XSR-Verarbeitung. Außerdem müssen die tatsächlich
+verwendeten TTF-/OTF-Dateien lesbar sein, damit der
+Python-Zeichengenerator ihre Konturen laden kann.
+
+\subsection{Schriftdateien und persönliche Einstellungen}
+
+IMPE sucht eine registrierte Schrift zunächst als
+lokale Datei und anschließend in den verfügbaren
+\TeX{}- und Systemschriften. Auflösbare Systemschriften
+müssen deshalb nicht in das Projektverzeichnis kopiert
+werden. Für zusätzliche Schriftdateien dient
+\texttt{assets/fonts/} als übliches Stammverzeichnis.
+
+Eine dauerhafte Anpassung kann in
+\texttt{impe.local.tex} stehen; auch eine direkte Angabe
+im Vorspann ist möglich:
 
 \begin{verbatim}
 \SetCatalogFontRoot{D:/Fonts/IMPE}
 \end{verbatim}
 
-wobei der Pfad an den lokalen Rechner angepasst wird. Derselbe Befehl kann auch
-aus einem Dokument heraus verwendet werden, wenn eine einmalige Überschreibung
-geeigneter ist. Core- und CTAN-Installationen verwenden direkt auflösbare
-System- oder TeX-Schriften. Dokumentfunktionen, die lokale Schriftdateien
-anfordern, benötigen die entsprechenden Ressourcen.
+Bei nicht auflösbaren gewöhnlichen Schriften kann IMPE
+nach Warnung eine Ersatzschrift verwenden. Die externe
+XSR-Darstellung benötigt dagegen die wirkliche Schriftdatei.
 
-\subsection{Schneller Installationstest}
+\subsection{Ein kurzer Installationstest}
 
-Nach der Installation sollte sich die folgende Datei auf einem System mit
-verfügbarem Libertinus mit \XeLaTeX{} kompilieren lassen:
+Auf einem Rechner mit Libertinus prüft dieses Beispiel
+die Dokumentklasse, das Schriftverzeichnis und den lokalen
+Schriftbefehl:
 
 \begin{verbatim}
 \documentclass{impeart}
 \UseFont{libertinus}
-
 \begin{document}
-\LIB{IMPE is ready.}
+IMPE ist bereit. \LIB{Text mit Libertinus.}
 \end{document}
 \end{verbatim}
 
-Wenn dies gelingt, sind die kanonische Wrapper-Klasse, der Paketeinstieg und die
-automatische Schnittstelle zum Laden von Schriften für \TeX{} sichtbar.
+Der Test betrifft die übliche \XeLaTeX{}-Ausgabe;
+für XSR und Veröffentlichung gibt es gesonderte Prüfungen.
 
 \section{Schnellstart}
 
 Der einfachste IMPE-Arbeitsablauf besteht darin, eine Wrapper-Klasse zu wählen,
 die gewünschten Schriftfamilien oder Features auszuwählen und das Dokument
-anschließend wie gewohnt zu schreiben. IMPE ersetzt die gewöhnliche
-\LaTeX{}-Dokumentstruktur mit einer wiederverwendbaren
-Einrichtungsschicht darum.
+anschließend wie gewohnt zu schreiben. IMPE ergänzt die gewöhnliche
+\LaTeX{}-Dokumentstruktur um eine wiederverwendbare Einrichtungsschicht.
 
 Ein kleiner Artikel kann daher beispielsweise so aussehen:
 
@@ -236,10 +250,11 @@ Ein kleiner Artikel kann daher beispielsweise so aussehen:
 \end{document}
 \end{verbatim}
 
-Die Klasse liefert bereits das normale englische Artikellayout und die
-Basisschrift. Der Aufruf \verb|\UseFont{libertinus}| mit ausgelassenem Modus folgt dem
-registrierten automatischen Verhalten dieser Familie, aktiviert ihren globalen
-Schriftstapel und stellt zugleich den lokalen Befehl \verb|\LIB| bereit,
+Die Klasse stellt bereits den englischen Satzspiegel und CMU bereit.
+Der Aufruf \verb|\UseFont{libertinus}| registriert die lokale Auswahl
+\verb|\LIB| und zugleich eine ausdrücklich gewählte globale
+lateinische Schrift. Sie hat Vorrang vor der von der Klasse
+vorgegebenen CMU-Schrift,
 während \verb|\UseFeatures| zwei optionale Feature-Module aktiviert. Der Rest
 ist gewöhnliches \LaTeX{}.
 
@@ -270,7 +285,7 @@ geladen werden:
 
 \UseTemplateSet{
   layout = en_doc,
-  fonts = {cmu,libertinus},
+  fonts = {libertinus},
   features = {hyperlinks}
 }
 \end{verbatim}
