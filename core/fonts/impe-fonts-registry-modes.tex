@@ -12,6 +12,7 @@
 \prop_new:N \g__font_family_global_prop
 \prop_new:N \g__font_family_default_prop
 \prop_new:N \g__font_family_loaded_prop
+\prop_new:N \g__font_family_loaded_default_prop
 \prop_new:N \g__font_family_command_prop
 \prop_new:N \g__font_family_range_profile_prop
 \prop_new:N \g__font_family_global_route_prop
@@ -157,10 +158,26 @@
       { \__writing_legacy_registered: }
   }
 
+% Re-declaring a class default as a user choice promotes its priority.
+% This is the only case that bypasses the usual already-loaded fast path.
 \cs_new_protected:Npn \__font_family_use_declaration:nnn #1#2#3
   {
     \prop_if_in:NnTF \g__font_family_loaded_prop { #1 / #2 }
-      { }
+      {
+        \str_if_eq:nnT {#2} {global}
+          {
+            \bool_if:NF \g__font_registering_defaults_bool
+              {
+                \prop_if_in:NnT \g__font_family_loaded_default_prop { #1 / #2 }
+                  {
+                    \tl_set:Nx \l_tmpb_tl
+                      {scope=global,familyid=#1,\exp_not:n {#3}}
+                    \exp_args:NV \FontDeclare \l_tmpb_tl
+                    \prop_gremove:Nn \g__font_family_loaded_default_prop { #1 / #2 }
+                  }
+              }
+          }
+      }
       {
         \tl_set:Nx \l_tmpb_tl { scope = #2, familyid = #1, \exp_not:n {#3} }
         \exp_args:NV \FontDeclare \l_tmpb_tl
@@ -171,6 +188,14 @@
               { \__writing_wrap_legacy_local:n {#1} }
           }
         \prop_put:Nnn \g__font_family_loaded_prop { #1 / #2 } { loaded }
+        \str_if_eq:nnT {#2} {global}
+          {
+            \bool_if:NT \g__font_registering_defaults_bool
+              {
+                \prop_gput:Nnn \g__font_family_loaded_default_prop
+                  { #1 / #2 } { default }
+              }
+          }
       }
   }
 
