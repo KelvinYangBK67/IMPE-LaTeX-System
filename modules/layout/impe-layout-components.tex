@@ -329,6 +329,7 @@
 % --------------------------------------------------------------------------
 \makeatletter
 
+\ExplSyntaxOn
 % Rebase an unmodified base-class size command onto the publication leading
 % ratio. Calling the original size command first preserves NFSS size selection,
 % math skips and the author's explicit 10pt/11pt/12pt class choice.
@@ -337,6 +338,8 @@
   \@setfontsize\@currsize{\f@size}{%
     \fp_eval:n { \f@size * \dim_to_fp:n {#3} / \dim_to_fp:n {#2} }pt}%
 }
+\ExplSyntaxOff
+\makeatletter
 \newif\ifIMPELayoutUseCuratedSize
 \newcommand{\NextLayoutTypeDefaults}[4]{%
   \RequirePackage{setspace}%
