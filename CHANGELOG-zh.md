@@ -74,7 +74,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 字體／Writing 架構的內部原始碼版本，已合併 PR #23；尚非正式對外發佈。三語手冊與標準 Showcase 的 TeX 原始碼、追蹤中的 PDF 均刻意保留上一版，待正式發佈時一併修訂與重建。
 
 ### 新增
-* 將 Unicode 18.0.0 的 353 個區段、69 個人工維護的書寫系統設定檔、85 個具名資源／字體包別名，以及全部 59 個舊版家族 preset 分離管理。覆寫字體不再意外改動 書寫系統設定檔。
+* 將 Unicode 18.0.0 的 353 個區段、69 個人工維護的書寫系統設定檔、85 個具名資源／字體包別名，以及全部 59 個舊版家族 preset 分離管理。覆寫字體不再意外改動書寫系統設定檔。
 * 新增 \UseWriting{[字體包,選項]Profile}、\DeclareWriting{名稱}{設定}、\Font{名稱}[覆寫]{文字} 及 \Writing{設定}{文字}。既有 \UseFont mode、局部捷徑、直排與 XSR 渲染器繼續相容。
 * 以 xeCJK 原生逐字缺字檢測支援僅限 CJK 的 2×2×2（Serif/Sans × Regular/Bold × Upright/Italic）樣式矩陣，優先尋找目前字體包的其他面，再尋找同 Profile 與其他 CJK Profile；支援正文後續註冊、快取更新與去重警告。
 
@@ -144,7 +144,7 @@ Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容�
 * 目前的手冊、模板與受維護測試都改用標準 `impe*` 入口；自動檢查將舊入口的使用範圍維持在相容性 fixture 與獨立維護的 `papers/` 樹。
 * 移除受追蹤的 scratch `examples/` 樹，把其中獨立的 hyperlink-anchor 與 Libertinus-math 案例移入回歸測試；發佈包採用明確的內容清單。
 * 同步並精簡英文與繁體中文 README 及子系統參考文件，修正實作細節，並把目前所有 package/class metadata 更新為日期 2026-09-29 的 v1.0.1。
-* 發佈回歸測試改由 `VERSION` 推導 archive 與獨立文件檔名，同時維持 CTAN 與手冊的確定性建置。
+* 發佈回歸測試改由 `VERSION` 推導 archive 與獨立文件檔案名稱，同時維持 CTAN 與手冊的確定性建置。
 
 ## [1.0.0] - 2026-09-24
 
@@ -164,7 +164,7 @@ Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容�
 ### 調整
 
 * 將所有 `next*` 套件與 class 入口改為轉送至 `impe*` 標準實作的受支持相容 wrapper。
-* 所有可分發的內部 TeX runtime 檔改用 `impe-` 前綴，在共享 TeX tree 中維持專屬檔名。
+* 所有可分發的內部 TeX runtime 檔案改用 `impe-` 前綴，在共享 TeX tree 中維持專屬檔名。
 * 將 IMPE 定義為 Integrated Multilingual Publishing Environment（整合式多語出版環境），正式專案名稱仍為 `IMPE LaTeX System`。
 * 釐清 Git checkout、本地 `assets/fonts/` 字體庫，以及 full、core、CTAN 導向發佈包之間的關係。
 * 將 `impe.zip` 改為以單一頂層 `impe/` 目錄封裝，並把標準安裝位置改為 `tex/latex/impe/`，同時安全清理受管理的舊安裝。
@@ -222,7 +222,7 @@ Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容�
 
 ### 新增
 - 新增 `CHANGELOG.md`，用於追蹤版本更新歷史。
-- 新增輔助檔清理腳本：
+- 新增輔助檔案清理腳本：
   - `scripts/clean_aux.ps1`
   - `scripts/clean_aux.bat`
 - 新增多組字體註冊，並同步更新 catalog / debug 覆蓋，包括 `gentium`、`charis`、`nabataean`。

@@ -429,7 +429,7 @@ Catalog 分別處理字體 shaping、內建 layout route 與專用 TeX 模組：
 - 一般 shaping 由 `script`、`language`、`features` 組裝成 fontspec 選項
 - 內建 vertical 能力由 `core/fonts/impe-fonts-interface.tex` 處理
 - script-specific 或使用者提供的 TeX 邏輯存放於 `modules/fonts/`
-- 缽羅婆文的特殊處理掛在需要的字族上，例如 `pahlavi_psalter`；碑銘安息文與碑銘缽羅婆文 在 RawFeature 足夠時維持標準 fontspec 註冊
+- 缽羅婆文的特殊處理掛在需要的字族上，例如 `pahlavi_psalter`；碑銘安息文與碑銘缽羅婆文在 RawFeature 足夠時維持標準 fontspec 註冊
 
 ## 蒙古文區域字體映射與分發說明
 

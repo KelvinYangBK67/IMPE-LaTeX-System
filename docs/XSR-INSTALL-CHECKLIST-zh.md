@@ -35,7 +35,7 @@ TEXMF（其中 xsr-core.sty 位於 tex/latex/impe/xsr/）；XSR Python
 
 同時檢查安裝器生成的
 $HOME\texmf\tex\latex\impe\impe-xsr-runtime.tex，確認其中使用的是
-正確的私有 Python 執行檔；原本使用者管理的 impe.local.tex
+正確的私有 Python 執行檔案；原本使用者管理的 impe.local.tex
 仍然保留。
 
 ## C. 從已安裝環境編譯（不依賴第二個 XSR 倉庫）
@@ -87,7 +87,7 @@ CTAN 源碼封裝包含 XSR TeX/Python 原始碼，但 TeX Live 的安裝流程�
 ## G. 完全隔離的本地安裝驗證（更嚴格）
 
 上面的直接編譯在 IMPE 工作目錄內，TeX 仍可能優先讀取
-./core、./catalog 與 ./modules 中的倉庫原始檔。因此要對安裝
+./core、./catalog 與 ./modules 中的倉庫原始檔案。因此要對安裝
 結果作最終確認，另開一個不含 IMPE 原始碼的目錄，複製測試文件
 後再從該目錄編譯：
 
