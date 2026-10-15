@@ -15,7 +15,7 @@
 同步更新兩種語言的字體參考文件；若新行為需要長期保護，加入最小回歸測試。開發該
 字族時可以使用本機的聚焦探針。
 
-同一字體若用於多種文字，應將字體資源與 Unicode 書寫系統設定檔案
+同一字體若用於多種文字，應將字體資源與 Unicode 書寫系統設定檔
 分開註冊，並使用 `\UseWriting`、`\DeclareWriting`、`\Font`、
 `\Writing` 檢查綁定。既有 `\UseFont` preset 與專用局部命令仍照常使用。
 實作位於 `core/fonts/impe-fonts-usewriting.tex` 及其樣式／備援模組。

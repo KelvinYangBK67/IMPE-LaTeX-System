@@ -418,7 +418,7 @@ texindy -L english -C utf8 -M <job>-impe <job>.idx
 
 ### `glyphs`
 
-`glyphs` 與埃及、契丹字族獨立，啟用 `\UseFeature{glyphs}`
+`glyphs` 與埃及文、契丹小字的字族獨立，啟用 `\UseFeature{glyphs}`
 或 `features={glyphs}` 時載入 XSR 的行內／向量圖片功能。
 
 ```tex

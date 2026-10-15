@@ -53,7 +53,7 @@ Beamer 預設傳統 Madrid 主題及 4:3 畫布；可使用原生 `aspectratio=1
 
 ## Writing 與字體選擇
 
-既有字體 preset 仍推薦使用 \UseFont{preset}；需要把字體資源與 Unicode 書寫系統設定檔案 分開指定時，則使用：
+既有字體 preset 仍推薦使用 \UseFont{preset}；需要把字體資源與 Unicode 書寫系統設定檔分開指定時，則使用：
 
 ```tex
 \UseWriting{[shanggu]chinese}
@@ -137,7 +137,7 @@ Unix 可執行 `sh scripts/install.sh`。僅安裝 TeX 時，可在 PowerShell
 需要 XSR 動態渲染時再另行設定執行環境。渲染可使用 XeLaTeX
 shell-escape 或 XSR 預處理，一般 IMPE 文件則無須啟動 Python。
 
-core 封裝不附字體二進位檔；XSR 的文字後端需要可讀取的 TTF／OTF 字體檔案。
+core 封裝不附字體二進位檔案；XSR 的文字後端需要可讀取的 TTF／OTF 字體檔案。
 CTAN 分發原始碼，但 TeX Live 安裝程序不會自動執行 `pip`。
 詳見[字體參考](docs/FONTS-zh.md)及 [XSR 驗收清單](docs/XSR-INSTALL-CHECKLIST-zh.md)。
 
@@ -168,7 +168,7 @@ package/          公開 package 與 class 入口
 core/             穩定子系統邏輯
 catalog/          公開字體、版面與功能註冊
 modules/          具體版面、字體與功能模組
-assets/           本地執行資源；字體二進位檔存於本地
+assets/           本地執行資源；字體二進位檔案存於本地
 manual/           手冊原始碼、受追蹤 PDF 與 showcase
 docs/             子系統參考文件
 scripts/          建置與安裝工具

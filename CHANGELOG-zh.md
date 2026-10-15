@@ -10,7 +10,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 正式發佈前的遠端收口版本。**尚未正式發佈或建立 v1.1.0 Tag**；三語手冊、Showcase 的 TeX 原始碼與追蹤 PDF 將於本地出版收口階段同步、重建及稽覈。
 
-* 保留 1.0.5 書寫系統設定檔案／字體矩陣、1.0.6 出版版面及舊版恢復命令、1.0.7 原生優先索引與 1.0.8 XSR 1.1 Unicode 提取，作為 1.1.0 的既定功能基礎。
+* 保留 1.0.5 書寫系統設定檔／字體矩陣、1.0.6 出版版面及舊版恢復命令、1.0.7 原生優先索引與 1.0.8 XSR 1.1 Unicode 提取，作為 1.1.0 的既定功能基礎。
 * 新增腳註／minipage 相容性及六份公開入門模板的回歸編譯測試。
 * Full 公開封裝使用明確核准的字體收錄清單，未核准的二進位字體預設不收錄。
 * 新增獨立 Showcase 重建及 PDF 比對關卡；相關本地出版材料更新後才啟用完整發行驗收。
@@ -74,7 +74,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 字體／Writing 架構的內部原始碼版本，已合併 PR #23；尚非正式對外發佈。三語手冊與標準 Showcase 的 TeX 原始碼、追蹤中的 PDF 均刻意保留上一版，待正式發佈時一併修訂與重建。
 
 ### 新增
-* 將 Unicode 18.0.0 的 353 個區段、69 個人工維護的 書寫系統設定檔、85 個具名資源／字體包別名，以及全部 59 個舊版家族 preset 分離管理。覆寫字體不再意外改動 書寫系統設定檔案。
+* 將 Unicode 18.0.0 的 353 個區段、69 個人工維護的書寫系統設定檔、85 個具名資源／字體包別名，以及全部 59 個舊版家族 preset 分離管理。覆寫字體不再意外改動 書寫系統設定檔。
 * 新增 \UseWriting{[字體包,選項]Profile}、\DeclareWriting{名稱}{設定}、\Font{名稱}[覆寫]{文字} 及 \Writing{設定}{文字}。既有 \UseFont mode、局部捷徑、直排與 XSR 渲染器繼續相容。
 * 以 xeCJK 原生逐字缺字檢測支援僅限 CJK 的 2×2×2（Serif/Sans × Regular/Bold × Upright/Italic）樣式矩陣，優先尋找目前字體包的其他面，再尋找同 Profile 與其他 CJK Profile；支援正文後續註冊、快取更新與去重警告。
 
@@ -193,8 +193,8 @@ Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容�
 
 ### 調整
 
-* 將 文津宋體 整合為 `wenjin` 字族與 `\WJ{...}` 局部命令，Plane 0 / 2 / 3 改由 CJK fallback chain 統一處理。
-* 調整 CJK 路由：載入日文、朝鮮文或漢喃文字族時，共用漢字繼續使用文件的中文／CJK 字體；需要特定語言漢字字形時仍可使用 `\JP`、`\KR`、`\HN`。
+* 將文津宋體整合為 `wenjin` 字族與 `\WJ{...}` 局部命令，Plane 0 / 2 / 3 改由 CJK fallback chain 統一處理。
+* 調整 CJK 路由：載入日文、朝鮮文或漢喃文字族時，共用漢字繼續使用文件的中文／CJK 字體；需要日本漢字或朝鮮漢字字形時仍可使用 `\JP`、`\KR`、`\HN`。
 * 改善 CJK 與 Unicode-range fallback 行為，包括日文字體的全域 CJK 路由，以及擴展漢字範圍的 fallback 支援。
 * 更新 Libertinus catalog 路線，改用 TeX Live OTF 字族名稱並加入 mono；文字字族改以 fontspec 的 `no-math` 載入，預設保留完整 Computer Modern 數學設定；明確使用 `\UseMathFont{libertinus}` 時則切換到 Libertinus Math。
 * 改善紙本 layout 預設值、雙面文件頁面處理、中文 UI 章節編號、目錄間距、圖表題名與星號標題入目錄行為。

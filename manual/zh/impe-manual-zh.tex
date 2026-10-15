@@ -217,7 +217,7 @@ IMPE 已可使用。\LIB{Libertinus 局部文字。}
 \end{document}
 \end{verbatim}
 
-這個類別已提供中文文章版面，以及 CMU、尙古字體 等基礎字體。省略模式的
+這個類別已提供中文文章版面，以及 CMU、尙古字體等基礎字體。省略模式的
 \verb|\UseFont{libertinus}| 會遵循已註冊的自動行為：將 Libertinus 註冊為明確的全域拉丁字體候選，
 同時提供局部命令 \verb|\LIB|；\verb|\UseFeatures| 則啟用兩個選用功能模組。
 其餘部分都是一般的 \LaTeX{}。
@@ -462,11 +462,11 @@ IMPE 提供兩種公開字體選擇方式：簡單的已註冊字體預設，
 
 字體系統區分四類註冊資訊：
 \emph{Unicode 區塊資料}、
-\emph{書寫系統設定檔案}（碼位覆蓋範圍與文字處理規則）、
+\emph{書寫系統設定檔}（碼位覆蓋範圍與文字處理規則）、
 \emph{字體資源／字族}（實際字體樣式與對應關係），
 以及\emph{已註冊字體預設}。
 例如，\texttt{sanskrit} 是包含梵語排版行為的舊式字體預設，
-\texttt{devanagari} 則是可以搭配不同字體資源的書寫系統設定檔案。
+\texttt{devanagari} 則是可以搭配不同字體資源的書寫系統設定檔。
 
 1.1.0 提供 69 個書寫系統設定檔、85 個字體資源別名，
 並保留原有 59 個字體預設。書寫系統設定檔決定
@@ -561,7 +561,7 @@ CJK 使用 xeCJK 的主要、無襯線與等寬字體通道。
 假名與諺文可各自選擇字體範圍。
 若要顯示日本漢字或朝鮮漢字的字形，
 可使用 \verb|\JP{...}|、\verb|\KR{...}|
-等局部命令。重合的全域設定檔案仍遵循既有的路由優先級。
+等局部命令。重合的全域書寫系統設定檔仍遵循既有的路由優先級。
 
 \subsection{shaping、斷行與書寫方向}
 
@@ -1021,7 +1021,7 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 選項鍵仍使用 \texttt{font=}、\texttt{file=}、
 \texttt{stylemap=native|full}、
 \texttt{writing=} 及各字體樣式選項。
-下方提供所有設定檔案和資源別名清單。
+下方提供所有書寫系統設定檔和資源別名清單。
 
 \subsection{版面與頁眉命令}
 
@@ -1096,7 +1096,7 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 \endhead
 \texttt{cmu} & G & --- & Computer Modern Unicode 基礎字體 \\
 \texttt{noto} & L+G & \texttt{\string\NOT} & 通用 Noto 拉丁字體 \\
-\texttt{times} & L+G & \texttt{\string\TIM} & Times、Arial、Consolas 字族 \\
+\texttt{times} & L+G & \texttt{\string\TIM} & Times、Arial、Consolas 字體組合 \\
 \texttt{gentium} & L+G & \texttt{\string\GEN} & Gentium Plus \\
 \texttt{charis} & L+G & \texttt{\string\CHA} & Charis SIL \\
 \texttt{libertinus} & L+G & \texttt{\string\LIB} & Libertinus 襯線、無襯線與等寬字體 \\
@@ -1140,7 +1140,7 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 \texttt{sogdian\_old} & L+R & \texttt{\string\SGO} & 古粟特文，支援範圍路由 \\
 \texttt{chinese\_simplified} & L+R & \texttt{\string\SC} & 簡體中文 CJK 字體 \\
 \texttt{chinese\_traditional} & L+R & \texttt{\string\TC} & 繁體中文 CJK 字體 \\
-\texttt{japanese} & L+R & \texttt{\string\JP} & 日文與假名 \\
+\texttt{japanese} & L+R & \texttt{\string\JP} & 日文 \\
 \texttt{wenjin} & L+R & \texttt{\string\WJ} & 文津宋體，支援 CJK 缺字回退 \\
 \texttt{shanggu} & G & --- & 尙古字體，全域 CJK 設定 \\
 \texttt{sim} & G & --- & 簡體中文系統字體 \\
@@ -1166,16 +1166,16 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 \texttt{---} 表示需要使用者提供字體資源或指定
 \texttt{font=}、\texttt{file=}。
 「覆蓋範圍鍵」列出實際註冊的 Unicode 範圍鍵；
-同一設定檔案包含多個範圍時，會在儲存格內逐項換行。
+同一書寫系統設定檔包含多個範圍時，會在儲存格內逐項換行。
 
 \begingroup\small
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.245\linewidth}>{\raggedright\arraybackslash}p{0.305\linewidth}>{\raggedright\arraybackslash}p{0.375\linewidth}@{}}
 \toprule
-\textbf{設定檔案 ID} & \textbf{預設字體資源} & \textbf{覆蓋範圍鍵} \\
+\textbf{設定檔 ID} & \textbf{預設字體資源} & \textbf{覆蓋範圍鍵} \\
 \midrule
 \endfirsthead
 \toprule
-\textbf{設定檔案 ID} & \textbf{預設字體資源} & \textbf{覆蓋範圍鍵} \\
+\textbf{設定檔 ID} & \textbf{預設字體資源} & \textbf{覆蓋範圍鍵} \\
 \midrule
 \endhead
 \texttt{basic} & \texttt{basic} & \texttt{basic} \\
@@ -1262,7 +1262,7 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 這 85 個別名可在 \verb|\UseWriting|
 的中括號內選用；第二欄列出對應的已註冊字族。
 多個別名可能來自同一字族，
-但選用不同字體樣式。
+但選用不同的字體樣式。
 
 \begingroup\small
 \begin{longtable}{@{}p{0.43\linewidth}p{0.47\linewidth}@{}}
@@ -1396,7 +1396,7 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 
 例如，
 \verb|\UseWriting{[shanggu,italic=zhuque]chinese}|
-會明確指定斜體字體樣式所用的字體。
+會明確指定斜體樣式使用的字體。
 
 \subsection{其他文字排版命令}
 

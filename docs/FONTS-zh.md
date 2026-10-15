@@ -2,12 +2,12 @@
 
 [English](FONTS.md)
 
-## 書寫系統設定檔案 與字體資源
+## 書寫系統設定檔與字體資源
 
 簡單選擇既有 preset 仍推薦 \UseFont{preset}（包含全部舊版 ID）。
-進階介面將 **Unicode 書寫系統設定檔案**（文字路由及 Renderer 行為）與
+進階介面將 **Unicode 書寫系統設定檔**（文字路由及 Renderer 行為）與
 **Font resource/pack**（字體文件及已存在的字體面）分離。
-改用其他字體包不改變 書寫系統設定檔案。本版有 69 個人工維護的 Profile、
+改用其他字體包不改變書寫系統設定檔。本版有 69 個人工維護的 Profile、
 85 個資源別名及原有 59 個家族 preset。
 
 ```tex
@@ -28,7 +28,7 @@
 
 **自動缺字備援只限 CJK。** xeCJK 以 Serif/Sans × Regular/Bold ×
 Upright/Italic 的 2×2×2 矩陣按逐字字形覆蓋選擇：
-先找目前字體資源中實際存在的其他字體面，再找相同 書寫系統設定檔案，
+先找目前字體資源中實際存在的其他字體樣式，再找相同書寫系統設定檔，
 最後才找其他 CJK Profile 的候選字體。字體面存在但缺少該字時繼續尋找；
 正文中途註冊新字體亦會更新候選鏈及快取。
 非 CJK 文字不提供通用缺字自動備援，重疊 Unicode Profile 的全域仲裁亦未實作。
@@ -61,7 +61,7 @@ core/fonts/impe-fonts-system.tex
 - writing model
 - script / behavior 處理
 - 宣告介面
-- 字族註冊表 行為
+- 字族註冊表的行為
 
 目前的 core 檔案分工如下：
 
@@ -106,7 +106,7 @@ core/fonts/impe-fonts-system.tex
 目前模組包括：
 
 - `impe-font-pahlavi.tex`
-  缽羅婆 專用的 shaping routing
+  缽羅婆文專用的 shaping 路由
 - `impe-font-egyptian.tex`
   埃及文字體與 Unicode 自動組字
 - `impe-font-khitan_small.tex`
@@ -125,12 +125,12 @@ core/fonts/impe-fonts-system.tex
 字體層支援：
 
 - 全域綁定
-- 區域 command 字族
+- 局部命令字族
 - 以 `\FontRegisterFamily` 為中心的集中註冊
 
-### 普通區域字族
+### 一般局部字族
 
-這是一般使用者新增字族時的目標格式。普通區域字族使用 `assets/fonts/` 下的一個目錄；日後若需全域行為，可另外宣告：
+這是一般使用者新增字族時的目標格式。一般局部字族使用 `assets/fonts/` 下的一個目錄；日後若需全域行為，可另外宣告：
 
 ```tex
 \FontRegisterFamily{
@@ -158,7 +158,7 @@ core/fonts/impe-fonts-system.tex
 
 一般註冊使用 `command`、`name`、`path`、`regular`。其他樣式欄位可選，系統會依 core fallback 鏈處理。`sans*` 字體會在 local 命令中自動映射；`mono*` 保留給 global / system 字族或明確的進階註冊。
 
-普通區域字族使用標準註冊欄位；以下欄位用於特殊情況：
+一般局部字族使用標準註冊欄位；以下欄位用於特殊情況：
 
 - `globalkind` / `globalstatus`
 - 與主 `path` 相同的 style-specific path 欄位
@@ -178,7 +178,7 @@ core/fonts/impe-fonts-system.tex
 
 `scriptclass = cjk` 是內部路由提示，用於選擇 xeCJK 路徑。包含 `japanese` 在內的 CJK global 字族會透過 xeCJK 替換文件的 CJK main / sans / mono 通道。一般字族的 OpenType shaping 則透過 `script`、`language`、`features` 表達。
 
-在自動範圍路由中，日文字體與朝鮮文字體分別接管其專屬文字（假名與諺文）以及 CJK 標點；共用漢字仍使用文件的 CJK 字體，讓中文字體保持優先。需要明確採用日本漢字或朝鮮漢字字形時，可分別使用局部命令 `\JP{...}`、`\KR{...}`。漢喃文字體透過 `\HN{...}` 明確局部選用。
+在自動範圍路由中，日文字體與朝鮮文字體分別接管其專屬文字（假名與諺文）以及 CJK 標點；共用漢字仍使用文件的 CJK 字體，讓中文字體保持優先。需要明確採用日本漢字或朝鮮漢字的字形時，可分別使用局部命令 `\JP{...}`、`\KR{...}`。漢喃文字體透過 `\HN{...}` 明確局部選用。
 
 ### Shaping、Layout 與特殊模組
 
@@ -201,7 +201,7 @@ core/fonts/impe-fonts-system.tex
 
 ## 註冊語法
 
-字族目前集中註冊在：
+字族的註冊資料集中存放在：
 
 ```text
 catalog/impe-fonts-catalog.tex
@@ -346,7 +346,7 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 | `vietnamese_hannom` | `HN` | `local` | 否 | 越南文（漢喃文） |
 
 目前阿拉伯文相關字族的分工為：
-- `arabic`：regular/bold 使用 Naskh，italic/bolditalic 使用 Ruqaa，`sans` / `sansbold` 使用 Noto Sans Arabic，`sansitalic` / `sansbolditalic` 使用 Noto Kufi Arabic；局部字體樣式涵蓋文字與 sans 通道。
+- `arabic`：regular/bold 使用 Naskh，italic/bolditalic 使用 Ruqaa，`sans` / `sansbold` 使用 Noto Sans Arabic，`sansitalic` / `sansbolditalic` 使用 Noto Kufi Arabic；局部字體樣式涵蓋正文與 sans 通道。
 - `urdu`：Nastaliq 作為波斯體阿拉伯文的專用字體。
 
 若 local 命令欄位為 `-`，表示該字族在目前 catalog 中是純 global 用途。
@@ -365,7 +365,7 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
   `sans*` 來自 Arial，
   `mono*` 來自 Consolas。
 - `arabic`
-  `regular` / `bold` 使用 Naskh，`italic` / `bolditalic` 使用 Ruqaa，`sans` / `sansbold` 使用 Noto Sans Arabic，`sansitalic` / `sansbolditalic` 使用 Noto Kufi Arabic。局部字體樣式涵蓋文字與 sans 通道。
+  `regular` / `bold` 使用 Naskh，`italic` / `bolditalic` 使用 Ruqaa，`sans` / `sansbold` 使用 Noto Sans Arabic，`sansitalic` / `sansbolditalic` 使用 Noto Kufi Arabic。局部字體樣式涵蓋正文與 sans 通道。
 - `urdu`
   Nastaliq 作為波斯體阿拉伯文的專用字體；`arabic` 使用獨立的 Naskh/Ruqaa 映射。
 - `khitan_small`
@@ -379,7 +379,7 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 
 ## 本地字體庫與公開封裝
 
-Git 倉庫收錄原始碼與文件。本地字體二進位檔可存放於 `assets/fonts/`，
+Git 倉庫收錄原始碼與文件。本地字體二進位檔案可存放於 `assets/fonts/`，
 並透過 `impe.local.tex` 或 `\SetCatalogFontRoot{...}` 指定。
 公開 Full 封裝只收錄[逐檔核准清單](../font_licenses/approved-public-fonts.txt)
 內、本地實際存在的字體。發行腳本要求字體目錄可讀取，且至少包含
@@ -429,7 +429,7 @@ Catalog 分別處理字體 shaping、內建 layout route 與專用 TeX 模組：
 - 一般 shaping 由 `script`、`language`、`features` 組裝成 fontspec 選項
 - 內建 vertical 能力由 `core/fonts/impe-fonts-interface.tex` 處理
 - script-specific 或使用者提供的 TeX 邏輯存放於 `modules/fonts/`
-- 缽羅婆 的特殊處理掛在需要的字族上，例如 `pahlavi_psalter`；安息文 與 Inscriptional 缽羅婆 在 RawFeature 足夠時維持標準 fontspec 註冊
+- 缽羅婆文的特殊處理掛在需要的字族上，例如 `pahlavi_psalter`；碑銘安息文與碑銘缽羅婆文 在 RawFeature 足夠時維持標準 fontspec 註冊
 
 ## 蒙古文區域字體映射與分發說明
 

@@ -148,8 +148,8 @@ class 加上明確的 `\UseTemplateSet`。
 
 ## Writing 與字體註冊
 
-Unicode 區段資料、人工維護的 書寫系統設定檔、字體資源包及與舊版
-相容的 preset 分開註冊。全域 CJK 綁定會獨立保存 書寫系統設定檔案，
+Unicode 區段資料、人工維護的書寫系統設定檔、字體資源包及與舊版
+相容的 preset 分開註冊。全域 CJK 綁定會獨立保存書寫系統設定檔，
 字形缺漏由 xeCJK 及 2×2×2 字體面矩陣處理。
 本機制不取代舊有 XeTeX interchar 全域區段路由仲裁。
 詳見 [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md)。
