@@ -5,9 +5,9 @@
 IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
 文件功能。
 
-目前原始碼版本：**1.1.0**（尚未正式發佈的候選版）。詳見[變更日誌](CHANGELOG-zh.md)。
+目前發佈版本：**1.1.0**。詳見[變更日誌](CHANGELOG-zh.md)及 [GitHub Releases](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/releases)。
 
-目前的 API 以本文件及 [`docs/`](docs/SYSTEM-zh.md) 為準。三語手冊及 Showcase PDF 的出版更新見 [1.1.0 驗收清單](docs/RELEASE-1.1.0-LOCAL.md)。
+1.1.0 的 API 以本文件及 [`docs/`](docs/SYSTEM-zh.md) 為準。發佈材料包含英文、德文、正體中文手冊與標準 Showcase；建製與驗收方式見[發行驗證指南](docs/RELEASE-1.1.0-LOCAL.md)。
 
 ## 快速開始
 
