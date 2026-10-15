@@ -5,7 +5,7 @@ This guide records how the 1.1.0 release assets are built, checked and published
 ## Build and verify
 
 1. Synchronize a clean local `main` checkout and confirm that its Windows/Linux CI has passed.
-2. Review the local font library against `font_licenses/approved-public-fonts.txt` and `FONT-NOTICES.md`. Only approved, locally present font files may enter the public Full archive.
+2. Review the local font library against `font_licenses/approved-public-fonts.txt` and `font_licenses/FONT-NOTICES.md`. Only approved, locally present font files may enter the public Full archive.
 3. Run `./scripts/build_release.ps1` from the repository root in PowerShell. The default build **clears `dist/`**, rebuilds the canonical Showcase once from TeX, compiles all three manuals from source using that Showcase, compares independently reproduced manual PDFs, and produces Full, Core and CTAN archives. The builder does **not** overwrite tracked PDFs in `manual/`.
 4. Inspect all seven output files. In particular, check fonts, links, Unicode copy behaviour, landscape Showcase pages and duplicate page numbers in each embedded appendix. The Showcase retains its own page numbering; the host manuals do not print theirs over inserted pages. Confirm the Full archive contains only approved font files.
 5. If the repository's **tagged source tree** should also distribute updated `manual/*/*.pdf`, replace the four tracked PDF files with their newly built `dist/` versions and commit them **before** tagging. The GitHub Release PDF assets always come from `dist/`; otherwise, tracked PDFs and release assets may differ. Recheck the final commit and CI after any such update.

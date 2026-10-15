@@ -217,9 +217,10 @@ tests\run_regressions.ps1 -PublicFonts
 ```
 
 The suite covers canonical and legacy entries, font routing, starter templates,
-manual builds, and installation. Release packaging additionally checks the
-tracked Showcase against a rebuilt copy. See the [local publication checklist](docs/RELEASE-1.1.0-LOCAL.md)
-for final validation and [font-library policy](assets/README.md) for approved binaries.
+manual builds, and installation. Release packaging recompiles the Showcase and
+all manuals from source and checks reproducibility of the manual PDFs. See the
+[release verification guide](docs/RELEASE-1.1.0-LOCAL.md) and
+[font-library policy](assets/README.md) for approved binaries.
 
 ## Maintainer
 
