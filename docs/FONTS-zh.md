@@ -2,12 +2,12 @@
 
 [English](FONTS.md)
 
-## Writing Profile 與字體資源
+## 書寫系統設定檔與字體資源
 
 簡單選擇既有 preset 仍推薦 \UseFont{preset}（包含全部舊版 ID）。
-進階介面將 **Unicode Writing Profile**（文字路由及 Renderer 行為）與
+進階介面將 **Unicode 書寫系統設定檔**（文字路由及 Renderer 行為）與
 **Font resource/pack**（字體文件及已存在的字體面）分離。
-改用其他字體包不改變 Writing Profile。本版有 69 個人工維護的 Profile、
+改用其他字體包不改變書寫系統設定檔。本版有 69 個人工維護的書寫系統設定檔、
 85 個資源別名及原有 59 個家族 preset。
 
 ```tex
@@ -28,10 +28,10 @@
 
 **自動缺字備援只限 CJK。** xeCJK 以 Serif/Sans × Regular/Bold ×
 Upright/Italic 的 2×2×2 矩陣按逐字字形覆蓋選擇：
-先找目前字體資源中實際存在的其他字體面，再找相同 Writing Profile，
-最後才找其他 CJK Profile 的候選字體。字體面存在但缺少該字時繼續尋找；
+先找目前字體資源中實際存在的其他字體樣式，再找相同書寫系統設定檔，
+最後才找其他 CJK 書寫系統設定檔 的候選字體。字體樣式存在但缺少該字時繼續尋找；
 正文中途註冊新字體亦會更新候選鏈及快取。
-非 CJK 文字不提供通用缺字自動備援，重疊 Unicode Profile 的全域仲裁亦未實作。
+非 CJK 文字不提供通用缺字自動備援，重疊 Unicode 書寫系統設定檔的全域仲裁亦未實作。
 
 完整選項、別名及限制見 [1.0.5 Writing API](USEWRITING-1.0.5.md)。
 
@@ -57,20 +57,20 @@ core/fonts/impe-fonts-system.tex
 這一層負責穩定機制：
 
 - defaults
-- 樣式 fallback 解析
+- 樣式 回退 解析
 - writing model
 - script / behavior 處理
 - 宣告介面
-- family registry 行為
+- 字族註冊表的行為
 
 目前的 core 檔案分工如下：
 
 - `impe-fonts-system.tex`
-  字體子系統的公開入口。它會載入 defaults 層、family registry，以及 `catalog/impe-fonts-catalog.tex`。
+  字體子系統的公開入口。它會載入 defaults 層、字族註冊表，以及 `catalog/impe-fonts-catalog.tex`。
 - `impe-fonts-defaults.tex`
-  載入內部各層邏輯，並定義 scope、script class、fallback mode、writing model、behavior、backend 等預設值。
+  載入內部各層邏輯，並定義 scope、script class、回退模式、writing model、behavior、backend 等預設值。
 - `impe-fonts-style.tex`
-  負責樣式 fallback 鏈的解析，例如 `bold`、`italic`、`bolditalic`、`sans*`、`mono*`。
+  負責樣式 回退鏈的解析，例如 `bold`、`italic`、`bolditalic`、`sans*`、`mono*`。
 - `impe-fonts-writing.tex`
   定義並驗證 writing model 相關欄位：inline axis、inline direction、block progression。
 - `impe-fonts-script.tex`
@@ -78,11 +78,11 @@ core/fonts/impe-fonts-system.tex
 - `impe-fonts-behavior.tex`
   定義 inline / block 行為路由，目前包括一般行為、RTL 行為與藏文斷行行為 hook。
 - `impe-fonts-interface.tex`
-  主要的宣告引擎。它負責解析 family 註冊欄位、解析實際字體選項、定義 public commands，並且內建 `layout = vertical` route。
+  主要的宣告引擎。它負責解析字族註冊欄位、解析實際字體選項、定義 public commands，並且內建 `layout = vertical` route。
 - `impe-fonts-registry.tex`
-  保存底層 declaration entry，之後再把它們轉成可使用的 local / global family。
+  保存底層 declaration entry，之後再把它們轉成可使用的 local / global 字族。
 - `impe-fonts-registry-modes.tex`
-  追蹤 family 的載入模式（`local` / `global`），並負責 on-demand family activation。
+  追蹤字族的載入模式（`local` / `global`），並負責 on-demand 字族啟用。
 - `impe-fonts-helpers.tex`
   提供字體框架共用的小型 helper primitive。
 
@@ -92,7 +92,7 @@ core/fonts/impe-fonts-system.tex
 
 它負責宣告：
 
-- family id
+- 字族 id
 - command 名稱
 - 字體檔案路徑
 - script / language / feature 中介資料
@@ -106,31 +106,31 @@ core/fonts/impe-fonts-system.tex
 目前模組包括：
 
 - `impe-font-pahlavi.tex`
-  Pahlavi 專用的 shaping routing
+  缽羅婆文專用的 shaping 路由
 - `impe-font-egyptian.tex`
-  埃及聖書字字體與 Unicode 自動組字
+  埃及文字體與 Unicode 自動組字
 - `impe-font-khitan_small.tex`
   契丹小字的 XSR 原生堆疊接口
 - `impe-font-mlmodern.tex`
-  `mlmodern` family 的 NFSS/package 整合
+  `mlmodern` 字族的 NFSS/package 整合
 
 補充說明：
 
 - `layout = vertical` 現在已經內建在 `core/fonts/impe-fonts-interface.tex`
 - 一般 OpenType shaping 由 `script`、`language`、`features` 這些註冊欄位統一表達
-- 對於採用標準 fontspec shaping 的新 family，在 catalog 中新增註冊；`modules/fonts/` 用於 script-specific 行為
+- 對於採用標準 fontspec shaping 的新字族，在 catalog 中新增註冊；`modules/fonts/` 用於 script-specific 行為
 
 ## 宣告模型
 
 字體層支援：
 
 - 全域綁定
-- 區域 command family
+- 局部命令字族
 - 以 `\FontRegisterFamily` 為中心的集中註冊
 
-### 普通區域 Family
+### 一般局部字族
 
-這是一般使用者新增 family 時的目標格式。普通區域 family 使用 `assets/fonts/` 下的一個目錄；日後若需全域行為，可另外宣告：
+這是一般使用者新增字族時的目標格式。一般局部字族使用 `assets/fonts/` 下的一個目錄；日後若需全域行為，可另外宣告：
 
 ```tex
 \FontRegisterFamily{
@@ -156,9 +156,9 @@ core/fonts/impe-fonts-system.tex
 }
 ```
 
-一般註冊使用 `command`、`name`、`path`、`regular`。其他樣式欄位可選，系統會依 core fallback 鏈處理。`sans*` 字體會在 local 命令中自動映射；`mono*` 保留給 global / system family 或明確的進階註冊。
+一般註冊使用 `command`、`name`、`path`、`regular`。其他樣式欄位可選，系統會依 core 回退鏈處理。`sans*` 字體會在 local 命令中自動映射；`mono*` 保留給 global / system 字族或明確的進階註冊。
 
-普通區域 family 使用標準註冊欄位；以下欄位用於特殊情況：
+一般局部字族使用標準註冊欄位；以下欄位用於特殊情況：
 
 - `globalkind` / `globalstatus`
 - 與主 `path` 相同的 style-specific path 欄位
@@ -168,23 +168,23 @@ core/fonts/impe-fonts-system.tex
 - 直排相關欄位
 - `mono` / `monobold`
 
-### 全域 Family
+### 全域字族
 
-帶有 `global = {...}` 區塊的 family 可透過明確的 `globalfonts` override 載入。大部分可作為全域字體的 family 是 Latin / CJK / system 類 family，例如 `cmu`、`noto`、`times`、`gentium`、`charis`、`libertinus`、`japanese`、`shanggu`、`sim`。`hindi`、`sanskrit`、`tibetan` 這類 complex-script global 會用 `unicodeblocks` 限定 Unicode 區段，讓 Latin、漢字及其他文字維持原有字體。`hindi` range global 使用 Devanagari 區段及印地語斷行行為。`sanskrit` range global 會為 Devanagari 基礎區段加入 akshara-aware 斷行，並將 virama 與後接 consonant 保持在同一行。Tibetan range global 保留核心 tsheg 行為：`U+0F0B` / `U+0F0C` 後面接藏文字母 / 符號時允許斷行，斷點維持在藏文標點之後。若 family 缺少 `global` 區塊卻被要求以 global mode 載入，registry 會直接回報「no global mode」錯誤。
+帶有 `global = {...}` 區塊的字族可透過明確的 `globalfonts` override 載入。大部分可作為全域字體的字族是 Latin / CJK / system 類字族，例如 `cmu`、`noto`、`times`、`gentium`、`charis`、`libertinus`、`japanese`、`shanggu`、`sim`。`hindi`、`sanskrit`、`tibetan` 這類 complex-script global 會用 `unicodeblocks` 限定 Unicode 區段，讓 Latin、漢字及其他文字維持原有字體。`hindi` range global 使用 Devanagari 區段及印地語斷行行為。`sanskrit` range global 會為 Devanagari 基礎區段加入 akshara-aware 斷行，並將 virama 與後接 consonant 保持在同一行。Tibetan range global 保留核心 tsheg 行為：`U+0F0B` / `U+0F0C` 後面接藏文字母 / 符號時允許斷行，斷點維持在藏文標點之後。若字族缺少 `global` 區塊卻被要求以 global mode 載入，registry 會直接回報「no global mode」錯誤。
 
 `cmu` 與 `times` 是 system / bundled 例外：它們可直接使用字體名稱，`path` 欄位按實際來源設定。
 
 ### CJK / 內部路由
 
-`scriptclass = cjk` 是內部路由提示，用於選擇 xeCJK 路徑。包含 `japanese` 在內的 CJK global family 會透過 xeCJK 替換文件的 CJK main / sans / mono 通道。一般 family 的 OpenType shaping 則透過 `script`、`language`、`features` 表達。
+`scriptclass = cjk` 是內部路由提示，用於選擇 xeCJK 路徑。包含 `japanese` 在內的 CJK global 字族會透過 xeCJK 替換文件的 CJK main / sans / mono 通道。一般字族的 OpenType shaping 則透過 `script`、`language`、`features` 表達。
 
-在自動範圍路由中，日文字體與朝鮮文字體分別接管其專屬文字（假名與諺文）以及 CJK 標點；共用漢字仍使用文件的 CJK 字體，讓中文字體保持優先。需要明確採用日文或朝鮮文漢字字形時，可分別使用局部命令 `\JP{...}`、`\KR{...}`。越南漢喃字體透過 `\HN{...}` 明確局部選用。
+在自動範圍路由中，日文字體與朝鮮文字體分別接管其專屬文字（假名與諺文）以及 CJK 標點；共用漢字仍使用文件的 CJK 字體，讓中文字體保持優先。需要明確採用日本漢字或朝鮮漢字的字形時，可分別使用局部命令 `\JP{...}`、`\KR{...}`。漢喃文字體透過 `\HN{...}` 明確局部選用。
 
 ### Shaping、Layout 與特殊模組
 
 `script`、`language`、`features = { RawFeature = { script=... } }` 提供標準 fontspec / OpenType shaping 選項。
 
-`layout = vertical` 會選擇 core 內建的 vertical layout route，用於現有蒙古文、滿文、古回鶻文一類條目。它的參數包括：
+`layout = vertical` 會選擇 core 內建的 vertical layout route，用於現有蒙古文、滿文、回鶻文一類條目。它的參數包括：
 
 - `verticalstrategy`
 - `verticalrotation`
@@ -201,7 +201,7 @@ core/fonts/impe-fonts-system.tex
 
 ## 註冊語法
 
-字體 family 目前集中註冊在：
+字族的註冊資料集中存放在：
 
 ```text
 catalog/impe-fonts-catalog.tex
@@ -230,9 +230,9 @@ catalog/impe-fonts-catalog.tex
 
 - `command` 以純識別符定義區域命令名稱
 - `path` 指向字體所在目錄
-- `regular` / `bold` / `italic` / `bolditalic` 指向具體字體檔
-- `local = {...}` 會建立區域命令 family
-- `global = {...}` 會把 family 綁定進文件全域預設
+- `regular` / `bold` / `italic` / `bolditalic` 指向具體字體檔案
+- `local = {...}` 會建立區域命令字族
+- `global = {...}` 會把字族綁定進文件全域預設
 - `unicodeblocks = {...}` 透過 XeLaTeX Unicode block transitions 路由指定區段，其餘文字沿用原有 main/sans/mono 字體棧
 - `layout = vertical` 會選擇內建 vertical layout route
 - `verticalstrategy` / `verticalrotation` / `verticalorigin` / `verticaltopcorrection` 會配置 `layout = vertical`
@@ -246,15 +246,15 @@ transition 會在該作用域內暫停，因此 `\HI{...}` 之類的命令維持
 優先於全域 Devanagari owner；離開作用域後會恢復自動路由。
 
 range 路由為實際已配置的 XeTeX interchar class 與段落邊界 class 建立
-transition，並在文檔開始時補登其他套件較晚配置的 class。同一 family
+transition，並在文檔開始時補登其他套件較晚配置的 class。同一字族
 擁有的相鄰 Unicode block 之間仍保留空 transition，使 shaping run 可以連續。
 
-載入 `thai` family 時，IMPE 會選用 XeTeX 的 ICU `th_TH` 斷行 locale，
+載入 `thai` 字族時，IMPE 會選用 XeTeX 的 ICU `th_TH` 斷行 locale，
 讓連續泰文長句取得字典式斷行位置，由系統安排斷點。
 
 ## 最小示例
 
-自動載入 family 的例子：
+自動載入字族的例子：
 
 ```tex
 \UseTemplateSet{
@@ -273,18 +273,18 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 
 這代表：
 
-- 省略 mode 的 `fonts = {...}` 會依每個 family 的註冊行為載入
+- 省略 mode 的 `fonts = {...}` 會依每個字族的註冊行為載入
 - `cmu` 與 `shanggu` 會採用其註冊的 global 行為
 - `hebrew` 與 `arabic` 會建立其註冊的 local 命令
 - 明確的 `[global]` mode 會刻意覆寫註冊行為
 
-## 已註冊 Families
+## 已註冊字族
 
-目前 catalog 中已註冊的 family 如下。`fonts = {...}` 會依各 family 註冊的
-自動行為載入；`globalfonts = {...}` 是明確的 global 綁定要求，family
+目前 catalog 中已註冊的字族如下。`fonts = {...}` 會依各字族註冊的
+自動行為載入；`globalfonts = {...}` 是明確的 global 綁定要求，字族
 沒有 global 定義時會直接報錯。
 
-| Family id | Local 命令 | 預設模式 | 提供 global | 說明 |
+| 字族 id | Local 命令 | 預設模式 | 提供 global | 說明 |
 |---|---|---|---|---|
 | `cmu` | `-` | `global` | 是 | CMU 拉丁字族；全域綁定 |
 | `noto` | `NOT` | `local` | 是 | Noto 拉丁字族 |
@@ -297,20 +297,20 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 | `coptic` | `CO` | `local` | 否 | 科普特文 |
 | `bopomofo` | `ZY` | `local` | 否 | 注音 / Bopomofo |
 | `cuneiform` | `CU` | `local` | 否 | 楔形文字 |
-| `glagolitic` | `GL` | `local` | 否 | 格拉哥里字母 |
-| `italic` | `OI` | `local` | 否 | 古意大利字母 |
-| `hungarian` | `OH` | `local` | 否 | 古匈牙利字母 |
-| `runic` | `RU` | `local` | 否 | 如尼字母 |
+| `glagolitic` | `GL` | `local` | 否 | 格拉哥里文 |
+| `italic` | `OI` | `local` | 否 | 古義大利文 |
+| `hungarian` | `OH` | `local` | 否 | 古匈牙利文 |
+| `runic` | `RU` | `local` | 否 | 盧恩文 |
 | `armenian` | `HY` | `local` | 否 | 亞美尼亞文 |
-| `hindi` | `HI` | `local` | 是 | 印地語；global 套用於 Devanagari Unicode 區段及印地語斷行行為 |
-| `sanskrit` | `SA` | `local` | 是 | 梵語；global 套用於 Devanagari 與 Vedic Unicode 區段 |
-| `devanagari` | `DEV` | `local` | 否 | 通用天城體 family |
+| `hindi` | `HI` | `local` | 是 | 天城文；global 套用於 Devanagari Unicode 區段及印地語斷行行為 |
+| `sanskrit` | `SA` | `local` | 是 | 天城文（梵語）；global 套用於 Devanagari 與 Vedic Unicode 區段 |
+| `devanagari` | `DEV` | `local` | 否 | 通用天城文字族 |
 | `tamil` | `TA` | `local` | 否 | 泰米爾文 |
 | `brahmi` | `BR` | `local` | 否 | 婆羅米文 |
 | `georgian` | `KA` | `local` | 否 | 格魯吉亞文 |
 | `tibetan` | `TI` | `local` | 是 | 藏文；global 套用於 Tibetan Unicode 區段 |
 | `arabic` | `AR` | `local` | 否 | 阿拉伯文 |
-| `urdu` | `UR` | `local` | 否 | 烏爾都文 |
+| `urdu` | `UR` | `local` | 否 | 阿拉伯文（波斯體） |
 | `aramaic` | `IA` | `local` | 否 | 帝國亞蘭文 |
 | `nabataean` | `NB` | `local` | 否 | 納巴泰文 |
 | `hebrew` | `HE` | `local` | 否 | 希伯來文 |
@@ -318,11 +318,11 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 | `syriac_eastern` | `SYE` | `local` | 否 | 東敘利亞文 |
 | `kharosthi` | `KH` | `local` | 否 | 佉盧文 |
 | `khitan_small` | `KHS` | `local` | 否 | 契丹小字 |
-| `pahlavi_parthian` | `PAR` | `local` | 否 | 碑銘帕提亞文 |
-| `pahlavi_inscriptional` | `PAH` | `local` | 否 | 碑銘巴列維文 |
-| `pahlavi_psalter` | `PSP` | `local` | 否 | 詩篇巴列維文 |
+| `pahlavi_parthian` | `PAR` | `local` | 否 | 碑銘安息文 |
+| `pahlavi_inscriptional` | `PAH` | `local` | 否 | 碑銘缽羅婆文 |
+| `pahlavi_psalter` | `PSP` | `local` | 否 | 詩篇缽羅婆文 |
 | `avestan` | `AV` | `local` | 否 | 阿維斯陀文 |
-| `manichaean` | `MA` | `local` | 否 | 摩尼文字 |
+| `manichaean` | `MA` | `local` | 否 | 摩尼文 |
 | `phoenician` | `PH` | `local` | 否 | 腓尼基文 |
 | `samaritan` | `SM` | `local` | 否 | 撒馬利亞文 |
 | `sogdian` | `SG` | `local` | 否 | 粟特文 |
@@ -330,60 +330,60 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 | `chinese_simplified` | `SC` | `local` | 否 | 簡體中文 |
 | `chinese_traditional` | `TC` | `local` | 否 | 繁體中文 |
 | `japanese` | `JP` | `local` | 是 | 日文；global 使用 xeCJK 的 CJK 字體通道 |
-| `wenjin` | `WJ` | `local` | 是 | 文津宋體，P0 爲主字體，P2/P3 作 xeCJK fallback |
-| `shanggu` | `-` | `global` | 是 | 漢字全域 CJK family |
+| `wenjin` | `WJ` | `local` | 是 | 文津宋體，P0 爲主字體，P2/P3 作 xeCJK 回退 |
+| `shanggu` | `-` | `global` | 是 | 尙古字體（明體／黑體），全域 CJK 字族 |
 | `sim` | `-` | `global` | 是 | Windows CJK 字族 |
-| `korean` | `KR` | `local` | 否 | 韓文 |
-| `tangut` | `TG` | `local` | 否 | 西夏文 |
+| `korean` | `KR` | `local` | 否 | 朝鮮文 |
+| `tangut` | `TG` | `local` | 否 | 番文（西夏文） |
 | `mongolian` | `MO` | `local` | 否 | 蒙古文 |
 | `mongolian_baiti` | `MOb` | `local` | 否 | Mongolian Baiti |
 | `manchu` | `MC` | `local` | 否 | 滿文 |
 | `segoe` | `SEG` | `local` | 否 | Segoe UI Historic |
 | `thai` | `TH` | `local` | 否 | 泰文 |
 | `turkic` | `OT` | `local` | 否 | 古突厥文 |
-| `uyghur` | `UY` | `local` | 否 | 古回鶻文 |
-| `vietnamese_quocngu` | `VI` | `local` | 否 | 越南語國語字 |
-| `vietnamese_hannom` | `HN` | `local` | 否 | 越南漢喃 |
+| `uyghur` | `UY` | `local` | 否 | 回鶻文 |
+| `vietnamese_quocngu` | `VI` | `local` | 否 | 越南文（國語字） |
+| `vietnamese_hannom` | `HN` | `local` | 否 | 越南文（漢喃文） |
 
-目前阿拉伯字母相關 family 的分工為：
-- `arabic`：regular/bold 使用 Naskh，italic/bolditalic 使用 Ruqaa，`sans` / `sansbold` 使用 Noto Sans Arabic，`sansitalic` / `sansbolditalic` 使用 Noto Kufi Arabic；局部字面涵蓋文字與 sans 通道。
-- `urdu`：Nastaliq 作為烏爾都文 family 的專用字體。
+目前阿拉伯文相關字族的分工為：
+- `arabic`：regular/bold 使用 Naskh，italic/bolditalic 使用 Ruqaa，`sans` / `sansbold` 使用 Noto Sans Arabic，`sansitalic` / `sansbolditalic` 使用 Noto Kufi Arabic；局部字體樣式涵蓋正文與 sans 通道。
+- `urdu`：Nastaliq 作為波斯體阿拉伯文的專用字體。
 
-若 local 命令欄位為 `-`，表示該 family 在目前 catalog 中是純 global 用途。
+若 local 命令欄位為 `-`，表示該字族在目前 catalog 中是純 global 用途。
 
 ## 字體映射說明
 
-這一節列出具有特殊內部映射的 family。一般 family 採用 `regular` / `bold` / `italic` / `bolditalic` 四態字體檔映射。
+這一節列出具有特殊內部映射的字族。一般字族採用 `regular` / `bold` / `italic` / `bolditalic` 四態字體檔案映射。
 
 - `shanggu`
-  這個全域 Han/CJK family 主要負責中文向版面中的漢字主文字通道。
+  這個全域 Han/CJK 字族主要負責中文向版面中的漢字主文字通道。
 - `sim`
-  這個 Windows 側的全域 CJK fallback family 用於全域 Han/CJK 綁定。
+  這個 Windows 側的全域 CJK 回退字族用於全域 Han/CJK 綁定。
 - `times`
   使用多款 Windows 字體組合：
   `regular` / `bold` / `italic` / `bolditalic` 來自 Times New Roman，
   `sans*` 來自 Arial，
   `mono*` 來自 Consolas。
 - `arabic`
-  `regular` / `bold` 使用 Naskh，`italic` / `bolditalic` 使用 Ruqaa，`sans` / `sansbold` 使用 Noto Sans Arabic，`sansitalic` / `sansbolditalic` 使用 Noto Kufi Arabic。局部字面涵蓋文字與 sans 通道。
+  `regular` / `bold` 使用 Naskh，`italic` / `bolditalic` 使用 Ruqaa，`sans` / `sansbold` 使用 Noto Sans Arabic，`sansitalic` / `sansbolditalic` 使用 Noto Kufi Arabic。局部字體樣式涵蓋正文與 sans 通道。
 - `urdu`
-  Nastaliq 作為烏爾都文 family 的專用字體；`arabic` 使用獨立的 Naskh/Ruqaa 映射。
+  Nastaliq 作為波斯體阿拉伯文的專用字體；`arabic` 使用獨立的 Naskh/Ruqaa 映射。
 - `khitan_small`
   `\KHS{...}` 預設由 XSR 排出原生二維 cluster；
   `\KHSstack{...}` 與 `\KHSstackblock{...}` 保留為顯式堆疊命令。
-  請先載入 `\UseFonts{egyptian,khitan_small}` 並設定實際契丹字型檔案；
+  請先載入 `\UseFonts{egyptian,khitan_small}` 並設定實際契丹字體檔案；
   XSR 處理 cluster 與 Type B 的 U+16FE4 標記；`\Font{khitan_small}{...}`
   也使用堆疊路徑。XSR 1.2 使首個 cluster 與宿主段落對齊，包含表格儲存格。
-  Python 渲染器須透過字體登錄資訊讀取真實 TTF／OTF 字體檔，
+  Python 渲染器須透過字體註冊資訊讀取真實 TTF／OTF 字體檔案，
   僅靠已安裝字族名稱仍不足以提供字體檔案；動態堆疊可使用 shell-escape 或預處理。
 
 ## 本地字體庫與公開封裝
 
-Git 倉庫收錄原始碼與文件。本地字體二進位檔可存放於 `assets/fonts/`，
+Git 倉庫收錄原始碼與文件。本地字體二進位檔案可存放於 `assets/fonts/`，
 並透過 `impe.local.tex` 或 `\SetCatalogFontRoot{...}` 指定。
-公開 Full 封裝只收錄[逐檔核准清單](../font_licenses/approved-public-fonts.txt)
+公開 Full 封裝只收錄[逐一核准的檔案清單](../font_licenses/approved-public-fonts.txt)
 內、本地實際存在的字體。發行腳本要求字體目錄可讀取，且至少包含
-一個已核准的字體檔；未核准檔案仍留在本地字體庫。
+一個已核准的字體檔案；未核准檔案仍留在本地字體庫。
 core 與 CTAN 封裝則使用已安裝的 TeX Live／系統字體或用戶指定的字體庫。
 授權細節見[第三方字體授權](../font_licenses/README-zh.md)。
 
@@ -393,9 +393,9 @@ core 與 CTAN 封裝則使用已安裝的 TeX Live／系統字體或用戶指定
 例如 `cmu` 使用 Computer Modern Unicode
 （[專案網站](https://cm-unicode.sourceforge.io/)）。
 
-## Fallback 行為
+## 回退 行為
 
-IMPE LaTeX System 目前支援兩種字體 fallback 模式：
+IMPE LaTeX System 目前支援兩種字體 回退 模式：
 
 - `strict`
   字體解析失敗時視為錯誤。
@@ -429,11 +429,11 @@ Catalog 分別處理字體 shaping、內建 layout route 與專用 TeX 模組：
 - 一般 shaping 由 `script`、`language`、`features` 組裝成 fontspec 選項
 - 內建 vertical 能力由 `core/fonts/impe-fonts-interface.tex` 處理
 - script-specific 或使用者提供的 TeX 邏輯存放於 `modules/fonts/`
-- Pahlavi 的特殊處理掛在需要的 family 上，例如 `pahlavi_psalter`；Parthian 與 Inscriptional Pahlavi 在 RawFeature 足夠時維持標準 fontspec 註冊
+- 缽羅婆文的特殊處理掛在需要的字族上，例如 `pahlavi_psalter`；碑銘安息文與碑銘缽羅婆文在 RawFeature 足夠時維持標準 fontspec 註冊
 
 ## 蒙古文區域字體映射與分發說明
 
-目前 `mongolian` 的區域字體族映射如下：
+目前 `mongolian` 的區域字族映射如下：
 
 - `regular = mnglwhiteotf.ttf`
 - `italic = mnglwritingotf.ttf`
@@ -444,7 +444,7 @@ Catalog 分別處理字體 shaping、內建 layout route 與專用 TeX 模組：
 其中：
 
 - `MO` 是普通的線性蒙古文字體命令
-- `MOv` 是建立在同一字體族之上的豎排變體
+- `MOv` 是建立在同一字族之上的豎排變體
 
 `manchu` 採用同樣的 vertical 模型：
 
@@ -480,7 +480,7 @@ Catalog 分別處理字體 shaping、內建 layout route 與專用 TeX 模組：
 
 ## Syriac 區域字體映射
 
-`syriac` family 使用：
+`syriac` 字族使用：
 
 - `regular = SyrCOMEdessa.otf`
 - `bold = SyrCOMMidyat.otf`
@@ -491,7 +491,7 @@ Catalog 分別處理字體 shaping、內建 layout route 與專用 TeX 模組：
 - `sansitalic = NotoSansSyriacWestern-Regular.ttf`
 - `sansbolditalic = NotoSansSyriacWestern-Bold.ttf`
 
-`syriac_eastern` family 使用：
+`syriac_eastern` 字族使用：
 
 - `regular = SyrCOMAdiabene.otf`
 - `bold = SyrCOMCtesiphon.otf`

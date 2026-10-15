@@ -418,7 +418,7 @@ texindy -L english -C utf8 -M <job>-impe <job>.idx
 
 ### `glyphs`
 
-`glyphs` 與埃及、契丹字體家族獨立，啟用 `\UseFeature{glyphs}`
+`glyphs` 與埃及文、契丹小字的字族獨立，啟用 `\UseFeature{glyphs}`
 或 `features={glyphs}` 時載入 XSR 的行內／向量圖片功能。
 
 ```tex
@@ -430,7 +430,7 @@ texindy -L english -C utf8 -M <job>-impe <job>.idx
 ```
 
 登記的元資料不另加 PDF 隱形文字層；`trim` 僅裁切顯示的 TeX 盒子，
-原始圖檔保持不變。
+原始圖像檔案保持不變。
 
 ### `lists_envs`（僅相容）
 
@@ -456,7 +456,7 @@ This is an indented example block.
 
 - 第一次使用某個 feature id 時會載入對應模組。
 - 重複使用同一個 id 會被忽略。
-- 未登錄 id 會觸發明確的錯誤訊息。
+- 未註冊 id 會觸發明確的錯誤訊息。
 
 ## 公開介面
 

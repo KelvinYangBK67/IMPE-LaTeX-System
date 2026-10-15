@@ -17,7 +17,7 @@ assets/     本地執行資源
 
 ### `core/`
 
-- `core/fonts/`：宣告、fallback 解析、writing model、路由、shaping 選項、
+- `core/fonts/`：宣告、回退 解析、writing model、路由、shaping 選項、
   registry 行為；按文字需要載入 XSR 字體後端
 - `core/layout/`：class 偵測、preset 解析、component 套用與 layout registry
 - `core/features/impe-features-system.tex`：feature catalog 載入、
@@ -89,7 +89,7 @@ checkout 內的文件可載入 package 層原始碼：
 支援的 key：
 
 - `layout`：一個公開 layout preset
-- `fonts`：每個 family 使用其註冊的自動模式
+- `fonts`：每個字族使用其註冊的自動模式
 - `globalfonts`：強制使用 global 或 range-global 模式
 - `mainfonts`：`globalfonts` 的別名
 - `features`：以逗號分隔的 feature id
@@ -105,7 +105,7 @@ checkout 內的文件可載入 package 層原始碼：
 \UseGlobalFonts{libertinus}
 ```
 
-`\UseFont`、`\UseFonts` 與 `fonts` key 的預設呼叫遵循各字體族的登錄行為。
+`\UseFont`、`\UseFonts` 與 `fonts` key 的預設呼叫遵循各字族的註冊行為。
 `\UseLocalFont(s)`、`\UseGlobalFont(s)`、`globalfonts` 與 `mainfonts` 是
 明確的 mode override。
 
@@ -146,10 +146,10 @@ class 加上明確的 `\UseTemplateSet`。
 `\HeaderTitle{...}` 可指定較短文字；在 feature 模組中，
 `\HeaderStyle{title}` 會改用只有固定標題的頁眉。
 
-## Writing 與字體登錄
+## Writing 與字體註冊
 
-Unicode 區段資料、人工維護的 Writing Profile、字體資源包及與舊版
-相容的 preset 分開登錄。全域 CJK 綁定會獨立保存 Writing Profile，
+Unicode 區段資料、人工維護的書寫系統設定檔、字體資源包及與舊版
+相容的 preset 分開註冊。全域 CJK 綁定會獨立保存書寫系統設定檔，
 字形缺漏由 xeCJK 及 2×2×2 字體面矩陣處理。
 本機制不取代舊有 XeTeX interchar 全域區段路由仲裁。
 詳見 [USEWRITING-1.0.5.md](USEWRITING-1.0.5.md)。
@@ -165,7 +165,7 @@ Unicode 區段資料、人工維護的 Writing Profile、字體資源包及與�
 內部及舊版相容邊界定義於 [STABILITY-zh.md](STABILITY-zh.md)。
 
 擴充應優先使用 catalog：可由既有 metadata 表達的一般字體與文字差異應放在
-`catalog/`；需要自定義行為時加入帶 namespace 的 module。跨家族共用的
+`catalog/`；需要自定義行為時加入帶 namespace 的 module。跨字族共用的
 通用機制放在 `core/`。詳見
 [EXTENDING-zh.md](EXTENDING-zh.md)。
 

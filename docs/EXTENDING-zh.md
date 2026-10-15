@@ -3,9 +3,9 @@
 [English](EXTENDING.md)
 
 字體、版面與功能應優先透過 catalog 及命名明確的 module 擴充。
-跨多個 family 或文字系統共用的機制則實作於 `core/`。
+跨多個字族或文字系統共用的機制則實作於 `core/`。
 
-## 新增一般字體族
+## 新增一般字族
 
 在 `catalog/impe-fonts-catalog.tex` 加入 `\FontRegisterFamily{...}`，設定
 `id`、`defaultmode` 與所需的 `local`／`global` metadata。優先使用既有的
@@ -13,10 +13,10 @@
 欄位。選用本地字體庫中的檔案應透過 `\CatalogFontRoot` 定位。
 
 同步更新兩種語言的字體參考文件；若新行為需要長期保護，加入最小回歸測試。開發該
-family 時可以使用本機的聚焦探針。
+字族時可以使用本機的聚焦探針。
 
-同一字體若用於多種文字，應將字體資源與 Unicode Writing Profile
-分開登錄，並使用 `\UseWriting`、`\DeclareWriting`、`\Font`、
+同一字體若用於多種文字，應將字體資源與 Unicode 書寫系統設定檔
+分開註冊，並使用 `\UseWriting`、`\DeclareWriting`、`\Font`、
 `\Writing` 檢查綁定。既有 `\UseFont` preset 與專用局部命令仍照常使用。
 實作位於 `core/fonts/impe-fonts-usewriting.tex` 及其樣式／備援模組。
 詳見 [Writing API](USEWRITING-1.0.5.md)。
@@ -53,6 +53,6 @@ target 進行測試。
 ## 測試與文件
 
 若擴充行為需要長期保護，應加入最小回歸測試，並同步更新英文與繁體中文參考文件，
-以及必要的手冊或 showcase。開發期間可使用本機聚焦探針，並保留為本地暫存檔。
+以及必要的手冊或 showcase。開發期間可使用本機聚焦探針，並保留為本地暫存檔案。
 發佈前執行 `tests/run_regressions.ps1 -PublicFonts`；測試與 CTAN 封裝使用
 公開字體 fixture。

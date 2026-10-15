@@ -4,7 +4,7 @@
 
 IMPE 原始碼使用倉庫根目錄的 [MIT 授權](../LICENSE)，第三方字體則遵循各自
 的原始授權。本目錄保存經核對字體所需的授權全文與再分發聲明。
-Git 倉庫追蹤原始碼；字體二進位檔另存於本地的 `assets/fonts/`。
+Git 倉庫追蹤原始碼；字體二進位檔案另存於本地的 `assets/fonts/`。
 
 ## 公開 Full 字體清單（1.1.0 稽覈）
 
@@ -13,7 +13,7 @@ Full 封裝依[逐檔核准清單](approved-public-fonts.txt)收錄字體。
 IPA 與 MIT 各 1 個），另有 **17 個排除檔案**。發行腳本只從本地
 複製清單中實際存在的檔案，並將本目錄的授權附件收入封裝。
 逐檔證據、雜湊值及排除理由見 [AUDIT-1.1.0.md](AUDIT-1.1.0.md)。
-更換字體二進位檔後須重新核對授權與聲明。
+更換字體二進位檔案後須重新核對授權與聲明。
 
 獲准收錄的 Meltho 字體為 `syriac/` 及 `syriac_eastern/` 下的
 原始未修改檔案；Meltho 授權允許再分發這些原檔，但限制修改。
@@ -39,14 +39,14 @@ I.Ming 專案另提供 [IPA 授權中文參考譯文](https://github.com/ichiten
 
 ## 排除的字體檔案
 
-目前排除兩款西夏文字體、四款 `mngl*.ttf` 蒙古文字體、
+目前排除兩款番文（西夏文）字體、四款 `mngl*.ttf` 蒙古文字體、
 Microsoft Mongolian Baiti 與 Segoe UI Historic、兩款滿文字體、
 兩款藏文字體、兩份 Gothic Nguyen 及三款文津字體。
 相關檔案的公開再分發授權證據不足或存在限制；
 稽覈報告逐項記錄了檔案路徑及理由。這些排除規則針對公開封裝，
 不妨礙使用者以本地字體私人排版。
 
-西夏文字體可向[原始網站](http://ccamc.org/fonts_tangut.php)取得；
+番文（西夏文）字體可向[原始網站](http://ccamc.org/fonts_tangut.php)取得；
 四款 `mngl*.ttf` 可參考 [Mongolfont](http://www.mongolfont.com/cn/font/index.html)；
 [Mongolian Baiti](https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti)
 及 [Segoe UI Historic](https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic)
