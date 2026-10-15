@@ -1501,9 +1501,9 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 將保存與本手冊對應的版本。
 
 \IfFileExists{\IMPEShowcaseFile}
-  {\includepdf[pages=1-3,pagecommand={}]{\IMPEShowcaseFile}%
-   \includepdf[pages=4-6,landscape=true,pagecommand={}]{\IMPEShowcaseFile}%
-   \includepdf[pages=7-,pagecommand={}]{\IMPEShowcaseFile}}
+  {\includepdf[pages=1-3]{\IMPEShowcaseFile}%
+   \includepdf[pages=4-6,landscape=true]{\IMPEShowcaseFile}%
+   \includepdf[pages=7-]{\IMPEShowcaseFile}}
   {\PackageError{impe-manual}
      {缺少必要的程式碼倉庫資源 ../showcase/impe-showcase.pdf}
      {請從 manual/zh 編譯，或在程式碼倉庫根目錄執行 scripts/build_manual.ps1。}}

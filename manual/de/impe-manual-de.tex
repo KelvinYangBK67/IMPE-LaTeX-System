@@ -1727,9 +1727,9 @@ steht im Projektverzeichnis. Der
 wird nach Veröffentlichung die zugehörige Fassung festhalten.
 
 \IfFileExists{\IMPEShowcaseFile}
-  {\includepdf[pages=1-3,pagecommand={}]{\IMPEShowcaseFile}%
-   \includepdf[pages=4-6,landscape=true,pagecommand={}]{\IMPEShowcaseFile}%
-   \includepdf[pages=7-,pagecommand={}]{\IMPEShowcaseFile}}
+  {\includepdf[pages=1-3]{\IMPEShowcaseFile}%
+   \includepdf[pages=4-6,landscape=true]{\IMPEShowcaseFile}%
+   \includepdf[pages=7-]{\IMPEShowcaseFile}}
   {\PackageError{impe-manual}
      {Erforderliche Repository-Ressource ../showcase/impe-showcase.pdf fehlt}
      {Aus manual/de kompilieren oder scripts/build_manual.ps1 aus dem Repository-Stammverzeichnis ausfuehren.}}
