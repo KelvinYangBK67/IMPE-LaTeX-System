@@ -6,7 +6,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 最新版本化倉庫狀態之後的變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
-## [1.1.0] - 2026-10-15
+## [1.1.0] - 2026-10-12
 
 IMPE LaTeX System 1.1.0 正式發佈版本。英文、德文與正體中文手冊及標準 Showcase 已同步至 1.1.0 的功能；發行腳本直接從源碼建製 Showcase、三語手冊與 PDF 發佈附件。
 

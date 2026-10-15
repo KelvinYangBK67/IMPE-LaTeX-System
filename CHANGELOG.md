@@ -6,7 +6,7 @@ All notable versioned changes to IMPE LaTeX System are documented in this file.
 
 For changes since the latest versioned repository state, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
-## [1.1.0] - 2026-10-15
+## [1.1.0] - 2026-10-12
 
 Public release of IMPE LaTeX System 1.1.0, with synchronized English, German and Traditional Chinese documentation and a canonical Showcase. The release builder compiles the Showcase and manuals from their sources and packages the resulting PDFs.
 
