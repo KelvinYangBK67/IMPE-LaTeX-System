@@ -30,7 +30,7 @@ deprecated 狀態須明確宣告。這些 wrapper：
 - 由相容性回歸測試覆蓋；
 - 在 `tests/legacy-entry.tex` 等專用相容性 fixture 中接受測試。
 
-CTAN `impe-framework` 發佈、新手冊、模板、示例與一般受維護來源使用標準
+CTAN `impe-framework` 發佈、新手冊、範本、示例與一般受維護來源使用標準
 `impe*` 入口。
 
 新文件使用標準 `impe*` 入口。日後若改變 `next*` 的支援狀態，須明確記錄。

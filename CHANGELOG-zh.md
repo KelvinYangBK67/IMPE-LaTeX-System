@@ -11,7 +11,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 正式發佈前的遠端收口版本。**尚未正式發佈或建立 v1.1.0 Tag**；三語手冊、Showcase 的 TeX 原始碼與追蹤 PDF 將於本地出版收口階段同步、重建及稽覈。
 
 * 保留 1.0.5 書寫系統設定檔／字體矩陣、1.0.6 出版版面及舊版恢復命令、1.0.7 原生優先索引與 1.0.8 XSR 1.1 Unicode 提取，作為 1.1.0 的既定功能基礎。
-* 新增腳註／minipage 相容性及六份公開入門模板的回歸編譯測試。
+* 新增腳註／minipage 相容性及六份公開入門範本的回歸編譯測試。
 * Full 公開封裝使用明確核准的字體收錄清單，未核准的二進位字體預設不收錄。
 * 新增獨立 Showcase 重建及 PDF 比對關卡；相關本地出版材料更新後才啟用完整發行驗收。
 * 內附 XSR 1.3，使契丹小字組字間採用正常詞間空格並沿共同中線對齊；保留 1.2 的宿主段落對齊修正與 1.1 的 Unicode 提取功能。
@@ -74,12 +74,12 @@ IMPE LaTeX System 的版本化變更記錄於此。
 字體／Writing 架構的內部原始碼版本，已合併 PR #23；尚非正式對外發佈。三語手冊與標準 Showcase 的 TeX 原始碼、追蹤中的 PDF 均刻意保留上一版，待正式發佈時一併修訂與重建。
 
 ### 新增
-* 將 Unicode 18.0.0 的 353 個區段、69 個人工維護的書寫系統設定檔、85 個具名資源／字體包別名，以及全部 59 個舊版家族 preset 分離管理。覆寫字體不再意外改動書寫系統設定檔。
+* 將 Unicode 18.0.0 的 353 個區段、69 個人工維護的書寫系統設定檔、85 個具名資源／字體包別名，以及全部 59 個舊版字族預設 分離管理。覆寫字體不再意外改動書寫系統設定檔。
 * 新增 \UseWriting{[字體包,選項]Profile}、\DeclareWriting{名稱}{設定}、\Font{名稱}[覆寫]{文字} 及 \Writing{設定}{文字}。既有 \UseFont mode、局部捷徑、直排與 XSR 渲染器繼續相容。
 * 以 xeCJK 原生逐字缺字檢測支援僅限 CJK 的 2×2×2（Serif/Sans × Regular/Bold × Upright/Italic）樣式矩陣，優先尋找目前字體包的其他面，再尋找同 Profile 與其他 CJK Profile；支援正文後續註冊、快取更新與去重警告。
 
 ### 相容性及界限
-* 維持 IMPE 1.x 公開介面、舊家族及顯式局部覆寫優先級。非 CJK 文字不提供通用缺字自動備援。
+* 維持 IMPE 1.x 公開介面、舊字族及顯式局部覆寫優先級。非 CJK 文字不提供通用缺字自動備援。
 * 不另行實作重疊 Unicode 區段的全域仲裁；全文件真正直排仍另列後續事項。
 
 ### 驗證及後續
@@ -107,11 +107,11 @@ Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容�
 本版本已整理為穩定原始碼快照；Git Tag、GitHub Release 與 CTAN 發佈仍是獨立的可選步驟。
 
 ### 新增
-* #8：新增獨立的 `glyphs` Feature，透過 XSR 登記與引用行內圖片字形，支援縮放、基線調整、裁切，以及與 PDF 視覺層分離的線性文字／描述元資料。
-* 將埃及文與契丹小字登記為一般字族，預設使用 Noto；XSR 0.10 支援直接 Unicode 輸入與二維組字，並保留既有線性／顯式堆疊命令。
+* #8：新增獨立的 `glyphs` Feature，透過 XSR 註冊與引用行內圖片字形，支援縮放、基線調整、裁切，以及與 PDF 視覺層分離的線性文字／描述元資料。
+* 將埃及文與契丹小字註冊為一般字族，預設使用 Noto；XSR 0.10 支援直接 Unicode 輸入與二維組字，並保留既有線性／顯式堆疊命令。
 
 ### 調整
-* #10：移除過時的外部 TeX 子文件／PDF 再插入管線，以及相關的舊命令、登記、封裝和測試。
+* #10：移除過時的外部 TeX 子文件／PDF 再插入管線，以及相關的舊命令、註冊、封裝和測試。
 * 將固定版本的 XSR 0.10 TeX／Python 原始碼內附於倉庫和 core／full／CTAN 原始碼封裝。IMPE 安裝器使用獨立的 XSR Python 環境，不修改全域 Python 套件。
 * 納入 XSR 0.10 上游的 shell 輸出目錄修復（`f62677aeb2b5cc082efb1bec6f4c13b8bed965d6`）。
 
@@ -124,7 +124,7 @@ Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容�
 
 * #5：標題、目錄返回點與雙向腳註共用遞增目的地配置。術語索引頁碼透過 xindy 位置連回正文，即使可見頁碼重複仍能區分。
 * #6：所有註冊字體樣式依序查找隨附檔案、TeX Live／系統字體，再採用原有嚴格／軟回退。core 安裝可直接使用已安裝字體。
-* #7：新增 `\Font{id}{內容}`，共用家族局部命令、路由覆寫與文字系統行為；`\UseFont` 及原有家族命令維持既有語義。
+* #7：新增 `\Font{id}{內容}`，共用字族局部命令、路由覆寫與文字系統行為；`\UseFont` 及原有字族命令維持既有語義。
 * #4：新增 `drawing`，提供 TikZ/PGF、pgfplots 與 forest 原生語法。
 * 新增字體、繪圖與 PDF 索引連結執行期回歸，並更新雙語文件。
 
@@ -141,7 +141,7 @@ Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容�
 * 採用 `impe-framework` 作為 CTAN archive 與根目錄 id，同時保留 IMPE 專案名稱、標準 `impe*` runtime namespace 與既有 TEXMF namespace。
 * CTAN 收錄標準 `impe*` 入口；倉庫與 full/core release 保留並測試舊 `next*` 相容 wrapper。
 * 將手冊樹由 `doc/` 改名為 `manual/`，把標準 showcase 移至 `manual/showcase/`，並在 CTAN 收錄其原始碼、PDF 與參考書目。
-* 目前的手冊、模板與受維護測試都改用標準 `impe*` 入口；自動檢查將舊入口的使用範圍維持在相容性 fixture 與獨立維護的 `papers/` 樹。
+* 目前的手冊、範本與受維護測試都改用標準 `impe*` 入口；自動檢查將舊入口的使用範圍維持在相容性 fixture 與獨立維護的 `papers/` 樹。
 * 移除受追蹤的 scratch `examples/` 樹，把其中獨立的 hyperlink-anchor 與 Libertinus-math 案例移入回歸測試；發佈包採用明確的內容清單。
 * 同步並精簡英文與繁體中文 README 及子系統參考文件，修正實作細節，並把目前所有 package/class metadata 更新為日期 2026-09-29 的 v1.0.1。
 * 發佈回歸測試改由 `VERSION` 推導 archive 與獨立文件檔案名稱，同時維持 CTAN 與手冊的確定性建置。
@@ -174,11 +174,11 @@ Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容�
 ### 修正
 
 * `\UseLocalFont` 與 `\UseLocalFonts` 現在會明確要求 local mode；省略 mode 的 `\UseFont`、`\UseFonts` 與 `fonts` template key 仍採自動模式。
-* 為可選的 LaTeX tagged-math 定位 hook 增加空操作 fallback，確保標題與 tabular 路徑相容於 TeX Live 2026 的 tools bundle。
+* 為可選的 LaTeX tagged-math 定位 hook 增加空操作 回退，確保標題與 tabular 路徑相容於 TeX Live 2026 的 tools bundle。
 * 倉庫手冊建置現在使用可重現且與倉庫同形的暫存目錄、checkout 自有 runtime、根目錄 `VERSION` 與唯一的 `_showcase/main.pdf` 作為文件資源。
 * 手冊建置器現在會自動發現標準命名的語言源碼，並在可重現且與倉庫同形的暫存目錄中建置；英文與繁體中文版本仍可直接從源碼目錄以 XeLaTeX/latexmk 建置。
 * 明確的局部字體命令現在會在其作用域內優先於自動 Unicode-range 路由，離開作用域後恢復正常全域路由。
-* class transition 改為針對已配置 XeTeX interchar class 稀疏建表，並在文檔開始時補登較晚配置的 class；同時修正同 owner 比較，讓相鄰 block 維持同一 shaping run。
+* class transition 改為針對已配置 XeTeX interchar class 稀疏建表，並在文件開始時補登較晚配置的 class；同時修正同 owner 比較，讓相鄰 block 維持同一 shaping run。
 * 載入泰文字族時，透過 XeTeX 的 ICU `th_TH` locale 提供泰文字典斷行。
 
 ## [0.1.3] - 2026-08-29
@@ -193,9 +193,9 @@ Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容�
 
 ### 調整
 
-* 將文津宋體整合為 `wenjin` 字族與 `\WJ{...}` 局部命令，Plane 0 / 2 / 3 改由 CJK fallback chain 統一處理。
+* 將文津宋體整合為 `wenjin` 字族與 `\WJ{...}` 局部命令，Plane 0 / 2 / 3 改由 CJK 回退鏈 統一處理。
 * 調整 CJK 路由：載入日文、朝鮮文或漢喃文字族時，共用漢字繼續使用文件的中文／CJK 字體；需要日本漢字或朝鮮漢字字形時仍可使用 `\JP`、`\KR`、`\HN`。
-* 改善 CJK 與 Unicode-range fallback 行為，包括日文字體的全域 CJK 路由，以及擴展漢字範圍的 fallback 支援。
+* 改善 CJK 與 Unicode-range 回退 行為，包括日文字體的全域 CJK 路由，以及擴展漢字範圍的 回退 支援。
 * 更新 Libertinus catalog 路線，改用 TeX Live OTF 字族名稱並加入 mono；文字字族改以 fontspec 的 `no-math` 載入，預設保留完整 Computer Modern 數學設定；明確使用 `\UseMathFont{libertinus}` 時則切換到 Libertinus Math。
 * 改善紙本 layout 預設值、雙面文件頁面處理、中文 UI 章節編號、目錄間距、圖表題名與星號標題入目錄行為。
 * 紙本 layout 的所有帶編號目錄項，包括 chapter 與各層 section，現在會依編號自然寬度擴張並保留固定間距。
@@ -206,13 +206,13 @@ Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容�
 ### 修正
 
 * 修正 range transition：相鄰 Unicode block 若屬於同一字族，即維持同一 shaping run，從而保留跨 Hangul Jamo 與 Jamo Extended block 的古諺文 cluster。
-* 修正 WenJin fallback，使其能正確跟隨目前啟用的尙古字體／CJK 主字體路線。
+* 修正 WenJin 回退，使其能正確跟隨目前啟用的尙古字體／CJK 主字體路線。
 
 
 ## [0.1.2] - 2026-04-28
 
 ### 新增
-- 註冊 文津宋體 Plane 0 / 2 / 3，提供 local 命令 `\WJA`、`\WJB`、`\WJC`。
+- 註冊文津宋體 Plane 0 / 2 / 3，提供 local 命令 `\WJA`、`\WJB`、`\WJC`。
 - 生成 `IMPE-LaTeX-System-v0.1.2-full.zip` 與 `IMPE-LaTeX-System-v0.1.2-core.zip`。
 
 ### 修正
@@ -245,7 +245,7 @@ Feature API 維護版本，保持既有 IMPE 1.x 公開介面的原始碼相容�
 
 ### 新增
 - IMPE LaTeX System 首個公開版本。
-- 建立模組化 LaTeX 模板系統結構，包括 `core`、`catalog`、`modules`、`package`、`scripts`、`docs`、`examples`、`templates`。
+- 建立模組化 LaTeX 範本系統結構，包括 `core`、`catalog`、`modules`、`package`、`scripts`、`docs`、`examples`、`templates`。
 - 加入 full/core 雙 release 打包模式。
 - 補齊中英文雙語專案文檔。
 - 補齊第三方字體授權說明。

@@ -7,7 +7,7 @@
 簡單選擇既有 preset 仍推薦 \UseFont{preset}（包含全部舊版 ID）。
 進階介面將 **Unicode 書寫系統設定檔**（文字路由及 Renderer 行為）與
 **Font resource/pack**（字體文件及已存在的字體面）分離。
-改用其他字體包不改變書寫系統設定檔。本版有 69 個人工維護的 Profile、
+改用其他字體包不改變書寫系統設定檔。本版有 69 個人工維護的書寫系統設定檔、
 85 個資源別名及原有 59 個家族 preset。
 
 ```tex
@@ -29,9 +29,9 @@
 **自動缺字備援只限 CJK。** xeCJK 以 Serif/Sans × Regular/Bold ×
 Upright/Italic 的 2×2×2 矩陣按逐字字形覆蓋選擇：
 先找目前字體資源中實際存在的其他字體樣式，再找相同書寫系統設定檔，
-最後才找其他 CJK Profile 的候選字體。字體面存在但缺少該字時繼續尋找；
+最後才找其他 CJK 書寫系統設定檔 的候選字體。字體樣式存在但缺少該字時繼續尋找；
 正文中途註冊新字體亦會更新候選鏈及快取。
-非 CJK 文字不提供通用缺字自動備援，重疊 Unicode Profile 的全域仲裁亦未實作。
+非 CJK 文字不提供通用缺字自動備援，重疊 Unicode 書寫系統設定檔的全域仲裁亦未實作。
 
 完整選項、別名及限制見 [1.0.5 Writing API](USEWRITING-1.0.5.md)。
 
@@ -57,7 +57,7 @@ core/fonts/impe-fonts-system.tex
 這一層負責穩定機制：
 
 - defaults
-- 樣式 fallback 解析
+- 樣式 回退 解析
 - writing model
 - script / behavior 處理
 - 宣告介面
@@ -68,9 +68,9 @@ core/fonts/impe-fonts-system.tex
 - `impe-fonts-system.tex`
   字體子系統的公開入口。它會載入 defaults 層、字族註冊表，以及 `catalog/impe-fonts-catalog.tex`。
 - `impe-fonts-defaults.tex`
-  載入內部各層邏輯，並定義 scope、script class、fallback mode、writing model、behavior、backend 等預設值。
+  載入內部各層邏輯，並定義 scope、script class、回退模式、writing model、behavior、backend 等預設值。
 - `impe-fonts-style.tex`
-  負責樣式 fallback 鏈的解析，例如 `bold`、`italic`、`bolditalic`、`sans*`、`mono*`。
+  負責樣式 回退鏈的解析，例如 `bold`、`italic`、`bolditalic`、`sans*`、`mono*`。
 - `impe-fonts-writing.tex`
   定義並驗證 writing model 相關欄位：inline axis、inline direction、block progression。
 - `impe-fonts-script.tex`
@@ -156,7 +156,7 @@ core/fonts/impe-fonts-system.tex
 }
 ```
 
-一般註冊使用 `command`、`name`、`path`、`regular`。其他樣式欄位可選，系統會依 core fallback 鏈處理。`sans*` 字體會在 local 命令中自動映射；`mono*` 保留給 global / system 字族或明確的進階註冊。
+一般註冊使用 `command`、`name`、`path`、`regular`。其他樣式欄位可選，系統會依 core 回退鏈處理。`sans*` 字體會在 local 命令中自動映射；`mono*` 保留給 global / system 字族或明確的進階註冊。
 
 一般局部字族使用標準註冊欄位；以下欄位用於特殊情況：
 
@@ -330,8 +330,8 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 | `chinese_simplified` | `SC` | `local` | 否 | 簡體中文 |
 | `chinese_traditional` | `TC` | `local` | 否 | 繁體中文 |
 | `japanese` | `JP` | `local` | 是 | 日文；global 使用 xeCJK 的 CJK 字體通道 |
-| `wenjin` | `WJ` | `local` | 是 | 文津宋體，P0 爲主字體，P2/P3 作 xeCJK fallback |
-| `shanggu` | `-` | `global` | 是 | 漢字全域 CJK 字族 |
+| `wenjin` | `WJ` | `local` | 是 | 文津宋體，P0 爲主字體，P2/P3 作 xeCJK 回退 |
+| `shanggu` | `-` | `global` | 是 | 尙古字體（明體／黑體），全域 CJK 字族 |
 | `sim` | `-` | `global` | 是 | Windows CJK 字族 |
 | `korean` | `KR` | `local` | 否 | 朝鮮文 |
 | `tangut` | `TG` | `local` | 否 | 番文（西夏文） |
@@ -358,7 +358,7 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 - `shanggu`
   這個全域 Han/CJK 字族主要負責中文向版面中的漢字主文字通道。
 - `sim`
-  這個 Windows 側的全域 CJK fallback 字族用於全域 Han/CJK 綁定。
+  這個 Windows 側的全域 CJK 回退字族用於全域 Han/CJK 綁定。
 - `times`
   使用多款 Windows 字體組合：
   `regular` / `bold` / `italic` / `bolditalic` 來自 Times New Roman，
@@ -381,7 +381,7 @@ transition，並在文檔開始時補登其他套件較晚配置的 class。同�
 
 Git 倉庫收錄原始碼與文件。本地字體二進位檔案可存放於 `assets/fonts/`，
 並透過 `impe.local.tex` 或 `\SetCatalogFontRoot{...}` 指定。
-公開 Full 封裝只收錄[逐檔核准清單](../font_licenses/approved-public-fonts.txt)
+公開 Full 封裝只收錄[逐一核准的檔案清單](../font_licenses/approved-public-fonts.txt)
 內、本地實際存在的字體。發行腳本要求字體目錄可讀取，且至少包含
 一個已核准的字體檔案；未核准檔案仍留在本地字體庫。
 core 與 CTAN 封裝則使用已安裝的 TeX Live／系統字體或用戶指定的字體庫。
@@ -393,9 +393,9 @@ core 與 CTAN 封裝則使用已安裝的 TeX Live／系統字體或用戶指定
 例如 `cmu` 使用 Computer Modern Unicode
 （[專案網站](https://cm-unicode.sourceforge.io/)）。
 
-## Fallback 行為
+## 回退 行為
 
-IMPE LaTeX System 目前支援兩種字體 fallback 模式：
+IMPE LaTeX System 目前支援兩種字體 回退 模式：
 
 - `strict`
   字體解析失敗時視為錯誤。

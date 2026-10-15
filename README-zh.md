@@ -203,7 +203,7 @@ tests\run_regressions.ps1
 tests\run_regressions.ps1 -PublicFonts
 ```
 
-測試涵蓋標準與相容入口、字體路由、入門模板、手冊建置及安裝。
+測試涵蓋標準與相容入口、字體路由、入門範本、手冊建置及安裝。
 發行封裝另會檢查重新建置的 Showcase 是否與追蹤中的 PDF 一致。
 正式驗收見[本地出版清單](docs/RELEASE-1.1.0-LOCAL.md)；字體封裝政策見
 [字體庫說明](assets/README-zh.md)。

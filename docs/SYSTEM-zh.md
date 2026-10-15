@@ -17,7 +17,7 @@ assets/     本地執行資源
 
 ### `core/`
 
-- `core/fonts/`：宣告、fallback 解析、writing model、路由、shaping 選項、
+- `core/fonts/`：宣告、回退 解析、writing model、路由、shaping 選項、
   registry 行為；按文字需要載入 XSR 字體後端
 - `core/layout/`：class 偵測、preset 解析、component 套用與 layout registry
 - `core/features/impe-features-system.tex`：feature catalog 載入、
@@ -165,7 +165,7 @@ Unicode 區段資料、人工維護的書寫系統設定檔、字體資源包及
 內部及舊版相容邊界定義於 [STABILITY-zh.md](STABILITY-zh.md)。
 
 擴充應優先使用 catalog：可由既有 metadata 表達的一般字體與文字差異應放在
-`catalog/`；需要自定義行為時加入帶 namespace 的 module。跨家族共用的
+`catalog/`；需要自定義行為時加入帶 namespace 的 module。跨字族共用的
 通用機制放在 `core/`。詳見
 [EXTENDING-zh.md](EXTENDING-zh.md)。
 
