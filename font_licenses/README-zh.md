@@ -39,14 +39,14 @@ I.Ming 專案另提供 [IPA 授權中文參考譯文](https://github.com/ichiten
 
 ## 排除的字體檔案
 
-目前排除兩款西夏文字體、四款 `mngl*.ttf` 蒙古文字體、
+目前排除兩款番文（西夏文）字體、四款 `mngl*.ttf` 蒙古文字體、
 Microsoft Mongolian Baiti 與 Segoe UI Historic、兩款滿文字體、
 兩款藏文字體、兩份 Gothic Nguyen 及三款文津字體。
 相關檔案的公開再分發授權證據不足或存在限制；
 稽覈報告逐項記錄了檔案路徑及理由。這些排除規則針對公開封裝，
 不妨礙使用者以本地字體私人排版。
 
-西夏文字體可向[原始網站](http://ccamc.org/fonts_tangut.php)取得；
+番文（西夏文）字體可向[原始網站](http://ccamc.org/fonts_tangut.php)取得；
 四款 `mngl*.ttf` 可參考 [Mongolfont](http://www.mongolfont.com/cn/font/index.html)；
 [Mongolian Baiti](https://learn.microsoft.com/zh-tw/typography/font-list/mongolian-baiti)
 及 [Segoe UI Historic](https://learn.microsoft.com/en-us/typography/font-list/segoe-ui-historic)

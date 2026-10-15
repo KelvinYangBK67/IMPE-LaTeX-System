@@ -47,7 +47,7 @@ $HOME\texmf\tex\latex\impe\impe-xsr-runtime.tex，確認其中使用的是
 IMPE-PRIVATE-XSR-RUNNER-SELECTED。這份測試不需要額外的埃及或
 契丹字體。
 
-對真實二維字形編譯，確認相關 Noto 字體檔位於 IMPE 設定的字體根目錄後：
+對真實二維字形編譯，確認相關 Noto 字體檔案位於 IMPE 設定的字體根目錄後：
 
     xelatex -shell-escape -output-directory=build -interaction=nonstopmode -halt-on-error tests/xsr-integration.tex
 
@@ -60,7 +60,7 @@ XSR-FONT-MISSING。該測試的字體配置可能使用 repository fixture；
 - 第一次安裝與第二次安裝都能成功，且不修改全域 Python 環境。
 - 舊 IMPE 安裝升級後，普通排版、字體覆寫與既有 local override 未被破壞。
 - 實際的中文論文段落內插入未編碼字形，檢查基線、行距與裁切。
-- 埃及聖書字控制符、契丹小字 U+16FE4 能正常二維排列，並可在 PDF 中視覺辨認。
+- 埃及文控制符、契丹小字 U+16FE4 能正常二維排列，並可在 PDF 中視覺辨認。
 - 在真實工作路徑（包括含空格或中文的資料夾）使用 -output-directory 成功。
 - 關閉 shell-escape 時，按 XSR 預處理流程檢查輸出；core 封裝不內附字體。
 - 在沒有網路的機器首次安裝，應有明確 pip 失敗提示；如需離線部署，
@@ -106,13 +106,13 @@ catalog 與 modules 均從 C:/Users/.../texmf/tex/latex/impe/ 載入，
 若要實際檢查二維字形，需把 xsr-integration.tex 和
 tests/fixtures/xsr-square.svg 按原來相對路徑複製到隔離目錄；
 還要先確認 \SetCatalogFontRoot 所指定的 Egyptian/Khitan
-字體檔確實存在。舊日誌的字體警告表示「沒有完成該字體的驗證」，
+字體檔案確實存在。舊日誌的字體警告表示「沒有完成該字體的驗證」，
 不應當視為自動渲染測試通過。
 
 ## H. PDF Unicode 提取驗證（1.0.8）
 
 使用 PyMuPDF 或 Poppler 實際複製／提取 PDF，確認契丹小字
-U+16FE4、埃及聖書文格式控制符及其他補充平面字符仍保持原始序列。
+U+16FE4、埃及文格式控制符及其他補充平面字符仍保持原始序列。
 文字層採用原子排版單位的 `/ActualText`，不覆蓋普通文字
 的原生 `ToUnicode`；各閱讀器對 `/ActualText` 支援可能不同。
 

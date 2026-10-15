@@ -53,7 +53,7 @@ Beamer 預設傳統 Madrid 主題及 4:3 畫布；可使用原生 `aspectratio=1
 
 ## Writing 與字體選擇
 
-既有字體 preset 仍推薦使用 \UseFont{preset}；需要把字體資源與 Unicode Writing Profile 分開指定時，則使用：
+既有字體 preset 仍推薦使用 \UseFont{preset}；需要把字體資源與 Unicode 書寫系統設定檔案 分開指定時，則使用：
 
 ```tex
 \UseWriting{[shanggu]chinese}
@@ -122,7 +122,7 @@ CTAN 封裝提供標準執行環境與公開文件。部分多語手冊與 showc
 最終收錄清單須於本地完成授權稽覈。`font_licenses/` 下的第三方
 記錄屬於原始碼倉庫及適用時的 full 封裝。CTAN 封裝提供原始碼與文件資源。
 
-## 埃及聖書字、契丹小字與行內圖片字形
+## 埃及文、契丹小字與行內圖片字形
 
 `fonts={egyptian,khitan_small}` 載入對應的 XSR 文字渲染器；
 `features={glyphs}` 則獨立啟用已登記的行內圖片字形。
@@ -137,7 +137,7 @@ Unix 可執行 `sh scripts/install.sh`。僅安裝 TeX 時，可在 PowerShell
 需要 XSR 動態渲染時再另行設定執行環境。渲染可使用 XeLaTeX
 shell-escape 或 XSR 預處理，一般 IMPE 文件則無須啟動 Python。
 
-core 封裝不附字體二進位檔；XSR 的文字後端需要可讀取的 TTF／OTF 字體檔。
+core 封裝不附字體二進位檔；XSR 的文字後端需要可讀取的 TTF／OTF 字體檔案。
 CTAN 分發原始碼，但 TeX Live 安裝程序不會自動執行 `pip`。
 詳見[字體參考](docs/FONTS-zh.md)及 [XSR 驗收清單](docs/XSR-INSTALL-CHECKLIST-zh.md)。
 

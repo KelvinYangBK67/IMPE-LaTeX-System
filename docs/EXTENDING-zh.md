@@ -3,9 +3,9 @@
 [English](EXTENDING.md)
 
 字體、版面與功能應優先透過 catalog 及命名明確的 module 擴充。
-跨多個 family 或文字系統共用的機制則實作於 `core/`。
+跨多個字族或文字系統共用的機制則實作於 `core/`。
 
-## 新增一般字體族
+## 新增一般字族
 
 在 `catalog/impe-fonts-catalog.tex` 加入 `\FontRegisterFamily{...}`，設定
 `id`、`defaultmode` 與所需的 `local`／`global` metadata。優先使用既有的
@@ -13,10 +13,10 @@
 欄位。選用本地字體庫中的檔案應透過 `\CatalogFontRoot` 定位。
 
 同步更新兩種語言的字體參考文件；若新行為需要長期保護，加入最小回歸測試。開發該
-family 時可以使用本機的聚焦探針。
+字族時可以使用本機的聚焦探針。
 
-同一字體若用於多種文字，應將字體資源與 Unicode Writing Profile
-分開登錄，並使用 `\UseWriting`、`\DeclareWriting`、`\Font`、
+同一字體若用於多種文字，應將字體資源與 Unicode 書寫系統設定檔案
+分開註冊，並使用 `\UseWriting`、`\DeclareWriting`、`\Font`、
 `\Writing` 檢查綁定。既有 `\UseFont` preset 與專用局部命令仍照常使用。
 實作位於 `core/fonts/impe-fonts-usewriting.tex` 及其樣式／備援模組。
 詳見 [Writing API](USEWRITING-1.0.5.md)。
