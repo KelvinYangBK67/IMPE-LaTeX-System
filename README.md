@@ -5,9 +5,9 @@
 IMPE is a modular XeLaTeX framework for reusable layouts, font routing,
 multilingual typesetting, and optional document features.
 
-Current source version: **1.1.0** (unpublished release candidate). See [CHANGELOG](CHANGELOG.md).
+Current release: **1.1.0**. See the [Changelog](CHANGELOG.md) and [GitHub Releases](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/releases).
 
-The current API is documented here and under [`docs/`](docs/SYSTEM.md). The three-language manuals and Showcase PDFs belong to the pending [1.1.0 publication checklist](docs/RELEASE-1.1.0-LOCAL.md).
+The 1.1.0 API is documented here and under [`docs/`](docs/SYSTEM.md). The release includes English, German and Traditional Chinese manuals and the canonical Showcase; see [release construction and verification](docs/RELEASE-1.1.0-LOCAL.md).
 
 ## Quick Start
 
@@ -217,9 +217,10 @@ tests\run_regressions.ps1 -PublicFonts
 ```
 
 The suite covers canonical and legacy entries, font routing, starter templates,
-manual builds, and installation. Release packaging additionally checks the
-tracked Showcase against a rebuilt copy. See the [local publication checklist](docs/RELEASE-1.1.0-LOCAL.md)
-for final validation and [font-library policy](assets/README.md) for approved binaries.
+manual builds, and installation. Release packaging recompiles the Showcase and
+all manuals from source and checks reproducibility of the manual PDFs. See the
+[release verification guide](docs/RELEASE-1.1.0-LOCAL.md) and
+[font-library policy](assets/README.md) for approved binaries.
 
 ## Maintainer
 

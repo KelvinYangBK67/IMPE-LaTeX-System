@@ -42,7 +42,7 @@
 \newcommand{\IMPERepo}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System}
 \newcommand{\IMPEIssues}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues}
 \newcommand{\IMPEShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/main/manual/showcase/impe-showcase.pdf}
-\newcommand{\IMPETaggedShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/blob/v\IMPEVersion/manual/showcase/impe-showcase.pdf}
+\newcommand{\IMPETaggedShowcaseURL}{https://github.com/KelvinYangBK67/IMPE-LaTeX-System/releases/download/v\IMPEVersion/impe-showcase-\IMPEVersion.pdf}
 
 \begin{document}
 
@@ -80,8 +80,8 @@ OpenType 字體、\texttt{fontspec} 以及 \XeTeX{} 的字元間機制，同時�
 其結構與技術內容。
 
 本系統的視覺概覽可參見專案的
-\href{\IMPEShowcaseURL}{目前 IMPE 展示冊 PDF}。與本手冊一同凍結的版本可由
-\href{\IMPETaggedShowcaseURL}{對應版本標籤}取得。這份標準展示冊也完整收入
+\href{\IMPEShowcaseURL}{目前 IMPE 展示冊 PDF}。與本手冊對應的版本可由
+\href{\IMPETaggedShowcaseURL}{v\IMPEVersion{} 發佈附件}取得。這份標準展示冊也完整收入
 附錄~\ref{app:showcase}，用於展示促成本系統設計的各類文字、書寫方向、版面與功能
 組合。
 
@@ -89,7 +89,7 @@ OpenType 字體、\texttt{fontspec} 以及 \XeTeX{} 的字元間機制，同時�
 
 \subsection{發行形式}
 
-IMPE 1.1.0 準備了 \texttt{Full}、\texttt{Core} 與
+IMPE 1.1.0 提供 \texttt{Full}、\texttt{Core} 與
 \texttt{CTAN} 三種發行形式。三者使用相同的核心
 \XeLaTeX{} 執行環境與標準文件類別，差別在於隨附字體及安裝程序。
 
@@ -1496,9 +1496,8 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 以及多種文件功能的組合效果。
 
 \href{\IMPEShowcaseURL}{目前的展示冊}可由專案倉庫取得。
-正式發佈後，
-\href{\IMPETaggedShowcaseURL}{v\IMPEVersion{} 版本標籤}
-將保存與本手冊對應的版本。
+\href{\IMPETaggedShowcaseURL}{v\IMPEVersion{} 發佈附件}
+提供與本手冊對應的展示冊 PDF。
 
 % 先結束手冊正文頁，再停用宿主頁式；保留展示冊 PDF 自有的頁碼。
 \clearpage

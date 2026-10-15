@@ -8,15 +8,19 @@ For changes since the latest versioned repository state, see [CHANGELOG.unreleas
 
 ## [1.1.0] - 2026-10-12
 
-Release preparation (remote closure). This entry records the source/API freeze candidate; the public release is **not yet published**. The three language manuals, Showcase sources and tracked PDFs will be rebuilt and reviewed during local publication closure before tagging.
+Public release of IMPE LaTeX System 1.1.0, with synchronized English, German and Traditional Chinese documentation and a canonical Showcase. The release builder compiles the Showcase and manuals from their sources and packages the resulting PDFs.
 
 * Keep the 1.0.5 Writing Profiles and style matrix, 1.0.6 publication layouts and legacy override, 1.0.7 native-first indexing, and 1.0.8 XSR 1.1 Unicode extraction as the supported 1.1.0 baseline.
 * Add regression coverage for footnote/minipage handling and all six public starter templates.
 * Require an explicit reviewed font allowlist for public full archives; unapproved binaries are excluded by default.
-* Add an isolated Showcase build-and-compare gate to the release pipeline. The existing publication check remains deferred until the Showcase/manual sources and PDFs are synchronized.
+* Compile the canonical Showcase once for every release build, embed that newly built PDF in all three manuals, and verify independently reproduced manual PDFs.
 * Vendor XSR 1.3 with ordinary Khitan word spacing and centered mixed-height stacks, retaining the 1.2 host-paragraph alignment and 1.1 Unicode extraction behavior.
 * Harmonize current technical Markdown with the implementation and remove a stale direction-version error message.
 * Use `zh` as the Chinese manual distribution language ID (`manual/zh/impe-manual-zh.tex`); retain Traditional Chinese contents and the public `lang=zh` class option.
+* Restore Madrid with a 4:3 canvas as the default for English and Chinese Beamer; keep explicit native aspect ratios and the optional 1.0.6 minimalist layout.
+* Expand all six starter templates into substantial documents and update their PDF regression expectations.
+* Normalize Chinese writing-system, font and typography terminology, including official font names and the untranslated term *shaping*.
+* Keep the Showcase's original pages and page numbers when embedding it into any manual, suppressing the host manual's page style; update regression assertions accordingly.
 
 ## [1.0.8] - 2026-10-11
 
