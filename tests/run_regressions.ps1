@@ -710,11 +710,19 @@ foreach ($languageId in $manualLanguages) {
     foreach ($requiredText in @(
         "\appendix",
         "\label{app:showcase}",
-        "\includepdf[pages=4-6,landscape=true,pagecommand={}]"
+        "\includepdf[pages=4-6,landscape=true]"
     )) {
         if (-not $manualSourceText.Contains($requiredText)) {
             throw "$languageId manual source is missing required appendix marker: $requiredText"
         }
+    }
+    # The included Showcase retains its own page number; the host manual must
+    # suppress its running page style before inclusion.
+    if ($manualSourceText -notmatch '(?s)\\clearpage\s+\\pagestyle\{empty\}\s+\\IfFileExists\{\\IMPEShowcaseFile\}') {
+        throw "$languageId manual source must disable the host page style before embedding the Showcase."
+    }
+    if ($manualSourceText.Contains('pagecommand={}')) {
+        throw "$languageId manual source must not restore the host page style on embedded Showcase pages."
     }
     if ($manualSourceText -notmatch '(?s)\\appendix\s+\\section\{[^}]+\}.*\\section\{[^}]+\}\\label\{app:showcase\}') {
         throw "$languageId manual source must contain Appendix A before Appendix B Showcase."
