@@ -168,7 +168,7 @@ package/          公開 package 與 class 入口
 core/             穩定子系統邏輯
 catalog/          公開字體、版面與功能註冊
 modules/          具體版面、字體與功能模組
-assets/           本地執行資源；字體二進位檔案存於本地
+assets/           本地執行資源；字體二進位檔存於本地
 manual/           手冊原始碼、受追蹤 PDF 與 showcase
 docs/             子系統參考文件
 scripts/          建置與安裝工具
