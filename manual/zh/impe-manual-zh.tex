@@ -1500,6 +1500,9 @@ IMPE 版本，以及相關字體資訊。若問題涉及本機或私下提供的
 \href{\IMPETaggedShowcaseURL}{v\IMPEVersion{} 版本標籤}
 將保存與本手冊對應的版本。
 
+% 先結束手冊正文頁，再停用宿主頁式；保留展示冊 PDF 自有的頁碼。
+\clearpage
+\pagestyle{empty}
 \IfFileExists{\IMPEShowcaseFile}
   {\includepdf[pages=1-3]{\IMPEShowcaseFile}%
    \includepdf[pages=4-6,landscape=true]{\IMPEShowcaseFile}%
