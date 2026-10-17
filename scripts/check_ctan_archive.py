@@ -85,7 +85,7 @@ def check_ctan(path: Path) -> tuple[list[str], list[str], int]:
                 if kind == "text-lf" and b"\r" in data:
                     errors.append(f"Non-LF text: {full_name}")
                 if kind == "text-crlf":
-                    if data.replace(b"\\r\\n", b"").find(b"\r") >= 0 or data.replace(b"\\r\\n", b"").find(b"\n") >= 0:
+                    if data.replace(b"\r\n", b"").find(b"\r") >= 0 or data.replace(b"\r\n", b"").find(b"\n") >= 0:
                         errors.append(f"Non-CRLF batch file: {full_name}")
         flat = {p for items in names.values() for p in items}
         for required in sorted(REQUIRED_XSR - flat):
