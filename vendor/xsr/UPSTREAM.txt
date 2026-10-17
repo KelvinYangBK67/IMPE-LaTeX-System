@@ -1,7 +1,7 @@
 xetex-stack-renderer 1.3
 Origin: https://github.com/KelvinYangBK67/xetex-stack-renderer
-Source commit: 5e1b78b24e0b2268ae439f6377f480d60f99bb20
+Source commit: fa1db6da391611b234e4d84fd2c73caf99599873
 License: MIT; retained in vendor/xsr/LICENSE
-Vendored runtime: src/, tex/, pyproject.toml and README.md
+Vendored runtime: src/, tex/, pyproject.toml, VERSION and LICENSE; two font-fetch helpers are retained for IMPE CI only
 The exact upstream blob mapping is recorded in UPSTREAM.json and verified by scripts/check_xsr_vendor.py.
 Do not edit this snapshot in IMPE. Update by re-vendoring a reviewed upstream commit.

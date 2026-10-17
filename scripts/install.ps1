@@ -334,9 +334,12 @@ if (-not $SkipXsrPython) {
     $XsrBuildRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("impe-xsr-build-" + [guid]::NewGuid().ToString("N"))
     try {
         New-Item -ItemType Directory -Force -Path (Join-Path $XsrBuildRoot "src") | Out-Null
-        foreach ($file in @("pyproject.toml", "README.md", "LICENSE", "VERSION")) {
+        foreach ($file in @("pyproject.toml", "VERSION")) {
             Copy-Item -LiteralPath (Join-Path $XsrSource $file) -Destination (Join-Path $XsrBuildRoot $file) -Force
         }
+        $XsrLicense = Join-Path $XsrSource "xsr-LICENSE.txt"
+        if (-not (Test-Path -LiteralPath $XsrLicense)) { $XsrLicense = Join-Path $XsrSource "LICENSE" }
+        Copy-Item -LiteralPath $XsrLicense -Destination (Join-Path $XsrBuildRoot "LICENSE") -Force
         Copy-Item -LiteralPath (Join-Path $XsrSource "src/xsr") -Destination (Join-Path $XsrBuildRoot "src") -Recurse -Force
         & $VenvPython -m pip install --disable-pip-version-check --no-input --upgrade $XsrBuildRoot
         if ($LASTEXITCODE -ne 0) { throw "Bundled XSR Python installation failed in $VenvRoot." }

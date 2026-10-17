@@ -155,7 +155,7 @@ function Get-ArchiveEntryKind {
     $name = ($normalizedPath -split '/')[-1]
     $extension = [System.IO.Path]::GetExtension($name).ToLowerInvariant()
 
-    if (@(".md", ".tex", ".sty", ".cls", ".lua", ".bib", ".txt", ".ps1", ".sh", ".yml", ".yaml", ".py", ".toml") -contains $extension) {
+    if (@(".md", ".tex", ".sty", ".cls", ".lua", ".bib", ".txt", ".ps1", ".sh", ".yml", ".yaml", ".py", ".toml", ".json", ".jsonl", ".xml", ".svg", ".csv", ".ini", ".cfg") -contains $extension) {
         return "text-lf"
     }
     if ($extension -eq ".bat") {
@@ -398,6 +398,29 @@ function New-PortableZip {
     Test-PortableZip -ZipPath $ZipPath
 }
 
+# Stage only the XSR installable runtime. Developer docs, provenance manifests and
+# font-download scripts remain in the source checkout, not in public archives.
+function Copy-XsrRuntime {
+    param([string]$StageRoot)
+
+    $source = Join-Path $RepoRoot "vendor/xsr"
+    $target = Join-Path $StageRoot "vendor/xsr"
+    foreach ($file in @("pyproject.toml", "VERSION", "LICENSE")) {
+        if (-not (Test-Path -LiteralPath (Join-Path $source $file) -PathType Leaf)) {
+            throw "XSR runtime source missing: $file"
+        }
+    }
+    New-Item -ItemType Directory -Force -Path $target | Out-Null
+    foreach ($directory in @("src", "tex")) {
+        Copy-Item -LiteralPath (Join-Path $source $directory) -Destination (Join-Path $target $directory) -Recurse -Force
+    }
+    foreach ($file in @("pyproject.toml", "VERSION")) {
+        Copy-Item -LiteralPath (Join-Path $source $file) -Destination (Join-Path $target $file) -Force
+    }
+    # Preserve the XSR MIT notice without introducing a second LICENSE basename.
+    Copy-Item -LiteralPath (Join-Path $source "LICENSE") -Destination (Join-Path $target "xsr-LICENSE.txt") -Force
+}
+
 function New-ReleasePackage {
     param(
         [string]$Flavor,
@@ -433,10 +456,7 @@ function New-ReleasePackage {
     Copy-Item -Force (Join-Path $ScriptRoot "install.sh") (Join-Path $StageRoot "install.sh")
 
     # The XSR runtime is bundled with every core/full release, including Python.
-    $XsrVendor = Join-Path $RepoRoot "vendor/xsr"
-    if (-not (Test-Path (Join-Path $XsrVendor "UPSTREAM.txt"))) { throw "Bundled XSR source is missing." }
-    New-Item -ItemType Directory -Force -Path (Join-Path $StageRoot "vendor") | Out-Null
-    Copy-Item -LiteralPath $XsrVendor -Destination (Join-Path $StageRoot "vendor/xsr") -Recurse -Force
+    Copy-XsrRuntime -StageRoot $StageRoot
 
     if ($Flavor -eq "full") {
         $LocalFontRoot = Join-Path $RepoRoot "assets/fonts"
@@ -544,9 +564,8 @@ function New-CtanPackage {
         Copy-Item -Recurse -Force (Join-Path $RepoRoot $dir) (Join-Path $StageRoot $dir)
     }
 
-    # CTAN receives the vendored source; CTAN itself cannot execute pip.
-    New-Item -ItemType Directory -Force -Path (Join-Path $StageRoot "vendor") | Out-Null
-    Copy-Item -LiteralPath (Join-Path $RepoRoot "vendor/xsr") -Destination (Join-Path $StageRoot "vendor/xsr") -Recurse -Force
+    # CTAN receives the full XSR runtime source, not the upstream development tree.
+    Copy-XsrRuntime -StageRoot $StageRoot
 
     Remove-RuntimeBuildArtifacts -StageRoot $StageRoot
 
@@ -606,6 +625,8 @@ function New-CtanPackage {
         (New-Object System.Text.UTF8Encoding($false))
     )
     New-PortableZip -SourceRoot $StageRoot -ZipPath $ZipPath -IncludeRoot
+    & python (Join-Path $ScriptRoot "check_ctan_archive.py") $ZipPath
+    if ($LASTEXITCODE -ne 0) { throw "CTAN archive layout/metadata check failed." }
 
     Write-Host "CTAN directory: $StageRoot"
     Write-Host "CTAN zip:       $ZipPath"
