@@ -220,7 +220,7 @@ The suite covers canonical and legacy entries, font routing, starter templates,
 manual builds, and installation. Release packaging recompiles the Showcase and
 all manuals from source and checks reproducibility of the manual PDFs. See the
 [release verification guide](docs/RELEASE-1.1.0-LOCAL.md) and
-[font-library policy](assets/README.md) for approved binaries.
+[font-library policy](assets/FONT-LIBRARY.md) for approved binaries.
 
 ## Maintainer
 

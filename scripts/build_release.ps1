@@ -585,6 +585,22 @@ function New-CtanPackage {
     # CTAN receives the full XSR runtime source, not the upstream development tree.
     Copy-XsrRuntime -StageRoot $StageRoot
 
+    # CTAN-only filename disambiguation; source, Full and Core keep VERSION.
+    $CtanXsrRoot = Join-Path $StageRoot "vendor/xsr"
+    $CtanXsrPyproject = Join-Path $CtanXsrRoot "pyproject.toml"
+    $CtanXsrVersion = Join-Path $CtanXsrRoot "VERSION"
+    $versionReference = "version = {file = 'VERSION'}"
+    $metadata = [System.IO.File]::ReadAllText($CtanXsrPyproject)
+    if (-not $metadata.Contains($versionReference)) {
+        throw "XSR version metadata changed; CTAN version rename requires review."
+    }
+    [System.IO.File]::WriteAllText(
+        $CtanXsrPyproject,
+        $metadata.Replace($versionReference, "version = {file = 'xsr-version.txt'}"),
+        (New-Object System.Text.UTF8Encoding($false))
+    )
+    Move-Item -LiteralPath $CtanXsrVersion -Destination (Join-Path $CtanXsrRoot "xsr-version.txt") -ErrorAction Stop
+
     Remove-RuntimeBuildArtifacts -StageRoot $StageRoot
 
     $CtanTopLevelDocs = @(
@@ -625,7 +641,7 @@ function New-CtanPackage {
             -Destination (Join-Path $CtanShowcaseRoot $specimenDir) -Recurse -Force
     }
 
-    $AssetsReadmes = @("README.md", "README-zh.md")
+    $AssetsReadmes = @("FONT-LIBRARY.md", "FONT-LIBRARY-zh.md")
     if (Test-Path (Join-Path $RepoRoot "assets")) {
         $CtanAssets = Join-Path $StageRoot "assets"
         New-Item -ItemType Directory -Force -Path $CtanAssets | Out-Null

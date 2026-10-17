@@ -8,6 +8,7 @@ from __future__ import annotations
 from collections import defaultdict
 from pathlib import Path, PurePosixPath
 import sys
+import tomllib
 import zipfile
 
 ROOT = "impe-framework/"
@@ -17,27 +18,27 @@ TEXT_EXTENSIONS = {
     ".json", ".jsonl", ".xml", ".svg", ".csv", ".ini", ".cfg",
 }
 TEXT_NAMES = {".gitignore", ".gitattributes", ".latexmkrc", "LICENSE", "VERSION"}
-# Necessary Python package markers and existing font-library documentation.
-# The paths are explicit: newly introduced collisions fail rather than silently
-# becoming accepted exceptions.
+# Only required Python package markers may share basenames. Any additional
+# collision must fail rather than silently becoming an allowed exception.
 KNOWN_COLLISIONS = {
     "__init__.py": {
         "vendor/xsr/src/xsr/__init__.py",
         "vendor/xsr/src/xsr/egyptian/__init__.py",
         "vendor/xsr/src/xsr/khitan/__init__.py",
     },
-    "readme.md": {"README.md", "assets/README.md"},
-    "readme-zh.md": {"README-zh.md", "assets/README-zh.md"},
-    "version": {"VERSION", "vendor/xsr/VERSION"},
 }
 REQUIRED_XSR = {
     "vendor/xsr/pyproject.toml",
-    "vendor/xsr/VERSION",
+    "vendor/xsr/xsr-version.txt",
     "vendor/xsr/xsr-LICENSE.txt",
     "vendor/xsr/src/xsr/renderer.py",
     "vendor/xsr/tex/xsr-core.sty",
 }
+REQUIRED_DOCS = {"assets/FONT-LIBRARY.md", "assets/FONT-LIBRARY-zh.md"}
 FORBIDDEN_XSR = {
+    "vendor/xsr/VERSION",
+    "assets/README.md",
+    "assets/README-zh.md",
     "vendor/xsr/README.md",
     "vendor/xsr/UPSTREAM.json",
     "vendor/xsr/UPSTREAM.txt",
@@ -90,6 +91,17 @@ def check_ctan(path: Path) -> tuple[list[str], list[str], int]:
         flat = {p for items in names.values() for p in items}
         for required in sorted(REQUIRED_XSR - flat):
             errors.append(f"Bundled XSR runtime file missing: {required}")
+        for required in sorted(REQUIRED_DOCS - flat):
+            errors.append(f"CTAN font-library document missing: {required}")
+        # Verify pip can resolve the version after CTAN-only renaming.
+        if "vendor/xsr/pyproject.toml" in flat:
+            try:
+                metadata = tomllib.loads(archive.read(ROOT + "vendor/xsr/pyproject.toml").decode("utf-8"))
+                version_file = metadata["tool"]["setuptools"]["dynamic"]["version"]["file"]
+                if version_file != "xsr-version.txt":
+                    errors.append(f"Incorrect CTAN XSR metadata version file: {version_file!r}")
+            except (UnicodeError, ValueError, KeyError, TypeError) as exc:
+                errors.append(f"Invalid CTAN XSR pyproject metadata: {exc}")
         for excluded in sorted(FORBIDDEN_XSR & flat):
             errors.append(f"Unnecessary XSR development file in CTAN ZIP: {excluded}")
         if any(p.startswith("vendor/xsr/scripts/") for p in flat):

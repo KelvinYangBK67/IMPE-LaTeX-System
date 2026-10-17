@@ -44,7 +44,7 @@ assets/     本地執行資源
 ### `assets/`
 
 `assets/fonts/` 是選用的本地字體根目錄。Git 追蹤原始碼；full 封裝可收入
-允許再分發的字體。core 與 CTAN 封裝提供執行環境與文件。詳見 `assets/README-zh.md`。
+允許再分發的字體。core 與 CTAN 封裝提供執行環境與文件。詳見 `assets/FONT-LIBRARY-zh.md`。
 
 ## 公開入口
 
