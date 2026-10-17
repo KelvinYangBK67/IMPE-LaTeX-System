@@ -286,9 +286,14 @@ else
     if ! (
         trap 'rm -rf "$xsr_stage"' EXIT
         mkdir -p "$xsr_stage/src" || exit 1
-        for file in pyproject.toml README.md LICENSE VERSION; do
+        for file in pyproject.toml VERSION; do
             cp "$xsr_source/$file" "$xsr_stage/$file" || exit 1
         done
+        if [ -f "$xsr_source/xsr-LICENSE.txt" ]; then
+            cp "$xsr_source/xsr-LICENSE.txt" "$xsr_stage/LICENSE" || exit 1
+        else
+            cp "$xsr_source/LICENSE" "$xsr_stage/LICENSE" || exit 1
+        fi
         cp -R "$xsr_source/src/xsr" "$xsr_stage/src/" || exit 1
         "$xsr_python" -m pip install --disable-pip-version-check --no-input --upgrade "$xsr_stage"
     ); then

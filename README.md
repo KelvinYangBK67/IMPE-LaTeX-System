@@ -227,6 +227,13 @@ all manuals from source and checks reproducibility of the manual PDFs. See the
 YANG Sikai. Use [GitHub Issues](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues)
 for public contact and support.
 
+## AI-assisted development
+
+Development of IMPE has used AI coding assistants, including OpenAI Codex and
+ChatGPT. Project decisions, integration, maintenance and release responsibility
+remain with the human maintainer. AI tools are acknowledged as assistance, not
+authors.
+
 ## License
 
 MIT License. See [LICENSE](LICENSE).

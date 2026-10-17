@@ -213,6 +213,12 @@ tests\run_regressions.ps1 -PublicFonts
 YANG Sikai。公開聯絡與支援請使用
 [GitHub Issues](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/issues)。
 
+## AI 輔助開發聲明
+
+IMPE 的開發使用了 AI 程式輔助工具，包括 OpenAI Codex 與 ChatGPT。
+專案決策、整合、維護與發佈責任均由人類維護者承擔；AI 工具列為開發輔助，
+不列為作者。
+
 ## 授權
 
 MIT License。詳見 [LICENSE](LICENSE)。
