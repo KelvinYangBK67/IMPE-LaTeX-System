@@ -4,7 +4,6 @@
   "version": "1.3",
   "git_blobs": {
     "LICENSE": "a62fe12d455c015392d94dd13da5de30a719ae9d",
-    "README.md": "b45d7bd2e0481e244e69874ff3f34b653cab0a1f",
     "pyproject.toml": "1dc6f038c9e10764d35b1c73246400cc473db47d",
     "scripts/fetch_khitan.py": "5985b1594ccbabd65ba94abaa5cf832bb70012af",
     "scripts/fetch_noto.py": "379f54acb8cd57dc192284237ccf6d5173c95ee8",
