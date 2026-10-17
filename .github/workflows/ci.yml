@@ -37,6 +37,9 @@ jobs:
       - name: Audit Unicode 18.0 writing registry
         run: python tests/check_writing_registry.py
 
+      - name: Audit CTAN ZIP policy (including stale Python caches)
+        run: python tests/check_ctan_archive_policy.py
+
       - name: Validate release-tool syntax and public font allowlist
         shell: pwsh
         run: |

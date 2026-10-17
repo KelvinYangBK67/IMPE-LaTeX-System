@@ -94,6 +94,14 @@ def check_ctan(path: Path) -> tuple[list[str], list[str], int]:
             errors.append(f"Unnecessary XSR development file in CTAN ZIP: {excluded}")
         if any(p.startswith("vendor/xsr/scripts/") for p in flat):
             errors.append("XSR development scripts were included in the CTAN ZIP")
+        for relative in sorted(flat):
+            parts = PurePosixPath(relative).parts
+            if (
+                any(part in {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".tox"}
+                    or part.endswith(".egg-info") for part in parts)
+                or PurePosixPath(relative).suffix.lower() in {".pyc", ".pyo"}
+            ):
+                errors.append(f"Local Python build/cache artifact in CTAN ZIP: {relative}")
         for base, locations in sorted(names.items()):
             if len(locations) < 2:
                 continue
