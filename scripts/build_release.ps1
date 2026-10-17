@@ -411,8 +411,26 @@ function Copy-XsrRuntime {
         }
     }
     New-Item -ItemType Directory -Force -Path $target | Out-Null
-    foreach ($directory in @("src", "tex")) {
-        Copy-Item -LiteralPath (Join-Path $source $directory) -Destination (Join-Path $target $directory) -Recurse -Force
+    # Copy only recorded upstream runtime files. Never copy local Python caches.
+    $manifestFile = Join-Path $source "UPSTREAM.json"
+    if (-not (Test-Path -LiteralPath $manifestFile -PathType Leaf)) {
+        throw "Bundled XSR manifest is missing: $manifestFile"
+    }
+    $manifest = Get-Content -LiteralPath $manifestFile -Raw -Encoding UTF8 | ConvertFrom-Json
+    $runtimeFiles = @($manifest.git_blobs.PSObject.Properties.Name |
+        Where-Object { $_ -match '^(src|tex)/' } | Sort-Object)
+    if ($runtimeFiles.Count -eq 0) { throw "XSR manifest has no runtime files." }
+    foreach ($relativePath in $runtimeFiles) {
+        if ($relativePath -match '(^|/)\.\.?(/|$)' -or $relativePath.Contains([char]92)) {
+            throw "Unsafe XSR runtime source path: $relativePath"
+        }
+        $sourceFile = Join-Path $source $relativePath
+        if (-not (Test-Path -LiteralPath $sourceFile -PathType Leaf)) {
+            throw "Recorded XSR runtime file is missing: $sourceFile"
+        }
+        $targetFile = Join-Path $target $relativePath
+        New-Item -ItemType Directory -Force -Path (Split-Path -Parent $targetFile) | Out-Null
+        Copy-Item -LiteralPath $sourceFile -Destination $targetFile -Force
     }
     foreach ($file in @("pyproject.toml", "VERSION")) {
         Copy-Item -LiteralPath (Join-Path $source $file) -Destination (Join-Path $target $file) -Force
