@@ -26,9 +26,9 @@ KNOWN_COLLISIONS = {
         "vendor/xsr/src/xsr/egyptian/__init__.py",
         "vendor/xsr/src/xsr/khitan/__init__.py",
     },
-    "README.md": {"README.md", "assets/README.md"},
-    "README-zh.md": {"README-zh.md", "assets/README-zh.md"},
-    "VERSION": {"VERSION", "vendor/xsr/VERSION"},
+    "readme.md": {"README.md", "assets/README.md"},
+    "readme-zh.md": {"README-zh.md", "assets/README-zh.md"},
+    "version": {"VERSION", "vendor/xsr/VERSION"},
 }
 REQUIRED_XSR = {
     "vendor/xsr/pyproject.toml",
@@ -80,12 +80,12 @@ def check_ctan(path: Path) -> tuple[list[str], list[str], int]:
                 errors.append(f"ZIP text/binary metadata mismatch: {full_name}")
             if kind != "binary":
                 data = archive.read(info)
-                if b"\\x00" in data:
+                if b"\x00" in data:
                     errors.append(f"NUL byte in declared text: {full_name}")
-                if kind == "text-lf" and b"\\r" in data:
+                if kind == "text-lf" and b"\r" in data:
                     errors.append(f"Non-LF text: {full_name}")
                 if kind == "text-crlf":
-                    if data.replace(b"\\r\\n", b"").find(b"\\r") >= 0 or data.replace(b"\\r\\n", b"").find(b"\\n") >= 0:
+                    if data.replace(b"\\r\\n", b"").find(b"\r") >= 0 or data.replace(b"\\r\\n", b"").find(b"\n") >= 0:
                         errors.append(f"Non-CRLF batch file: {full_name}")
         flat = {p for items in names.values() for p in items}
         for required in sorted(REQUIRED_XSR - flat):
