@@ -206,7 +206,7 @@ tests\run_regressions.ps1 -PublicFonts
 測試涵蓋標準與相容入口、字體路由、入門範本、手冊建置及安裝。
 發行腳本從源碼重新編譯 Showcase 與三語手冊，並核對手冊 PDF 的可重現性。
 驗證方法見[發行驗證指南](docs/RELEASE-1.1.0-LOCAL.md)；字體封裝政策見
-[字體庫說明](assets/README-zh.md)。
+[字體庫說明](assets/FONT-LIBRARY-zh.md)。
 
 ## 維護者
 

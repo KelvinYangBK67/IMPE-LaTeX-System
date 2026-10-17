@@ -49,7 +49,7 @@ font modules use namespaced filenames, including:
 `assets/fonts/` is the optional local font root. Git tracks source files; full
 distributions can bundle permitted fonts. Core and CTAN packages carry the
 runtime and documentation. See
-`assets/README.md`.
+`assets/FONT-LIBRARY.md`.
 
 ## Public Entries
 
