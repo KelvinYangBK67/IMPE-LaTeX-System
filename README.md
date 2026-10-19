@@ -124,12 +124,10 @@ Checkout-local documents may load `package/impe-system.tex` directly:
 
 ## Font Resources
 
-The CTAN distribution contains the canonical runtime and public documentation. Some
-multilingual manual and showcase sources require locally configured fonts for
-full source reproduction; the prebuilt documentation PDFs are included. The
-third-party records under `font_licenses/` belong to the source repository and,
-where applicable, the full distribution. The CTAN package contains source and
-documentation resources.
+Some multilingual manual and Showcase sources require locally configured fonts
+for full source reproduction; prebuilt documentation PDFs are available with
+GitHub releases. Third-party license records under `font_licenses/` belong to
+the source repository and, where applicable, the full distribution.
 
 ## Egyptian, Khitan and inline image glyphs
 
@@ -148,8 +146,8 @@ needed. Dynamic rendering uses XeLaTeX shell escape or XSR preprocessing;
 ordinary IMPE documents do not start Python.
 
 The core package has no bundled font binaries. XSR needs readable TTF/OTF
-files for its script backends. CTAN distributes source without running
-`pip`; the IMPE installer sets up the private Python environment.
+files for its script backends. GitHub Full/Core installers set up the private
+Python environment; simply unpacking the ZIP does not run `pip`.
 See [Fonts](docs/FONTS.md) and the [XSR verification checklist](docs/XSR-INSTALL-CHECKLIST-zh.md).
 
 ## Documentation
@@ -195,12 +193,13 @@ tests/            regression suite
   the permitted local font library
 - `IMPE-LaTeX-System-vX.Y.Z-core.zip`: runtime and compatibility wrappers;
   installed fonts resolve through TeX Live or the system
-- `impe-framework.zip`: CTAN distribution with one `impe-framework/` root,
-  canonical `impe*` entries, manuals, and showcase source/PDF
 
-Versioned standalone manual and showcase PDFs retain the `impe-` project
-prefix. The CTAN id `impe-framework` names the archive; package and class
-names and the TEXMF namespace retain their IMPE identifiers.
+Versioned standalone manual and Showcase PDFs retain the `impe-` project
+prefix. **CTAN-specific packaging was retired after 1.1.0**; its scripts and
+checks remain in the historical branch
+[`archive/ctan-1.1.0-20261019`](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/tree/archive/ctan-1.1.0-20261019).
+Existing CTAN/TeX Live copies of the earlier release are independent of current
+GitHub releases. The TeX package/class and TEXMF identifiers remain unchanged.
 
 ## Development and Tests
 
