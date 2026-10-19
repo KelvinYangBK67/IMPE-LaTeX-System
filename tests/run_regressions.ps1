@@ -782,7 +782,7 @@ if ($RunFormalReleaseChecks) {
 
     $coreInspect = Join-Path $BuildRoot "core-inspect"
     Expand-Archive -LiteralPath $coreZip -DestinationPath $coreInspect -Force
-    foreach ($xsrFile in @("vendor/xsr/UPSTREAM.txt", "vendor/xsr/tex/xsr-core.sty", "vendor/xsr/src/xsr/renderer.py")) {
+    foreach ($xsrFile in @("vendor/xsr/VERSION", "vendor/xsr/pyproject.toml", "vendor/xsr/tex/xsr-core.sty", "vendor/xsr/src/xsr/renderer.py")) {
         if (-not (Test-Path (Join-Path $coreInspect $xsrFile))) { throw "Core archive missing XSR: $xsrFile" }
     }
     if (Test-Path -LiteralPath (Join-Path $coreInspect "examples")) {
