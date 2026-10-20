@@ -195,11 +195,7 @@ tests/            regression suite
   installed fonts resolve through TeX Live or the system
 
 Versioned standalone manual and Showcase PDFs retain the `impe-` project
-prefix. **CTAN-specific packaging was retired after 1.1.0**; its scripts and
-checks remain in the historical branch
-[`archive/ctan-1.1.0-20261019`](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/tree/archive/ctan-1.1.0-20261019).
-Existing CTAN/TeX Live copies of the earlier release are independent of current
-GitHub releases. The TeX package/class and TEXMF identifiers remain unchanged.
+prefix. The TeX package/class and TEXMF identifiers remain unchanged.
 
 ## Development and Tests
 
