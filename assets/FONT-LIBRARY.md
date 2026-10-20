@@ -9,8 +9,7 @@ full packages include only exact font paths listed in
 Unlisted fonts are excluded from the public archive, regardless of the local
 library contents. The local library remains unchanged.
 
-The core distribution and the CTAN-oriented `impe-framework.zip` contain the
-runtime and documentation. Fontspec resolves installed fonts directly; users
+The Core distribution contains the runtime and documentation. Fontspec resolves installed fonts directly; users
 may also provide a local library through `impe.local.tex` or
 `\SetCatalogFontRoot{...}`.
 

@@ -1,7 +1,6 @@
 # IMPE 內附 XSR 1.3：本地驗收清單
 
 狀態：IMPE 1.1.0 內附 XSR 1.3。本清單保留作為 1.1.0 的本地安裝與驗證指引；
-GitHub Release 與 CTAN 上傳是不同的發佈步驟。
 這份清單專門驗證 GitHub CI 無法替使用者確認的本地安裝環境。
 CI 綠燈不代表已在使用者自己的電腦上完成本地安裝驗證。
 
@@ -78,13 +77,7 @@ XSR-FONT-MISSING。該測試的字體配置可能使用 repository fixture；
 IMPE_SKIP_XSR_PYTHON=1 sh scripts/install.sh。
 在此模式下，不能宣稱 Python 渲染環境已自動配置。
 
-## F. 關於 CTAN
-
-CTAN 源碼封裝包含 XSR TeX/Python 原始碼，但 TeX Live 的安裝流程不會
-替使用者執行 pip。完整一站式安裝請使用 IMPE core／full 安裝器。
-
-
-## G. 完全隔離的本地安裝驗證（更嚴格）
+## F. 完全隔離的本地安裝驗證（更嚴格）
 
 上面的直接編譯在 IMPE 工作目錄內，TeX 仍可能優先讀取
 ./core、./catalog 與 ./modules 中的倉庫原始檔案。因此要對安裝
@@ -109,7 +102,7 @@ tests/fixtures/xsr-square.svg 按原來相對路徑複製到隔離目錄；
 字體檔案確實存在。舊日誌的字體警告表示「沒有完成該字體的驗證」，
 不應當視為自動渲染測試通過。
 
-## H. PDF Unicode 提取驗證（1.0.8）
+## G. PDF Unicode 提取驗證（1.0.8）
 
 使用 PyMuPDF 或 Poppler 實際複製／提取 PDF，確認契丹小字
 U+16FE4、埃及文格式控制符及其他補充平面字符仍保持原始序列。

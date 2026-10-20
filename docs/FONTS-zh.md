@@ -384,7 +384,7 @@ Git 倉庫收錄原始碼與文件。本地字體二進位檔案可存放於 `as
 公開 Full 封裝只收錄[逐一核准的檔案清單](../font_licenses/approved-public-fonts.txt)
 內、本地實際存在的字體。發行腳本要求字體目錄可讀取，且至少包含
 一個已核准的字體檔案；未核准檔案仍留在本地字體庫。
-core 與 CTAN 封裝則使用已安裝的 TeX Live／系統字體或用戶指定的字體庫。
+Core 封裝則使用已安裝的 TeX Live／系統字體或用戶指定的字體庫。
 授權細節見[第三方字體授權](../font_licenses/README-zh.md)。
 
 ## 外部字體解析

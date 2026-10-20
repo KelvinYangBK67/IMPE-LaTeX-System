@@ -64,4 +64,4 @@ long-term protection, matching English and Traditional Chinese reference
 updates, and any required manual or showcase change. Focused probes may be
 used locally during development and kept as local scratch files. Run
 `tests/run_regressions.ps1 -PublicFonts` before release; use public font
-fixtures for tests and CTAN packaging.
+fixtures for regression tests and release-package verification.

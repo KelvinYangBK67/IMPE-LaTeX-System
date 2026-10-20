@@ -31,8 +31,8 @@ comes from documentation, including for files under `core/` or `modules/`.
 canonical API uses `impe*`; deprecation requires an explicit announcement.
 The wrappers ship in the repository and full/core distributions and are
 exercised in dedicated compatibility fixtures such as `tests/legacy-entry.tex`.
-The CTAN `impe-framework` distribution, new manuals, templates, examples, and
-ordinary maintained sources use the canonical `impe*` entries.
+New manuals, templates, examples, and ordinary maintained sources use the
+canonical `impe*` entries.
 
 New documents use the canonical `impe*` entries. Any future change to the
 support status of `next*` requires an explicit statement.

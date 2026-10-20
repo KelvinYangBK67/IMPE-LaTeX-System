@@ -47,7 +47,7 @@ font modules use namespaced filenames, including:
 ### `assets/`
 
 `assets/fonts/` is the optional local font root. Git tracks source files; full
-distributions can bundle permitted fonts. Core and CTAN packages carry the
+distributions can bundle permitted fonts. Core packages carry the
 runtime and documentation. See
 `assets/FONT-LIBRARY.md`.
 
@@ -185,11 +185,7 @@ generic mechanisms belong in `core/`. See
   permitted local fonts
 - `IMPE-LaTeX-System-vX.Y.Z-core.zip`: runtime and compatibility entries;
   installed fonts resolve through TeX Live or the system
-- `impe-framework.zip`: CTAN archive rooted at `impe-framework/`, containing
-  canonical `impe*` entries and documentation
-
-The CTAN id names the archive; `\ProvidesPackage{impe}`, class names, runtime
-file prefixes, and the `tex/latex/impe/` installation namespace retain the
-canonical IMPE names. The version comes
+The `\ProvidesPackage{impe}` identifier, class names, runtime file prefixes,
+and the `tex/latex/impe/` installation namespace retain the canonical IMPE names. The version comes
 from the repository `VERSION` file.
 

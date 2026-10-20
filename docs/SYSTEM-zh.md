@@ -44,7 +44,7 @@ assets/     本地執行資源
 ### `assets/`
 
 `assets/fonts/` 是選用的本地字體根目錄。Git 追蹤原始碼；full 封裝可收入
-允許再分發的字體。core 與 CTAN 封裝提供執行環境與文件。詳見 `assets/FONT-LIBRARY-zh.md`。
+允許再分發的字體。Core 封裝提供執行環境與文件。詳見 `assets/FONT-LIBRARY-zh.md`。
 
 ## 公開入口
 
@@ -174,9 +174,6 @@ Unicode 區段資料、人工維護的書寫系統設定檔、字體資源包及
 - `IMPE-LaTeX-System-vX.Y.Z-full.zip`：執行環境、相容入口與允許收錄的本地字體
 - `IMPE-LaTeX-System-vX.Y.Z-core.zip`：執行環境與相容入口；已安裝字體可透過
   TeX Live 或系統環境解析
-- `impe-framework.zip`：根目錄為 `impe-framework/` 的 CTAN archive，包含標準
-  `impe*` 入口與文件
-
-CTAN id 用於命名封裝；`\ProvidesPackage{impe}`、class 名稱、執行檔前綴與
+`\ProvidesPackage{impe}`、class 名稱、執行檔前綴與
 `tex/latex/impe/` 安裝 namespace 沿用 IMPE 標準名稱。版本號取自倉庫根目錄的 `VERSION`。
 

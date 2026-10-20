@@ -185,9 +185,6 @@ tests/            回歸測試
   TeX Live 或系統解析
 
 獨立發佈的手冊與 Showcase PDF 繼續使用 `impe-` 專案前綴。
-**CTAN 專用打包流程已在 1.1.0 後停止維護**，歷史腳本與稽覈工具封存在
-[`archive/ctan-1.1.0-20261019`](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/tree/archive/ctan-1.1.0-20261019)。
-先前已收錄 CTAN／TeX Live 的版本不受 GitHub 後續發行影響；
 package、class 與 TEXMF namespace 仍沿用 IMPE 名稱。
 
 ## 開發與測試

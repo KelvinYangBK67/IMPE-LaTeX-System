@@ -437,7 +437,7 @@ be placed in `assets/fonts/` and selected using `impe.local.tex` or
 whose exact paths appear in [the approved-font manifest](../font_licenses/approved-public-fonts.txt).
 The release builder requires a readable font directory and at least one
 approved local font. Other local files remain outside the public archive.
-Core and CTAN archives rely on installed TeX Live or system fonts and user
+Core archives rely on installed TeX Live or system fonts and user
 font directories. See [third-party font licenses](../font_licenses/README.md).
 
 ## External Font Resolution
