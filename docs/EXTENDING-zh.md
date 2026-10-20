@@ -54,5 +54,5 @@ target 進行測試。
 
 若擴充行為需要長期保護，應加入最小回歸測試，並同步更新英文與繁體中文參考文件，
 以及必要的手冊或 showcase。開發期間可使用本機聚焦探針，並保留為本地暫存檔案。
-發佈前執行 `tests/run_regressions.ps1 -PublicFonts`；測試與 CTAN 封裝使用
+發佈前執行 `tests/run_regressions.ps1 -PublicFonts`；測試與發行包驗證使用
 公開字體 fixture。
