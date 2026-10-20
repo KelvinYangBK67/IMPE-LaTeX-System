@@ -117,10 +117,10 @@ checkout 內的文件可直接載入 `package/impe-system.tex`：
 
 ## 字體資源
 
-CTAN 封裝提供標準執行環境與公開文件。部分多語手冊與 showcase 原始碼若要完整重現，
-可能需要本機設定字體；發佈內已附預先建置的文件 PDF。`font_licenses/approved-public-fonts.txt` 列出 full 包核准的字體；
-最終收錄清單須於本地完成授權稽覈。`font_licenses/` 下的第三方
-記錄屬於原始碼倉庫及適用時的 full 封裝。CTAN 封裝提供原始碼與文件資源。
+部分多語手冊與 Showcase 原始碼若要完整重現，可能需要本機設定字體；
+GitHub Releases 提供預先建置的文件 PDF。`font_licenses/approved-public-fonts.txt`
+列出 Full 包核准的字體；最終收錄清單須於本地完成授權稽覈。
+`font_licenses/` 下的第三方記錄屬於原始碼倉庫及適用時的 Full 封裝。
 
 ## 埃及文、契丹小字與行內圖片字形
 
@@ -138,7 +138,7 @@ Unix 可執行 `sh scripts/install.sh`。僅安裝 TeX 時，可在 PowerShell
 shell-escape 或 XSR 預處理，一般 IMPE 文件則無須啟動 Python。
 
 core 封裝不附字體二進位檔案；XSR 的文字後端需要可讀取的 TTF／OTF 字體檔案。
-CTAN 分發原始碼，但 TeX Live 安裝程序不會自動執行 `pip`。
+Full／Core 封裝可使用 IMPE 安裝器設定專用 Python 環境；僅解壓 ZIP 不會自動執行 `pip`。
 詳見[字體參考](docs/FONTS-zh.md)及 [XSR 驗收清單](docs/XSR-INSTALL-CHECKLIST-zh.md)。
 
 ## 文件
@@ -183,11 +183,12 @@ tests/            回歸測試
   本地字體庫
 - `IMPE-LaTeX-System-vX.Y.Z-core.zip`：執行環境與相容 wrapper；已安裝字體可由
   TeX Live 或系統解析
-- `impe-framework.zip`：CTAN 封裝；根目錄為 `impe-framework/`，包含
-  標準 `impe*` 入口、手冊及 showcase 原始碼/PDF
 
-獨立發佈的手冊與 showcase PDF 繼續使用 `impe-` 專案前綴。CTAN id
-`impe-framework` 用於命名封裝；package、class 與 TEXMF namespace 沿用 IMPE 名稱。
+獨立發佈的手冊與 Showcase PDF 繼續使用 `impe-` 專案前綴。
+**CTAN 專用打包流程已在 1.1.0 後停止維護**，歷史腳本與稽覈工具封存在
+[`archive/ctan-1.1.0-20261019`](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/tree/archive/ctan-1.1.0-20261019)。
+先前已收錄 CTAN／TeX Live 的版本不受 GitHub 後續發行影響；
+package、class 與 TEXMF namespace 仍沿用 IMPE 名稱。
 
 ## 開發與測試
 

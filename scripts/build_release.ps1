@@ -3,7 +3,6 @@ param(
     [switch]$KeepStage,
     [switch]$SkipFull,
     [switch]$SkipCore,
-    [switch]$SkipCtan,
     [switch]$SkipManualReproducibility
 )
 
@@ -557,122 +556,8 @@ function New-ReleasePackage {
     }
 }
 
-function New-CtanPackage {
-    $StageRoot = Join-Path $OutputRoot "impe-framework"
-    $ZipPath = Join-Path $OutputRoot "impe-framework.zip"
-
-    Write-Host "Preparing CTAN release..."
-    Write-Host "  Stage root: $StageRoot"
-    Write-Host "  Zip path:   $ZipPath"
-
-    if (Test-Path $StageRoot) {
-        Remove-Item -Recurse -Force $StageRoot
-    }
-    if (Test-Path $ZipPath) {
-        Remove-Item -Force $ZipPath
-    }
-
-    New-Item -ItemType Directory -Force -Path $StageRoot | Out-Null
-
-    foreach ($file in $CanonicalTopLevelFiles) {
-        Copy-Item -Force (Join-Path (Join-Path $RepoRoot "package") $file) (Join-Path $StageRoot $file)
-    }
-
-    foreach ($dir in @("core", "catalog", "modules", "docs")) {
-        Copy-Item -Recurse -Force (Join-Path $RepoRoot $dir) (Join-Path $StageRoot $dir)
-    }
-
-    # CTAN receives the full XSR runtime source, not the upstream development tree.
-    Copy-XsrRuntime -StageRoot $StageRoot
-
-    # CTAN-only filename disambiguation; source, Full and Core keep VERSION.
-    $CtanXsrRoot = Join-Path $StageRoot "vendor/xsr"
-    $CtanXsrPyproject = Join-Path $CtanXsrRoot "pyproject.toml"
-    $CtanXsrVersion = Join-Path $CtanXsrRoot "VERSION"
-    $versionReference = "version = {file = 'VERSION'}"
-    $metadata = [System.IO.File]::ReadAllText($CtanXsrPyproject)
-    if (-not $metadata.Contains($versionReference)) {
-        throw "XSR version metadata changed; CTAN version rename requires review."
-    }
-    [System.IO.File]::WriteAllText(
-        $CtanXsrPyproject,
-        $metadata.Replace($versionReference, "version = {file = 'xsr-version.txt'}"),
-        (New-Object System.Text.UTF8Encoding($false))
-    )
-    Move-Item -LiteralPath $CtanXsrVersion -Destination (Join-Path $CtanXsrRoot "xsr-version.txt") -ErrorAction Stop
-
-    Remove-RuntimeBuildArtifacts -StageRoot $StageRoot
-
-    $CtanTopLevelDocs = @(
-        "README.md",
-        "README-zh.md",
-        "CHANGELOG.md",
-        "CHANGELOG-zh.md",
-        "LICENSE",
-        "VERSION"
-    )
-    foreach ($file in $CtanTopLevelDocs) {
-        Copy-Item -Force (Join-Path $RepoRoot $file) (Join-Path $StageRoot $file)
-    }
-
-    foreach ($languageId in $ManualLanguages) {
-        $manual = $Manuals[$languageId]
-        $manualDocRoot = Join-Path $StageRoot "manual/$languageId"
-        New-Item -ItemType Directory -Force -Path $manualDocRoot | Out-Null
-        Copy-Item -LiteralPath $manual.Source `
-            -Destination (Join-Path $manualDocRoot ([IO.Path]::GetFileName($manual.Source))) -Force
-        Copy-Item -LiteralPath (Join-Path $ManualBuildPrimary $manual.PdfName) `
-            -Destination (Join-Path $manualDocRoot $manual.PdfName) -Force
-    }
-    $CtanShowcaseRoot = Join-Path $StageRoot "manual/showcase"
-    New-Item -ItemType Directory -Force -Path $CtanShowcaseRoot | Out-Null
-    Copy-Item -LiteralPath $ShowcaseSource -Destination (Join-Path $CtanShowcaseRoot "impe-showcase.tex") -Force
-    Copy-Item -LiteralPath $ShowcasePdf -Destination (Join-Path $CtanShowcaseRoot "impe-showcase.pdf") -Force
-    Copy-Item -LiteralPath $ShowcaseBibliography -Destination (Join-Path $CtanShowcaseRoot "references.bib") -Force
-
-    # A CTAN source distribution must retain the Showcase's relative image
-    # paths, so users can rebuild the specimens with their own fonts.
-    foreach ($specimenDir in @("figures", "glyphs")) {
-        $sourceDir = Join-Path $RepoRoot "manual/showcase/$specimenDir"
-        if (-not (Test-Path -LiteralPath $sourceDir -PathType Container)) {
-            throw "Showcase specimen assets are missing: $sourceDir"
-        }
-        Copy-Item -LiteralPath $sourceDir `
-            -Destination (Join-Path $CtanShowcaseRoot $specimenDir) -Recurse -Force
-    }
-
-    $AssetsReadmes = @("FONT-LIBRARY.md", "FONT-LIBRARY-zh.md")
-    if (Test-Path (Join-Path $RepoRoot "assets")) {
-        $CtanAssets = Join-Path $StageRoot "assets"
-        New-Item -ItemType Directory -Force -Path $CtanAssets | Out-Null
-        foreach ($file in $AssetsReadmes) {
-            $source = Join-Path (Join-Path $RepoRoot "assets") $file
-            if (Test-Path $source) {
-                Copy-Item -Force $source (Join-Path $CtanAssets $file)
-            }
-        }
-    }
-
-    [System.IO.File]::WriteAllText(
-        (Join-Path $StageRoot "RELEASE.txt"),
-        "CTAN-oriented IMPE v$Version source and runtime archive. Font binaries are intentionally excluded.`n",
-        (New-Object System.Text.UTF8Encoding($false))
-    )
-    New-PortableZip -SourceRoot $StageRoot -ZipPath $ZipPath -IncludeRoot
-    & python (Join-Path $ScriptRoot "check_ctan_archive.py") $ZipPath
-    if ($LASTEXITCODE -ne 0) { throw "CTAN archive layout/metadata check failed." }
-
-    Write-Host "CTAN directory: $StageRoot"
-    Write-Host "CTAN zip:       $ZipPath"
-    Write-Host ""
-
-    if (-not $KeepStage) {
-        Remove-Item -Recurse -Force $StageRoot
-    }
-}
-
 # Compile the current Showcase once; the same validated PDF feeds the
-# Manual appendices, the CTAN archive and the versioned release asset.
+# Manual appendices and the versioned GitHub release asset.
 # The tracked canonical PDF is left untouched for separate human review.
 $ShowcaseBuildRoot = Join-Path $OutputRoot ".showcase-build"
 & (Join-Path $ScriptRoot "build_showcase.ps1") -OutputRoot $ShowcaseBuildRoot
@@ -719,10 +604,6 @@ if (-not $SkipManualReproducibility) {
     }
 }
 
-if (-not $SkipCtan) {
-    New-CtanPackage
-}
-
 if (-not $SkipFull) {
     New-ReleasePackage `
         -Flavor "full" `
@@ -753,8 +634,8 @@ foreach ($manualBuildRoot in @($ManualBuildPrimary, $ManualBuildSecondary)) {
         Remove-Item -LiteralPath $manualBuildRoot -Recurse -Force
     }
 }
-# Keep only the final public assets; the newly compiled Showcase has already
-# been copied to the versioned PDF and packaged into CTAN.
+# Keep only the final public assets; the freshly compiled Showcase
+# has already been copied to its versioned PDF.
 if (Test-Path -LiteralPath $ShowcaseBuildRoot) {
     Remove-Item -LiteralPath $ShowcaseBuildRoot -Recurse -Force
 }

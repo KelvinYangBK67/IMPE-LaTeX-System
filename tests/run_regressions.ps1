@@ -744,9 +744,8 @@ if ($RunFormalReleaseChecks) {
     }
 
     $coreZip = Join-Path $releaseRoot "IMPE-LaTeX-System-v$Version-core.zip"
-    $ctanZip = Join-Path $releaseRoot "impe-framework.zip"
-    if (-not (Test-Path $coreZip) -or -not (Test-Path $ctanZip)) {
-        throw "Expected core and CTAN archives were not created."
+    if (-not (Test-Path -LiteralPath $coreZip)) {
+        throw "Expected GitHub core archive was not created."
     }
     $expectedReleaseAssets = @(
         foreach ($languageId in $manualLanguages) {
@@ -760,205 +759,30 @@ if ($RunFormalReleaseChecks) {
         }
     }
 
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-    $ctanArchive = [System.IO.Compression.ZipFile]::OpenRead($ctanZip)
-    try {
-        $ctanEntryNames = @($ctanArchive.Entries | ForEach-Object { $_.FullName })
-        if ($ctanEntryNames | Where-Object { $_.Contains("\\") }) {
-            throw "CTAN archive entries must use portable forward-slash separators."
-        }
-        $ctanEntryRoots = @($ctanEntryNames |
-            Where-Object { $_ } |
-            ForEach-Object { ($_ -split "/")[0] } |
-            Sort-Object -Unique)
-        if ($ctanEntryRoots.Count -ne 1 -or $ctanEntryRoots[0] -ne "impe-framework") {
-            throw "CTAN archive must contain exactly one raw top-level impe-framework directory."
-        }
-    }
-    finally {
-        $ctanArchive.Dispose()
-    }
-
+    # Verify that independent GitHub Core builds are reproducible.
     $reproReleaseRoot = Join-Path $BuildRoot "release-reproducibility"
     & (Join-Path $RepoRoot "scripts/build_release.ps1") `
         -OutputRoot $reproReleaseRoot `
         -SkipFull `
-        -SkipCore `
         -SkipManualReproducibility
     if ($LASTEXITCODE -ne 0) {
-        throw "Reproducible CTAN construction regression failed."
+        throw "Reproducible GitHub Core construction regression failed."
     }
-    $reproCtanZip = Join-Path $reproReleaseRoot "impe-framework.zip"
-    $ctanHash = (Get-FileHash -LiteralPath $ctanZip -Algorithm SHA256).Hash
-    $reproCtanHash = (Get-FileHash -LiteralPath $reproCtanZip -Algorithm SHA256).Hash
-    if ($ctanHash -ne $reproCtanHash) {
-        throw "Independent CTAN builds must be byte-for-byte reproducible."
+    $reproCoreZip = Join-Path $reproReleaseRoot "IMPE-LaTeX-System-v$Version-core.zip"
+    if (-not (Test-Path -LiteralPath $reproCoreZip)) {
+        throw "Independent GitHub Core archive is missing."
     }
-
-    $ctanInspect = Join-Path $BuildRoot "ctan-inspect"
-    Expand-Archive -LiteralPath $ctanZip -DestinationPath $ctanInspect -Force
-    $ctanTopLevel = @(Get-ChildItem -LiteralPath $ctanInspect -Force)
-    if ($ctanTopLevel.Count -ne 1 -or
-        -not $ctanTopLevel[0].PSIsContainer -or
-        $ctanTopLevel[0].Name -ne "impe-framework") {
-        throw "CTAN archive must contain exactly one top-level impe-framework directory."
-    }
-    $ctanPackage = Join-Path $ctanInspect "impe-framework"
-    $requiredCtanPaths = @(
-        "impe.sty",
-        "impeart.cls",
-        "impeart_zh.cls",
-        "impebook.cls",
-        "impebook_zh.cls",
-        "impereport.cls",
-        "impereport_zh.cls",
-        "impebeamer.cls",
-        "impebeamer_zh.cls",
-        "README.md",
-        "README-zh.md",
-        "CHANGELOG.md",
-        "CHANGELOG-zh.md",
-        "LICENSE",
-        "VERSION",
-        "docs/STABILITY.md",
-        "docs/STABILITY-zh.md",
-        "docs/EXTENDING.md",
-        "docs/EXTENDING-zh.md",
-        "manual/showcase/impe-showcase.tex",
-        "manual/showcase/impe-showcase.pdf",
-        "manual/showcase/references.bib"
-    )
-    foreach ($languageId in $manualLanguages) {
-        $requiredCtanPaths += "manual/$languageId/impe-manual-$languageId.tex"
-        $requiredCtanPaths += "manual/$languageId/impe-manual-$languageId.pdf"
-    }
-    foreach ($required in $requiredCtanPaths) {
-        if (-not (Test-Path (Join-Path $ctanPackage $required))) {
-            throw "CTAN archive is missing $required."
-        }
-    }
-    # Every Showcase specimen must retain its relative source path in CTAN.
-    foreach ($specimenDir in @("figures", "glyphs")) {
-        $sourceDir = Join-Path $RepoRoot "manual/showcase/$specimenDir"
-        $sourceFiles = @(Get-ChildItem -LiteralPath $sourceDir -Recurse -File)
-        if ($sourceFiles.Count -eq 0) {
-            throw "No Showcase specimens found under $sourceDir."
-        }
-        foreach ($sourceFile in $sourceFiles) {
-            $relative = $sourceFile.FullName.Substring($sourceDir.Length).TrimStart([char[]](92,47))
-            $archivedFile = Join-Path (Join-Path $ctanPackage "manual/showcase/$specimenDir") $relative
-            if (-not (Test-Path -LiteralPath $archivedFile -PathType Leaf)) {
-                throw "CTAN archive is missing Showcase specimen: $specimenDir/$relative"
-            }
-            # ZIP text resources receive LF normalization, but image bytes
-            # must remain unchanged.
-            if ($sourceFile.Extension.ToLowerInvariant() -in @(".png", ".pdf")) {
-                $sourceHash = (Get-FileHash -LiteralPath $sourceFile.FullName -Algorithm SHA256).Hash
-                $archivedHash = (Get-FileHash -LiteralPath $archivedFile -Algorithm SHA256).Hash
-                if ($sourceHash -ne $archivedHash) {
-                    throw "CTAN Showcase specimen differs from source: $specimenDir/$relative"
-                }
-            }
-        }
-    }
-    foreach ($xsrFile in @("vendor/xsr/UPSTREAM.txt", "vendor/xsr/LICENSE", "vendor/xsr/pyproject.toml", "vendor/xsr/tex/xsr-core.sty", "vendor/xsr/src/xsr/renderer.py")) {
-        if (-not (Test-Path (Join-Path $ctanPackage $xsrFile))) { throw "CTAN source missing XSR: $xsrFile" }
-    }
-    $ctanVersion = (Get-Content -LiteralPath (Join-Path $ctanPackage "VERSION") -Raw -Encoding UTF8).Trim()
-    if ($ctanVersion -ne $Version) {
-        throw "CTAN VERSION is $ctanVersion; expected $Version."
-    }
-    if (Test-Path (Join-Path $ctanInspect "impe.sty")) {
-        throw "CTAN package files must not be placed directly at zip root."
-    }
-    if (Test-Path (Join-Path $ctanPackage "assets/fonts")) {
-        throw "CTAN archive must not contain the local font library."
-    }
-    $ctanLegacyEntries = @(Get-ChildItem -LiteralPath $ctanPackage -Recurse -File |
-        Where-Object { $_.Name -like "next*" })
-    if ($ctanLegacyEntries) {
-        $names = ($ctanLegacyEntries.FullName -join [Environment]::NewLine)
-        throw "CTAN archive contains legacy next* compatibility files:$([Environment]::NewLine)$names"
-    }
-    $forbiddenCtanPaths = @(
-        "impe-manual.tex",
-        "impe-manual.pdf",
-        "impe-showcase.pdf",
-        "doc",
-        "_showcase",
-        "examples",
-        "archive",
-        "CHANGELOG.unreleased.md"
-    )
-    foreach ($languageId in $manualLanguages) {
-        $forbiddenCtanPaths += "manual/$languageId/VERSION"
-        $forbiddenCtanPaths += "manual/$languageId/impe-showcase.pdf"
-    }
-    foreach ($forbiddenCtanPath in $forbiddenCtanPaths) {
-        if (Test-Path -LiteralPath (Join-Path $ctanPackage $forbiddenCtanPath)) {
-            throw "CTAN archive contains obsolete or duplicated content: $forbiddenCtanPath"
-        }
-    }
-    $ctanSaveErrors = @(Get-ChildItem -LiteralPath $ctanPackage -Recurse -File |
-        Where-Object { $_.Name -like "*-SAVE-ERROR" })
-    if ($ctanSaveErrors) {
-        throw "CTAN archive contains SAVE-ERROR leftovers."
-    }
-    $ctanFonts = @(Get-ChildItem -LiteralPath $ctanPackage -Recurse -File |
-        Where-Object { $_.Extension -in @(".ttf", ".otf", ".ttc", ".woff", ".woff2") })
-    if ($ctanFonts) {
-        throw "CTAN archive contains font binaries."
-    }
-    $ctanRuntimeArtifacts = foreach ($root in $runtimeRoots) {
-        Get-ChildItem (Join-Path $ctanPackage $root) -Recurse -File |
-            Where-Object { $_.Extension -ne ".tex" }
-    }
-    if ($ctanRuntimeArtifacts) {
-        $names = ($ctanRuntimeArtifacts.FullName -join [Environment]::NewLine)
-        throw "CTAN runtime contains build artifacts:$([Environment]::NewLine)$names"
-    }
-    $unwantedExtensions = @(".aux", ".log", ".out", ".toc", ".fls", ".xdv")
-    $ctanBuildArtifacts = @(Get-ChildItem -LiteralPath $ctanPackage -Recurse -File |
-        Where-Object {
-            $_.Extension -in $unwantedExtensions -or
-            $_.Name -like "*.fdb_latexmk" -or
-            $_.Name -like "*.synctex.gz"
-        })
-    if ($ctanBuildArtifacts) {
-        $names = ($ctanBuildArtifacts.FullName -join [Environment]::NewLine)
-        throw "CTAN archive contains build artifacts:$([Environment]::NewLine)$names"
-    }
-    if (Test-Path (Join-Path $ctanPackage "impe-externalized-render.ps1")) {
-        throw "CTAN archive contains the obsolete PowerShell renderer."
-    }
-
-    $ctanRuntimeFiles = @(
-        Get-ChildItem -LiteralPath $ctanPackage -File |
-            Where-Object { $_.Extension -in @(".sty", ".cls", ".tex", ".lua") }
-        foreach ($root in $runtimeRoots) {
-            Get-ChildItem (Join-Path $ctanPackage $root) -Recurse -File
-        }
-    )
-    $hardCodedRuntime = foreach ($file in $ctanRuntimeFiles) {
-        $text = Get-Content -LiteralPath $file.FullName -Raw
-        if ($text -match 'C:[/\\]texlive' -or
-            $text -match '/bin/windows/' -or
-            $text -match 'texlive[/\\][0-9]{4}' -or
-            $text -match '(?i)\bpowershell\b' -or
-            $text -match '(?i)\bcmd(?:\.exe)?\s+/c\b') {
-            $file
-        }
-    }
-    if ($hardCodedRuntime) {
-        $names = ($hardCodedRuntime.FullName -join [Environment]::NewLine)
-        throw "CTAN runtime contains platform-specific runner assumptions:$([Environment]::NewLine)$names"
+    $coreHash = (Get-FileHash -LiteralPath $coreZip -Algorithm SHA256).Hash
+    $reproCoreHash = (Get-FileHash -LiteralPath $reproCoreZip -Algorithm SHA256).Hash
+    if ($coreHash -ne $reproCoreHash) {
+        throw "Independent GitHub Core builds must be byte-for-byte reproducible."
     }
 
     $env:TEXINPUTS = $manualPreviousTexInputs
 
     $coreInspect = Join-Path $BuildRoot "core-inspect"
     Expand-Archive -LiteralPath $coreZip -DestinationPath $coreInspect -Force
-    foreach ($xsrFile in @("vendor/xsr/UPSTREAM.txt", "vendor/xsr/tex/xsr-core.sty", "vendor/xsr/src/xsr/renderer.py")) {
+    foreach ($xsrFile in @("vendor/xsr/VERSION", "vendor/xsr/pyproject.toml", "vendor/xsr/tex/xsr-core.sty", "vendor/xsr/src/xsr/renderer.py")) {
         if (-not (Test-Path (Join-Path $coreInspect $xsrFile))) { throw "Core archive missing XSR: $xsrFile" }
     }
     if (Test-Path -LiteralPath (Join-Path $coreInspect "examples")) {
