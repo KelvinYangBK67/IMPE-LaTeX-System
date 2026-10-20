@@ -1,6 +1,6 @@
 # IMPE 1.1.0: GitHub release construction and verification
 
-This guide records how the 1.1.0 release assets are built, checked and published. The source version, user manuals and canonical Showcase are 1.1.0. GitHub Releases are published by the maintainer. The historical CTAN packaging path is preserved on branch `archive/ctan-1.1.0-20261019` and is no longer part of the active build.
+This guide records how the 1.1.0 release assets are built, checked and published. The source version, user manuals and canonical Showcase are 1.1.0. GitHub Releases are published by the maintainer.
 
 ## Build and verify
 
@@ -21,7 +21,7 @@ After completing the verification above, create the tag `v1.1.0` from the final 
 - `impe-manual-de-1.1.0.pdf`
 - `impe-manual-zh-1.1.0.pdf`
 
-Versioned Showcase links in the manuals target the **GitHub Release asset**, not an independently tracked PDF in the source tree. The original 1.1.0 GitHub release may still include a historical CTAN ZIP asset. The current build no longer produces it and does not change previously published release assets.
+Versioned Showcase links in the manuals target the **GitHub Release asset**, not an independently tracked PDF in the source tree. The release build does not modify previously published assets.
 
 ## Invariants
 
