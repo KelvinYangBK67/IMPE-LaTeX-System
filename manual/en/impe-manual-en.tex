@@ -99,7 +99,7 @@ that motivated the system.
 
 \subsection{Distribution forms}
 
-IMPE 1.1.0 is distributed in three forms. They share the same
+IMPE 1.1.0 is distributed in two forms. They share the same
 public class/package names and the core \XeLaTeX{} runtime, but differ in
 font assets and installation workflow.
 
@@ -111,11 +111,6 @@ font assets and installation workflow.
   \item[\texttt{Core}] The managed runtime, compatibility entry points, vendored
     XSR and installers, without a local font library. Existing \TeX{} Live and
     system fonts can be resolved directly; other required files must be supplied.
-  \item[\texttt{CTAN}] The \texttt{impe-framework.zip} source and runtime
-    distribution rooted at \texttt{impe-framework/}. It includes canonical
-    \texttt{impe*} entry points, the vendored XSR sources, and documentation
-    resources, but no font binaries. CTAN installation itself does not run
-    \texttt{pip} or create a Python environment.
 \end{description}
 
 The project is designed to keep the package runtime separate from licensing and
@@ -184,7 +179,7 @@ insufficient for the Python font-file reader.
 
 For a registered face IMPE first checks the corresponding local/bundled file,
 then attempts resolution through the \TeX{} font system or operating system.
-Core and CTAN users do not have to copy an already resolvable system font into
+Core users do not have to copy an already resolvable system font into
 the IMPE repository. Other registered fonts need the necessary files supplied
 by the user, subject to their respective licenses.
 
