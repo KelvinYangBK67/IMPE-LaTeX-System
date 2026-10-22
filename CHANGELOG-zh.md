@@ -10,7 +10,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 * `\\IMPEGlyph` 允許在首次使用時提供圖片路徑，自動註冊標籤；保留原有 `scale`、`raise`、`trim`。
 * Windows 安裝器提供可選的 LaTeX Workshop 編譯整合，使用 XeLaTeX 與 XSR，並在主 TeX 檔案所在目錄編譯。
-* 同步 XSR 1.3.1，修正行內字形比例的 expl3 正則範圍警告。
+* 同步 XSR 1.4，修正行內字形比例的 expl3 正則範圍警告。
 * 不啟用 unrestricted shell escape 的自動預處理仍在 Issue #54 規劃，不納入本次修正。
 
 ## [1.1.0] - 2026-10-12
