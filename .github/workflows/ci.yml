@@ -276,6 +276,31 @@ jobs:
             if (-not (Test-Path (Join-Path $output "xsr-integration.pdf"))) {
               throw 'Installed runtime failed to generate the sample PDF.'
             }
+            # The standard editor path must collect and render every public
+            # IMPE glyph API without unrestricted shell escape.
+            $builder = Join-Path $texmf "scripts/impe/impe_build.py"
+            if (-not (Test-Path $builder)) { throw 'Installed IMPE builder is missing.' }
+            Copy-Item -LiteralPath (Join-Path $root "tests/xsr-glyphs-only.tex") -Destination $workspace
+            & $venvPython $builder "--output-dir=$output" xsr-glyphs-only.tex
+            if ($LASTEXITCODE -ne 0) { throw 'Installed no-shell glyph build failed.' }
+            $glyphLog = Get-Content (Join-Path $output "xsr-glyphs-only.log") -Raw
+            if ($glyphLog -notmatch "IMPE-TEST-GLYPHS-ONLY-PASS" -or
+                $glyphLog -notmatch "XSR-BACKEND script=asset") {
+              throw 'No-shell glyph build returned missing/placeholder glyphs.'
+            }
+            & $venvPython $builder "--output-dir=$output" xsr-integration.tex
+            if ($LASTEXITCODE -ne 0) { throw 'Installed no-shell XSR integrated build failed.' }
+            $log = Get-Content (Join-Path $output "xsr-integration.log") -Raw
+            if ($log -notmatch 'IMPE-TEST-XSR-INTEGRATION-PASS' -or
+                $log -notmatch 'XSR-LAYOUT.*script=egyptian' -or
+                $log -notmatch 'XSR-LAYOUT.*script=khitan' -or
+                $log -notmatch 'XSR-INLINE' -or $log -match 'XSR-UNAVAILABLE') {
+              throw 'No-shell integrated XSR build rendered incomplete output.'
+            }
+            if (-not (Test-Path (Join-Path $output ".xsr/xsr-integration.responses.tex"))) {
+              throw 'No-shell render bundle was not created in output directory.'
+            }
+
           }
           finally {
             Pop-Location
