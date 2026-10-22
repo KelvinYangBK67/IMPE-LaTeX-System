@@ -25,7 +25,10 @@ def build(source: Path, output_dir: Path, *, latexmk: str, xelatex: str,
     source = source.expanduser().resolve()
     if not source.is_file() or source.suffix.lower() != ".tex":
         raise ValueError(f"expected an existing .tex source: {source}")
-    workdir = source.parent
+    # Match ordinary latexmk: relative inputs/assets are resolved from cwd.
+    # Editors set cwd to the master file directory; command-line callers may
+    # build tests/subdir/main.tex while remaining at the project root.
+    workdir = Path.cwd().resolve()
     output_dir = (workdir / output_dir).resolve()
     if jobname is None:
         jobname = source.stem
@@ -46,7 +49,10 @@ def build(source: Path, output_dir: Path, *, latexmk: str, xelatex: str,
     # The override is set before the document class loads IMPE/XSR.  The
     # source path is the basename: cwd supplies both relative assets and
     # TeX's usual local file search, including nested \input.
-    tex_source = source.name
+    try:
+        tex_source = source.relative_to(workdir).as_posix()
+    except ValueError:
+        tex_source = source.as_posix()
     if any(char in tex_source for char in "{}\\\n\r\""):
         raise ValueError("unsupported TeX source filename; avoid braces, quotes and backslashes")
     entry = (r"\def\XSRBuildModeOverride{collect}\input{"
@@ -74,7 +80,7 @@ def build(source: Path, output_dir: Path, *, latexmk: str, xelatex: str,
              "-e", latexmk_no_shell,
              "-synctex=1", "-interaction=nonstopmode", "-file-line-error",
              "-halt-on-error", "-g", "-outdir=" + str(output_dir),
-             "-jobname=" + jobname, source.name], cwd=workdir)
+             "-jobname=" + jobname, tex_source], cwd=workdir)
     pdf = output_dir / (jobname + ".pdf")
     if not pdf.is_file():
         raise RuntimeError(f"latexmk completed without the expected PDF: {pdf}")
