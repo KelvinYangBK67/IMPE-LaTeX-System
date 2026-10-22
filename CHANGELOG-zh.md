@@ -6,6 +6,13 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 最新版本化倉庫狀態之後的變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
+## [1.1.1] — 待發佈
+
+* `\\IMPEGlyph` 允許在首次使用時提供圖片路徑，自動註冊標籤；保留原有 `scale`、`raise`、`trim`。
+* Windows 安裝器提供可選的 LaTeX Workshop 編譯整合，使用 XeLaTeX 與 XSR，並在主 TeX 檔案所在目錄編譯。
+* 同步 XSR 1.3.1，修正行內字形比例的 expl3 正則範圍警告。
+* 不啟用 unrestricted shell escape 的自動預處理仍在 Issue #54 規劃，不納入本次修正。
+
 ## [1.1.0] - 2026-10-12
 
 IMPE LaTeX System 1.1.0 正式發佈版本。英文、德文與正體中文手冊及標準 Showcase 已同步至 1.1.0 的功能；發行腳本直接從源碼建製 Showcase、三語手冊與 PDF 發佈附件。
