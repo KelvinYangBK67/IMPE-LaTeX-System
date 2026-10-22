@@ -465,6 +465,7 @@ Before \IMPEGlyph{bs-042} after.
 
 The optional metadata does not create a hidden PDF text layer, and
 trim only clips the rendered TeX box, not the original source image.
+The same label/path pair can be repeated; a different path for an existing label is an error. The underlying XSR drawing commands are not IMPE's public API.
 
 ### `lists_envs` (compatibility-only)
 
@@ -477,9 +478,7 @@ useful for quoted examples, linguistic data, or teaching handouts.
 
 Example:
 
-```
-The same label/path pair can be repeated; a different path for an existing label is an error. The underlying XSR drawing commands are not IMPE's public API.
-tex
+```tex
 \UseTemplateSet{
   features = {lists_envs}
 }
