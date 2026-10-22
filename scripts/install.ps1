@@ -1,7 +1,9 @@
 param(
     [string]$TexmfRoot = (Join-Path $HOME "texmf"),
     [switch]$NoRefresh,
-    [switch]$SkipXsrPython
+    [switch]$SkipXsrPython,
+    [switch]$ConfigureVSCode,
+    [switch]$SkipVSCodePrompt
 )
 
 $ErrorActionPreference = "Stop"
@@ -430,6 +432,61 @@ if (-not $NoRefresh) {
 }
 
 Write-Host ""
+# Optional editor integration is explicit because the installed recipe grants
+# unrestricted shell escape to LaTeX documents compiled with it.
+$VSCodeUserDirectory = Join-Path $env:APPDATA "Code/User"
+$VSCodeHelper = Join-Path $ScriptRoot "configure_vscode.py"
+$EnableVSCode = [bool]$ConfigureVSCode
+if (-not $EnableVSCode -and -not $SkipVSCodePrompt -and -not $SkipXsrPython -and
+    -not $env:CI -and [Environment]::UserInteractive -and
+    (Test-Path -LiteralPath $VSCodeUserDirectory)) {
+    Write-Host ""
+    Write-Host "LaTeX Workshop can use IMPE + XSR directly via an installed build recipe."
+    Write-Host "This recipe enables unrestricted shell escape for documents built with it."
+    $reply = Read-Host "Configure VS Code user settings for IMPE (trusted TeX only)? [y/N]"
+    $EnableVSCode = ($reply -match '^(y|yes)
+Write-Host "You can now use:"
+Write-Host "  \documentclass{impebeamer}"
+Write-Host "  \UseTemplateSet{...}"
+Write-Host "Legacy next* package and class names remain available."
+if ($HasBundledAssets) {
+    Write-Host "Bundled font assets were installed with this package."
+}
+else {
+    Write-Host "No bundled font assets were installed; point your local setup to a font library if needed."
+}
+
+if ($InstallWarnings.Count -gt 0) {
+    Write-Host ""
+    Write-Host "Completed with warnings:"
+    foreach ($warning in $InstallWarnings) {
+        Write-Host "  - $warning"
+    }
+}
+)
+}
+if ($EnableVSCode) {
+    if ($SkipXsrPython) {
+        Add-InstallWarning "VS Code integration requires the XSR Python runtime; rerun without -SkipXsrPython."
+    }
+    elseif (-not (Test-Path -LiteralPath $VSCodeHelper)) {
+        Add-InstallWarning "VS Code integration helper missing: $VSCodeHelper"
+    }
+    else {
+        $latexmkCmd = Get-Command latexmk -ErrorAction SilentlyContinue
+        $xelatexCmd = Get-Command xelatex -ErrorAction SilentlyContinue
+        if (-not $latexmkCmd -or -not $xelatexCmd) {
+            Add-InstallWarning "latexmk and xelatex must be on PATH to configure VS Code integration."
+        }
+        else {
+            & $PythonCommand.Source $VSCodeHelper --latexmk $latexmkCmd.Source --xelatex $xelatexCmd.Source
+            if ($LASTEXITCODE -ne 0) {
+                Add-InstallWarning "VS Code user settings could not be updated; other IMPE installation steps succeeded."
+            }
+        }
+    }
+}
+
 Write-Host "Installation complete."
 Write-Host "You can now use:"
 Write-Host "  \documentclass{impebeamer}"
