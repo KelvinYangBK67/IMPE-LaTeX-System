@@ -1,5 +1,7 @@
 # IMPE LaTeX System
 
+開發版本 `VERSION` 已更新至 **1.1.1**（尚未發佈），最近已發佈的 GitHub Release 仍是 1.1.0。
+
 [English](README.md)
 
 IMPE 是一套模組化 XeLaTeX 框架，提供可重用的版面、字體路由、多語排版與選用
@@ -102,6 +104,8 @@ catalog-first 原則。
 install.bat
 ```
 
+Windows 安裝器會在偵測到 VS Code 時詢問是否配置 LaTeX Workshop。選擇同意後，將加入 IMPE 專用的 XeLaTeX／XSR recipe，從主 `.tex` 所在目錄編譯，保留既有 PDF 輸出目錄及其他 VS Code 設定、註解，修改前會備份 `settings.json`。這個 recipe 使用 unrestricted shell escape，請只用於可信任的 TeX 文件。也可執行 `scripts/install.ps1 -ConfigureVSCode` 明確開啟設定，或使用 `-SkipVSCodePrompt` 跳過詢問。無 shell-escape 的全自動預處理另列 Issue #54。
+
 安裝器會寫入使用者 TEXMF 樹的 `tex/latex/impe/`。full 封裝僅包含明確核准且允許再分發的
 本地字體；core 封裝提供執行環境。隨附檔案查找後會查找 TeX Live／系統字體，
 已可解析的字體可直接使用。若要使用其他字體庫，請設定
@@ -127,7 +131,7 @@ GitHub Releases 提供預先建置的文件 PDF。`font_licenses/approved-public
 `fonts={egyptian,khitan_small}` 載入對應的 XSR 文字渲染器；
 `features={glyphs}` 則獨立啟用已登記的行內圖片字形。
 `\KHS{...}` 預設以原生二維方式排列契丹小字。
-IMPE 在 `vendor/xsr/` 中內附 **XSR 1.3**；full／core 安裝器將
+IMPE 在 `vendor/xsr/` 中內附 **XSR 1.3.1**；full／core 安裝器將
 Python 程式及依賴安裝於專用虛擬環境。
 
 動態渲染需 Python 3.11+、`venv` 及 `pip`，首次安裝依賴時可能需要網路。
