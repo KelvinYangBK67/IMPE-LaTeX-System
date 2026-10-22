@@ -6,7 +6,7 @@ IMPE LaTeX System 的版本化變更記錄於此。
 
 最新版本化倉庫狀態之後的變更請見 [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md)。
 
-## [1.1.1] — 待發佈
+## [1.1.1] - 2026-10-22 (待發佈)
 
 * `\\IMPEGlyph` 允許在首次使用時提供圖片路徑，自動註冊標籤；保留原有 `scale`、`raise`、`trim`。
 * Windows 安裝器提供可選的 LaTeX Workshop 編譯整合，使用 XeLaTeX 與 XSR，並在主 TeX 檔案所在目錄編譯。
