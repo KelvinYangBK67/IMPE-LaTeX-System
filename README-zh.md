@@ -86,7 +86,7 @@ CJK 缺字備援採用 xeCJK 的 2×2×2 字體面矩陣；非 CJK 不作通用�
 | 文件引擎 | XeLaTeX |
 | LuaLaTeX | 無受支援的執行後端 |
 | Unicode-range 全域路由 | XeLaTeX |
-| 可選 XSR 整合 | 內附 XSR 1.3、Python 與 XeLaTeX shell-escape／預處理 |
+| 可選 XSR 整合 | 內附 XSR 1.4、Python 與 XeLaTeX shell-escape／預處理 |
 | TeX Live | 已測試 2026 |
 | Windows | 經 CI 測試 |
 | Linux | 經 CI 測試 |
@@ -131,7 +131,7 @@ GitHub Releases 提供預先建置的文件 PDF。`font_licenses/approved-public
 `fonts={egyptian,khitan_small}` 載入對應的 XSR 文字渲染器；
 `features={glyphs}` 則獨立啟用已登記的行內圖片字形。
 `\KHS{...}` 預設以原生二維方式排列契丹小字。
-IMPE 在 `vendor/xsr/` 中內附 **XSR 1.3.1**；full／core 安裝器將
+IMPE 在 `vendor/xsr/` 中內附 **XSR 1.4**；full／core 安裝器將
 Python 程式及依賴安裝於專用虛擬環境。
 
 動態渲染需 Python 3.11+、`venv` 及 `pip`，首次安裝依賴時可能需要網路。
