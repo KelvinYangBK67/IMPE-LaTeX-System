@@ -7,6 +7,8 @@ multilingual typesetting, and optional document features.
 
 Current release: **1.1.0**. See the [Changelog](CHANGELOG.md) and [GitHub Releases](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/releases).
 
+Development `VERSION` is **1.1.1** (pending release); the last published GitHub Release is 1.1.0.
+
 The 1.1.0 API is documented here and under [`docs/`](docs/SYSTEM.md). The release includes English, German and Traditional Chinese manuals and the canonical Showcase; see [release construction and verification](docs/RELEASE-1.1.0-LOCAL.md).
 
 ## Quick Start
@@ -108,6 +110,8 @@ For a packaged full or core distribution, extract the archive and run:
 install.bat
 ```
 
+On Windows, installation offers an **opt-in** LaTeX Workshop user-settings update when VS Code is detected. It adds an IMPE XeLaTeX/XSR recipe that compiles in the main `.tex` directory, keeps the existing PDF output-directory preference, and backs up `settings.json` while preserving other settings and comments. It enables unrestricted shell escape for **documents built with that recipe**; only choose it for trusted TeX files. For scripted installation, use `scripts/install.ps1 -ConfigureVSCode` (or `-SkipVSCodePrompt` to suppress the question). On other editors, the existing manual compilation/preprocess workflows still apply. A no-shell-escape automatic build is tracked in issue #54.
+
 The installer writes to the user TEXMF tree under `tex/latex/impe/`. The full
 archive includes locally available, explicitly approved redistributable fonts; the core archive contains the
 runtime. Catalog faces use TeX Live/system lookup after the bundled-file check.
@@ -133,7 +137,7 @@ the source repository and, where applicable, the full distribution.
 
 `fonts={egyptian,khitan_small}` loads the script-specific XSR renderers;
 `features={glyphs}` enables independently registered inline image glyphs.
-`\KHS{...}` uses native Khitan stacking. IMPE bundles **XSR 1.3** under
+`\KHS{...}` uses native Khitan stacking. IMPE bundles **XSR 1.3.1** under
 `vendor/xsr/`; the full/core installer installs its Python code and dependencies
 into a private virtual environment.
 
