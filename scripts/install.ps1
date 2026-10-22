@@ -432,8 +432,8 @@ if (-not $NoRefresh) {
 }
 
 Write-Host ""
-# Optional editor integration is explicit because the installed recipe grants
-# unrestricted shell escape to LaTeX documents compiled with it.
+# Configure VS Code only after explicit authorization. The generated recipe
+# uses unrestricted shell escape for trusted TeX documents.
 $VSCodeUserDirectory = if ($env:APPDATA) { Join-Path $env:APPDATA "Code/User" } else { "" }
 $VSCodeHelper = Join-Path $ScriptRoot "configure_vscode.py"
 $EnableVSCode = [bool]$ConfigureVSCode
@@ -441,29 +441,10 @@ if (-not $EnableVSCode -and -not $SkipVSCodePrompt -and -not $SkipXsrPython -and
     -not $env:CI -and [Environment]::UserInteractive -and
     $VSCodeUserDirectory -and (Test-Path -LiteralPath $VSCodeUserDirectory)) {
     Write-Host ""
-    Write-Host "LaTeX Workshop can use IMPE + XSR directly via an installed build recipe."
-    Write-Host "This recipe enables unrestricted shell escape for documents built with it."
-    $reply = Read-Host "Configure VS Code user settings for IMPE (trusted TeX only)? [y/N]"
-    $EnableVSCode = ($reply -match '^(y|yes)
-Write-Host "You can now use:"
-Write-Host "  \documentclass{impebeamer}"
-Write-Host "  \UseTemplateSet{...}"
-Write-Host "Legacy next* package and class names remain available."
-if ($HasBundledAssets) {
-    Write-Host "Bundled font assets were installed with this package."
-}
-else {
-    Write-Host "No bundled font assets were installed; point your local setup to a font library if needed."
-}
-
-if ($InstallWarnings.Count -gt 0) {
-    Write-Host ""
-    Write-Host "Completed with warnings:"
-    foreach ($warning in $InstallWarnings) {
-        Write-Host "  - $warning"
-    }
-}
-)
+    Write-Host "LaTeX Workshop can use IMPE + XSR via an installed build recipe."
+    Write-Host "This recipe enables unrestricted shell escape for trusted TeX documents."
+    $reply = Read-Host "Configure VS Code user settings for IMPE? [y/N]"
+    $EnableVSCode = ($reply -match '^(y|yes)$')
 }
 if ($EnableVSCode) {
     if ($SkipXsrPython) {
