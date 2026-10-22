@@ -70,11 +70,13 @@ def build(source: Path, output_dir: Path, *, latexmk: str, xelatex: str,
     # selected command *afterwards*, otherwise latexmk resets the shell flag.
     # -g ensures changed external image/font files always reach XeLaTeX;
     # the XSR batch renderer deduplicates identical digests.
-    latexmk_no_shell = (
-        "$xelatex =~ s/^xelatex\\b/" +
-        '"' + xelatex.replace("\\", "/").replace('"', '\\"') + '"' +
-        " -no-shell-escape/;"
-    )
+    engine = xelatex.replace("\\", "/")
+    # Perl substitution uses braces: absolute Windows/Unix executable paths
+    # contain '/' and would otherwise terminate an s/.../.../ expression.
+    for special in ("\\", "{", "}", "$", "@"):
+        engine = engine.replace(special, "\\" + special)
+    engine = engine.replace('"', '\\"')
+    latexmk_no_shell = '$xelatex =~ s{^xelatex\\b}{"' + engine + '" -no-shell-escape};'
     command([latexmk, "-xelatex",
              r"-usepretex=\def\XSRBuildModeOverride{preprocess}",
              "-e", latexmk_no_shell,
