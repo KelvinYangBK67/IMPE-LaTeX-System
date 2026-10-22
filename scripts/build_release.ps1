@@ -470,6 +470,7 @@ function New-ReleasePackage {
 
     Copy-Item -Force (Join-Path $ScriptRoot "install.ps1") (Join-Path $StageRoot "install.ps1")
     Copy-Item -Force (Join-Path $ScriptRoot "configure_vscode.py") (Join-Path $StageRoot "configure_vscode.py")
+    Copy-Item -Force (Join-Path $ScriptRoot "impe_build.py") (Join-Path $StageRoot "impe_build.py")
     Copy-Item -Force (Join-Path $ScriptRoot "install.bat") (Join-Path $StageRoot "install.bat")
     Copy-Item -Force (Join-Path $ScriptRoot "install.sh") (Join-Path $StageRoot "install.sh")
 
