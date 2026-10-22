@@ -436,6 +436,7 @@ texindy -L english -C utf8 -M <job>-impe <job>.idx
 
 登記的元資料不另加 PDF 隱形文字層；`trim` 僅裁切顯示的 TeX 盒子，
 原始圖像檔案保持不變。
+同一標籤重複指定同一路徑是安全的；不同路徑會報錯。底層 XSR 字形命令不作為 IMPE 公開 API。
 
 ### `lists_envs`（僅相容）
 
@@ -447,9 +448,7 @@ texindy -L english -C utf8 -M <job>-impe <job>.idx
 
 例：
 
-```
-同一標籤重複指定同一路徑是安全的；不同路徑會報錯。底層 XSR 字形命令不作為 IMPE 公開 API。
-tex
+```tex
 \UseTemplateSet{
   features = {lists_envs}
 }
