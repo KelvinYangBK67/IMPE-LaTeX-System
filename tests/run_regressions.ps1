@@ -29,7 +29,7 @@ else {
         throw "Internal VERSION $Version has no matching canonical package metadata."
     }
     $ReleaseDateTeX = $packageStamp.Groups["date"].Value
-    Write-Host "Internal development version $Version: formal changelog/release checks deferred."
+    Write-Host "Internal development version ${Version}: formal changelog/release checks deferred."
 }
 
 # The internal source tag can precede formal manual/showcase publication.
