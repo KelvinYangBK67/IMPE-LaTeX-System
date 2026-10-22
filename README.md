@@ -7,7 +7,7 @@ multilingual typesetting, and optional document features.
 
 Current release: **1.1.0**. See the [Changelog](CHANGELOG.md) and [GitHub Releases](https://github.com/KelvinYangBK67/IMPE-LaTeX-System/releases).
 
-Development `VERSION` is **1.1.1** (pending release); the last published GitHub Release is 1.1.0.
+Development `VERSION` is **1.1.2** (pending release); the last published GitHub Release is 1.1.0.
 
 The 1.1.0 API is documented here and under [`docs/`](docs/SYSTEM.md). The release includes English, German and Traditional Chinese manuals and the canonical Showcase; see [release construction and verification](docs/RELEASE-1.1.0-LOCAL.md).
 
