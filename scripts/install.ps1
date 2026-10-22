@@ -434,12 +434,12 @@ if (-not $NoRefresh) {
 Write-Host ""
 # Optional editor integration is explicit because the installed recipe grants
 # unrestricted shell escape to LaTeX documents compiled with it.
-$VSCodeUserDirectory = Join-Path $env:APPDATA "Code/User"
+$VSCodeUserDirectory = if ($env:APPDATA) { Join-Path $env:APPDATA "Code/User" } else { "" }
 $VSCodeHelper = Join-Path $ScriptRoot "configure_vscode.py"
 $EnableVSCode = [bool]$ConfigureVSCode
 if (-not $EnableVSCode -and -not $SkipVSCodePrompt -and -not $SkipXsrPython -and
     -not $env:CI -and [Environment]::UserInteractive -and
-    (Test-Path -LiteralPath $VSCodeUserDirectory)) {
+    $VSCodeUserDirectory -and (Test-Path -LiteralPath $VSCodeUserDirectory)) {
     Write-Host ""
     Write-Host "LaTeX Workshop can use IMPE + XSR directly via an installed build recipe."
     Write-Host "This recipe enables unrestricted shell escape for documents built with it."
