@@ -92,7 +92,7 @@ See [Feature reference](docs/FEATURES.md#index-native-first).
 | Document engine | XeLaTeX |
 | LuaLaTeX | No supported runtime backend |
 | Unicode-range global routing | XeLaTeX |
-| Optional XSR integration | Bundled XSR 1.5, Python and XeLaTeX shell-escape/preprocess |
+| Optional XSR integration | Bundled XSR 1.5, Python and shell-free collect/batch/latexmk |
 | TeX Live | 2026 tested |
 | Windows | CI tested |
 | Linux | CI tested |
@@ -110,7 +110,7 @@ For a packaged full or core distribution, extract the archive and run:
 install.bat
 ```
 
-On Windows, installation offers an **opt-in** LaTeX Workshop user-settings update when VS Code is detected. It adds an IMPE XeLaTeX/XSR recipe that compiles in the main `.tex` directory, keeps the existing PDF output-directory preference, and backs up `settings.json` while preserving other settings and comments. It enables unrestricted shell escape for **documents built with that recipe**; only choose it for trusted TeX files. For scripted installation, use `scripts/install.ps1 -ConfigureVSCode` (or `-SkipVSCodePrompt` to suppress the question). On other editors, the existing manual compilation/preprocess workflows still apply. A no-shell-escape automatic build is tracked in issue #54.
+On Windows, installation offers an **opt-in** LaTeX Workshop user-settings update when VS Code is detected. It adds an IMPE XeLaTeX/XSR recipe that compiles in the main `.tex` directory, keeps the existing PDF output-directory preference, and backs up `settings.json` while preserving other settings and comments. The recipe uses the installed IMPE build runner, which collects XSR requests with XeLaTeX, renders them in the private Python runtime, then runs latexmk with `-no-shell-escape`. For scripted installation, use `scripts/install.ps1 -ConfigureVSCode` (or `-SkipVSCodePrompt` to suppress the question). Other editors can use the same runner directly: `python scripts/impe_build.py --output-dir=build main.tex` in a source checkout, or `<user-texmf>/scripts/impe/xsr-venv/<python> <user-texmf>/scripts/impe/impe_build.py --output-dir=build main.tex` after installing. This workflow does not alter global TeX Live security settings; advanced TeX programs with geometry-dependent conditional XSR requests may require explicit build handling.
 
 The installer writes to the user TEXMF tree under `tex/latex/impe/`. The full
 archive includes locally available, explicitly approved redistributable fonts; the core archive contains the
