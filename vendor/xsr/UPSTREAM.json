@@ -1,6 +1,6 @@
 {
   "upstream": "KelvinYangBK67/xetex-stack-renderer",
-  "commit": "942fd9061b9d806e23d78f2e7a99b7b16393d62c",
+  "commit": "e7ee8abb691370a2d0d1b0708ff14162878bd9e6",
   "version": "1.5",
   "git_blobs": {
     "LICENSE": "a62fe12d455c015392d94dd13da5de30a719ae9d",
@@ -24,7 +24,7 @@
     "src/xsr/preprocess.py": "731768901cef2cf380a3facf721abcafc5391cda",
     "src/xsr/providers.py": "c3f259a6a58ecc1573511171cdb1fc1a3052c172",
     "src/xsr/registry.py": "9b30418224a8f065ddfaccdc0c4ff6e84ec2ec74",
-    "src/xsr/renderer.py": "26fac401a83848ab442f2dcc2f473530f1f72df5",
+    "src/xsr/renderer.py": "b1f59b26dc0e22a5d958871bf9e54ee6e25a5f93",
     "src/xsr/source.py": "ef90643dfbe33432b04d621ec5f4222bf59001b5",
     "src/xsr/source_traversal.py": "373eb150636c45315eeefd5ee548f5557412302c",
     "src/xsr/synthetic.py": "b1c34b57161334212ede6b7f8e28920392197f56",
