@@ -45,11 +45,26 @@
 \tl_new:N \l__impe_glyph_scale_tl
 \tl_new:N \l__impe_glyph_raise_tl
 \tl_new:N \l__impe_glyph_trim_tl
+\tl_new:N \l__impe_glyph_file_tl
 \keys_define:nn { impe/glyph/use }
   {
     scale .tl_set:N = \l__impe_glyph_scale_tl,
     raise .tl_set:N = \l__impe_glyph_raise_tl,
     trim .tl_set:N = \l__impe_glyph_trim_tl,
+    file .tl_set:N = \l__impe_glyph_file_tl,
+  }
+% A bare optional argument is a first-use asset path; key/value options remain
+% backwards-compatible. Explicit file= combines registration with adjustments.
+\cs_new_protected:Npn \__impe_glyph_parse_options:n #1
+  {
+    \tl_if_blank:nF {#1}
+      {
+        \regex_match:nnTF
+          { \A \s* (scale|raise|trim|file) \s* = }
+          {#1}
+          { \keys_set:nn { impe/glyph/use } {#1} }
+          { \tl_set:Nn \l__impe_glyph_file_tl {#1} }
+      }
   }
 \cs_new_protected:Npn \__impe_glyph_draw:n #1
   {
@@ -67,7 +82,12 @@
       \tl_set:Nn \l__impe_glyph_scale_tl {1}
       \tl_set:Nn \l__impe_glyph_raise_tl {0pt}
       \tl_clear:N \l__impe_glyph_trim_tl
-      \keys_set:nn { impe/glyph/use } {#1}
+      \tl_clear:N \l__impe_glyph_file_tl
+      \__impe_glyph_parse_options:n {#1}
+      % XSR's label registry uses global assignments, so registration survives
+      % this use-site group. Its duplicate check rejects conflicting paths.
+      \tl_if_blank:VF \l__impe_glyph_file_tl
+        { \exp_args:NnV \GlyphRegister {#2} \l__impe_glyph_file_tl }
       \tl_if_blank:VTF \l__impe_glyph_trim_tl
         { \__impe_glyph_draw:n {#2} }
         {

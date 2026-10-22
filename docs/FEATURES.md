@@ -457,10 +457,15 @@ Example:
   {bs-042}{images/bs-042.svg}
 Before \IMPEGlyph{bs-042} after.
 \IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
+% A literal asset path registers a label on first use
+\IMPEGlyph[images/bs-043.png]{bs-043}
+\IMPEGlyph{bs-043}
+\IMPEGlyph[file={images/bs-044.svg},scale=1.2,raise=1pt]{bs-044}
 ```
 
 The optional metadata does not create a hidden PDF text layer, and
 trim only clips the rendered TeX box, not the original source image.
+The same label/path pair can be repeated; a different path for an existing label is an error. The underlying XSR drawing commands are not IMPE's public API.
 
 ### `lists_envs` (compatibility-only)
 

@@ -37,10 +37,13 @@ jobs:
       - name: Audit Unicode 18.0 writing registry
         run: python tests/check_writing_registry.py
 
+      - name: Verify safe IMPE VS Code configuration merger
+        run: python tests/test_configure_vscode.py
+
       - name: Validate release-tool syntax and public font allowlist
         shell: pwsh
         run: |
-          foreach ($path in @('scripts/build_release.ps1', 'scripts/build_showcase.ps1')) {
+          foreach ($path in @('scripts/build_release.ps1', 'scripts/build_showcase.ps1', 'scripts/install.ps1')) {
             $tokens = $null
             $parseErrors = $null
             [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $path).Path, [ref]$tokens, [ref]$parseErrors)

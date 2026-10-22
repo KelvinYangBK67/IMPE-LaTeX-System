@@ -1,8 +1,16 @@
 % !TeX program = xelatex
+% Exercise the installed IMPE glyph API, including first-use registration.
 \documentclass{impeart}
 \UseFeature{glyphs}
 \IMPEGlyphRegister{isolated}{tests/fixtures/xsr-square.svg}
 \begin{document}
-Inline glyph: \IMPEGlyph{isolated}.
+Previously registered: \IMPEGlyph{isolated}.
+Automatic first use: \IMPEGlyph[tests/fixtures/xsr-square.svg]{auto}.
+Repeat without path: \IMPEGlyph{auto}.
+Repeat with identical path: \IMPEGlyph[tests/fixtures/xsr-square.svg]{auto}.
+Old scale and raise: \IMPEGlyph[scale=1.2,raise=1pt]{auto}.
+Explicit file key and trim:
+\IMPEGlyph[file={tests/fixtures/xsr-square.svg},scale=1.2,trim={1pt 0pt 1pt 0pt}]{keyed}.
+Reuse keyed: \IMPEGlyph{keyed}.
 \typeout{IMPE-TEST-GLYPHS-ONLY-PASS}
 \end{document}

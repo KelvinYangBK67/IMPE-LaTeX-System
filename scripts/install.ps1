@@ -1,7 +1,9 @@
 param(
     [string]$TexmfRoot = (Join-Path $HOME "texmf"),
     [switch]$NoRefresh,
-    [switch]$SkipXsrPython
+    [switch]$SkipXsrPython,
+    [switch]$ConfigureVSCode,
+    [switch]$SkipVSCodePrompt
 )
 
 $ErrorActionPreference = "Stop"
@@ -430,6 +432,42 @@ if (-not $NoRefresh) {
 }
 
 Write-Host ""
+# Configure VS Code only after explicit authorization. The generated recipe
+# uses unrestricted shell escape for trusted TeX documents.
+$VSCodeUserDirectory = if ($env:APPDATA) { Join-Path $env:APPDATA "Code/User" } else { "" }
+$VSCodeHelper = Join-Path $ScriptRoot "configure_vscode.py"
+$EnableVSCode = [bool]$ConfigureVSCode
+if (-not $EnableVSCode -and -not $SkipVSCodePrompt -and -not $SkipXsrPython -and
+    -not $env:CI -and [Environment]::UserInteractive -and
+    $VSCodeUserDirectory -and (Test-Path -LiteralPath $VSCodeUserDirectory)) {
+    Write-Host ""
+    Write-Host "LaTeX Workshop can use IMPE + XSR via an installed build recipe."
+    Write-Host "This recipe enables unrestricted shell escape for trusted TeX documents."
+    $reply = Read-Host "Configure VS Code user settings for IMPE? [y/N]"
+    $EnableVSCode = ($reply -match '^(y|yes)$')
+}
+if ($EnableVSCode) {
+    if ($SkipXsrPython) {
+        Add-InstallWarning "VS Code integration requires the XSR Python runtime; rerun without -SkipXsrPython."
+    }
+    elseif (-not (Test-Path -LiteralPath $VSCodeHelper)) {
+        Add-InstallWarning "VS Code integration helper missing: $VSCodeHelper"
+    }
+    else {
+        $latexmkCmd = Get-Command latexmk -ErrorAction SilentlyContinue
+        $xelatexCmd = Get-Command xelatex -ErrorAction SilentlyContinue
+        if (-not $latexmkCmd -or -not $xelatexCmd) {
+            Add-InstallWarning "latexmk and xelatex must be on PATH to configure VS Code integration."
+        }
+        else {
+            & $PythonCommand.Source $VSCodeHelper --latexmk $latexmkCmd.Source --xelatex $xelatexCmd.Source
+            if ($LASTEXITCODE -ne 0) {
+                Add-InstallWarning "VS Code user settings could not be updated; other IMPE installation steps succeeded."
+            }
+        }
+    }
+}
+
 Write-Host "Installation complete."
 Write-Host "You can now use:"
 Write-Host "  \documentclass{impebeamer}"
