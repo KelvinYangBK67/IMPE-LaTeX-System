@@ -6,6 +6,13 @@ All notable versioned changes to IMPE LaTeX System are documented in this file.
 
 For changes since the latest versioned repository state, see [CHANGELOG.unreleased.md](./CHANGELOG.unreleased.md).
 
+## [1.1.1] - pending release
+
+* Preserve existing `\\IMPEGlyph` scale/raise/trim options while accepting a literal asset path for first-use label registration (`\\IMPEGlyph[path]{label}` or `file=...`).
+* Offer opt-in LaTeX Workshop integration during Windows installation, with an XSR-enabled XeLaTeX recipe and project-directory compilation.
+* Vendor XSR 1.3.1 to fix inline scale validation in expl3 (invalid range endpoint warning).
+* Track shell-escape-free automatic preprocessing separately in issue #54; this release still requires an authorized rendering workflow.
+
 ## [1.1.0] - 2026-10-12
 
 Public release of IMPE LaTeX System 1.1.0, with synchronized English, German and Traditional Chinese documentation and a canonical Showcase. The release builder compiles the Showcase and manuals from their sources and packages the resulting PDFs.
