@@ -427,6 +427,11 @@ texindy -L english -C utf8 -M <job>-impe <job>.idx
   {bs-042}{images/bs-042.svg}
 前文 \IMPEGlyph{bs-042} 後文。
 \IMPEGlyph[scale=1.2,raise=1pt,trim={1pt 0pt 1pt 0pt}]{bs-042}
+% 首次使用時指定路徑，當次插入並註冊標籤
+\IMPEGlyph[images/bs-043.png]{bs-043}
+\IMPEGlyph{bs-043}
+% 同時調整樣式可使用 file= 鍵
+\IMPEGlyph[file={images/bs-044.svg},scale=1.2,raise=1pt]{bs-044}
 ```
 
 登記的元資料不另加 PDF 隱形文字層；`trim` 僅裁切顯示的 TeX 盒子，
@@ -442,7 +447,9 @@ texindy -L english -C utf8 -M <job>-impe <job>.idx
 
 例：
 
-```tex
+```
+同一標籤重複指定同一路徑是安全的；不同路徑會報錯。底層 XSR 字形命令不作為 IMPE 公開 API。
+tex
 \UseTemplateSet{
   features = {lists_envs}
 }
