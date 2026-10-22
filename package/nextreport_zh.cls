@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{nextreport_zh}[2026/10/22 v1.1.1 Compatibility alias for impereport_zh]
+\ProvidesClass{nextreport_zh}[2026/10/22 v1.1.2 Compatibility alias for impereport_zh]
 
 \makeatletter
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{impereport_zh}}
