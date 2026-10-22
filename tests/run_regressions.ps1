@@ -15,11 +15,22 @@ if ($Version -notmatch '^\d+\.\d+\.\d+$') {
 $ChangelogText = Get-Content -LiteralPath (Join-Path $RepoRoot "CHANGELOG.md") -Raw -Encoding UTF8
 $releaseHeadingPattern = "(?m)^## \[$([regex]::Escape($Version))\] - (?<date>\d{4}-\d{2}-\d{2})\r?$"
 $releaseHeading = [regex]::Match($ChangelogText, $releaseHeadingPattern)
-if (-not $releaseHeading.Success) {
-    throw "CHANGELOG.md has no dated entry for v$Version."
+if ($releaseHeading.Success) {
+    $ReleaseDateTeX = $releaseHeading.Groups["date"].Value.Replace('-', '/')
 }
-$ReleaseDateIso = $releaseHeading.Groups["date"].Value
-$ReleaseDateTeX = $ReleaseDateIso.Replace('-', '/')
+else {
+    # A patch-only internal development version has no published release
+    # heading. Validate the version/date stamped into the canonical package;
+    # the public release builder retains the strict changelog requirement.
+    $packageText = Get-Content -LiteralPath (Join-Path $RepoRoot "package/impe.sty") -Raw -Encoding UTF8
+    $pattern = "\\ProvidesPackage\{impe\}\[(?<date>\d{4}/\d{2}/\d{2}) v$([regex]::Escape($Version))\b"
+    $packageStamp = [regex]::Match($packageText, $pattern)
+    if (-not $packageStamp.Success) {
+        throw "Internal VERSION $Version has no matching canonical package metadata."
+    }
+    $ReleaseDateTeX = $packageStamp.Groups["date"].Value
+    Write-Host "Internal development version $Version: formal changelog/release checks deferred."
+}
 
 # The internal source tag can precede formal manual/showcase publication.
 # Keep all runtime, font, compatibility and manual-compilation regressions,
@@ -28,7 +39,7 @@ $ReleaseDateTeX = $ReleaseDateIso.Replace('-', '/')
 # gate, and release checks resume automatically after documentation catches up.
 # Public-font fixtures intentionally lack the private font library needed for
 # canonical Showcase/archive builds. CI must validate runtime/templates only.
-$RunFormalReleaseChecks = -not $SkipRelease -and -not $PublicFonts
+$RunFormalReleaseChecks = -not $SkipRelease -and -not $PublicFonts -and $releaseHeading.Success
 $ShowcaseSourceForRelease = Join-Path $RepoRoot 'manual/showcase/impe-showcase.tex'
 if (-not (Test-Path -LiteralPath $ShowcaseSourceForRelease)) {
     throw "Required canonical showcase source is missing: $ShowcaseSourceForRelease"
