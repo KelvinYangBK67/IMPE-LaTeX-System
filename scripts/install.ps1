@@ -370,10 +370,19 @@ if (-not $SkipXsrPython) {
         $XsrConfig, (($ConfigLines -join $Newline) + $Newline),
         (New-Object System.Text.UTF8Encoding($false))
     )
+    $BuilderSource = Join-Path $ScriptRoot "impe_build.py"
+    if (-not (Test-Path -LiteralPath $BuilderSource)) {
+        throw "IMPE build runner missing: $BuilderSource"
+    }
+    $BuilderInstalled = Join-Path $TexmfRoot "scripts/impe/impe_build.py"
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $BuilderInstalled) | Out-Null
+    Copy-Item -LiteralPath $BuilderSource -Destination $BuilderInstalled -Force
+
     Write-Host "  Bundled XSR: $XsrVersion (private Python: $VenvPython)"
 }
 else {
     Remove-StaleItem -Path $XsrConfig
+    Remove-StaleItem -Path (Join-Path $TexmfRoot "scripts/impe/impe_build.py")
     Write-Host "  Bundled XSR TeX installed; Python renderer skipped by request."
 }
 
@@ -442,7 +451,7 @@ if (-not $EnableVSCode -and -not $SkipVSCodePrompt -and -not $SkipXsrPython -and
     $VSCodeUserDirectory -and (Test-Path -LiteralPath $VSCodeUserDirectory)) {
     Write-Host ""
     Write-Host "LaTeX Workshop can use IMPE + XSR via an installed build recipe."
-    Write-Host "This recipe enables unrestricted shell escape for trusted TeX documents."
+    Write-Host "This recipe automatically collects and renders XSR requests without shell escape."
     $reply = Read-Host "Configure VS Code user settings for IMPE? [y/N]"
     $EnableVSCode = ($reply -match '^(y|yes)$')
 }
@@ -460,7 +469,7 @@ if ($EnableVSCode) {
             Add-InstallWarning "latexmk and xelatex must be on PATH to configure VS Code integration."
         }
         else {
-            & $PythonCommand.Source $VSCodeHelper --latexmk $latexmkCmd.Source --xelatex $xelatexCmd.Source
+            & $PythonCommand.Source $VSCodeHelper --latexmk $latexmkCmd.Source --xelatex $xelatexCmd.Source --python $VenvPython --builder $BuilderInstalled
             if ($LASTEXITCODE -ne 0) {
                 Add-InstallWarning "VS Code user settings could not be updated; other IMPE installation steps succeeded."
             }

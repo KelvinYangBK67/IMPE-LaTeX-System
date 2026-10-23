@@ -162,7 +162,8 @@ def apply_settings(source: str, updates: dict) -> str:
     return source
 
 
-def configure(settings: Path, latexmk: str, xelatex: str) -> bool:
+def configure(settings: Path, latexmk: str, xelatex: str,
+              python: str | None = None, builder: str | None = None) -> bool:
     original_bytes = settings.read_bytes() if settings.exists() else b"{}\n"
     has_bom = original_bytes.startswith(b"\xef\xbb\xbf")
     original = original_bytes.decode("utf-8-sig")
@@ -171,19 +172,20 @@ def configure(settings: Path, latexmk: str, xelatex: str) -> bool:
     recipes = parsed.get("latex-workshop.latex.recipes", [])
     if not isinstance(tools, list) or not isinstance(recipes, list):
         raise ValueError("LaTeX Workshop tools/recipes must be arrays")
-    # Quote the executable inside latexmk's Perl $xelatex program value.
-    # A command path containing a single quote cannot safely be interpolated.
-    exe = xelatex.replace("\\", "/")
-    if "'" in exe:
-        raise ValueError("XeLaTeX path contains an unsupported single quote")
+    # LaTeX Workshop invokes the private installed Python environment; all
+    # compilation policy lives in impe_build.py, not editor-specific flags.
+    python = python or sys.executable
+    builder = builder or str(Path(__file__).with_name("impe_build.py"))
     runner = {
-        "name": TOOL_NAME, "command": latexmk.replace("\\", "/"),
+        "name": TOOL_NAME,
+        "command": python.replace("\\", "/"),
         "cwd": "%DIR%",
         "args": [
-            "-synctex=1", "-interaction=nonstopmode", "-file-line-error",
-            "-outdir=%OUTDIR%",
-            "-e", "$xelatex='" + '"' + exe + '"' + " -shell-escape %O %S'",
-            "-xelatex", "%DOCFILE_EXT%",
+            builder.replace("\\", "/"),
+            "--xelatex=" + xelatex.replace("\\", "/"),
+            "--latexmk=" + latexmk.replace("\\", "/"),
+            "--output-dir=%OUTDIR%",
+            "%DOCFILE_EXT%",
         ],
     }
     recipe = {"name": RECIPE_NAME, "tools": [TOOL_NAME]}
@@ -220,13 +222,15 @@ def main() -> int:
     parser.add_argument("--settings", type=Path)
     parser.add_argument("--latexmk", default="latexmk")
     parser.add_argument("--xelatex", default="xelatex")
+    parser.add_argument("--python", help="installed private XSR Python executable")
+    parser.add_argument("--builder", help="installed IMPE build script")
     args = parser.parse_args()
     appdata = os.environ.get("APPDATA")
     if args.settings is None and not appdata:
         parser.error("APPDATA is unavailable; pass --settings")
     settings = args.settings or Path(appdata) / "Code" / "User" / "settings.json"
     try:
-        changed = configure(settings, args.latexmk, args.xelatex)
+        changed = configure(settings, args.latexmk, args.xelatex, args.python, args.builder)
     except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as error:
         print(f"VS Code settings were not changed: {error}", file=sys.stderr)
         return 2

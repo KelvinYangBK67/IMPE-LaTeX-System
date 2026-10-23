@@ -267,6 +267,7 @@ sync_managed_directory "$xsr_source/tex" "$package_root/xsr"
 xsr_config=$package_root/impe-xsr-runtime.tex
 if [ "$IMPE_SKIP_XSR_PYTHON" = 1 ]; then
     remove_stale_item "$xsr_config"
+    remove_stale_item "$texmf_root/scripts/impe/impe_build.py"
     echo "  Bundled XSR TeX installed; private Python renderer skipped by request."
 else
     if ! command -v python3 >/dev/null 2>&1; then
@@ -320,6 +321,14 @@ else
         echo "Failed to generate XSR TeX runtime configuration." >&2
         exit 1
     fi
+    builder_source=$script_dir/impe_build.py
+    builder_target=$texmf_root/scripts/impe/impe_build.py
+    if [ ! -f "$builder_source" ]; then
+        echo "IMPE build runner missing: $builder_source" >&2
+        exit 1
+    fi
+    cp -f "$builder_source" "$builder_target" || exit 1
+
     echo "  Bundled XSR: $xsr_version (private Python: $xsr_python_path)"
 fi
 

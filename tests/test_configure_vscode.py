@@ -43,7 +43,9 @@ class ConfigureVSCodeTests(unittest.TestCase):
             self.assertIn(TOOL_NAME, tools)
             self.assertEqual(tools["latexmk-xelatex"]["command"], "legacy-latexmk")
             self.assertEqual(tools[TOOL_NAME]["cwd"], "%DIR%")
-            self.assertIn("-shell-escape", " ".join(tools[TOOL_NAME]["args"]))
+            self.assertNotIn("-shell-escape", " ".join(tools[TOOL_NAME]["args"]))
+            self.assertIn("impe_build.py", " ".join(tools[TOOL_NAME]["args"]))
+            self.assertIn("--output-dir=%OUTDIR%", tools[TOOL_NAME]["args"])
             self.assertEqual(len(list(Path(temp).glob("settings.json.impe-*.bak"))), 1)
             self.assertFalse(configure(settings, "C:/texlive/bin/latexmk.exe",
                                        "C:/texlive/bin/xelatex.exe"))
