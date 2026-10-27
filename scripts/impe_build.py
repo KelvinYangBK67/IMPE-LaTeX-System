@@ -62,9 +62,16 @@ def build(source: Path, output_dir: Path, *, latexmk: str, xelatex: str,
              "-jobname=" + jobname, "-output-directory=" + str(capture),
              entry], cwd=workdir)
 
-    command([sys.executable, "-m", "xsr.renderer", "batch",
-             "--input", str(request), "--output-dir", str(output_dir),
-             "--jobname", jobname], cwd=workdir)
+    # A plain XeLaTeX document (or an XSR-enabled document with no runs)
+    # needs neither a response bundle nor an empty XSR manifest.
+    has_xsr_requests = request.is_file() and request.stat().st_size > 0
+    if has_xsr_requests:
+        command([sys.executable, "-m", "xsr.renderer", "batch",
+                 "--input", str(request), "--output-dir", str(output_dir),
+                 "--jobname", jobname], cwd=workdir)
+    else:
+        (output_dir / ".xsr" / (jobname + ".manifest.json")).unlink(missing_ok=True)
+        print("IMPE-BUILD: no XSR requests; skipping batch render", flush=True)
 
     # -usepretex selects latexmk's built-in TeX-entry form.  Modify that
     # selected command *afterwards*, otherwise latexmk resets the shell flag.
@@ -87,6 +94,10 @@ def build(source: Path, output_dir: Path, *, latexmk: str, xelatex: str,
     if not pdf.is_file():
         raise RuntimeError(f"latexmk completed without the expected PDF: {pdf}")
     shutil.rmtree(capture)
+    if not has_xsr_requests:
+        xsr_dir = output_dir / ".xsr"
+        if not any(xsr_dir.iterdir()):
+            xsr_dir.rmdir()
     print(f"IMPE-BUILD-OK XSR={xsr_version} PDF={pdf}", flush=True)
     return pdf
 

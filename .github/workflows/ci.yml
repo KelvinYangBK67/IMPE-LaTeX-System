@@ -40,6 +40,9 @@ jobs:
       - name: Verify safe IMPE VS Code configuration merger
         run: python tests/test_configure_vscode.py
 
+      - name: Verify no-request IMPE builder cleanup
+        run: python tests/test_impe_build.py
+
       - name: Validate release-tool syntax and public font allowlist
         shell: pwsh
         run: |
@@ -280,6 +283,14 @@ jobs:
             # IMPE glyph API without unrestricted shell escape.
             $builder = Join-Path $texmf "scripts/impe/impe_build.py"
             if (-not (Test-Path $builder)) { throw 'Installed IMPE builder is missing.' }
+            # An XSR-enabled document with no actual rendering requests must
+            # compile normally without an empty response bundle.
+            & $venvPython $builder "--output-dir=$output" xsr-installed-only.tex
+            if ($LASTEXITCODE -ne 0) { throw 'No-request XSR-enabled build failed.' }
+            if ((Test-Path (Join-Path $output ".xsr/xsr-installed-only.responses.tex")) -or
+                (Test-Path (Join-Path $output ".xsr/xsr-installed-only.manifest.json"))) {
+              throw 'No-request XSR build left an unnecessary bundle or manifest.'
+            }
             Copy-Item -LiteralPath (Join-Path $root "tests/xsr-glyphs-only.tex") -Destination $workspace
             & $venvPython $builder "--output-dir=$output" xsr-glyphs-only.tex
             if ($LASTEXITCODE -ne 0) { throw 'Installed no-shell glyph build failed.' }
