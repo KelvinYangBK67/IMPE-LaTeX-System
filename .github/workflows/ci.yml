@@ -283,6 +283,30 @@ jobs:
             # IMPE glyph API without unrestricted shell escape.
             $builder = Join-Path $texmf "scripts/impe/impe_build.py"
             if (-not (Test-Path $builder)) { throw 'Installed IMPE builder is missing.' }
+            # Both routes support \include's relative auxiliary paths with a
+            # separate PDF output directory. The plain route must not collect.
+            New-Item -ItemType Directory -Force (Join-Path $workspace "chapters") | Out-Null
+            Copy-Item -LiteralPath (Join-Path $root "tests/plain-include-main.tex") -Destination $workspace
+            Copy-Item -LiteralPath (Join-Path $root "tests/xsr-include-main.tex") -Destination $workspace
+            Copy-Item -LiteralPath (Join-Path $root "tests/fixtures/chapters/plain-ch02.tex") -Destination (Join-Path $workspace "chapters")
+            Copy-Item -LiteralPath (Join-Path $root "tests/fixtures/chapters/xsr-ch02.tex") -Destination (Join-Path $workspace "chapters")
+            & $venvPython $builder "--output-dir=$output" plain-include-main.tex
+            if ($LASTEXITCODE -ne 0) { throw 'Plain LaTeX with include failed.' }
+            if (-not (Test-Path (Join-Path $output "chapters/plain-ch02.aux"))) {
+              throw 'Plain include auxiliary file was not written in output directory.'
+            }
+            if (Test-Path (Join-Path $output ".xsr/plain-include-main.responses.tex")) {
+              throw 'Plain include unexpectedly created an XSR response bundle.'
+            }
+            & $venvPython $builder "--output-dir=$output" xsr-include-main.tex
+            if ($LASTEXITCODE -ne 0) { throw 'XSR with include failed.' }
+            if (-not (Test-Path (Join-Path $output "chapters/xsr-ch02.aux")) -or
+                -not (Test-Path (Join-Path $output ".xsr/xsr-include-main.responses.tex"))) {
+              throw 'XSR include lost its chapter auxiliary file or rendered bundle.'
+            }
+            if ((Get-Content (Join-Path $output "xsr-include-main.log") -Raw) -notmatch 'XSR-BACKEND script=asset') {
+              throw 'XSR include did not render its inline glyph.'
+            }
             # An XSR-enabled document with no actual rendering requests must
             # compile normally without an empty response bundle.
             & $venvPython $builder "--output-dir=$output" xsr-installed-only.tex
