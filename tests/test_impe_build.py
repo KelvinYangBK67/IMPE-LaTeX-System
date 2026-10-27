@@ -20,7 +20,8 @@ with patch.dict(sys.modules, {"xsr": stub_xsr}):
 class IMPEBuildTests(unittest.TestCase):
     def compile(self, *, request_content=None, stale=False, other_job=False):
         with TemporaryDirectory() as temp:
-            workdir = Path(temp)
+            # Resolve Windows short (8.3) temp paths before the runner does.
+            workdir = Path(temp).resolve()
             source = workdir / "main.tex"
             source.write_text(r"\documentclass{article}\begin{document}Hi\end{document}", encoding="utf-8")
             output = workdir / "build"
