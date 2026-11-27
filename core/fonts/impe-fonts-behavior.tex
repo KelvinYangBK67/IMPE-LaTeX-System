@@ -36,74 +36,18 @@
     \tl_use:N \l_tmpa_tl
   }
 
-\prg_new_conditional:Npnn \__font_should_infer_rtl: { TF }
-  {
-    \__font_tl_if_in_set:NnTF \l__font_decl_family_id_tl
-      {
-        arabic,urdu,aramaic,nabataean,hebrew,syriac,syriac_eastern,
-        kharosthi,pahlavi_parthian,pahlavi_inscriptional,pahlavi_psalter,
-        avestan,manichaean,phoenician,samaritan,sogdian,sogdian_old,
-        hungarian,turkic,uyghur
-      }
-      { \prg_return_true: }
-      {
-        \__font_tl_if_in_set:NnTF \l__font_script_tl
-          {
-            Arabic,Hebrew,Syriac,Avestan,Nabataean,Phoenician,Samaritan,
-            PsalterPahlavi,ImperialAramaic,Kharoshthi,OldHungarian,
-            OldTurkic,OldUyghur,Sogdian,OldSogdian,Manichaean
-          }
-          { \prg_return_true: }
-          {
-            \tl_if_in:VnTF \l__font_features_tl { script=arab }
-              { \prg_return_true: }
-              {
-                \tl_if_in:VnTF \l__font_features_tl { script=hebr }
-                  { \prg_return_true: }
-                  {
-                    \tl_if_in:VnTF \l__font_features_tl { script=syrc }
-                      { \prg_return_true: }
-                      {
-                        \tl_if_in:VnTF \l__font_features_tl { script=armi }
-                          { \prg_return_true: }
-                          {
-                            \tl_if_in:VnTF \l__font_features_tl { script=mani }
-                              { \prg_return_true: }
-                              {
-                                \tl_if_in:VnTF \l__font_features_tl { script=phli }
-                                  { \prg_return_true: }
-                                  {
-                                    \tl_if_in:VnTF \l__font_features_tl { script=prti }
-                                      { \prg_return_true: }
-                                      {
-                                        \tl_if_in:VnTF \l__font_features_tl { script=sogd }
-                                          { \prg_return_true: }
-                                          {
-                                            \tl_if_in:VnTF \l__font_features_tl { script=ougr }
-                                              { \prg_return_true: }
-                                              {
-                                                \tl_if_in:VnTF \l__font_features_tl { script=khar }
-                                                  { \prg_return_true: }
-                                                  { \prg_return_false: }
-                                              }
-                                          }
-                                      }
-                                  }
-                              }
-                          }
-                      }
-                  }
-              }
-          }
-      }
-  }
-
 \cs_new_protected:Npn \__font_apply_behavior_defaults:
   {
     \tl_if_blank:VTF \l__font_inline_behavior_tl
       {
-        \__font_should_infer_rtl:TF
-          { \tl_set:Nn \l__font_inline_behavior_tl { rtl } }
+        % Bidi is selected from the resolved Writing Model, not from a
+        % second family-name/script heuristic.
+        \str_if_eq:VnTF \l__font_inline_axis_tl { horizontal }
+          {
+            \str_if_eq:VnTF \l__font_inline_direction_tl { rtl }
+              { \tl_set:Nn \l__font_inline_behavior_tl { rtl } }
+              { \tl_set:NV \l__font_inline_behavior_tl \FontDefaultInlineBehavior }
+          }
           { \tl_set:NV \l__font_inline_behavior_tl \FontDefaultInlineBehavior }
       }
       { }
