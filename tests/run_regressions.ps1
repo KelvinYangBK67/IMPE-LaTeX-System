@@ -181,6 +181,7 @@ try {
         "font-mode-aliases",
         "global-font-priority",
         "usewriting-api",
+        "rtl-writing-model",
         "usewriting-local-first-use",
         "fallback-native",
         "fallback-tangut-system",
