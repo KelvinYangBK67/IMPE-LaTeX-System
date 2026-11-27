@@ -189,7 +189,7 @@ core/fonts/impe-fonts-system.tex
 family/script/feature 方向推導，作為相容性回退。
 
 Unicode 範圍 transition 負責字體選擇，並不代表 Bidi run 的邊界。XeTeX
-字元間 transition 可能在空格及其他中性邊界觸發，因此不能逐字符開啟、
+interchar transition 會在 glue／空格等邊界類別觸發，因此不能逐字符開啟、
 關閉 Bidi 範圍。這套路由也不負責推導段落方向或自動切分混合方向文字。
 需要處理完整文字範圍時，使用局部書寫命令（例如 \AR、\HE、\SY）；
 需要直接指定方向時，使用 \RL 或 \RTL。自訂 local 字族也可以透過
