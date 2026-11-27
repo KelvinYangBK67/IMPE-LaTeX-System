@@ -36,10 +36,26 @@
   {\PackageError{impe-test}{Arabic~profile~lost~its~script}{}}
 \str_if_eq:VnF \l__font_inline_behavior_tl {rtl}
   {\PackageError{impe-test}{Arabic~profile~lost~RTL}{}}
+\str_if_eq:VnF \l__font_inline_direction_tl {rtl}
+  {\PackageError{impe-test}{Arabic~profile~lost~RTL~direction}{}}
 \tl_if_in:VnF \l__font_regular_tl {GentiumPlus-Regular.ttf}
   {\PackageError{impe-test}{Gentium~pack~resource~missing}{}}
 \ExplSyntaxOff
-\UseWriting{[writing=horizontal]mongolian}
+\UseWriting{hebrew}
+\ExplSyntaxOn
+\str_if_eq:VnF \l__font_inline_direction_tl {rtl}
+  {\PackageError{impe-test}{Hebrew~profile~lost~RTL~direction}{}}
+\str_if_eq:VnF \l__font_inline_behavior_tl {rtl}
+  {\PackageError{impe-test}{Hebrew~profile~lost~RTL~behavior}{}}
+\ExplSyntaxOff
+\UseWriting{syriac}
+\ExplSyntaxOn
+\str_if_eq:VnF \l__font_inline_direction_tl {rtl}
+  {\PackageError{impe-test}{Syriac~profile~lost~RTL~direction}{}}
+\str_if_eq:VnF \l__font_inline_behavior_tl {rtl}
+  {\PackageError{impe-test}{Syriac~profile~lost~RTL~behavior}{}}
+\ExplSyntaxOff
+\UseWriting{[writing=horizontal]mongolian]}
 \ExplSyntaxOn
 \tl_if_blank:VF \l__font_layout_tl
   {\PackageError{impe-test}{Explicit~horizontal~writing~was~ignored}{}}
