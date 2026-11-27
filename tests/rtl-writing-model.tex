@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage{impe}
+
+% A custom family opts into the shared RTL controller through Writing Model
+% metadata alone; its family ID and OpenType script are deliberately neutral.
+\FontRegisterFamily{
+  id = rtl_meta_probe,
+  defaultmode = local,
+  local = {
+    command = RMP,
+    name = rtl_meta_probe_local,
+    regular = lmroman10-regular.otf,
+    inlinedirection = rtl,
+  },
+}
+\UseFont{rtl_meta_probe}[local]
+
+\ExplSyntaxOn
+\str_if_eq:VnF \l__font_inline_direction_tl {rtl}
+  {\PackageError{impe-test}{Explicit~RTL~direction~was~not~resolved}{}}
+\str_if_eq:VnF \l__font_inline_behavior_tl {rtl}
+  {\PackageError{impe-test}{Explicit~RTL~direction~did~not~select~Bidi~behavior}{}}
+\cs_if_exist:cF {__font_behavior_inline_rtl_meta_probe_local:n}
+  {\PackageError{impe-test}{RTL~inline~behavior~hook~was~not~created}{}}
+\cs_if_exist:cF {__font_behavior_block_rtl_meta_probe_local:n}
+  {\PackageError{impe-test}{RTL~block~behavior~hook~was~not~created}{}}
+\ExplSyntaxOff
+
+\begin{document}
+\RMP{RTL inline words with spaces, punctuation, and 123.}
+\RMP{First RTL paragraph.\par Second RTL paragraph.}
+\typeout{IMPE-TEST-RTL-WRITING-MODEL-PASS}
+\end{document}
