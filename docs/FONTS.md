@@ -228,8 +228,8 @@ previous family/script/feature inference remains available as a compatibility
 fallback.
 
 Unicode-range transitions are a font-selection mechanism, not Bidi run
-boundaries. XeTeX inter-character transitions can occur at spaces and other
-neutral boundaries, so they must not start and end Bidi scopes one character
+boundaries. XeTeX inter-character transitions can fire around glue/space and other
+boundary classes, so they must not start and end Bidi scopes one character
 at a time. They do not infer paragraph direction or automatically segment
 mixed-direction text. Use the local writing command (for example \AR, \HE,
 or \SY) for a complete text argument, or explicit \RL / \RTL scopes when the
