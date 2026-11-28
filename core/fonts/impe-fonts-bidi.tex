@@ -5,7 +5,7 @@
 \ExplSyntaxOn
 
 \prop_new:N \g__font_bidi_rtl_class_prop
-\seq_new:N \g__font_bidi_boundary_transition_seq
+\seq_new:N \g__font_bidi_installed_transition_seq
 \bool_new:N \g__font_bidi_auto_paragraph_bool
 \bool_new:N \g__font_bidi_auto_run_bool
 \bool_new:N \g__font_bidi_paragraph_rtl_bool
@@ -22,6 +22,17 @@
 \tl_new:N \l__font_bidi_existing_transition_tl
 \skip_new:N \l__font_bidi_saved_skip
 \box_new:N \l__font_bidi_indent_box
+
+% Spaces and common ASCII punctuation are weak/neutral Bidi characters.
+% Keep them in a dedicated class so they do not split a strong RTL run.
+\cs_new_protected:Npn \__font_bidi_assign_neutral_range:nn #1#2
+  {
+    \int_step_inline:nnn {#1} {#2}
+      {
+        \XeTeXcharclass ##1 =
+          \use:c { __font_bidi_neutral_class }
+      }
+  }
 
 \cs_new_protected:Npn \__font_bidi_class_if_rtl:nTF #1#2#3
   {
@@ -147,6 +158,12 @@
               { \bool_set_true:N \l__font_bidi_from_boundary_bool }
             \int_compare:nNnT {#2} = { \__font_interchar_boundary_class: }
               { \bool_set_true:N \l__font_bidi_to_boundary_bool }
+            \int_compare:nNnT
+              {#1} = { \use:c { __font_bidi_neutral_class } }
+              { \bool_set_true:N \l__font_bidi_from_boundary_bool }
+            \int_compare:nNnT
+              {#2} = { \use:c { __font_bidi_neutral_class } }
+              { \bool_set_true:N \l__font_bidi_to_boundary_bool }
 
             \bool_if:NF \l__font_bidi_to_boundary_bool
               {
@@ -196,7 +213,7 @@
     \tl_set:Nx \l__font_bidi_transition_key_tl
       { \int_eval:n {#1} / \int_eval:n {#2} }
     \exp_args:NNV \seq_if_in:NnTF
-      \g__font_bidi_boundary_transition_seq
+      \g__font_bidi_installed_transition_seq
       \l__font_bidi_transition_key_tl
       { }
       {
@@ -217,10 +234,43 @@
               }
           }
         \exp_args:NNV \seq_gput_right:Nn
-          \g__font_bidi_boundary_transition_seq
+          \g__font_bidi_installed_transition_seq
           \l__font_bidi_transition_key_tl
       }
   }
+
+\cs_new_protected:Npn \__font_bidi_initialize_neutral_class:
+  {
+    \cs_if_exist:cF { __font_bidi_neutral_class }
+      {
+        \exp_args:Nc \newXeTeXintercharclass
+          { __font_bidi_neutral_class }
+
+        % Ordinary and non-breaking spaces.
+        \__font_bidi_assign_neutral_range:nn { "0020 } { "0020 }
+        \__font_bidi_assign_neutral_range:nn { "00A0 } { "00A0 }
+        \__font_bidi_assign_neutral_range:nn { "1680 } { "1680 }
+        \__font_bidi_assign_neutral_range:nn { "2000 } { "200A }
+        \__font_bidi_assign_neutral_range:nn { "202F } { "202F }
+        \__font_bidi_assign_neutral_range:nn { "205F } { "205F }
+
+        % Common ASCII punctuation is neutral; ASCII letters and digits
+        % remain in class 0 and therefore continue to act as LTR strong text.
+        \__font_bidi_assign_neutral_range:nn { "0021 } { "002F }
+        \__font_bidi_assign_neutral_range:nn { "003A } { "0040 }
+        \__font_bidi_assign_neutral_range:nn { "005B } { "0060 }
+        \__font_bidi_assign_neutral_range:nn { "007B } { "007E }
+
+        % Class 0 is the default LTR class. Bridge it to/from neutral text
+        % without allowing spaces or punctuation to determine paragraph base.
+        \__font_bidi_append_transition:nn
+          { \use:c { __font_bidi_neutral_class } } { 0 }
+        \__font_bidi_append_transition:nn
+          { 0 } { \use:c { __font_bidi_neutral_class } }
+      }
+  }
+
+\__font_bidi_initialize_neutral_class:
 
 \cs_new_protected:Npn \__font_bidi_install_boundary_transitions:
   {
