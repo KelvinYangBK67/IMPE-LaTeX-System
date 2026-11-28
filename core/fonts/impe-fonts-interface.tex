@@ -1708,21 +1708,11 @@
             \exp_not:N \XeTeXinterchartoks
               \exp_not:c { __font_unicode_block_#1_class }
               \exp_not:c { __font_unicode_block_#2_class }
-              =
-              {
-                \exp_not:N \__font_bidi_transition:nn
-                  { \exp_not:c { __font_unicode_block_#1_class } }
-                  { \exp_not:c { __font_unicode_block_#2_class } }
-              }
+              = { }
             \exp_not:N \XeTeXinterchartoks
               \exp_not:c { __font_unicode_block_#2_class }
               \exp_not:c { __font_unicode_block_#1_class }
-              =
-              {
-                \exp_not:N \__font_bidi_transition:nn
-                  { \exp_not:c { __font_unicode_block_#2_class } }
-                  { \exp_not:c { __font_unicode_block_#1_class } }
-              }
+              = { }
           }
       }
       {
