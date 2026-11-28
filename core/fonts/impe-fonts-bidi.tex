@@ -67,8 +67,9 @@
 \cs_new_protected:Npn \__font_bidi_start_paragraph:
   {
     \bool_gset_true:N \g__font_bidi_auto_paragraph_bool
-    \bool_gset_eq:NN \g__font_bidi_paragraph_rtl_bool
-      \l__font_bidi_to_rtl_bool
+    \bool_if:NTF \l__font_bidi_to_rtl_bool
+      { \bool_gset_true:N \g__font_bidi_paragraph_rtl_bool }
+      { \bool_gset_false:N \g__font_bidi_paragraph_rtl_bool }
     \bool_gset_false:N \g__font_bidi_main_paragraph_bool
     \bool_gset_false:N \g__font_bidi_auto_run_bool
     \bool_if:NTF \l__font_bidi_to_rtl_bool
