@@ -6,6 +6,8 @@
 
 \prop_new:N \g__font_bidi_rtl_class_prop
 \seq_new:N \g__font_bidi_installed_transition_seq
+\bool_new:N \g__font_bidi_enabled_bool
+\bool_new:N \g__font_bidi_neutral_transitions_installed_bool
 \bool_new:N \g__font_bidi_auto_paragraph_bool
 \bool_new:N \g__font_bidi_auto_run_bool
 \bool_new:N \g__font_bidi_paragraph_rtl_bool
@@ -156,8 +158,10 @@
   {
     \mode_if_horizontal:T
       {
-        \bool_if:NF \g__font_bidi_suppress_bool
+        \bool_if:NT \g__font_bidi_enabled_bool
           {
+            \bool_if:NF \g__font_bidi_suppress_bool
+              {
             \bool_if:NF \l__font_local_override_bool
               {
             \bool_set_false:N \l__font_bidi_from_rtl_bool
@@ -203,6 +207,7 @@
                   }
               }
               }
+            }
           }
       }
   }
@@ -308,7 +313,18 @@
         \__font_bidi_assign_ltr_range:nn { "2D00 } { "2D2F }
         \__font_bidi_assign_ltr_range:nn { "A720 } { "A7FF }
 
-        % Bridge neutral/default characters to the explicit LTR class.
+        % Neutral transitions are installed only when an automatic RTL
+        % range is registered; LTR-only documents keep the controller dormant.
+      }
+  }
+
+\__font_bidi_initialize_neutral_class:
+
+\cs_new_protected:Npn \__font_bidi_enable:
+  {
+    \bool_gset_true:N \g__font_bidi_enabled_bool
+    \bool_if:NF \g__font_bidi_neutral_transitions_installed_bool
+      {
         \__font_bidi_append_transition:nn
           { \use:c { __font_bidi_neutral_class } } { 0 }
         \__font_bidi_append_transition:nn
@@ -323,10 +339,9 @@
           { 0 } { \use:c { __font_bidi_ltr_class } }
         \__font_bidi_append_transition:nn
           { \use:c { __font_bidi_ltr_class } } { 0 }
+        \bool_gset_true:N \g__font_bidi_neutral_transitions_installed_bool
       }
   }
-
-\__font_bidi_initialize_neutral_class:
 
 \cs_new_protected:Npn \__font_bidi_install_boundary_transitions:
   {
@@ -353,6 +368,7 @@
       \g__font_bidi_rtl_class_prop
       \l__font_bidi_class_tl
       { rtl }
+    \__font_bidi_enable:
     \__font_bidi_install_boundary_transitions:
   }
 
