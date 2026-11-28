@@ -12,21 +12,43 @@
 \cs_new_eq:NN \__impe_test_saved_bidi_close: \__font_bidi_close_run:
 \cs_new_eq:NN \__impe_test_saved_bidi_transition:nn \__font_bidi_transition:nn
 \cs_new_eq:NN \__impe_test_saved_bidi_end_paragraph: \__font_bidi_end_paragraph:
+\cs_new_eq:NN \__impe_test_saved_bidi_start_paragraph: \__font_bidi_start_paragraph:
+\cs_new_eq:NN \__impe_test_saved_bidi_switch_to:n \__font_bidi_switch_to:n
 
+\cs_new:Npn \__impe_test_bidi_state:
+  {
+    auto=\bool_if:NTF \g__font_bidi_auto_paragraph_bool {1}{0},
+    baseRTL=\bool_if:NTF \g__font_bidi_paragraph_rtl_bool {1}{0},
+    run=\bool_if:NTF \g__font_bidi_auto_run_bool {1}{0},
+    dir=\tl_use:N \g__font_bidi_run_direction_tl
+  }
 \cs_set_protected:Npn \__font_bidi_transition:nn #1#2
   {
-    \typeout{IMPE-BIDI-TRACE-TRANSITION-\int_eval:n{#1}-TO-\int_eval:n{#2}}
+    \typeout{IMPE-BIDI-TRACE-TRANSITION-\int_eval:n{#1}-TO-\int_eval:n{#2}-H=\ifhmode1\else0\fi-BEFORE-\__impe_test_bidi_state:}
     \__impe_test_saved_bidi_transition:nn {#1}{#2}
+    \typeout{IMPE-BIDI-TRACE-AFTER-TRANSITION-\__impe_test_bidi_state:}
+  }
+\cs_set_protected:Npn \__font_bidi_start_paragraph:
+  {
+    \typeout{IMPE-BIDI-TRACE-START-PARAGRAPH-H=\ifhmode1\else0\fi-INNER=\ifinner1\else0\fi-RTL=\bool_if:NTF \l__font_bidi_to_rtl_bool {1}{0}}
+    \__impe_test_saved_bidi_start_paragraph:
+  }
+\cs_set_protected:Npn \__font_bidi_switch_to:n #1
+  {
+    \typeout{IMPE-BIDI-TRACE-SWITCH-#1-BEFORE-\__impe_test_bidi_state:}
+    \__impe_test_saved_bidi_switch_to:n {#1}
+    \typeout{IMPE-BIDI-TRACE-SWITCH-#1-AFTER-\__impe_test_bidi_state:}
   }
 \cs_set_protected:Npn \__font_bidi_end_paragraph:
   {
-    \typeout{IMPE-BIDI-TRACE-PARA-END-OPEN=\int_use:N\g__impe_test_bidi_open_int-CLOSE=\int_use:N\g__impe_test_bidi_close_int}
+    \typeout{IMPE-BIDI-TRACE-PARA-END-BEFORE-\__impe_test_bidi_state:}
     \__impe_test_saved_bidi_end_paragraph:
+    \typeout{IMPE-BIDI-TRACE-PARA-END-AFTER-\__impe_test_bidi_state:}
   }
 \cs_set_protected:Npn \__font_bidi_open_run:n #1
   {
     \int_gincr:N \g__impe_test_bidi_open_int
-    \typeout{IMPE-BIDI-TRACE-OPEN-#1}
+    \typeout{IMPE-BIDI-TRACE-OPEN-#1-STATE-\__impe_test_bidi_state:}
     \__impe_test_saved_bidi_open:n {#1}
   }
 \cs_set_protected:Npn \__font_bidi_close_run:
@@ -42,6 +64,8 @@
 \typeout{IMPE-BIDI-TRACE-NEUTRAL-CLASS=\the\__font_bidi_neutral_class}
 \typeout{IMPE-BIDI-TRACE-LTR-CLASS=\the\__font_bidi_ltr_class}
 \typeout{IMPE-BIDI-TRACE-ASCII-A-CLASS=\the\XeTeXcharclass 65}
+\typeout{IMPE-BIDI-TRACE-AMPERSAND-CLASS=\the\XeTeXcharclass 38}
+\typeout{IMPE-BIDI-TRACE-LBRACE-CLASS=\the\XeTeXcharclass 123}
 \cs_new_protected:Npn \__impe_test_reset:
   {
     \int_gzero:N \g__impe_test_bidi_open_int
