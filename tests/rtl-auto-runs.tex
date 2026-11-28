@@ -46,6 +46,11 @@
     \int_compare:nNnF { \g__impe_test_bidi_close_int } = {#2}
       { \PackageError{impe-test}{Unexpected~automatic~Bidi~close~count~(open=\int_use:N\g__impe_test_bidi_open_int,~close=\int_use:N\g__impe_test_bidi_close_int)}{} }
   }
+\tl_set:Nx \l_tmpa_tl { \int_eval:n { \use:c { __font_unicode_block_Arabic_class } } }
+\typeout{IMPE-BIDI-DEBUG-ARABIC-CLASS=\l_tmpa_tl}
+\prop_if_in:NVTF \g__font_bidi_rtl_class_prop \l_tmpa_tl
+  { \typeout{IMPE-BIDI-DEBUG-ARABIC-CLASS-REGISTERED} }
+  { \typeout{IMPE-BIDI-DEBUG-ARABIC-CLASS-MISSING} }
 \seq_if_in:NnF \g__font_range_global_blocks_seq {Arabic}
   { \PackageError{impe-test}{Arabic~rangeprofile~was~not~registered}{} }
 \seq_if_in:NnF \g__font_range_global_blocks_seq {Hebrew}
