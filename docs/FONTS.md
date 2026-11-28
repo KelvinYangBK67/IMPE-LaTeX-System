@@ -232,9 +232,9 @@ consumes resolved direction metadata independently. It is activated when a
 global horizontal RTL range is registered. On XeTeX, RTL runs remain open
 across spaces and common punctuation, then close or switch when the next
 strong script is encountered. The paragraph base direction follows the first
-routed strong script. Spaces and common ASCII punctuation use a dedicated
-neutral class; XeTeX's default class 0 is also treated as neutral because it
-can contain unclassified characters and TeX-generated boundaries. Common
+routed strong script. Spaces and common ASCII punctuation are treated as neutral; XeTeX's default
+class 0 is also treated as neutral because it can contain unclassified
+characters and TeX-generated boundaries. Common
 Latin, Greek, Cyrillic, Armenian, and Georgian letters and digits receive an
 explicit strong LTR class. This is script-run automation built on XeTeX
 TeX--XeT direction nodes and the loaded bidi package, not a complete
