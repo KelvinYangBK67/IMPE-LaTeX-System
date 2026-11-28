@@ -44,10 +44,16 @@
 
 % Bare Arabic text in paragraph and table cells: no \AR, \RL, or local/global
 % mode declaration. Spaces between words must remain inside one RTL run.
+\ExplSyntaxOn
+\__impe_test_reset:
+\ExplSyntaxOff
 \begin{tabular}{p{.18\linewidth}p{.68\linewidth}}
   動詞 & فِعْلٌ \\
   & كَتَبَ، يَكْتُبُ، اُكْتُبْ \\
 \end{tabular}
+\ExplSyntaxOn
+\__impe_test_assert:nn {2}{2}
+\ExplSyntaxOff
 
 \ExplSyntaxOn
 \__impe_test_reset:
