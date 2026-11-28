@@ -10,6 +10,7 @@
 \bool_new:N \g__font_bidi_auto_run_bool
 \bool_new:N \g__font_bidi_paragraph_rtl_bool
 \bool_new:N \g__font_bidi_main_paragraph_bool
+\bool_new:N \g__font_bidi_suppress_bool
 \tl_new:N \g__font_bidi_run_direction_tl
 
 \bool_new:N \l__font_bidi_from_rtl_bool
@@ -102,9 +103,14 @@
           % box inside the RTL segment so it follows the paragraph direction.
           \@RTLtrue
           \bool_gset_true:N \g__font_bidi_main_paragraph_bool
+          % Extracting/reinserting the paragraph indent box creates XeTeX
+          % interchar boundaries of its own. They are layout machinery, not
+          % strong text, so keep them out of the automatic Bidi state machine.
+          \bool_gset_true:N \g__font_bidi_suppress_bool
           \setbox\l__font_bidi_indent_box=\lastbox
           \__font_bidi_open_run:n { rtl }
           \box_use_drop:N \l__font_bidi_indent_box
+          \bool_gset_false:N \g__font_bidi_suppress_bool
         \fi
       }
       { \tl_gset:Nn \g__font_bidi_run_direction_tl { ltr } }
@@ -151,8 +157,10 @@
   {
     \mode_if_horizontal:T
       {
-        \bool_if:NF \l__font_local_override_bool
+        \bool_if:NF \g__font_bidi_suppress_bool
           {
+            \bool_if:NF \l__font_local_override_bool
+              {
             \bool_set_false:N \l__font_bidi_from_rtl_bool
             \bool_set_false:N \l__font_bidi_to_rtl_bool
             \bool_set_false:N \l__font_bidi_from_boundary_bool
@@ -194,6 +202,7 @@
                       \__font_bidi_start_paragraph:
                     \fi
                   }
+              }
               }
           }
       }
