@@ -227,14 +227,18 @@ Syriac, and related historical RTL families. If the field is omitted, the
 previous family/script/feature inference remains available as a compatibility
 fallback.
 
-Unicode-range transitions are a font-selection mechanism, not Bidi run
-boundaries. XeTeX inter-character transitions can fire around glue/space and other
-boundary classes, so they must not start and end Bidi scopes one character
-at a time. They do not infer paragraph direction or automatically segment
-mixed-direction text. Use the local writing command (for example \AR, \HE,
-or \SY) for a complete text argument, or explicit \RL / \RTL scopes when the
-text direction must be specified directly. A custom local family can use the
-same controller by declaring inlinedirection = rtl.
+Unicode-range transitions still select fonts; the shared Bidi controller
+consumes resolved direction metadata independently. On XeTeX, registered
+horizontal RTL ranges open direction runs, keep those runs across interword
+glue, and close or switch them when the next strong script is encountered.
+The paragraph base direction follows the first routed strong script. This is
+script-run automation built on XeTeX TeX--XeT direction nodes and the loaded
+bidi package; it is not a replacement for the full Unicode Bidirectional
+Algorithm's treatment of every weak/neutral class, isolate control, or
+arbitrary macro-generated box. Explicit local commands (\AR, \HE, \SY)
+and \RL / \RTL scopes remain available for deliberate overrides. Custom
+horizontal RTL families opt in through inlinedirection = rtl plus a
+registered rangeprofile.
 
 ### Shaping, Layout, and Special Modules
 
