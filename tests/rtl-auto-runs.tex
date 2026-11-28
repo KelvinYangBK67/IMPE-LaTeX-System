@@ -28,9 +28,9 @@
 \cs_new_protected:Npn \__impe_test_assert:nn #1#2
   {
     \int_compare:nNnF { \g__impe_test_bidi_open_int } = {#1}
-      { \PackageError{impe-test}{Unexpected~automatic~Bidi~run~count}{} }
+      { \PackageError{impe-test}{Unexpected~automatic~Bidi~run~count~(open=\int_use:N\g__impe_test_bidi_open_int,~close=\int_use:N\g__impe_test_bidi_close_int)}{} }
     \int_compare:nNnF { \g__impe_test_bidi_close_int } = {#2}
-      { \PackageError{impe-test}{Unexpected~automatic~Bidi~close~count}{} }
+      { \PackageError{impe-test}{Unexpected~automatic~Bidi~close~count~(open=\int_use:N\g__impe_test_bidi_open_int,~close=\int_use:N\g__impe_test_bidi_close_int)}{} }
   }
 \seq_if_in:NnF \g__font_range_global_blocks_seq {Arabic}
   { \PackageError{impe-test}{Arabic~rangeprofile~was~not~registered}{} }
