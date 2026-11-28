@@ -101,12 +101,11 @@
         \else
           % Match bidi.sty's paragraph-start handling: move the indentation
           % box inside the RTL segment so it follows the paragraph direction.
+          % Changing paragraph direction and moving the indent box may
+          % create interchar boundaries that are layout machinery, not text.
+          \bool_gset_true:N \g__font_bidi_suppress_bool
           \@RTLtrue
           \bool_gset_true:N \g__font_bidi_main_paragraph_bool
-          % Extracting/reinserting the paragraph indent box creates XeTeX
-          % interchar boundaries of its own. They are layout machinery, not
-          % strong text, so keep them out of the automatic Bidi state machine.
-          \bool_gset_true:N \g__font_bidi_suppress_bool
           \setbox\l__font_bidi_indent_box=\lastbox
           \__font_bidi_open_run:n { rtl }
           \box_use_drop:N \l__font_bidi_indent_box
