@@ -20,6 +20,7 @@
     auto=\bool_if:NTF \g__font_bidi_auto_paragraph_bool {1}{0},
     baseRTL=\bool_if:NTF \g__font_bidi_paragraph_rtl_bool {1}{0},
     run=\bool_if:NTF \g__font_bidi_auto_run_bool {1}{0},
+    suppress=\bool_if:NTF \g__font_bidi_suppress_bool {1}{0},
     dir=\tl_use:N \g__font_bidi_run_direction_tl
   }
 \cs_set_protected:Npn \__font_bidi_transition:nn #1#2
