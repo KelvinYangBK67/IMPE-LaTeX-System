@@ -228,16 +228,20 @@ previous family/script/feature inference remains available as a compatibility
 fallback.
 
 Unicode-range transitions still select fonts; the shared Bidi controller
-consumes resolved direction metadata independently. On XeTeX, registered
-horizontal RTL ranges open direction runs, keep those runs across interword
-glue, and close or switch them when the next strong script is encountered.
-The paragraph base direction follows the first routed strong script. This is
-script-run automation built on XeTeX TeX--XeT direction nodes and the loaded
-bidi package; it is not a replacement for the full Unicode Bidirectional
-Algorithm's treatment of every weak/neutral class, isolate control, or
-arbitrary macro-generated box. Explicit local commands (\AR, \HE, \SY)
-and \RL / \RTL scopes remain available for deliberate overrides. Custom
-horizontal RTL families opt in through inlinedirection = rtl plus a
+consumes resolved direction metadata independently. It is activated when a
+global horizontal RTL range is registered. On XeTeX, RTL runs remain open
+across spaces and common punctuation, then close or switch when the next
+strong script is encountered. The paragraph base direction follows the first
+routed strong script. Spaces and common ASCII punctuation use a dedicated
+neutral class; XeTeX's default class 0 is also treated as neutral because it
+can contain unclassified characters and TeX-generated boundaries. Common
+Latin, Greek, Cyrillic, Armenian, and Georgian letters and digits receive an
+explicit strong LTR class. This is script-run automation built on XeTeX
+TeX--XeT direction nodes and the loaded bidi package, not a complete
+implementation of Unicode UAX #9 weak/neutral resolution, isolate controls,
+or arbitrary macro-generated boxes. Explicit local commands (\AR, \HE,
+\SY) and \RL / \RTL scopes remain available for deliberate overrides.
+Custom horizontal RTL families opt in through inlinedirection = rtl plus a
 registered rangeprofile.
 
 ### Shaping, Layout, and Special Modules
