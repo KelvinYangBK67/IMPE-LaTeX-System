@@ -27,7 +27,14 @@
   { \PackageError{impe-test}{Space~must~use~the~neutral~Bidi~class}{} }
 \int_compare:nNnF
   { \the\XeTeXcharclass 44 } = { \the\__font_bidi_neutral_class }
-  { \PackageError{impe-test}{ASCII~comma~must~use~the~neutral~Bidi~class}{} }
+  {
+    \int_compare:nNnF { \the\XeTeXcharclass 44 } = { 0 }
+      {
+        \PackageError{impe-test}
+          {ASCII~comma~class~\the\XeTeXcharclass 44~is~not~neutral}
+          {}
+      }
+  }
 \int_compare:nNnF
   { \the\XeTeXcharclass 65 } = { \the\__font_bidi_ltr_class }
   { \PackageError{impe-test}{Latin~letters~must~use~the~strong~LTR~class}{} }
