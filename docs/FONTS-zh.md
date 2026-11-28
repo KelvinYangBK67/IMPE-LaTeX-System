@@ -188,12 +188,16 @@ core/fonts/impe-fonts-system.tex
 及相關歷史 RTL 書寫系統明確設定此欄位。若未提供，系統仍保留原有的
 family/script/feature 方向推導，作為相容性回退。
 
-Unicode 範圍 transition 負責字體選擇，並不代表 Bidi run 的邊界。XeTeX
-interchar transition 會在 glue／空格等邊界類別觸發，因此不能逐字符開啟、
-關閉 Bidi 範圍。這套路由也不負責推導段落方向或自動切分混合方向文字。
-需要處理完整文字範圍時，使用局部書寫命令（例如 \AR、\HE、\SY）；
-需要直接指定方向時，使用 \RL 或 \RTL。自訂 local 字族也可以透過
-inlinedirection = rtl 接入同一套 controller。
+Unicode 範圍 transition 仍然負責字體選擇；共用 Bidi controller
+則獨立讀取已解析的方向 metadata。在 XeTeX 下，已註冊的水平 RTL range
+會啟動方向 run，run 會跨越詞間 glue 延續，直到遇到下一個強方向文字系統
+才關閉或切換。段落基礎方向依照第一個已路由的強方向文字系統決定。
+這是建立在 XeTeX TeX--XeT direction nodes 與既有 bidi 宏包上的文字
+系統 run 自動處理，尚不等同完整 Unicode Bidirectional Algorithm
+對所有 weak/neutral 類別、isolate controls 及任意宏生成盒子的處理。
+局部書寫命令（\AR、\HE、\SY）以及 \RL／\RTL 仍可用於明確覆寫。
+自訂水平 RTL 字族透過 inlinedirection = rtl 與已註冊的 rangeprofile
+接入共用 controller。
 
 ### Shaping、Layout 與特殊模組
 
