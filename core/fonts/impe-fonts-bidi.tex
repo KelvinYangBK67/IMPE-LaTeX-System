@@ -34,6 +34,15 @@
       }
   }
 
+\cs_new_protected:Npn \__font_bidi_assign_ltr_range:nn #1#2
+  {
+    \int_step_inline:nnn {#1} {#2}
+      {
+        \XeTeXcharclass ##1 =
+          \use:c { __font_bidi_ltr_class }
+      }
+  }
+
 \cs_new_protected:Npn \__font_bidi_class_if_rtl:nTF #1#2#3
   {
     \tl_set:Nx \l__font_bidi_class_tl { \int_eval:n {#1} }
@@ -164,6 +173,10 @@
             \int_compare:nNnT
               {#2} = { \use:c { __font_bidi_neutral_class } }
               { \bool_set_true:N \l__font_bidi_to_boundary_bool }
+            \int_compare:nNnT {#1} = { 0 }
+              { \bool_set_true:N \l__font_bidi_from_boundary_bool }
+            \int_compare:nNnT {#2} = { 0 }
+              { \bool_set_true:N \l__font_bidi_to_boundary_bool }
 
             \bool_if:NF \l__font_bidi_to_boundary_bool
               {
@@ -245,6 +258,8 @@
       {
         \exp_args:Nc \newXeTeXintercharclass
           { __font_bidi_neutral_class }
+        \exp_args:Nc \newXeTeXintercharclass
+          { __font_bidi_ltr_class }
 
         % Ordinary and non-breaking spaces.
         \__font_bidi_assign_neutral_range:nn { "0020 } { "0020 }
@@ -254,19 +269,47 @@
         \__font_bidi_assign_neutral_range:nn { "202F } { "202F }
         \__font_bidi_assign_neutral_range:nn { "205F } { "205F }
 
-        % Common ASCII punctuation is neutral; ASCII letters and digits
-        % remain in class 0 and therefore continue to act as LTR strong text.
+        % Common ASCII punctuation is neutral.
         \__font_bidi_assign_neutral_range:nn { "0021 } { "002F }
         \__font_bidi_assign_neutral_range:nn { "003A } { "0040 }
         \__font_bidi_assign_neutral_range:nn { "005B } { "0060 }
         \__font_bidi_assign_neutral_range:nn { "007B } { "007E }
 
-        % Class 0 is the default LTR class. Bridge it to/from neutral text
-        % without allowing spaces or punctuation to determine paragraph base.
+        % Class 0 contains both unclassified text and TeX alignment/control
+        % boundaries, so it is neutral. Give common LTR letters and digits
+        % an explicit strong class instead of treating all class-0 tokens
+        % as LTR (which breaks RTL text in tables and macro boundaries).
+        \__font_bidi_assign_ltr_range:nn { "0030 } { "0039 }
+        \__font_bidi_assign_ltr_range:nn { "0041 } { "005A }
+        \__font_bidi_assign_ltr_range:nn { "0061 } { "007A }
+        \__font_bidi_assign_ltr_range:nn { "00C0 } { "00D6 }
+        \__font_bidi_assign_ltr_range:nn { "00D8 } { "00F6 }
+        \__font_bidi_assign_ltr_range:nn { "00F8 } { "00FF }
+        \__font_bidi_assign_ltr_range:nn { "0100 } { "02AF }
+        \__font_bidi_assign_ltr_range:nn { "02B0 } { "02FF }
+        \__font_bidi_assign_ltr_range:nn { "0370 } { "052F }
+        \__font_bidi_assign_ltr_range:nn { "0531 } { "0588 }
+        \__font_bidi_assign_ltr_range:nn { "10A0 } { "10FF }
+        \__font_bidi_assign_ltr_range:nn { "1E00 } { "1EFF }
+        \__font_bidi_assign_ltr_range:nn { "2C60 } { "2C7F }
+        \__font_bidi_assign_ltr_range:nn { "2D00 } { "2D2F }
+        \__font_bidi_assign_ltr_range:nn { "A720 } { "A7FF }
+
+        % Bridge neutral/default characters to the explicit LTR class.
         \__font_bidi_append_transition:nn
           { \use:c { __font_bidi_neutral_class } } { 0 }
         \__font_bidi_append_transition:nn
           { 0 } { \use:c { __font_bidi_neutral_class } }
+        \__font_bidi_append_transition:nn
+          { \use:c { __font_bidi_neutral_class } }
+          { \use:c { __font_bidi_ltr_class } }
+        \__font_bidi_append_transition:nn
+          { \use:c { __font_bidi_ltr_class } }
+          { \use:c { __font_bidi_neutral_class } }
+        \__font_bidi_append_transition:nn
+          { 0 } { \use:c { __font_bidi_ltr_class } }
+        \__font_bidi_append_transition:nn
+          { \use:c { __font_bidi_ltr_class } } { 0 }
       }
   }
 
