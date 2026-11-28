@@ -1274,6 +1274,9 @@
           \exp_not:c { __font_unicode_block_#2_class }
           =
           {
+            \exp_not:N \__font_bidi_transition:nn
+              { \int_eval:n {#1} }
+              { \exp_not:c { __font_unicode_block_#2_class } }
             \exp_not:c { __font_enter_range_#3: }
           }
         \exp_not:N \XeTeXinterchartoks
@@ -1282,6 +1285,9 @@
           =
           {
             \exp_not:N \__font_leave_range:
+            \exp_not:N \__font_bidi_transition:nn
+              { \exp_not:c { __font_unicode_block_#2_class } }
+              { \int_eval:n {#1} }
           }
       }
   }
@@ -1359,6 +1365,9 @@
           \exp_not:c { __font_devanagari_#2_class }
           =
           {
+            \exp_not:N \__font_bidi_transition:nn
+              { \int_eval:n {#1} }
+              { \exp_not:c { __font_devanagari_#2_class } }
             \exp_not:c { __font_enter_range_#3: }
           }
         \exp_not:N \XeTeXinterchartoks
@@ -1367,6 +1376,9 @@
           =
           {
             \exp_not:N \__font_leave_range:
+            \exp_not:N \__font_bidi_transition:nn
+              { \exp_not:c { __font_devanagari_#2_class } }
+              { \int_eval:n {#1} }
           }
       }
   }
@@ -1430,6 +1442,9 @@
                   =
                   {
                     \exp_not:N \__font_leave_range:
+                    \exp_not:N \__font_bidi_transition:nn
+                      { \exp_not:c { __font_unicode_block_#1_class } }
+                      { \exp_not:c { __font_devanagari_##1_class } }
                     \exp_not:c { __font_enter_range_\g__font_devanagari_akshara_name_tl : }
                   }
                 \exp_not:N \XeTeXinterchartoks
@@ -1438,6 +1453,9 @@
                   =
                   {
                     \exp_not:N \__font_leave_range:
+                    \exp_not:N \__font_bidi_transition:nn
+                      { \exp_not:c { __font_devanagari_##1_class } }
+                      { \exp_not:c { __font_unicode_block_#1_class } }
                     \exp_not:c { __font_enter_range_#2: }
                   }
               }
@@ -1499,6 +1517,9 @@
           \exp_not:c { __font_tibetan_tsheg_class }
           =
           {
+            \exp_not:N \__font_bidi_transition:nn
+              { \int_eval:n {#1} }
+              { \exp_not:c { __font_tibetan_tsheg_class } }
             \exp_not:c { __font_enter_range_#2: }
           }
         \exp_not:N \XeTeXinterchartoks
@@ -1507,6 +1528,9 @@
           =
           {
             \exp_not:N \__font_leave_range:
+            \exp_not:N \__font_bidi_transition:nn
+              { \exp_not:c { __font_tibetan_tsheg_class } }
+              { \int_eval:n {#1} }
           }
       }
   }
@@ -1520,6 +1544,9 @@
           \exp_not:c { __font_tibetan_punctuation_class }
           =
           {
+            \exp_not:N \__font_bidi_transition:nn
+              { \int_eval:n {#1} }
+              { \exp_not:c { __font_tibetan_punctuation_class } }
             \exp_not:N \nobreak
             \exp_not:c { __font_enter_range_#2: }
           }
@@ -1529,6 +1556,9 @@
           =
           {
             \exp_not:N \__font_leave_range:
+            \exp_not:N \__font_bidi_transition:nn
+              { \exp_not:c { __font_tibetan_punctuation_class } }
+              { \int_eval:n {#1} }
           }
       }
   }
@@ -1543,6 +1573,9 @@
           =
           {
             \exp_not:N \__font_leave_range:
+            \exp_not:N \__font_bidi_transition:nn
+              { \exp_not:c { __font_unicode_block_#1_class } }
+              { \exp_not:c { __font_tibetan_tsheg_class } }
             \exp_not:c { __font_enter_range_#3: }
           }
         \exp_not:N \XeTeXinterchartoks
@@ -1551,6 +1584,9 @@
           =
           {
             \exp_not:N \__font_leave_range:
+            \exp_not:N \__font_bidi_transition:nn
+              { \exp_not:c { __font_tibetan_tsheg_class } }
+              { \exp_not:c { __font_unicode_block_#1_class } }
             \exp_not:c { __font_enter_range_#2: }
           }
       }
@@ -1566,6 +1602,9 @@
           =
           {
             \exp_not:N \__font_leave_range:
+            \exp_not:N \__font_bidi_transition:nn
+              { \exp_not:c { __font_unicode_block_#1_class } }
+              { \exp_not:c { __font_tibetan_punctuation_class } }
             \exp_not:N \nobreak
             \exp_not:c { __font_enter_range_#3: }
           }
@@ -1575,6 +1614,9 @@
           =
           {
             \exp_not:N \__font_leave_range:
+            \exp_not:N \__font_bidi_transition:nn
+              { \exp_not:c { __font_tibetan_punctuation_class } }
+              { \exp_not:c { __font_unicode_block_#1_class } }
             \exp_not:c { __font_enter_range_#2: }
           }
       }
@@ -1682,6 +1724,9 @@
               =
               {
                 \exp_not:N \__font_leave_range:
+                \exp_not:N \__font_bidi_transition:nn
+                  { \exp_not:c { __font_unicode_block_#1_class } }
+                  { \exp_not:c { __font_unicode_block_#2_class } }
                 \exp_not:c { __font_enter_range_#4: }
               }
             \exp_not:N \XeTeXinterchartoks
@@ -1690,6 +1735,9 @@
               =
               {
                 \exp_not:N \__font_leave_range:
+                \exp_not:N \__font_bidi_transition:nn
+                  { \exp_not:c { __font_unicode_block_#2_class } }
+                  { \exp_not:c { __font_unicode_block_#1_class } }
                 \exp_not:c { __font_enter_range_#3: }
               }
           }
@@ -1700,6 +1748,10 @@
   {
     \tl_if_blank:nF {#1}
       {
+        \bool_lazy_and:nnT
+          { \str_if_eq_p:Vn \l__font_inline_axis_tl { horizontal } }
+          { \str_if_eq_p:Vn \l__font_inline_direction_tl { rtl } }
+          { \__font_bidi_register_range_block:n {#1} }
         \__font_global_candidate_origin:
         \int_zero:N \l_tmpa_int
         \prop_get:NnNT \g__font_range_global_origin_prop {#1} \l_tmpa_tl

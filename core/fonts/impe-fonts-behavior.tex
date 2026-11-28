@@ -118,6 +118,8 @@
 
 \cs_new_protected:Npn \__font_apply_behavior:nn #1#2
   {
+    \bool_if:NT \l__font_local_override_bool
+      { \__font_bidi_end_run: }
     \tl_set:Nn \l_tmpa_tl {#2}
     \tl_if_in:NnTF \l_tmpa_tl { \par }
       { \use:c { __font_behavior_block_#1:n } {#2} }

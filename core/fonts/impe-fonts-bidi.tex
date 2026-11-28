@@ -1,0 +1,409 @@
+% Shared automatic bidirectional run handling for horizontal RTL scripts.
+% Font selection remains owned by Unicode-range routing; this layer consumes
+% resolved direction metadata and emits TeX-XeT direction nodes.
+
+\ExplSyntaxOn
+
+\prop_new:N \g__font_bidi_rtl_class_prop
+\prop_new:N \g__font_bidi_neutral_class_prop
+\seq_new:N \g__font_bidi_installed_transition_seq
+\bool_new:N \g__font_bidi_auto_paragraph_bool
+\bool_new:N \g__font_bidi_auto_run_bool
+\bool_new:N \g__font_bidi_paragraph_rtl_bool
+\bool_new:N \g__font_bidi_main_paragraph_bool
+\bool_new:N \g__font_bidi_suppress_bool
+\tl_new:N \g__font_bidi_run_direction_tl
+
+\bool_new:N \l__font_bidi_from_rtl_bool
+\bool_new:N \l__font_bidi_to_rtl_bool
+\bool_new:N \l__font_bidi_from_boundary_bool
+\bool_new:N \l__font_bidi_to_boundary_bool
+\bool_new:N \l__font_bidi_need_open_bool
+\tl_new:N \l__font_bidi_class_tl
+\tl_new:N \l__font_bidi_transition_key_tl
+\tl_new:N \l__font_bidi_existing_transition_tl
+\skip_new:N \l__font_bidi_saved_skip
+\box_new:N \l__font_bidi_indent_box
+
+% Spaces and common ASCII punctuation are weak/neutral Bidi characters.
+% Keep them in a dedicated class so they do not split a strong RTL run.
+\cs_new_protected:Npn \__font_bidi_assign_neutral_range:nn #1#2
+  {
+    \int_step_inline:nnn {#1} {#2}
+      {
+        \XeTeXcharclass ##1 =
+          \use:c { __font_bidi_neutral_class }
+      }
+  }
+
+\cs_new_protected:Npn \__font_bidi_assign_ltr_range:nn #1#2
+  {
+    \int_step_inline:nnn {#1} {#2}
+      {
+        \XeTeXcharclass ##1 =
+          \use:c { __font_bidi_ltr_class }
+      }
+  }
+
+\cs_new_protected:Npn \__font_bidi_register_neutral_char:n #1
+  {
+    \tl_set:Nx \l_tmpa_tl
+      { \int_eval:n { \the\XeTeXcharclass #1 } }
+    \exp_args:NNV \prop_gput:Nnn
+      \g__font_bidi_neutral_class_prop
+      \l_tmpa_tl
+      { neutral }
+  }
+
+\cs_new_protected:Npn \__font_bidi_register_neutral_range:nn #1#2
+  {
+    \int_step_inline:nnn {#1} {#2}
+      { \__font_bidi_register_neutral_char:n {##1} }
+  }
+
+\cs_new_protected:Npn \__font_bidi_register_external_neutral_classes:
+  {
+    \__font_bidi_register_neutral_char:n { "0020 }
+    \__font_bidi_register_neutral_char:n { "00A0 }
+    \__font_bidi_register_neutral_char:n { "1680 }
+    \__font_bidi_register_neutral_range:nn { "2000 } { "200A }
+    \__font_bidi_register_neutral_char:n { "202F }
+    \__font_bidi_register_neutral_char:n { "205F }
+    \__font_bidi_register_neutral_range:nn { "0021 } { "002F }
+    \__font_bidi_register_neutral_range:nn { "003A } { "0040 }
+    \__font_bidi_register_neutral_range:nn { "005B } { "0060 }
+    \__font_bidi_register_neutral_range:nn { "007B } { "007E }
+  }
+
+\AddToHook{begindocument/end}[impe/font-bidi-neutral]
+  { \__font_bidi_register_external_neutral_classes: }
+
+\cs_new_protected:Npn \__font_bidi_class_if_neutral:nTF #1#2#3
+  {
+    \tl_set:Nx \l__font_bidi_class_tl { \int_eval:n {#1} }
+    \exp_args:NNV \prop_if_in:NnTF
+      \g__font_bidi_neutral_class_prop
+      \l__font_bidi_class_tl
+      {#2}
+      {#3}
+  }
+
+\cs_new_protected:Npn \__font_bidi_class_if_rtl:nTF #1#2#3
+  {
+    \tl_set:Nx \l__font_bidi_class_tl { \int_eval:n {#1} }
+    \exp_args:NNV \prop_if_in:NnTF
+      \g__font_bidi_rtl_class_prop
+      \l__font_bidi_class_tl
+      {#2}
+      {#3}
+  }
+
+\cs_new_protected:Npn \__font_bidi_open_run:n #1
+  {
+    \str_if_eq:nnTF {#1} { rtl } { \beginR } { \beginL }
+    \bool_gset_true:N \g__font_bidi_auto_run_bool
+    \tl_gset:Nn \g__font_bidi_run_direction_tl {#1}
+  }
+
+\cs_new_protected:Npn \__font_bidi_close_run:
+  {
+    \bool_if:NT \g__font_bidi_auto_run_bool
+      {
+        \str_if_eq:VnTF \g__font_bidi_run_direction_tl { rtl }
+          { \endR }
+          { \endL }
+        \bool_gset_false:N \g__font_bidi_auto_run_bool
+      }
+  }
+
+% A separating interword glue resolves to the paragraph base direction when
+% the following strong run returns to that base direction.
+\cs_new_protected:Npn \__font_bidi_move_last_space_to_base:
+  {
+    \ifinner
+    \else
+      \skip_set:Nn \l__font_bidi_saved_skip { \lastskip }
+      \unskip
+      \__font_bidi_close_run:
+      \hskip \l__font_bidi_saved_skip
+    \fi
+  }
+
+\cs_new_protected:Npn \__font_bidi_start_paragraph:
+  {
+    \bool_gset_true:N \g__font_bidi_auto_paragraph_bool
+    \bool_if:NTF \l__font_bidi_to_rtl_bool
+      { \bool_gset_true:N \g__font_bidi_paragraph_rtl_bool }
+      { \bool_gset_false:N \g__font_bidi_paragraph_rtl_bool }
+    \bool_gset_false:N \g__font_bidi_main_paragraph_bool
+    \bool_gset_false:N \g__font_bidi_auto_run_bool
+    \bool_if:NTF \l__font_bidi_to_rtl_bool
+      {
+        \tl_gset:Nn \g__font_bidi_run_direction_tl { rtl }
+        \ifinner
+          \__font_bidi_open_run:n { rtl }
+        \else
+          % Match bidi.sty's paragraph-start handling: move the indentation
+          % box inside the RTL segment so it follows the paragraph direction.
+          % Changing paragraph direction and moving the indent box may
+          % create interchar boundaries that are layout machinery, not text.
+          \bool_gset_true:N \g__font_bidi_suppress_bool
+          \@RTLtrue
+          \bool_gset_true:N \g__font_bidi_main_paragraph_bool
+          \setbox\l__font_bidi_indent_box=\lastbox
+          \__font_bidi_open_run:n { rtl }
+          \box_use_drop:N \l__font_bidi_indent_box
+          \bool_gset_false:N \g__font_bidi_suppress_bool
+        \fi
+      }
+      { \tl_gset:Nn \g__font_bidi_run_direction_tl { ltr } }
+  }
+
+\cs_new_protected:Npn \__font_bidi_switch_to:n #1
+  {
+    \bool_set_false:N \l__font_bidi_need_open_bool
+    \bool_if:NTF \g__font_bidi_auto_run_bool
+      {
+        \str_if_eq:VnF \g__font_bidi_run_direction_tl {#1}
+          {
+            \bool_if:NT \l__font_bidi_from_boundary_bool
+              {
+                \bool_if:NTF \g__font_bidi_paragraph_rtl_bool
+                  {
+                    \str_if_eq:nnT {#1} { rtl }
+                      { \__font_bidi_move_last_space_to_base: }
+                  }
+                  {
+                    \str_if_eq:nnT {#1} { ltr }
+                      { \__font_bidi_move_last_space_to_base: }
+                  }
+              }
+            \__font_bidi_close_run:
+            \bool_set_true:N \l__font_bidi_need_open_bool
+          }
+      }
+      {
+        \bool_if:NTF \g__font_bidi_paragraph_rtl_bool
+          { \bool_set_true:N \l__font_bidi_need_open_bool }
+          { \str_if_eq:nnT {#1} { rtl } { \bool_set_true:N \l__font_bidi_need_open_bool } }
+      }
+    \bool_if:NT \l__font_bidi_need_open_bool
+      {
+        \bool_if:NTF \g__font_bidi_paragraph_rtl_bool
+          { \__font_bidi_open_run:n {#1} }
+          { \str_if_eq:nnT {#1} { rtl } { \__font_bidi_open_run:n { rtl } } }
+      }
+    \tl_gset:Nn \g__font_bidi_run_direction_tl {#1}
+  }
+
+\cs_new_protected:Npn \__font_bidi_transition:nn #1#2
+  {
+    \mode_if_horizontal:T
+      {
+        \bool_if:NF \g__font_bidi_suppress_bool
+          {
+            \bool_if:NF \l__font_local_override_bool
+              {
+            \bool_set_false:N \l__font_bidi_from_rtl_bool
+            \bool_set_false:N \l__font_bidi_to_rtl_bool
+            \bool_set_false:N \l__font_bidi_from_boundary_bool
+            \bool_set_false:N \l__font_bidi_to_boundary_bool
+
+            \__font_bidi_class_if_rtl:nTF {#1}
+              { \bool_set_true:N \l__font_bidi_from_rtl_bool } { }
+            \__font_bidi_class_if_rtl:nTF {#2}
+              { \bool_set_true:N \l__font_bidi_to_rtl_bool } { }
+
+            \int_compare:nNnT {#1} = { \__font_interchar_boundary_class: }
+              { \bool_set_true:N \l__font_bidi_from_boundary_bool }
+            \int_compare:nNnT {#2} = { \__font_interchar_boundary_class: }
+              { \bool_set_true:N \l__font_bidi_to_boundary_bool }
+            \__font_bidi_class_if_neutral:nTF {#1}
+              { \bool_set_true:N \l__font_bidi_from_boundary_bool } { }
+            \__font_bidi_class_if_neutral:nTF {#2}
+              { \bool_set_true:N \l__font_bidi_to_boundary_bool } { }
+
+            \bool_if:NF \l__font_bidi_to_boundary_bool
+              {
+                \bool_if:NTF \g__font_bidi_auto_paragraph_bool
+                  {
+                    \bool_if:NTF \l__font_bidi_to_rtl_bool
+                      { \__font_bidi_switch_to:n { rtl } }
+                      { \__font_bidi_switch_to:n { ltr } }
+                  }
+                  {
+                    % Respect explicit \RTL / \RL scopes. Otherwise infer the
+                    % paragraph base direction from its first routed script.
+                    \if@RTL
+                    \else
+                      \__font_bidi_start_paragraph:
+                    \fi
+                  }
+              }
+              }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_bidi_end_paragraph:
+  {
+    \bool_if:NT \g__font_bidi_auto_paragraph_bool
+      {
+        % Closing TeX--XeT direction and restoring bidi.sty's paragraph flag
+        % also emits interchar boundaries. They belong to paragraph cleanup,
+        % not to the next text run.
+        \bool_gset_true:N \g__font_bidi_suppress_bool
+        \__font_bidi_close_run:
+        \bool_if:NT \g__font_bidi_main_paragraph_bool
+          { \@RTLfalse }
+        \bool_gset_false:N \g__font_bidi_auto_paragraph_bool
+        \bool_gset_false:N \g__font_bidi_paragraph_rtl_bool
+        \bool_gset_false:N \g__font_bidi_main_paragraph_bool
+        \tl_gset:Nn \g__font_bidi_run_direction_tl { ltr }
+        \bool_gset_false:N \g__font_bidi_suppress_bool
+      }
+  }
+
+\cs_new_protected:Npn \__font_bidi_end_run:
+  {
+    \__font_bidi_close_run:
+    \bool_if:NTF \g__font_bidi_paragraph_rtl_bool
+      { \tl_gset:Nn \g__font_bidi_run_direction_tl { rtl } }
+      { \tl_gset:Nn \g__font_bidi_run_direction_tl { ltr } }
+  }
+
+\cs_new_protected:Npn \__font_bidi_append_transition:nn #1#2
+  {
+    \tl_set:Nx \l__font_bidi_transition_key_tl
+      { \int_eval:n {#1} / \int_eval:n {#2} }
+    \exp_args:NNV \seq_if_in:NnTF
+      \g__font_bidi_installed_transition_seq
+      \l__font_bidi_transition_key_tl
+      { }
+      {
+        \tl_set:Nx \l__font_bidi_existing_transition_tl
+          { \exp_not:o { \the\XeTeXinterchartoks \int_eval:n {#1} \c_space_tl \int_eval:n {#2} } }
+        \use:x
+          {
+            \exp_not:N \XeTeXinterchartoks
+              \int_eval:n {#1}
+              \c_space_tl
+              \int_eval:n {#2}
+              =
+              {
+                \exp_not:N \__font_bidi_transition:nn
+                  { \int_eval:n {#1} }
+                  { \int_eval:n {#2} }
+                \exp_not:V \l__font_bidi_existing_transition_tl
+              }
+          }
+        \exp_args:NNV \seq_gput_right:Nn
+          \g__font_bidi_installed_transition_seq
+          \l__font_bidi_transition_key_tl
+      }
+  }
+
+\cs_new_protected:Npn \__font_bidi_initialize_neutral_class:
+  {
+    \cs_if_exist:cF { __font_bidi_neutral_class }
+      {
+        \exp_args:Nc \newXeTeXintercharclass
+          { __font_bidi_neutral_class }
+        \exp_args:Nc \newXeTeXintercharclass
+          { __font_bidi_ltr_class }
+
+        % Class 0 is neutral by definition in this controller. The dedicated
+        % class is also registered; begin-document discovery adds any
+        % punctuation/space classes reassigned by other packages.
+        \prop_gput:Nnn \g__font_bidi_neutral_class_prop { 0 } { neutral }
+        \tl_set:Nx \l_tmpa_tl
+          { \int_eval:n { \use:c { __font_bidi_neutral_class } } }
+        \exp_args:NNV \prop_gput:Nnn
+          \g__font_bidi_neutral_class_prop \l_tmpa_tl { neutral }
+
+        % Ordinary and non-breaking spaces.
+        \__font_bidi_assign_neutral_range:nn { "0020 } { "0020 }
+        \__font_bidi_assign_neutral_range:nn { "00A0 } { "00A0 }
+        \__font_bidi_assign_neutral_range:nn { "1680 } { "1680 }
+        \__font_bidi_assign_neutral_range:nn { "2000 } { "200A }
+        \__font_bidi_assign_neutral_range:nn { "202F } { "202F }
+        \__font_bidi_assign_neutral_range:nn { "205F } { "205F }
+
+        % Common ASCII punctuation is neutral.
+        \__font_bidi_assign_neutral_range:nn { "0021 } { "002F }
+        \__font_bidi_assign_neutral_range:nn { "003A } { "0040 }
+        \__font_bidi_assign_neutral_range:nn { "005B } { "0060 }
+        \__font_bidi_assign_neutral_range:nn { "007B } { "007E }
+
+        % Class 0 contains both unclassified text and TeX alignment/control
+        % boundaries, so it is neutral. Give common LTR letters and digits
+        % an explicit strong class instead of treating all class-0 tokens
+        % as LTR (which breaks RTL text in tables and macro boundaries).
+        \__font_bidi_assign_ltr_range:nn { "0030 } { "0039 }
+        \__font_bidi_assign_ltr_range:nn { "0041 } { "005A }
+        \__font_bidi_assign_ltr_range:nn { "0061 } { "007A }
+        \__font_bidi_assign_ltr_range:nn { "00C0 } { "00D6 }
+        \__font_bidi_assign_ltr_range:nn { "00D8 } { "00F6 }
+        \__font_bidi_assign_ltr_range:nn { "00F8 } { "00FF }
+        \__font_bidi_assign_ltr_range:nn { "0100 } { "02AF }
+        \__font_bidi_assign_ltr_range:nn { "02B0 } { "02FF }
+        \__font_bidi_assign_ltr_range:nn { "0370 } { "052F }
+        \__font_bidi_assign_ltr_range:nn { "0531 } { "0588 }
+        \__font_bidi_assign_ltr_range:nn { "10A0 } { "10FF }
+        \__font_bidi_assign_ltr_range:nn { "1E00 } { "1EFF }
+        \__font_bidi_assign_ltr_range:nn { "2C60 } { "2C7F }
+        \__font_bidi_assign_ltr_range:nn { "2D00 } { "2D2F }
+        \__font_bidi_assign_ltr_range:nn { "A720 } { "A7FF }
+
+        % Bridge neutral/default characters to the explicit LTR class.
+        \__font_bidi_append_transition:nn
+          { \use:c { __font_bidi_neutral_class } } { 0 }
+        \__font_bidi_append_transition:nn
+          { 0 } { \use:c { __font_bidi_neutral_class } }
+        \__font_bidi_append_transition:nn
+          { \use:c { __font_bidi_neutral_class } }
+          { \use:c { __font_bidi_ltr_class } }
+        \__font_bidi_append_transition:nn
+          { \use:c { __font_bidi_ltr_class } }
+          { \use:c { __font_bidi_neutral_class } }
+        \__font_bidi_append_transition:nn
+          { 0 } { \use:c { __font_bidi_ltr_class } }
+        \__font_bidi_append_transition:nn
+          { \use:c { __font_bidi_ltr_class } } { 0 }
+      }
+  }
+
+\__font_bidi_initialize_neutral_class:
+
+\cs_new_protected:Npn \__font_bidi_install_boundary_transitions:
+  {
+    \int_step_inline:nnn { 0 } { \__font_interchar_class_max: }
+      {
+        \int_compare:nNnF {##1} = { \__font_interchar_boundary_class: }
+          {
+            \__font_bidi_class_if_rtl:nTF {##1}
+              { }
+              {
+                \__font_bidi_append_transition:nn
+                  { \__font_interchar_boundary_class: } {##1}
+              }
+          }
+      }
+  }
+
+\cs_new_protected:Npn \__font_bidi_register_range_block:n #1
+  {
+    \__font_ensure_unicode_block_class:n {#1}
+    \tl_set:Nx \l__font_bidi_class_tl
+      { \int_eval:n { \use:c { __font_unicode_block_#1_class } } }
+    \exp_args:NNV \prop_gput:Nnn
+      \g__font_bidi_rtl_class_prop
+      \l__font_bidi_class_tl
+      { rtl }
+    \__font_bidi_install_boundary_transitions:
+  }
+
+\AddToHook{para/end}[impe/font-bidi]
+  { \__font_bidi_end_paragraph: }
+
+\ExplSyntaxOff

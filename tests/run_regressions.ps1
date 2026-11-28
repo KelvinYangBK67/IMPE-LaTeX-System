@@ -180,6 +180,7 @@ try {
         "legacy-entry",
         "font-mode-aliases",
         "rtl-writing-model",
+        "rtl-auto-runs",
         "usewriting-api",
         "global-font-priority",
         "usewriting-local-first-use",

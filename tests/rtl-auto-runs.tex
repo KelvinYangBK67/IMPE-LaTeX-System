@@ -1,0 +1,162 @@
+\documentclass[lang=zh]{impebook}
+
+\UseTemplateSet{
+  fonts = {libertinus,arabic,hebrew,syriac},
+  features = {hyperlinks}
+}
+
+\ExplSyntaxOn
+\int_new:N \g__impe_test_bidi_open_int
+\int_new:N \g__impe_test_bidi_close_int
+\cs_new_eq:NN \__impe_test_saved_bidi_open:n \__font_bidi_open_run:n
+\cs_new_eq:NN \__impe_test_saved_bidi_close: \__font_bidi_close_run:
+
+\cs_set_protected:Npn \__font_bidi_open_run:n #1
+  {
+    \int_gincr:N \g__impe_test_bidi_open_int
+    \__impe_test_saved_bidi_open:n {#1}
+  }
+\cs_set_protected:Npn \__font_bidi_close_run:
+  {
+    \bool_if:NT \g__font_bidi_auto_run_bool
+      { \int_gincr:N \g__impe_test_bidi_close_int }
+    \__impe_test_saved_bidi_close:
+  }
+\cs_new_protected:Npn \__impe_test_assert_neutral_char:n #1
+  {
+    \tl_set:Nx \l_tmpa_tl
+      { \int_eval:n { \the\XeTeXcharclass #1 } }
+    \exp_args:NNV \prop_if_in:NnF
+      \g__font_bidi_neutral_class_prop
+      \l_tmpa_tl
+      {
+        \PackageError{impe-test}
+          {Character~class~\l_tmpa_tl~for~U+#1~is~not~registered~as~neutral}
+          {}
+      }
+  }
+\cs_new_protected:Npn \__impe_test_assert_ltr_char:n #1
+  {
+    \int_compare:nNnF
+      { \the\XeTeXcharclass #1 } = { \the\__font_bidi_ltr_class }
+      { \PackageError{impe-test}{Latin~letters~must~use~the~strong~LTR~class}{} }
+  }
+\cs_new_protected:Npn \__impe_test_reset:
+  {
+    \int_gzero:N \g__impe_test_bidi_open_int
+    \int_gzero:N \g__impe_test_bidi_close_int
+  }
+\cs_new_protected:Npn \__impe_test_assert:nn #1#2
+  {
+    \int_compare:nNnF { \g__impe_test_bidi_open_int } = {#1}
+      { \PackageError{impe-test}{Unexpected~automatic~Bidi~run~count~(open=\int_use:N\g__impe_test_bidi_open_int,~close=\int_use:N\g__impe_test_bidi_close_int)}{} }
+    \int_compare:nNnF { \g__impe_test_bidi_close_int } = {#2}
+      { \PackageError{impe-test}{Unexpected~automatic~Bidi~close~count~(open=\int_use:N\g__impe_test_bidi_open_int,~close=\int_use:N\g__impe_test_bidi_close_int)}{} }
+  }
+\tl_set:Nx \l_tmpa_tl { \int_eval:n { \use:c { __font_unicode_block_Arabic_class } } }
+\prop_if_in:NVF \g__font_bidi_rtl_class_prop \l_tmpa_tl
+  { \PackageError{impe-test}{Arabic~rangeprofile~was~not registered}{} }
+\seq_if_in:NnF \g__font_range_global_blocks_seq {Arabic}
+  { \PackageError{impe-test}{Arabic~rangeprofile~was~not~registered}{} }
+\seq_if_in:NnF \g__font_range_global_blocks_seq {Hebrew}
+  { \PackageError{impe-test}{Hebrew~rangeprofile~was~not~registered}{} }
+\seq_if_in:NnF \g__font_range_global_blocks_seq {Syriac}
+  { \PackageError{impe-test}{Syriac~rangeprofile~was~not~registered}{} }
+\ExplSyntaxOff
+
+\begin{document}
+
+\ExplSyntaxOn
+\__impe_test_assert_neutral_char:n { 32 }
+\__impe_test_assert_neutral_char:n { 44 }
+\__impe_test_assert_ltr_char:n { 65 }
+\ExplSyntaxOff
+
+% Bare Arabic text in paragraph and table cells: no \AR, \RL, or local/global
+% mode declaration. Spaces between words must remain inside one RTL run.
+\ExplSyntaxOn
+\__impe_test_reset:
+\ExplSyntaxOff
+\begin{tabular}{p{.18\linewidth}p{.68\linewidth}}
+  動詞 & فِعْلٌ \\
+  & كَتَبَ، يَكْتُبُ، اُكْتُبْ \\
+\end{tabular}
+\ExplSyntaxOn
+\__impe_test_assert:nn {2}{2}
+\ExplSyntaxOff
+
+\ExplSyntaxOn
+\__impe_test_reset:
+\ExplSyntaxOff
+\noindent كَتَبَ، يَكْتُبُ، اُكْتُبْ
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{0}
+\ExplSyntaxOff
+\par
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{1}
+\ExplSyntaxOff
+
+% Latin letters remain strong LTR; spaces and punctuation bridge the runs.
+\ExplSyntaxOn
+\__impe_test_reset:
+\ExplSyntaxOff
+\noindent Hello كَتَبَ، يَكْتُبُ، اُكْتُبْ world.
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{1}
+\ExplSyntaxOff
+\par
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{1}
+\ExplSyntaxOff
+
+% An LTR paragraph embeds a complete Arabic phrase as one RTL run.
+\ExplSyntaxOn
+\__impe_test_reset:
+\ExplSyntaxOff
+\noindent 中文 كَتَبَ، يَكْتُبُ، اُكْتُبْ 中文
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{1}
+\ExplSyntaxOff
+\par
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{1}
+\ExplSyntaxOff
+
+% First-strong paragraph direction is RTL, then an LTR CJK run is embedded.
+\ExplSyntaxOn
+\__impe_test_reset:
+\ExplSyntaxOff
+\noindent فَاءُ الْكَلِمَةِ 指第一個詞根輔音
+\ExplSyntaxOn
+\__impe_test_assert:nn {2}{1}
+\ExplSyntaxOff
+\par
+\ExplSyntaxOn
+\__impe_test_assert:nn {2}{2}
+\ExplSyntaxOff
+
+% Hebrew and Syriac use the same shared controller.
+\ExplSyntaxOn
+\__impe_test_reset:
+\ExplSyntaxOff
+\noindent שלום עולם
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{0}
+\ExplSyntaxOff
+\par
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{1}
+\__impe_test_reset:
+\ExplSyntaxOff
+\noindent ܫܠܡܐ ܥܠܝܟ
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{0}
+\ExplSyntaxOff
+\par
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{1}
+\typeout{IMPE-TEST-RTL-AUTO-RUNS-PASS}
+\ExplSyntaxOff
+
+\end{document}
