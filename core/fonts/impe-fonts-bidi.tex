@@ -5,6 +5,7 @@
 \ExplSyntaxOn
 
 \prop_new:N \g__font_bidi_rtl_class_prop
+\prop_new:N \g__font_bidi_neutral_class_prop
 \seq_new:N \g__font_bidi_installed_transition_seq
 \bool_new:N \g__font_bidi_auto_paragraph_bool
 \bool_new:N \g__font_bidi_auto_run_bool
@@ -42,6 +43,49 @@
         \XeTeXcharclass ##1 =
           \use:c { __font_bidi_ltr_class }
       }
+  }
+
+\cs_new_protected:Npn \__font_bidi_register_neutral_char:n #1
+  {
+    \tl_set:Nx \l_tmpa_tl
+      { \int_eval:n { \the\XeTeXcharclass #1 } }
+    \exp_args:NNV \prop_gput:Nnn
+      \g__font_bidi_neutral_class_prop
+      \l_tmpa_tl
+      { neutral }
+  }
+
+\cs_new_protected:Npn \__font_bidi_register_neutral_range:nn #1#2
+  {
+    \int_step_inline:nnn {#1} {#2}
+      { \__font_bidi_register_neutral_char:n {##1} }
+  }
+
+\cs_new_protected:Npn \__font_bidi_register_external_neutral_classes:
+  {
+    \__font_bidi_register_neutral_char:n { "0020 }
+    \__font_bidi_register_neutral_char:n { "00A0 }
+    \__font_bidi_register_neutral_char:n { "1680 }
+    \__font_bidi_register_neutral_range:nn { "2000 } { "200A }
+    \__font_bidi_register_neutral_char:n { "202F }
+    \__font_bidi_register_neutral_char:n { "205F }
+    \__font_bidi_register_neutral_range:nn { "0021 } { "002F }
+    \__font_bidi_register_neutral_range:nn { "003A } { "0040 }
+    \__font_bidi_register_neutral_range:nn { "005B } { "0060 }
+    \__font_bidi_register_neutral_range:nn { "007B } { "007E }
+  }
+
+\AddToHook{begindocument/end}[impe/font-bidi-neutral]
+  { \__font_bidi_register_external_neutral_classes: }
+
+\cs_new_protected:Npn \__font_bidi_class_if_neutral:nTF #1#2#3
+  {
+    \tl_set:Nx \l__font_bidi_class_tl { \int_eval:n {#1} }
+    \exp_args:NNV \prop_if_in:NnTF
+      \g__font_bidi_neutral_class_prop
+      \l__font_bidi_class_tl
+      {#2}
+      {#3}
   }
 
 \cs_new_protected:Npn \__font_bidi_class_if_rtl:nTF #1#2#3
@@ -174,16 +218,10 @@
               { \bool_set_true:N \l__font_bidi_from_boundary_bool }
             \int_compare:nNnT {#2} = { \__font_interchar_boundary_class: }
               { \bool_set_true:N \l__font_bidi_to_boundary_bool }
-            \int_compare:nNnT
-              {#1} = { \use:c { __font_bidi_neutral_class } }
-              { \bool_set_true:N \l__font_bidi_from_boundary_bool }
-            \int_compare:nNnT
-              {#2} = { \use:c { __font_bidi_neutral_class } }
-              { \bool_set_true:N \l__font_bidi_to_boundary_bool }
-            \int_compare:nNnT {#1} = { 0 }
-              { \bool_set_true:N \l__font_bidi_from_boundary_bool }
-            \int_compare:nNnT {#2} = { 0 }
-              { \bool_set_true:N \l__font_bidi_to_boundary_bool }
+            \__font_bidi_class_if_neutral:nTF {#1}
+              { \bool_set_true:N \l__font_bidi_from_boundary_bool } { }
+            \__font_bidi_class_if_neutral:nTF {#2}
+              { \bool_set_true:N \l__font_bidi_to_boundary_bool } { }
 
             \bool_if:NF \l__font_bidi_to_boundary_bool
               {
@@ -273,6 +311,15 @@
           { __font_bidi_neutral_class }
         \exp_args:Nc \newXeTeXintercharclass
           { __font_bidi_ltr_class }
+
+        % Class 0 is neutral by definition in this controller. The dedicated
+        % class is also registered; begin-document discovery adds any
+        % punctuation/space classes reassigned by other packages.
+        \prop_gput:Nnn \g__font_bidi_neutral_class_prop { 0 } { neutral }
+        \tl_set:Nx \l_tmpa_tl
+          { \int_eval:n { \use:c { __font_bidi_neutral_class } } }
+        \exp_args:NNV \prop_gput:Nnn
+          \g__font_bidi_neutral_class_prop \l_tmpa_tl { neutral }
 
         % Ordinary and non-breaking spaces.
         \__font_bidi_assign_neutral_range:nn { "0020 } { "0020 }
