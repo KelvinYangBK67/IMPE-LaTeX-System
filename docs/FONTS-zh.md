@@ -180,6 +180,21 @@ core/fonts/impe-fonts-system.tex
 
 在自動範圍路由中，日文字體與朝鮮文字體分別接管其專屬文字（假名與諺文）以及 CJK 標點；共用漢字仍使用文件的 CJK 字體，讓中文字體保持優先。需要明確採用日本漢字或朝鮮漢字的字形時，可分別使用局部命令 `\JP{...}`、`\KR{...}`。漢喃文字體透過 `\HN{...}` 明確局部選用。
 
+### 雙向文字方向
+
+**inlinedirection** 是 Writing Model 中水平文字方向的主要欄位。
+解析後的 horizontal / rtl 會選用共用 RTL behavior controller：行內內容
+使用 \RL，段落內容使用 \RTL。Catalog 已為阿拉伯文、希伯來文、敘利亞文
+及相關歷史 RTL 書寫系統明確設定此欄位。若未提供，系統仍保留原有的
+family/script/feature 方向推導，作為相容性回退。
+
+Unicode 範圍 transition 負責字體選擇，並不代表 Bidi run 的邊界。XeTeX
+interchar transition 會在 glue／空格等邊界類別觸發，因此不能逐字符開啟、
+關閉 Bidi 範圍。這套路由也不負責推導段落方向或自動切分混合方向文字。
+需要處理完整文字範圍時，使用局部書寫命令（例如 \AR、\HE、\SY）；
+需要直接指定方向時，使用 \RL 或 \RTL。自訂 local 字族也可以透過
+inlinedirection = rtl 接入同一套 controller。
+
 ### Shaping、Layout 與特殊模組
 
 `script`、`language`、`features = { RawFeature = { script=... } }` 提供標準 fontspec / OpenType shaping 選項。

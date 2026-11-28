@@ -38,5 +38,9 @@ xecjk
 xstring
 zref
 
+# CJK OpenType fonts used by the glyph-level fallback regression fixtures.
+# Test-only: IMPE does not depend on Fandol at runtime.
+fandol
+
 # Small, public Thai OpenType family used by the CI-safe fixture.
 fonts-tlwg

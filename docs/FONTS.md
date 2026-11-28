@@ -217,6 +217,25 @@ Chinese font keeps priority. Use the local `\JP{...}` or `\KR{...}` command to
 request Japanese or Korean Han glyph forms explicitly. Vietnamese Han-Nom
 uses explicit local selection with `\HN{...}`.
 
+### Bidirectional Direction
+
+**inlinedirection** is the primary Writing Model field for horizontal text
+direction. A resolved horizontal / rtl pair selects the shared RTL behavior
+controller: local inline content is wrapped with \RL, while paragraph content
+is handled with \RTL. The catalog declares this metadata for Arabic, Hebrew,
+Syriac, and related historical RTL families. If the field is omitted, the
+previous family/script/feature inference remains available as a compatibility
+fallback.
+
+Unicode-range transitions are a font-selection mechanism, not Bidi run
+boundaries. XeTeX inter-character transitions can fire around glue/space and other
+boundary classes, so they must not start and end Bidi scopes one character
+at a time. They do not infer paragraph direction or automatically segment
+mixed-direction text. Use the local writing command (for example \AR, \HE,
+or \SY) for a complete text argument, or explicit \RL / \RTL scopes when the
+text direction must be specified directly. A custom local family can use the
+same controller by declaring inlinedirection = rtl.
+
 ### Shaping, Layout, and Special Modules
 
 `script`, `language`, and `features = { RawFeature = { script=... } }`
