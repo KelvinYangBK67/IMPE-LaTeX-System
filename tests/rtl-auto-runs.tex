@@ -61,15 +61,31 @@
 \__impe_test_assert:nn {1}{1}
 \ExplSyntaxOff
 
+% An LTR paragraph embeds a complete Arabic phrase as one RTL run.
+\ExplSyntaxOn
+\__impe_test_reset:
+\ExplSyntaxOff
+\noindent 中文 كَتَبَ، يَكْتُبُ، اُكْتُبْ 中文
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{0}
+\ExplSyntaxOff
+\par
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{1}
+\ExplSyntaxOff
+
 % First-strong paragraph direction is RTL, then an LTR CJK run is embedded.
 \ExplSyntaxOn
 \__impe_test_reset:
 \ExplSyntaxOff
 \noindent فَاءُ الْكَلِمَةِ 指第一個詞根輔音،
 \ExplSyntaxOn
-\__impe_test_assert:nn {1}{1}
+\__impe_test_assert:nn {2}{1}
 \ExplSyntaxOff
 \par
+\ExplSyntaxOn
+\__impe_test_assert:nn {2}{2}
+\ExplSyntaxOff
 
 % Hebrew and Syriac use the same shared controller.
 \ExplSyntaxOn
