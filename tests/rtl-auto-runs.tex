@@ -10,20 +10,7 @@
 \int_new:N \g__impe_test_bidi_close_int
 \cs_new_eq:NN \__impe_test_saved_bidi_open:n \__font_bidi_open_run:n
 \cs_new_eq:NN \__impe_test_saved_bidi_close: \__font_bidi_close_run:
-\cs_new_eq:NN \__impe_test_saved_bidi_transition:nn \__font_bidi_transition:nn
-\cs_set_protected:Npn \__font_bidi_transition:nn #1#2
-  {
-    \typeout{IMPE-BIDI-DEBUG-TRANSITION-#1-TO-#2}
-    \bool_if:NTF \l__font_local_override_bool
-      { \typeout{IMPE-BIDI-DEBUG-LOCAL-OVERRIDE-TRUE} }
-      { \typeout{IMPE-BIDI-DEBUG-LOCAL-OVERRIDE-FALSE} }
-    \if@RTL
-      \typeout{IMPE-BIDI-DEBUG-RTL-FLAG-TRUE}
-    \else
-      \typeout{IMPE-BIDI-DEBUG-RTL-FLAG-FALSE}
-    \fi
-    \__impe_test_saved_bidi_transition:nn {#1}{#2}
-  }
+
 \cs_set_protected:Npn \__font_bidi_open_run:n #1
   {
     \int_gincr:N \g__impe_test_bidi_open_int
@@ -47,10 +34,8 @@
       { \PackageError{impe-test}{Unexpected~automatic~Bidi~close~count~(open=\int_use:N\g__impe_test_bidi_open_int,~close=\int_use:N\g__impe_test_bidi_close_int)}{} }
   }
 \tl_set:Nx \l_tmpa_tl { \int_eval:n { \use:c { __font_unicode_block_Arabic_class } } }
-\typeout{IMPE-BIDI-DEBUG-ARABIC-CLASS=\l_tmpa_tl}
-\prop_if_in:NVTF \g__font_bidi_rtl_class_prop \l_tmpa_tl
-  { \typeout{IMPE-BIDI-DEBUG-ARABIC-CLASS-REGISTERED} }
-  { \typeout{IMPE-BIDI-DEBUG-ARABIC-CLASS-MISSING} }
+\prop_if_in:NVF \g__font_bidi_rtl_class_prop \l_tmpa_tl
+  { \PackageError{impe-test}{Arabic~rangeprofile~was~not registered}{} }
 \seq_if_in:NnF \g__font_range_global_blocks_seq {Arabic}
   { \PackageError{impe-test}{Arabic~rangeprofile~was~not~registered}{} }
 \seq_if_in:NnF \g__font_range_global_blocks_seq {Hebrew}
@@ -67,13 +52,7 @@
 \__impe_test_reset:
 \ExplSyntaxOff
 \begin{tabular}{p{.18\linewidth}p{.68\linewidth}}
-  動詞 & \ExplSyntaxOn
-    \if@RTL \typeout{IMPE-BIDI-DEBUG-CELL-RTL-TRUE}
-    \else \typeout{IMPE-BIDI-DEBUG-CELL-RTL-FALSE}\fi
-    \bool_if:NTF \l__font_local_override_bool
-      { \typeout{IMPE-BIDI-DEBUG-CELL-LOCAL-TRUE} }
-      { \typeout{IMPE-BIDI-DEBUG-CELL-LOCAL-FALSE} }
-    \ExplSyntaxOff فِعْلٌ \\
+  動詞 & فِعْلٌ \\
   & كَتَبَ، يَكْتُبُ، اُكْتُبْ \\
 \end{tabular}
 \ExplSyntaxOn
@@ -86,6 +65,16 @@
 \noindent كَتَبَ، يَكْتُبُ، اُكْتُبْ
 \ExplSyntaxOn
 \__impe_test_assert:nn {1}{0}
+\ExplSyntaxOff
+\par
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{1}
+\ExplSyntaxOff
+
+% Latin letters remain strong LTR; spaces and punctuation bridge the runs.
+\noindent Hello كَتَبَ، يَكْتُبُ، اُكْتُبْ world.
+\ExplSyntaxOn
+\__impe_test_assert:nn {1}{1}
 \ExplSyntaxOff
 \par
 \ExplSyntaxOn
