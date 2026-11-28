@@ -31,12 +31,17 @@
   }
 \cs_set_protected:Npn \__font_bidi_close_run:
   {
-    \int_gincr:N \g__impe_test_bidi_close_int
-    \typeout{IMPE-BIDI-TRACE-CLOSE}
+    \bool_if:NT \g__font_bidi_auto_run_bool
+      {
+        \int_gincr:N \g__impe_test_bidi_close_int
+        \typeout{IMPE-BIDI-TRACE-CLOSE}
+      }
     \__impe_test_saved_bidi_close:
   }
 \typeout{IMPE-BIDI-TRACE-SPACE-CLASS=\the\XeTeXcharclass 32}
 \typeout{IMPE-BIDI-TRACE-NEUTRAL-CLASS=\the\__font_bidi_neutral_class}
+\typeout{IMPE-BIDI-TRACE-LTR-CLASS=\the\__font_bidi_ltr_class}
+\typeout{IMPE-BIDI-TRACE-ASCII-A-CLASS=\the\XeTeXcharclass 65}
 \cs_new_protected:Npn \__impe_test_reset:
   {
     \int_gzero:N \g__impe_test_bidi_open_int
