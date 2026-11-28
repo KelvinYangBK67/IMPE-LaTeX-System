@@ -10,17 +10,33 @@
 \int_new:N \g__impe_test_bidi_close_int
 \cs_new_eq:NN \__impe_test_saved_bidi_open:n \__font_bidi_open_run:n
 \cs_new_eq:NN \__impe_test_saved_bidi_close: \__font_bidi_close_run:
+\cs_new_eq:NN \__impe_test_saved_bidi_transition:nn \__font_bidi_transition:nn
+\cs_new_eq:NN \__impe_test_saved_bidi_end_paragraph: \__font_bidi_end_paragraph:
 
+\cs_set_protected:Npn \__font_bidi_transition:nn #1#2
+  {
+    \typeout{IMPE-BIDI-TRACE-TRANSITION-\int_eval:n{#1}-TO-\int_eval:n{#2}}
+    \__impe_test_saved_bidi_transition:nn {#1}{#2}
+  }
+\cs_set_protected:Npn \__font_bidi_end_paragraph:
+  {
+    \typeout{IMPE-BIDI-TRACE-PARA-END-OPEN=\int_use:N\g__impe_test_bidi_open_int-CLOSE=\int_use:N\g__impe_test_bidi_close_int}
+    \__impe_test_saved_bidi_end_paragraph:
+  }
 \cs_set_protected:Npn \__font_bidi_open_run:n #1
   {
     \int_gincr:N \g__impe_test_bidi_open_int
+    \typeout{IMPE-BIDI-TRACE-OPEN-#1}
     \__impe_test_saved_bidi_open:n {#1}
   }
 \cs_set_protected:Npn \__font_bidi_close_run:
   {
     \int_gincr:N \g__impe_test_bidi_close_int
+    \typeout{IMPE-BIDI-TRACE-CLOSE}
     \__impe_test_saved_bidi_close:
   }
+\typeout{IMPE-BIDI-TRACE-SPACE-CLASS=\the\XeTeXcharclass 32}
+\typeout{IMPE-BIDI-TRACE-NEUTRAL-CLASS=\the\__font_bidi_neutral_class}
 \cs_new_protected:Npn \__impe_test_reset:
   {
     \int_gzero:N \g__impe_test_bidi_open_int
