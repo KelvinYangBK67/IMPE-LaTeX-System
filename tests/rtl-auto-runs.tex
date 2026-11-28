@@ -72,6 +72,9 @@
 \ExplSyntaxOff
 
 % Latin letters remain strong LTR; spaces and punctuation bridge the runs.
+\ExplSyntaxOn
+\__impe_test_reset:
+\ExplSyntaxOff
 \noindent Hello كَتَبَ، يَكْتُبُ، اُكْتُبْ world.
 \ExplSyntaxOn
 \__impe_test_assert:nn {1}{1}
