@@ -211,6 +211,10 @@
   {
     \bool_if:NT \g__font_bidi_auto_paragraph_bool
       {
+        % Closing TeX--XeT direction and restoring bidi.sty's paragraph flag
+        % also emits interchar boundaries. They belong to paragraph cleanup,
+        % not to the next text run.
+        \bool_gset_true:N \g__font_bidi_suppress_bool
         \__font_bidi_close_run:
         \bool_if:NT \g__font_bidi_main_paragraph_bool
           { \@RTLfalse }
@@ -218,6 +222,7 @@
         \bool_gset_false:N \g__font_bidi_paragraph_rtl_bool
         \bool_gset_false:N \g__font_bidi_main_paragraph_bool
         \tl_gset:Nn \g__font_bidi_run_direction_tl { ltr }
+        \bool_gset_false:N \g__font_bidi_suppress_bool
       }
   }
 
