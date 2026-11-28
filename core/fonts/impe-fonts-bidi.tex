@@ -242,7 +242,7 @@
   {
     \__font_ensure_unicode_block_class:n {#1}
     \tl_set:Nx \l__font_bidi_class_tl
-      { \use:c { __font_unicode_block_#1_class } }
+      { \int_eval:n { \use:c { __font_unicode_block_#1_class } } }
     \exp_args:NNV \prop_gput:Nnn
       \g__font_bidi_rtl_class_prop
       \l__font_bidi_class_tl
