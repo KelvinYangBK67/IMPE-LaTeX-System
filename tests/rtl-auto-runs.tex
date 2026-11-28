@@ -22,22 +22,25 @@
       { \int_gincr:N \g__impe_test_bidi_close_int }
     \__impe_test_saved_bidi_close:
   }
-\int_compare:nNnF
-  { \the\XeTeXcharclass 32 } = { \the\__font_bidi_neutral_class }
-  { \PackageError{impe-test}{Space~must~use~the~neutral~Bidi~class}{} }
-\int_compare:nNnF
-  { \the\XeTeXcharclass 44 } = { \the\__font_bidi_neutral_class }
+\cs_new_protected:Npn \__impe_test_assert_neutral_char:n #1
   {
-    \int_compare:nNnF { \the\XeTeXcharclass 44 } = { 0 }
+    \tl_set:Nx \l_tmpa_tl
+      { \int_eval:n { \the\XeTeXcharclass #1 } }
+    \exp_args:NNV \prop_if_in:NnF
+      \g__font_bidi_neutral_class_prop
+      \l_tmpa_tl
       {
         \PackageError{impe-test}
-          {ASCII~comma~class~\the\XeTeXcharclass 44~is~not~neutral}
+          {Character~class~\l_tmpa_tl~for~U+#1~is~not~registered~as~neutral}
           {}
       }
   }
-\int_compare:nNnF
-  { \the\XeTeXcharclass 65 } = { \the\__font_bidi_ltr_class }
-  { \PackageError{impe-test}{Latin~letters~must~use~the~strong~LTR~class}{} }
+\cs_new_protected:Npn \__impe_test_assert_ltr_char:n #1
+  {
+    \int_compare:nNnF
+      { \the\XeTeXcharclass #1 } = { \the\__font_bidi_ltr_class }
+      { \PackageError{impe-test}{Latin~letters~must~use~the~strong~LTR~class}{} }
+  }
 \cs_new_protected:Npn \__impe_test_reset:
   {
     \int_gzero:N \g__impe_test_bidi_open_int
@@ -62,6 +65,12 @@
 \ExplSyntaxOff
 
 \begin{document}
+
+\ExplSyntaxOn
+\__impe_test_assert_neutral_char:n { 32 }
+\__impe_test_assert_neutral_char:n { 44 }
+\__impe_test_assert_ltr_char:n { 65 }
+\ExplSyntaxOff
 
 % Bare Arabic text in paragraph and table cells: no \AR, \RL, or local/global
 % mode declaration. Spaces between words must remain inside one RTL run.
