@@ -210,10 +210,10 @@
               \int_eval:n {#2}
               =
               {
-                \exp_not:V \l__font_bidi_existing_transition_tl
                 \exp_not:N \__font_bidi_transition:nn
                   { \int_eval:n {#1} }
                   { \int_eval:n {#2} }
+                \exp_not:V \l__font_bidi_existing_transition_tl
               }
           }
         \exp_args:NNV \seq_gput_right:Nn
